@@ -62,6 +62,10 @@ String getMenuIconPath(int pageId) {
     return serialSvgIcon();
   } else if (pageId == MenuId.basicDataCollectionPage) {
     return basicDataSvgIcon();
+  } else if (pageId == MenuId.wiredSettingPage) {
+    return wiredSettingSvgIcon();
+  } else if (pageId == MenuId.sealManagmentPage) {
+    return sealManagmentSvgIcon();
   }
 
   return '';
@@ -357,4 +361,36 @@ String fmaBarcodeIcon() {
 
 String recordsIcon() {
   return 'assets/images/records.svg';
+}
+
+String wiredSettingSvgIcon() {
+  return 'assets/images/wiredSetting.svg';
+}
+
+String sealManagmentSvgIcon() {
+  return 'assets/images/sealMgr.svg';
+}
+
+String unlockOkSvgIcon() {
+  return 'assets/images/unlockOk.svg';
+}
+
+String sealOkSvgIcon() {
+  return 'assets/images/sealOk.svg';
+}
+
+String sealedSvgIcon() {
+  return 'assets/images/sealed.svg';
+}
+
+String hardwareSealSvgIcon() {
+  return 'assets/images/hardwareSeal.svg';
+}
+
+String softwareSealSvgIcon() {
+  return 'assets/images/softwareSeal.svg';
+}
+
+String failedSvgIcon() {
+  return 'assets/images/failed.svg';
 }

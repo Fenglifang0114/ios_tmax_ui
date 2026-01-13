@@ -411,7 +411,7 @@ class _ScaleCalLogTabPageState extends State<ScaleCalLogTabPage> {
                 source: _dataSource,
                 headerRowHeight: 48.0,
                 frozenColumnsCount: 2,
-                footerFrozenColumnsCount: 1,
+                // footerFrozenColumnsCount: 1,
                 columnWidthMode: ColumnWidthMode.fill,
                 gridLinesVisibility: GridLinesVisibility.horizontal,
                 headerGridLinesVisibility: GridLinesVisibility.none,
@@ -570,8 +570,8 @@ class _ScaleCalLogTabPageState extends State<ScaleCalLogTabPage> {
           columnWidth, 'sn', localizedStrings.gScaleSn, textTheme, colorScheme),
       getColumnWidget(200, 'createTime', localizedStrings.fCreatedAtCol,
           textTheme, colorScheme),
-      getColumnWidgetNoSort(120, 'operate', localizedStrings.fTipOperation,
-          textTheme, colorScheme),
+      // getColumnWidgetNoSort(120, 'operate', localizedStrings.fTipOperation,
+      //     textTheme, colorScheme),
     ];
   }
 
@@ -837,46 +837,46 @@ class _ScaleCalLogTabPageState extends State<ScaleCalLogTabPage> {
             Theme.of(context).colorScheme.onPrimary,
             Theme.of(context).colorScheme.primary,
             Theme.of(context).colorScheme.onPrimary),
-        SizedBox(
-          width: 12,
-        ),
-        showTextButton(
-            context,
-            btnHeight,
-            localizedStrings.fClearBtn,
-            _allCalLogs.isEmpty
-                ? null
-                : () {
-                    _clearSelection();
-                    showDeleteDialog(() {
-                      PublicFunctions.deleteAllCalLog();
-                    }, localizedStrings.data_delete_confirm, context);
-                  },
-            Theme.of(context).colorScheme.onPrimary,
-            Theme.of(context).colorScheme.error,
-            Theme.of(context).colorScheme.onPrimary),
-        SizedBox(
-          width: regularPadding,
-        ),
-        showTextButton(
-            context,
-            btnHeight,
-            localizedStrings.gBtnDelete,
-            allSelectedRecIds.isEmpty
-                ? null
-                : () {
-                    List<int> selRecIds = allSelectedRecIds.toList();
+        // SizedBox(
+        //   width: 12,
+        // ),
+        // showTextButton(
+        //     context,
+        //     btnHeight,
+        //     localizedStrings.fClearBtn,
+        //     _allCalLogs.isEmpty
+        //         ? null
+        //         : () {
+        //             _clearSelection();
+        //             showDeleteDialog(() {
+        //               PublicFunctions.deleteAllCalLog();
+        //             }, localizedStrings.data_delete_confirm, context);
+        //           },
+        //     Theme.of(context).colorScheme.onPrimary,
+        //     Theme.of(context).colorScheme.error,
+        //     Theme.of(context).colorScheme.onPrimary),
+        // SizedBox(
+        //   width: regularPadding,
+        // ),
+        // showTextButton(
+        //     context,
+        //     btnHeight,
+        //     localizedStrings.gBtnDelete,
+        //     allSelectedRecIds.isEmpty
+        //         ? null
+        //         : () {
+        //             List<int> selRecIds = allSelectedRecIds.toList();
 
-                    String jsonStr =
-                        reqDelLogsToJson(ReqDelLogs(recId: selRecIds));
+        //             String jsonStr =
+        //                 reqDelLogsToJson(ReqDelLogs(recId: selRecIds));
 
-                    showDeleteDialog(() {
-                      PublicFunctions.deleteCalLog(jsonStr);
-                    }, localizedStrings.fConfirmDelete, context);
-                  },
-            Theme.of(context).colorScheme.onPrimary,
-            Theme.of(context).colorScheme.error,
-            Theme.of(context).colorScheme.onPrimary),
+        //             showDeleteDialog(() {
+        //               PublicFunctions.deleteCalLog(jsonStr);
+        //             }, localizedStrings.fConfirmDelete, context);
+        //           },
+        //     Theme.of(context).colorScheme.onPrimary,
+        //     Theme.of(context).colorScheme.error,
+        //     Theme.of(context).colorScheme.onPrimary),
         SizedBox(
           width: 20,
         ),
@@ -1029,10 +1029,10 @@ class CalLogDataSource extends DataGridSource {
           columnName: 'createTime',
           value: DateFormat('yyyy-MM-dd HH:mm:ss').format(syslog.createTime!),
         ),
-        DataGridCell<String>(
-          columnName: 'operate',
-          value: ('Delete'),
-        ),
+        // DataGridCell<String>(
+        //   columnName: 'operate',
+        //   value: ('Delete'),
+        // ),
       ]);
     }).toList();
   }
@@ -1083,22 +1083,22 @@ class CalLogDataSource extends DataGridSource {
             updateSelection(newSelectedIndexes);
           },
         );
-      case 'operate':
-        return IconButton(
-          icon: Icon(
-            Icons.delete_outline_outlined,
-            color: colorScheme.error,
-          ),
-          onPressed: () {
-            // 处理删除操作 - 现在可以直接使用syslog.recId
+      // case 'operate':
+      //   return IconButton(
+      //     icon: Icon(
+      //       Icons.delete_outline_outlined,
+      //       color: colorScheme.error,
+      //     ),
+      //     onPressed: () {
+      //       // 处理删除操作 - 现在可以直接使用syslog.recId
 
-            String jsonStr =
-                reqDelLogsToJson(ReqDelLogs(recId: [syslog.recId!]));
-            showDeleteDialog(() {
-              PublicFunctions.deleteCalLog(jsonStr);
-            }, localizedStrings.fConfirmDelete, context);
-          },
-        );
+      //       String jsonStr =
+      //           reqDelLogsToJson(ReqDelLogs(recId: [syslog.recId!]));
+      //       showDeleteDialog(() {
+      //         PublicFunctions.deleteCalLog(jsonStr);
+      //       }, localizedStrings.fConfirmDelete, context);
+      //     },
+      //   );
 
       default:
         return Padding(

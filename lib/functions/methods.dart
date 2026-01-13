@@ -1055,6 +1055,56 @@ class PublicFunctions {
     sendMsg(scaleId, jsonEncode(myScaleCmd));
   }
 
+  static void getSealStatus(int scaleId) {
+    myScaleCmd.cmdMode = "get_seal_status";
+    myScaleCmd.cmdData = '';
+    sendMsg(scaleId, jsonEncode(myScaleCmd));
+  }
+
+  static void softSeal(int scaleId, String sealKey) {
+    myScaleCmd.cmdMode = "soft_seal";
+    myScaleCmd.cmdData = sealKey;
+    sendMsg(scaleId, jsonEncode(myScaleCmd));
+  }
+
+  static void removeSoftSeal(int scaleId, String sealKey) {
+    myScaleCmd.cmdMode = "remove_soft_seal";
+    myScaleCmd.cmdData = sealKey;
+    sendMsg(scaleId, jsonEncode(myScaleCmd));
+  }
+
+  static void removeSoftSealOnce(int scaleId) {
+    myScaleCmd.cmdMode = "remove_soft_seal_once";
+    myScaleCmd.cmdData = '';
+    sendMsg(scaleId, jsonEncode(myScaleCmd));
+  }
+
+  //有线网络设置
+
+  static void getWiredIp(int scaleId) {
+    myScaleCmd.cmdMode = "get_wired_ip";
+    myScaleCmd.cmdData = '';
+    sendMsg(scaleId, jsonEncode(myScaleCmd));
+  }
+
+  static void setWiredIp(int scaleId, String ipInfo) {
+    myScaleCmd.cmdMode = "set_wired_ip";
+    myScaleCmd.cmdData = ipInfo;
+    sendMsg(scaleId, jsonEncode(myScaleCmd));
+  }
+
+  static void setWiredDhcp(int scaleId, String dhcpInfo) {
+    myScaleCmd.cmdMode = "set_wired_dhcp";
+    myScaleCmd.cmdData = dhcpInfo;
+    sendMsg(scaleId, jsonEncode(myScaleCmd));
+  }
+
+  static void getWiredDhcp(int scaleId) {
+    myScaleCmd.cmdMode = "get_wired_dhcp";
+    myScaleCmd.cmdData = '';
+    sendMsg(scaleId, jsonEncode(myScaleCmd));
+  }
+
   static void openScalePassth(int scaleId) {
     myScaleCmd.cmdMode = "open_scale_passthrough";
     myScaleCmd.cmdData = 'string';

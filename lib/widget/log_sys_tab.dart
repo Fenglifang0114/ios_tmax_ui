@@ -409,7 +409,6 @@ class _SysLogTabPageState extends State<SysLogTabPage> {
                 source: _dataSource,
                 headerRowHeight: 48.0,
                 frozenColumnsCount: 2,
-                footerFrozenColumnsCount: 1,
                 columnWidthMode: ColumnWidthMode.fill,
                 gridLinesVisibility: GridLinesVisibility.horizontal,
                 headerGridLinesVisibility: GridLinesVisibility.none,
@@ -556,8 +555,8 @@ class _SysLogTabPageState extends State<SysLogTabPage> {
           textTheme, colorScheme),
       getColumnWidget(200, 'createTime', localizedStrings.fCreatedAtCol,
           textTheme, colorScheme),
-      getColumnWidgetNoSort(120, 'operate', localizedStrings.fTipOperation,
-          textTheme, colorScheme),
+      // getColumnWidgetNoSort(120, 'operate', localizedStrings.fTipOperation,
+      //     textTheme, colorScheme),
     ];
   }
 
@@ -815,38 +814,38 @@ class _SysLogTabPageState extends State<SysLogTabPage> {
             Theme.of(context).colorScheme.onPrimary,
             Theme.of(context).colorScheme.primary,
             Theme.of(context).colorScheme.onPrimary),
-        SizedBox(
-          width: 12,
-        ),
-        showTextButton(context, btnHeight, localizedStrings.fClearBtn, () {
-          _clearSelection();
-          showDeleteDialog(() {
-            PublicFunctions.deleteAllSysLog();
-          }, localizedStrings.data_delete_confirm, context);
-        },
-            Theme.of(context).colorScheme.onPrimary,
-            Theme.of(context).colorScheme.error,
-            Theme.of(context).colorScheme.onPrimary),
-        SizedBox(
-          width: regularPadding,
-        ),
-        showTextButton(
-            context,
-            btnHeight,
-            localizedStrings.gBtnDelete,
-            allSelectedRecIds.isEmpty
-                ? null
-                : () {
-                    List<int> selRecIds = allSelectedRecIds.toList();
-                    String jsonStr =
-                        reqDelLogsToJson(ReqDelLogs(recId: selRecIds));
-                    showDeleteDialog(() {
-                      PublicFunctions.deleteSysLog(jsonStr);
-                    }, localizedStrings.fConfirmDelete, context);
-                  },
-            Theme.of(context).colorScheme.onPrimary,
-            Theme.of(context).colorScheme.error,
-            Theme.of(context).colorScheme.onPrimary),
+        // SizedBox(
+        //   width: 12,
+        // ),
+        // showTextButton(context, btnHeight, localizedStrings.fClearBtn, () {
+        //   _clearSelection();
+        //   showDeleteDialog(() {
+        //     PublicFunctions.deleteAllSysLog();
+        //   }, localizedStrings.data_delete_confirm, context);
+        // },
+        //     Theme.of(context).colorScheme.onPrimary,
+        //     Theme.of(context).colorScheme.error,
+        //     Theme.of(context).colorScheme.onPrimary),
+        // SizedBox(
+        //   width: regularPadding,
+        // ),
+        // showTextButton(
+        //     context,
+        //     btnHeight,
+        //     localizedStrings.gBtnDelete,
+        //     allSelectedRecIds.isEmpty
+        //         ? null
+        //         : () {
+        //             List<int> selRecIds = allSelectedRecIds.toList();
+        //             String jsonStr =
+        //                 reqDelLogsToJson(ReqDelLogs(recId: selRecIds));
+        //             showDeleteDialog(() {
+        //               PublicFunctions.deleteSysLog(jsonStr);
+        //             }, localizedStrings.fConfirmDelete, context);
+        //           },
+        //     Theme.of(context).colorScheme.onPrimary,
+        //     Theme.of(context).colorScheme.error,
+        //     Theme.of(context).colorScheme.onPrimary),
         SizedBox(
           width: 20,
         ),
@@ -978,10 +977,10 @@ class SyslogDataSource extends DataGridSource {
           columnName: 'createTime',
           value: DateFormat('yyyy-MM-dd HH:mm:ss').format(syslog.createTime!),
         ),
-        DataGridCell<String>(
-          columnName: 'operate',
-          value: ('Delete'),
-        ),
+        // DataGridCell<String>(
+        //   columnName: 'operate',
+        //   value: ('Delete'),
+        // ),
       ]);
     }).toList();
   }
@@ -1032,21 +1031,21 @@ class SyslogDataSource extends DataGridSource {
             updateSelection(newSelectedIndexes);
           },
         );
-      case 'operate':
-        return IconButton(
-          icon: Icon(
-            Icons.delete_outline_outlined,
-            color: colorScheme.error,
-          ),
-          onPressed: () {
-            String jsonStr =
-                reqDelLogsToJson(ReqDelLogs(recId: [syslog.recId!]));
+      // case 'operate':
+      //   return IconButton(
+      //     icon: Icon(
+      //       Icons.delete_outline_outlined,
+      //       color: colorScheme.error,
+      //     ),
+      //     onPressed: () {
+      //       String jsonStr =
+      //           reqDelLogsToJson(ReqDelLogs(recId: [syslog.recId!]));
 
-            showDeleteDialog(() {
-              PublicFunctions.deleteSysLog(jsonStr);
-            }, localizedStrings.fConfirmDelete, context);
-          },
-        );
+      //       showDeleteDialog(() {
+      //         PublicFunctions.deleteSysLog(jsonStr);
+      //       }, localizedStrings.fConfirmDelete, context);
+      //     },
+      //   );
 
       default:
         return Padding(

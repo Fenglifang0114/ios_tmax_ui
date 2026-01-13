@@ -225,12 +225,12 @@ class S {
     );
   }
 
-  /// `NetMask`
+  /// `Netmask`
   String get gNetmask {
     return Intl.message(
-      'NetMask',
+      'Netmask',
       name: 'gNetmask',
-      desc: 'This is a prompt for NetMask.',
+      desc: 'This is a prompt for Netmask.',
       args: [],
     );
   }
@@ -1873,16 +1873,6 @@ class S {
     return Intl.message(
       'Server Port:',
       name: 'server_port',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Ethernet IP Setting`
-  String get set_ethernet_ip_title {
-    return Intl.message(
-      'Ethernet IP Setting',
-      name: 'set_ethernet_ip_title',
       desc: '',
       args: [],
     );
@@ -5886,6 +5876,26 @@ class S {
     );
   }
 
+  /// `Wired Network Setting`
+  String get menuWiredSetting {
+    return Intl.message(
+      'Wired Network Setting',
+      name: 'menuWiredSetting',
+      desc: 'Menu item for wired setting',
+      args: [],
+    );
+  }
+
+  /// `Seal Management`
+  String get menuSealManagment {
+    return Intl.message(
+      'Seal Management',
+      name: 'menuSealManagment',
+      desc: 'Menu item for seal management',
+      args: [],
+    );
+  }
+
   /// `Parameter Setting`
   String get menuParameterSetting {
     return Intl.message(
@@ -7583,6 +7593,26 @@ class S {
       'Read device usage info from scales to understand any abnormal activity.',
       name: 'subTitleBasicDataCollection',
       desc: 'SubTitle for basic data collection',
+      args: [],
+    );
+  }
+
+  /// `Configure the Ethernet IP address.`
+  String get subTitleWiredSetting {
+    return Intl.message(
+      'Configure the Ethernet IP address.',
+      name: 'subTitleWiredSetting',
+      desc: 'SubTitle for wired setting',
+      args: [],
+    );
+  }
+
+  /// `Seal management`
+  String get subTitleSealManagment {
+    return Intl.message(
+      'Seal management',
+      name: 'subTitleSealManagment',
+      desc: 'SubTitle for seal management',
       args: [],
     );
   }
@@ -9636,6 +9666,248 @@ class S {
   /// `Print`
   String get gPrint {
     return Intl.message('Print', name: 'gPrint', desc: 'Print', args: []);
+  }
+
+  /// `Set Static IP`
+  String get setStaticIP {
+    return Intl.message(
+      'Set Static IP',
+      name: 'setStaticIP',
+      desc: 'Action to configure a static IP address',
+      args: [],
+    );
+  }
+
+  /// `Set IP Success`
+  String get setIPSuccess {
+    return Intl.message(
+      'Set IP Success',
+      name: 'setIPSuccess',
+      desc: 'Success message when IP configuration is applied successfully',
+      args: [],
+    );
+  }
+
+  /// `Set IP Failed`
+  String get setIPFailed {
+    return Intl.message(
+      'Set IP Failed',
+      name: 'setIPFailed',
+      desc: 'Error message when IP configuration fails',
+      args: [],
+    );
+  }
+
+  /// `Set DHCP Success`
+  String get setDHCPSuccess {
+    return Intl.message(
+      'Set DHCP Success',
+      name: 'setDHCPSuccess',
+      desc: 'Success message when DHCP configuration is applied successfully',
+      args: [],
+    );
+  }
+
+  /// `Set DHCP Failed`
+  String get setDHCPFailed {
+    return Intl.message(
+      'Set DHCP Failed',
+      name: 'setDHCPFailed',
+      desc: 'Error message when DHCP configuration fails',
+      args: [],
+    );
+  }
+
+  /// `Please wait 2 seconds...`
+  String get pleaseWait {
+    return Intl.message(
+      'Please wait 2 seconds...',
+      name: 'pleaseWait',
+      desc: 'Please wait message',
+      args: [],
+    );
+  }
+
+  /// `Hardware seal`
+  String get hardwareSeal {
+    return Intl.message(
+      'Hardware seal',
+      name: 'hardwareSeal',
+      desc: 'Term for a hardware-based tamper-proof seal',
+      args: [],
+    );
+  }
+
+  /// `Software Seal`
+  String get softwareSeal {
+    return Intl.message(
+      'Software Seal',
+      name: 'softwareSeal',
+      desc: 'Term for a software-based tamper-proof seal',
+      args: [],
+    );
+  }
+
+  /// `To be verified`
+  String get toBeVerified {
+    return Intl.message(
+      'To be verified',
+      name: 'toBeVerified',
+      desc: 'Status indicating an item is pending verification',
+      args: [],
+    );
+  }
+
+  /// `Check Seal`
+  String get checkSeal {
+    return Intl.message(
+      'Check Seal',
+      name: 'checkSeal',
+      desc: 'Action to inspect or verify the seal status',
+      args: [],
+    );
+  }
+
+  /// `Sealed`
+  String get sealed {
+    return Intl.message(
+      'Sealed',
+      name: 'sealed',
+      desc: 'Status indicating the device has been sealed',
+      args: [],
+    );
+  }
+
+  /// `Not Sealed`
+  String get notSealed {
+    return Intl.message(
+      'Not Sealed',
+      name: 'notSealed',
+      desc: 'Status indicating the device is not sealed',
+      args: [],
+    );
+  }
+
+  /// `Apply Software Seal`
+  String get applySoftwareSeal {
+    return Intl.message(
+      'Apply Software Seal',
+      name: 'applySoftwareSeal',
+      desc: 'Action to apply a software seal to the device',
+      args: [],
+    );
+  }
+
+  /// `Remove Software Seal`
+  String get removeSoftwareSeal {
+    return Intl.message(
+      'Remove Software Seal',
+      name: 'removeSoftwareSeal',
+      desc: 'Action to remove a software seal from the device',
+      args: [],
+    );
+  }
+
+  /// `Operation Record`
+  String get operationRecord {
+    return Intl.message(
+      'Operation Record',
+      name: 'operationRecord',
+      desc: 'Title for a log of operations performed',
+      args: [],
+    );
+  }
+
+  /// `Software Seal Applied Successfully`
+  String get softwareSealAppliedSuccessfully {
+    return Intl.message(
+      'Software Seal Applied Successfully',
+      name: 'softwareSealAppliedSuccessfully',
+      desc: 'Success message when a software seal is successfully applied',
+      args: [],
+    );
+  }
+
+  /// `Software Seal Applied Failed`
+  String get softwareSealAppliedFailed {
+    return Intl.message(
+      'Software Seal Applied Failed',
+      name: 'softwareSealAppliedFailed',
+      desc: 'Error message when a software seal application fails',
+      args: [],
+    );
+  }
+
+  /// `Software Seal Removed Successfully`
+  String get softwareSealRemovedSuccessfully {
+    return Intl.message(
+      'Software Seal Removed Successfully',
+      name: 'softwareSealRemovedSuccessfully',
+      desc: 'Success message when a software seal is successfully removed',
+      args: [],
+    );
+  }
+
+  /// `Software Seal Removal Failed. \r\nPlease retry. If the issue persists, contact your supplier for a removal code.`
+  String get softwareSealRemovalFailed {
+    return Intl.message(
+      'Software Seal Removal Failed. \r\nPlease retry. If the issue persists, contact your supplier for a removal code.',
+      name: 'softwareSealRemovalFailed',
+      desc:
+          'Error message when software seal removal fails, prompting for a retry or removal code',
+      args: [],
+    );
+  }
+
+  /// `Remove with Code`
+  String get removeWithCode {
+    return Intl.message(
+      'Remove with Code',
+      name: 'removeWithCode',
+      desc: 'Option or button to remove a seal using a special code',
+      args: [],
+    );
+  }
+
+  /// `Please enter the removal code`
+  String get pleaseEnterRemovalCode {
+    return Intl.message(
+      'Please enter the removal code',
+      name: 'pleaseEnterRemovalCode',
+      desc: 'Prompt asking the user to input the removal code',
+      args: [],
+    );
+  }
+
+  /// `A seal is present on the device. Calibration is not permitted.`
+  String get sealPresentCalibrationNotPermitted {
+    return Intl.message(
+      'A seal is present on the device. Calibration is not permitted.',
+      name: 'sealPresentCalibrationNotPermitted',
+      desc:
+          'Warning message indicating calibration is prohibited because a seal is present on the device',
+      args: [],
+    );
+  }
+
+  /// `Check Seal Failed`
+  String get checkSealFailed {
+    return Intl.message(
+      'Check Seal Failed',
+      name: 'checkSealFailed',
+      desc: 'Error message when checking the seal status fails',
+      args: [],
+    );
+  }
+
+  /// `Contact your supplier for a removal code`
+  String get contactSupplierForRemovalCode {
+    return Intl.message(
+      'Contact your supplier for a removal code',
+      name: 'contactSupplierForRemovalCode',
+      desc: 'Prompt to contact the supplier for a removal code',
+      args: [],
+    );
   }
 }
 

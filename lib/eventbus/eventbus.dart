@@ -117,6 +117,11 @@ class EventRespDetailInfo {
   EventRespDetailInfo(this.obj);
 }
 
+class EventShowSealOnce {
+  dynamic obj;
+  EventShowSealOnce(this.obj);
+}
+
 class EventRespNewDetailInfo {
   dynamic obj;
   EventRespNewDetailInfo(this.obj);
@@ -452,6 +457,21 @@ class EventUpdateFirmWareNetResp {
   EventUpdateFirmWareNetResp(this.obj);
 }
 
+class EventRevGetSealStatus {
+  dynamic obj;
+  EventRevGetSealStatus(this.obj);
+}
+
+class EventRevSoftSeal {
+  dynamic obj;
+  EventRevSoftSeal(this.obj);
+}
+
+class EventRevRemoveSoftSeal {
+  dynamic obj;
+  EventRevRemoveSoftSeal(this.obj);
+}
+
 class EventBTResponse {
   dynamic obj;
   EventBTResponse(this.obj);
@@ -555,6 +575,26 @@ class EventRevSetGaduationValue {
 class EventRevSetDecimalValue {
   dynamic obj;
   EventRevSetDecimalValue(this.obj);
+}
+
+class EventRevGetWiredIp {
+  dynamic obj;
+  EventRevGetWiredIp(this.obj);
+}
+
+class EventRevSetWiredIp {
+  dynamic obj;
+  EventRevSetWiredIp(this.obj);
+}
+
+class EventRevGetWiredDhcp {
+  dynamic obj;
+  EventRevGetWiredDhcp(this.obj);
+}
+
+class EventRevSetWiredDhcp {
+  dynamic obj;
+  EventRevSetWiredDhcp(this.obj);
 }
 
 class EventRevSetWeightUnit {

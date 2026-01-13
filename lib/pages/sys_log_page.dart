@@ -1,6 +1,7 @@
 // 系统日志页面
 
 import 'package:flutter/material.dart';
+import 'package:t_max/data/g_data.dart';
 import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/data/icons.dart';
 import 'package:t_max/data/language.dart';
@@ -58,10 +59,12 @@ class _SysLogPageState extends State<SysLogPage>
                     child: TabBarView(
                       controller: _mainTabController,
                       physics: const NeverScrollableScrollPhysics(),
-                      children: const [
+                      children: [
                         SysLogTabPage(contentType: ''),
                         ScaleCalLogTabPage(contentType: ''),
-                        ScaleWgtLogTabPage(contentType: ''),
+                        if (mySysUser.roleId == superAdminRoleId ||
+                            mySysUser.roleId == adminRoleId)
+                          ScaleWgtLogTabPage(contentType: ''),
                       ],
                     ),
                   ),

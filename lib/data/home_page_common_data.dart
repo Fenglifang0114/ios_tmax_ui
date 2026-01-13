@@ -73,6 +73,7 @@ Set<int> freeConfigMenuIds = {
   MenuId.pluEditPage,
   MenuId.downReciptPage,
   MenuId.downloadLabelPage,
+  MenuId.wiredSettingPage,
 };
 
 //付费的Config菜单Id
@@ -82,6 +83,7 @@ Set<int> paidConfigMenuIds = {
   MenuId.serialOutputDesignPage,
   MenuId.basicDataCollectionPage,
   // MenuId.parameterSettingPage,
+  MenuId.sealManagmentPage,
 };
 
 // 存储用户选择要添加的付费菜单 ID
@@ -110,6 +112,7 @@ Set<int> industrialAppMenuIds = {
   MenuId.takeOutPage,
   MenuId.formulationScalePage,
   MenuId.flowRatePage,
+  MenuId.sealManagmentPage
 };
 
 //如何定义一个枚举类型 比如  home  = 1  config = 2  apps = 3  appsSetting = 4  systemSetting = 5
@@ -139,4 +142,6 @@ class MenuId {
   static const int appLabelDesignPage = 21;
   static const int appRcpDesignPage = 22;
   static const int appConfigPage = 23;
+  static const int wiredSettingPage = 24;
+  static const int sealManagmentPage = 25;
 }

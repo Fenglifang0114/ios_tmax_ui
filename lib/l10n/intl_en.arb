@@ -68,9 +68,9 @@
     "@gIpAddress": {
         "description": "This is a prompt for IPv4."
     },
-    "gNetmask": "NetMask",
+    "gNetmask": "Netmask",
     "@gNetmask": {
-        "description": "This is a prompt for NetMask."
+        "description": "This is a prompt for Netmask."
     },
     "gGateway": "Gateway",
     "@gGateway": {
@@ -750,10 +750,6 @@
     },
     "server_port": "Server Port:",
     "@server_port": {
-        "description": ""
-    },
-    "set_ethernet_ip_title": "Ethernet IP Setting",
-    "@set_ethernet_ip_title": {
         "description": ""
     },
     "go_home": "Confirm to return to hompage?",
@@ -2460,6 +2456,14 @@
     "@menuBasicDataCollection": {
         "description": "Menu item for basic data collection"
     },
+    "menuWiredSetting": "Wired Network Setting",
+    "@menuWiredSetting": {
+        "description": "Menu item for wired setting"
+    },
+    "menuSealManagment": "Seal Management",
+    "@menuSealManagment": {
+        "description": "Menu item for seal management"
+    },
     "menuParameterSetting": "Parameter Setting",
     "@menuParameterSetting": {
         "description": "Menu item for parameter setting"
@@ -3135,6 +3139,14 @@
     "subTitleBasicDataCollection": "Read device usage info from scales to understand any abnormal activity.",
     "@subTitleBasicDataCollection": {
         "description": "SubTitle for basic data collection"
+    },
+    "subTitleWiredSetting": "Configure the Ethernet IP address.",
+    "@subTitleWiredSetting": {
+        "description": "SubTitle for wired setting"
+    },
+    "subTitleSealManagment":  "Seal management",
+    "@subTitleSealManagment": {
+        "description": "SubTitle for seal management"
     },
     "subTitleParameterSetting": "Configure device parameters online.",
     "@subTitleParameterSetting": {
@@ -3979,5 +3991,102 @@
     "gPrint": "Print",
     "@gPrint": {
         "description": "Print"
+    },
+    "setStaticIP": "Set Static IP",
+    "@setStaticIP": {
+        "description": "Action to configure a static IP address"
+    },
+    "setIPSuccess": "Set IP Success",
+    "@setIPSuccess": {
+        "description": "Success message when IP configuration is applied successfully"
+    },
+    "setIPFailed": "Set IP Failed",
+    "@setIPFailed": {
+        "description": "Error message when IP configuration fails"
+    },
+    "setDHCPSuccess": "Set DHCP Success",
+    "@setDHCPSuccess": {
+        "description": "Success message when DHCP configuration is applied successfully"
+    },
+    "setDHCPFailed": "Set DHCP Failed",
+    "@setDHCPFailed": {
+        "description": "Error message when DHCP configuration fails"
+    },
+    "pleaseWait": "Please wait 2 seconds...",
+    "@pleaseWait": {
+        "description": "Please wait message"
+    },
+    "hardwareSeal": "Hardware seal",
+    "@hardwareSeal": {
+        "description": "Term for a hardware-based tamper-proof seal"
+    },
+    "softwareSeal": "Software Seal",
+    "@softwareSeal": {
+        "description": "Term for a software-based tamper-proof seal"
+    },
+    "toBeVerified": "To be verified",
+    "@toBeVerified": {
+        "description": "Status indicating an item is pending verification"
+    },
+    "checkSeal": "Check Seal",
+    "@checkSeal": {
+        "description": "Action to inspect or verify the seal status"
+    },
+    "sealed": "Sealed",
+    "@sealed": {
+        "description": "Status indicating the device has been sealed"
+    },
+    "notSealed": "Not Sealed",
+    "@notSealed": {
+        "description": "Status indicating the device is not sealed"
+    },
+    "applySoftwareSeal": "Apply Software Seal",
+    "@applySoftwareSeal": {
+        "description": "Action to apply a software seal to the device"
+    },
+    "removeSoftwareSeal": "Remove Software Seal",
+    "@removeSoftwareSeal": {
+        "description": "Action to remove a software seal from the device"
+    },
+    "operationRecord": "Operation Record",
+    "@operationRecord": {
+        "description": "Title for a log of operations performed"
+    },
+    "softwareSealAppliedSuccessfully": "Software Seal Applied Successfully",
+    "@softwareSealAppliedSuccessfully": {
+        "description": "Success message when a software seal is successfully applied"
+    },
+    "softwareSealAppliedFailed": "Software Seal Applied Failed",
+    "@softwareSealAppliedFailed": {
+        "description": "Error message when a software seal application fails"
+    },
+    "softwareSealRemovedSuccessfully": "Software Seal Removed Successfully",
+    "@softwareSealRemovedSuccessfully": {
+        "description": "Success message when a software seal is successfully removed"
+    },
+    "softwareSealRemovalFailed": "Software Seal Removal Failed. \r\nPlease retry. If the issue persists, contact your supplier for a removal code.",
+    "@softwareSealRemovalFailed": {
+        "description": "Error message when software seal removal fails, prompting for a retry or removal code"
+    },
+    "removeWithCode": "Remove with Code",
+    "@removeWithCode": {
+        "description": "Option or button to remove a seal using a special code"
+    },
+    "pleaseEnterRemovalCode": "Please enter the removal code",
+    "@pleaseEnterRemovalCode": {
+        "description": "Prompt asking the user to input the removal code"
+    },
+    "sealPresentCalibrationNotPermitted": "A seal is present on the device. Calibration is not permitted.",
+    "@sealPresentCalibrationNotPermitted": {
+        "description": "Warning message indicating calibration is prohibited because a seal is present on the device"
+    },
+    "checkSealFailed": "Check Seal Failed",
+    "@checkSealFailed": {
+        "description": "Error message when checking the seal status fails"
+    },    
+    "contactSupplierForRemovalCode": "Contact your supplier for a removal code",
+    "@contactSupplierForRemovalCode": {
+        "description": "Prompt to contact the supplier for a removal code"
     }
+
 }    

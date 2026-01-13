@@ -99,6 +99,13 @@ class RespMsgType {
   static const String respSetInitialZero = 'resp_set_initial_zero';
   static const String respSetZeroTracking = 'resp_set_zero_tracking';
   static const String respSetGravAcc = 'resp_set_grav_acc';
+  static const String respGetWiredIp = 'resp_get_wired_ip';
+  static const String respSetWiredIp = 'resp_set_wired_ip';
+  static const String respSetWiredDhcp = 'resp_set_wired_dhcp';
+  static const String respGetWiredDhcp = 'resp_get_wired_dhcp';
+  static const String respGetSealStatus = 'resp_get_seal_status';
+  static const String respSoftSeal = 'resp_soft_seal';
+  static const String respRemoveSoftSeal = 'resp_remove_soft_seal';
 
   static final Map<String, Function> handlers = {
     RespMsgType.respGetUIConf: handleGetUIConf,
@@ -167,6 +174,13 @@ class RespMsgType {
     RespMsgType.respSetInitialZero: handleSetDecimalValue,
     RespMsgType.respSetZeroTracking: handleSetDecimalValue,
     RespMsgType.respSetGravAcc: handleSetDecimalValue,
+    RespMsgType.respGetWiredIp: handleRespGetWiredIp,
+    RespMsgType.respSetWiredIp: handleRespSetWiredIp,
+    RespMsgType.respSetWiredDhcp: handleRespSetWiredDhcp,
+    RespMsgType.respGetWiredDhcp: handleRespGetWiredDhcp,
+    RespMsgType.respGetSealStatus: handleRespGetSealStatus,
+    RespMsgType.respSoftSeal: handleRespSoftSeal,
+    RespMsgType.respRemoveSoftSeal: handleRespRemoveSoftSeal,
   };
 
   static void handleGetUIConf(dynamic data) {
@@ -512,6 +526,26 @@ class RespMsgType {
     eventBus.fire(EventRevSetDecimalValue(mobj));
   }
 
+  static void handleRespGetWiredIp(dynamic data) {
+    final jsonStrings = data['MsgBody'];
+    eventBus.fire(EventRevGetWiredIp(jsonStrings));
+  }
+
+  static void handleRespSetWiredIp(dynamic data) {
+    final jsonStrings = data['MsgBody'];
+    eventBus.fire(EventRevSetWiredIp(jsonStrings));
+  }
+
+  static void handleRespSetWiredDhcp(dynamic data) {
+    final jsonStrings = data['MsgBody'];
+    eventBus.fire(EventRevSetWiredDhcp(jsonStrings));
+  }
+
+  static void handleRespGetWiredDhcp(dynamic data) {
+    final jsonStrings = data['MsgBody'];
+    eventBus.fire(EventRevGetWiredDhcp(jsonStrings));
+  }
+
   static void handleRespGetGaduation1Value(dynamic data) {
     dynamic mobj = ChannelResponse.fromJson(data);
     eventBus.fire(EventRevGetGaduation1Value(mobj));
@@ -555,6 +589,21 @@ class RespMsgType {
   static void handleRespUpdateFirmwareNet(dynamic data) {
     dynamic mobj = ChannelResponse.fromJson(data);
     eventBus.fire(EventUpdateFirmWareNetResp(mobj));
+  }
+
+  static void handleRespGetSealStatus(dynamic data) {
+    final jsonStrings = data['MsgBody'];
+    eventBus.fire(EventRevGetSealStatus(jsonStrings));
+  }
+
+  static void handleRespSoftSeal(dynamic data) {
+    final jsonStrings = data['MsgBody'];
+    eventBus.fire(EventRevSoftSeal(jsonStrings));
+  }
+
+  static void handleRespRemoveSoftSeal(dynamic data) {
+    final jsonStrings = data['MsgBody'];
+    eventBus.fire(EventRevRemoveSoftSeal(jsonStrings));
   }
 
   static void handleRespCheckSerialPort(dynamic data) {

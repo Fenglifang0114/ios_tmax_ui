@@ -752,10 +752,6 @@
     "@server_port": {
         "description": ""
     },
-    "set_ethernet_ip_title": "有线IP地址设置",
-    "@set_ethernet_ip_title": {
-        "description": ""
-    },
     "go_home": "确定返回主页?",
     "@go_home": {
         "description": ""
@@ -2460,6 +2456,14 @@
     "@menuBasicDataCollection": {
         "description": "Menu item for basic data collection"
     },
+    "menuWiredSetting": "有线网络设置",
+    "@menuWiredSetting": {
+        "description": "Menu item for wired setting"
+    },
+    "menuSealManagment": "铅封管理",
+    "@menuSealManagment": {
+        "description": "Menu item for seal management"
+    },
     "menuParameterSetting": "参数设置",
     "@menuParameterSetting": {
         "description": "Menu item for parameter setting"
@@ -3135,6 +3139,14 @@
     "subTitleBasicDataCollection": "读取秤的运行数据，以了解任何异常活动。",
     "@subTitleBasicDataCollection": {
         "description": "SubTitle for basic data collection"
+    },
+    "subTitleWiredSetting": "配置有线网络的静态IP地址。",
+    "@subTitleWiredSetting": {
+        "description": "SubTitle for wired setting"
+    },
+    "subTitleSealManagment":  "铅封管理",
+    "@subTitleSealManagment": {
+        "description": "SubTitle for seal management"
     },
     "subTitleParameterSetting": "在线设置设备参数",
     "@subTitleParameterSetting": {
@@ -3979,6 +3991,102 @@
     "gPrint": "打印",
     "@gPrint": {
         "description": "Print"
+    },
+    "setStaticIP": "设置静态IP",
+    "@setStaticIP": {
+        "description": "Action to configure a static IP address"
+    },
+    "setIPSuccess": "设置IP成功",
+    "@setIPSuccess": {
+        "description": "Success message when IP configuration is applied successfully"
+    },
+    "setIPFailed": "设置IP失败",
+    "@setIPFailed": {
+        "description": "Error message when IP configuration fails"
+    },
+    "setDHCPSuccess": "设置DHCP成功",
+    "@setDHCPSuccess": {
+        "description": "Success message when DHCP configuration is applied successfully"
+    },
+    "setDHCPFailed": "设置DHCP失败",
+    "@setDHCPFailed": {
+        "description": "Error message when DHCP configuration fails"
+    },
+    "pleaseWait": "请等待2秒...",
+    "@pleaseWait": {
+        "description": "Please wait message"
+    },
+    "hardwareSeal": "硬铅封",
+    "@hardwareSeal": {
+        "description": "Term for a hardware-based tamper-proof seal"
+    },
+    "softwareSeal": "软铅封",
+    "@softwareSeal": {
+        "description": "Term for a software-based tamper-proof seal"
+    },
+    "toBeVerified": "待验证",
+    "@toBeVerified": {
+        "description": "Status indicating an item is pending verification"
+    },
+    "checkSeal": "检查铅封",
+    "@checkSeal": {
+        "description": "Action to inspect or verify the seal status"
+    },
+    "sealed": "已铅封",
+    "@sealed": {
+        "description": "Status indicating the device has been sealed"
+    },
+    "notSealed": "未铅封",
+    "@notSealed": {
+        "description": "Status indicating the device is not sealed"
+    },
+    "applySoftwareSeal": "施加软铅封",
+    "@applySoftwareSeal": {
+        "description": "Action to apply a software seal to the device"
+    },
+    "removeSoftwareSeal": "解除软铅封",
+    "@removeSoftwareSeal": {
+        "description": "Action to remove a software seal from the device"
+    },
+    "operationRecord": "操作记录",
+    "@operationRecord": {
+        "description": "Title for a log of operations performed"
+    },
+    "softwareSealAppliedSuccessfully": "软铅封施加成功",
+    "@softwareSealAppliedSuccessfully": {
+        "description": "Success message when a software seal is successfully applied"
+    },
+    "softwareSealAppliedFailed": "软铅封施加失败",
+    "@softwareSealAppliedFailed": {
+        "description": "Error message when a software seal application fails"
+    },
+    "softwareSealRemovedSuccessfully": "软铅封解除成功",
+    "@softwareSealRemovedSuccessfully": {
+        "description": "Success message when a software seal is successfully removed"
+    },
+    "softwareSealRemovalFailed": "软铅封解除失败，请尝试重新操作。若多次失败，请联系供应商提供解除码协助解除。",
+    "@softwareSealRemovalFailed": {
+        "description": "Error message when software seal removal fails, prompting for a retry or removal code"
+    },
+    "removeWithCode": "解锁码解锁软铅封",
+    "@removeWithCode": {
+        "description": "Option or button to remove a seal using a special code"
+    },
+    "pleaseEnterRemovalCode": "请输入解除码",
+    "@pleaseEnterRemovalCode": {
+        "description": "Prompt asking the user to input the removal code"
+    },
+    "sealPresentCalibrationNotPermitted": "设备存在铅封，无法标定",
+    "@sealPresentCalibrationNotPermitted": {
+        "description": "Warning message indicating calibration is prohibited because a seal is present on the device"
+    },
+    "checkSealFailed": "检查铅封失败",
+    "@checkSealFailed": {
+        "description": "Error message when checking the seal status fails"
+    },    
+    "contactSupplierForRemovalCode": "请联系供应商获取解除码",
+    "@contactSupplierForRemovalCode": {
+        "description": "Prompt to contact the supplier for a removal code"
     }
 
 }   

@@ -46,6 +46,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "appVersionTitle": MessageLookupByLibrary.simpleMessage("版本"),
     "appWebTitle": MessageLookupByLibrary.simpleMessage("网址"),
     "application_title": MessageLookupByLibrary.simpleMessage("应用"),
+    "applySoftwareSeal": MessageLookupByLibrary.simpleMessage("施加软铅封"),
     "autoSync": MessageLookupByLibrary.simpleMessage("自动传输"),
     "barcodeExceedsMaxLengthShort": MessageLookupByLibrary.simpleMessage(
       "条码超出最大长度",
@@ -95,12 +96,17 @@ class MessageLookup extends MessageLookupByLibrary {
     "calibrationRecords": MessageLookupByLibrary.simpleMessage("标定记录"),
     "calibrationType": MessageLookupByLibrary.simpleMessage("标定类型"),
     "calibrationValue": MessageLookupByLibrary.simpleMessage("标定值"),
+    "checkSeal": MessageLookupByLibrary.simpleMessage("检查铅封"),
+    "checkSealFailed": MessageLookupByLibrary.simpleMessage("检查铅封失败"),
     "choose_json_file": MessageLookupByLibrary.simpleMessage("选择 json"),
     "clearUnusedFormulaCategory": MessageLookupByLibrary.simpleMessage(
       "清除未使用配方类别",
     ),
     "clearUnusedIngredientCategory": MessageLookupByLibrary.simpleMessage(
       "清除未使用原料类别",
+    ),
+    "contactSupplierForRemovalCode": MessageLookupByLibrary.simpleMessage(
+      "请联系供应商获取解除码",
     ),
     "contentMissing": MessageLookupByLibrary.simpleMessage("内容缺失。"),
     "contentNotMeetBarcode": MessageLookupByLibrary.simpleMessage("内容不符合条码要求！"),
@@ -835,6 +841,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "General Configuration",
     ),
     "go_home": MessageLookupByLibrary.simpleMessage("确定返回主页?"),
+    "hardwareSeal": MessageLookupByLibrary.simpleMessage("硬铅封"),
     "iBtnZero": MessageLookupByLibrary.simpleMessage("归零"),
     "iStable": MessageLookupByLibrary.simpleMessage("稳定"),
     "iTextNet": MessageLookupByLibrary.simpleMessage("净重"),
@@ -949,6 +956,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "menuReceiptDesign": MessageLookupByLibrary.simpleMessage("票据格式设计"),
     "menuReceiptFormatDownload": MessageLookupByLibrary.simpleMessage("票据格式下发"),
     "menuRetailReport": MessageLookupByLibrary.simpleMessage("零售报表"),
+    "menuSealManagment": MessageLookupByLibrary.simpleMessage("铅封管理"),
     "menuSerialOutputDesign": MessageLookupByLibrary.simpleMessage("串口输出设计"),
     "menuSystemInformation": MessageLookupByLibrary.simpleMessage("系统信息"),
     "menuTakeOutScale": MessageLookupByLibrary.simpleMessage("减法秤"),
@@ -959,6 +967,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "menuWeighingSetting": MessageLookupByLibrary.simpleMessage("称重设置"),
     "menuWifiSetting": MessageLookupByLibrary.simpleMessage("Wi-Fi设置"),
+    "menuWiredSetting": MessageLookupByLibrary.simpleMessage("有线网络设置"),
     "missingHeaders": MessageLookupByLibrary.simpleMessage("缺少必填字段"),
     "modeEmpty": MessageLookupByLibrary.simpleMessage("Mode 不能为空"),
     "modeInvalid": MessageLookupByLibrary.simpleMessage(
@@ -979,6 +988,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "noBarCodeDataTip": MessageLookupByLibrary.simpleMessage("暂无数据"),
     "noDataImport": MessageLookupByLibrary.simpleMessage("没有数据可导入"),
     "noPermission": MessageLookupByLibrary.simpleMessage("没有权限"),
+    "notSealed": MessageLookupByLibrary.simpleMessage("未铅封"),
     "opDisable": MessageLookupByLibrary.simpleMessage("禁用"),
     "opEnable": MessageLookupByLibrary.simpleMessage("启用"),
     "opExport": MessageLookupByLibrary.simpleMessage("导出"),
@@ -989,6 +999,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "opUpdate": MessageLookupByLibrary.simpleMessage("更新"),
     "opUpload": MessageLookupByLibrary.simpleMessage("上传"),
     "operation": MessageLookupByLibrary.simpleMessage("具体操作"),
+    "operationRecord": MessageLookupByLibrary.simpleMessage("操作记录"),
     "operationResult": MessageLookupByLibrary.simpleMessage("结果"),
     "operationType": MessageLookupByLibrary.simpleMessage("操作类型"),
     "operator": MessageLookupByLibrary.simpleMessage("操作员"),
@@ -1094,9 +1105,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "p_weight_pcs_expl": MessageLookupByLibrary.simpleMessage("重量或者pcs."),
     "p_weight_pcs_var": MessageLookupByLibrary.simpleMessage("Weight Pcs"),
     "percentNot100": MessageLookupByLibrary.simpleMessage("总百分比必须为 100%"),
+    "pleaseEnterRemovalCode": MessageLookupByLibrary.simpleMessage("请输入解除码"),
     "pleaseSetSuperAdmin": MessageLookupByLibrary.simpleMessage(
       "新建账号前,请先设置超级管理员",
     ),
+    "pleaseWait": MessageLookupByLibrary.simpleMessage("请等待2秒..."),
     "plu_edit": MessageLookupByLibrary.simpleMessage("PLU 编辑"),
     "plu_error_message": MessageLookupByLibrary.simpleMessage("PLU 预扣重不能为空."),
     "plu_error_message1": MessageLookupByLibrary.simpleMessage(
@@ -1121,6 +1134,8 @@ class MessageLookup extends MessageLookupByLibrary {
       "此应用是用来下发变量数据,例如页眉、页脚等.",
     ),
     "rTitleSetVariableValues": MessageLookupByLibrary.simpleMessage("变量设置"),
+    "removeSoftwareSeal": MessageLookupByLibrary.simpleMessage("解除软铅封"),
+    "removeWithCode": MessageLookupByLibrary.simpleMessage("解锁码解锁软铅封"),
     "report_hide_btn": MessageLookupByLibrary.simpleMessage("隐藏报表"),
     "report_show_btn": MessageLookupByLibrary.simpleMessage("显示报表"),
     "save_as": MessageLookupByLibrary.simpleMessage("另存为"),
@@ -1129,6 +1144,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "scale_mgr_btn_def": MessageLookupByLibrary.simpleMessage("设置默认"),
     "scale_mgr_btn_rename": MessageLookupByLibrary.simpleMessage("重命名"),
     "scale_model": MessageLookupByLibrary.simpleMessage("选择机型:"),
+    "sealPresentCalibrationNotPermitted": MessageLookupByLibrary.simpleMessage(
+      "设备存在铅封，无法标定",
+    ),
+    "sealed": MessageLookupByLibrary.simpleMessage("已铅封"),
     "search": MessageLookupByLibrary.simpleMessage("搜索"),
     "searchName": MessageLookupByLibrary.simpleMessage("搜索名称"),
     "selectDevice": MessageLookupByLibrary.simpleMessage("选择设备"),
@@ -1143,16 +1162,33 @@ class MessageLookup extends MessageLookupByLibrary {
     "serial_page_weight": MessageLookupByLibrary.simpleMessage("计重模式"),
     "server_ip": MessageLookupByLibrary.simpleMessage("Server Ip:"),
     "server_port": MessageLookupByLibrary.simpleMessage("Server Port:"),
+    "setDHCPFailed": MessageLookupByLibrary.simpleMessage("设置DHCP失败"),
+    "setDHCPSuccess": MessageLookupByLibrary.simpleMessage("设置DHCP成功"),
+    "setIPFailed": MessageLookupByLibrary.simpleMessage("设置IP失败"),
+    "setIPSuccess": MessageLookupByLibrary.simpleMessage("设置IP成功"),
     "setName": MessageLookupByLibrary.simpleMessage("设置名称"),
     "setPower": MessageLookupByLibrary.simpleMessage("设置功率"),
+    "setStaticIP": MessageLookupByLibrary.simpleMessage("设置静态IP"),
     "setTime": MessageLookupByLibrary.simpleMessage("设置时间"),
-    "set_ethernet_ip_title": MessageLookupByLibrary.simpleMessage("有线IP地址设置"),
     "sharedFolderPath": MessageLookupByLibrary.simpleMessage("共享文件夹路径"),
     "show_current_weight": MessageLookupByLibrary.simpleMessage("当前重量:"),
     "show_increment_weight": MessageLookupByLibrary.simpleMessage("增量:"),
     "show_reduced_weight": MessageLookupByLibrary.simpleMessage("减少量:"),
     "singlePoint": MessageLookupByLibrary.simpleMessage("单点标定"),
     "skipThisIngredient": MessageLookupByLibrary.simpleMessage("跳过此原料"),
+    "softwareSeal": MessageLookupByLibrary.simpleMessage("软铅封"),
+    "softwareSealAppliedFailed": MessageLookupByLibrary.simpleMessage(
+      "软铅封施加失败",
+    ),
+    "softwareSealAppliedSuccessfully": MessageLookupByLibrary.simpleMessage(
+      "软铅封施加成功",
+    ),
+    "softwareSealRemovalFailed": MessageLookupByLibrary.simpleMessage(
+      "软铅封解除失败，请尝试重新操作。若多次失败，请联系供应商提供解除码协助解除。",
+    ),
+    "softwareSealRemovedSuccessfully": MessageLookupByLibrary.simpleMessage(
+      "软铅封解除成功",
+    ),
     "stable_time_error_tip": MessageLookupByLibrary.simpleMessage("20秒以内."),
     "subTitleBasicDataCollection": MessageLookupByLibrary.simpleMessage(
       "读取秤的运行数据，以了解任何异常活动。",
@@ -1197,6 +1233,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "subTitleRetailReport": MessageLookupByLibrary.simpleMessage(
       "自动收集和记录零售数据，并形成报表供用户下载。",
     ),
+    "subTitleSealManagment": MessageLookupByLibrary.simpleMessage("铅封管理"),
     "subTitleSerialOutputDesign": MessageLookupByLibrary.simpleMessage(
       "自定义并下发串口输出内容",
     ),
@@ -1214,6 +1251,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "subTitleWifiSetting": MessageLookupByLibrary.simpleMessage(
       "获取静态/动态IP地址并连接Wi-Fi",
+    ),
+    "subTitleWiredSetting": MessageLookupByLibrary.simpleMessage(
+      "配置有线网络的静态IP地址。",
     ),
     "success": MessageLookupByLibrary.simpleMessage("成功"),
     "superAdmin": MessageLookupByLibrary.simpleMessage("超级管理员"),
@@ -1258,6 +1298,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "保密称重模式",
     ),
     "titleLogout": MessageLookupByLibrary.simpleMessage("登出"),
+    "toBeVerified": MessageLookupByLibrary.simpleMessage("待验证"),
     "txt_serial_port_connected": MessageLookupByLibrary.simpleMessage("串口已连接"),
     "txt_serial_port_connected_fail": MessageLookupByLibrary.simpleMessage(
       "无法连接",

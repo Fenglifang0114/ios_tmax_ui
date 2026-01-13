@@ -4,6 +4,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import 'package:intl/intl.dart';
+import 'package:t_max/data/g_data.dart';
 import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/data/language.dart';
 import 'package:t_max/data/log_data.dart';
@@ -827,46 +828,50 @@ class _ScaleWgtLogTabPageState extends State<ScaleWgtLogTabPage> {
             Theme.of(context).colorScheme.onPrimary,
             Theme.of(context).colorScheme.primary,
             Theme.of(context).colorScheme.onPrimary),
-        SizedBox(
-          width: 12,
-        ),
-        showTextButton(
-            context,
-            btnHeight,
-            localizedStrings.fClearBtn,
-            _allWgtLogs.isEmpty
-                ? null
-                : () {
-                    _clearSelection();
-                    showDeleteDialog(() {
-                      PublicFunctions.deleteAllWgtLog();
-                    }, localizedStrings.data_delete_confirm, context);
-                  },
-            Theme.of(context).colorScheme.onPrimary,
-            Theme.of(context).colorScheme.error,
-            Theme.of(context).colorScheme.onPrimary),
-        SizedBox(
-          width: regularPadding,
-        ),
-        showTextButton(
-            context,
-            btnHeight,
-            localizedStrings.gBtnDelete,
-            allSelectedRecIds.isEmpty
-                ? null
-                : () {
-                    List<int> selRecIds = allSelectedRecIds.toList();
+        if (mySysUser.roleId == superAdminRoleId)
+          SizedBox(
+            width: 12,
+          ),
+        if (mySysUser.roleId == superAdminRoleId)
+          showTextButton(
+              context,
+              btnHeight,
+              localizedStrings.fClearBtn,
+              _allWgtLogs.isEmpty
+                  ? null
+                  : () {
+                      _clearSelection();
+                      showDeleteDialog(() {
+                        PublicFunctions.deleteAllWgtLog();
+                      }, localizedStrings.data_delete_confirm, context);
+                    },
+              Theme.of(context).colorScheme.onPrimary,
+              Theme.of(context).colorScheme.error,
+              Theme.of(context).colorScheme.onPrimary),
+        if (mySysUser.roleId == superAdminRoleId)
+          SizedBox(
+            width: regularPadding,
+          ),
+        if (mySysUser.roleId == superAdminRoleId)
+          showTextButton(
+              context,
+              btnHeight,
+              localizedStrings.gBtnDelete,
+              allSelectedRecIds.isEmpty
+                  ? null
+                  : () {
+                      List<int> selRecIds = allSelectedRecIds.toList();
 
-                    String jsonStr =
-                        reqDelLogsToJson(ReqDelLogs(recId: selRecIds));
+                      String jsonStr =
+                          reqDelLogsToJson(ReqDelLogs(recId: selRecIds));
 
-                    showDeleteDialog(() {
-                      PublicFunctions.deleteWgtLog(jsonStr);
-                    }, localizedStrings.fConfirmDelete, context);
-                  },
-            Theme.of(context).colorScheme.onPrimary,
-            Theme.of(context).colorScheme.error,
-            Theme.of(context).colorScheme.onPrimary),
+                      showDeleteDialog(() {
+                        PublicFunctions.deleteWgtLog(jsonStr);
+                      }, localizedStrings.fConfirmDelete, context);
+                    },
+              Theme.of(context).colorScheme.onPrimary,
+              Theme.of(context).colorScheme.error,
+              Theme.of(context).colorScheme.onPrimary),
         SizedBox(
           width: 20,
         ),
@@ -1057,10 +1062,15 @@ class WgtLogDataSource extends DataGridSource {
         return IconButton(
           icon: Icon(
             Icons.delete_outline_outlined,
-            color: colorScheme.error,
+            color: (mySysUser.roleId != superAdminRoleId)
+                ? colorScheme.surfaceContainerHighest
+                : colorScheme.error,
           ),
           onPressed: () {
             // 处理删除操作 - 现在可以直接使用syslog.recId
+            if (mySysUser.roleId != superAdminRoleId) {
+              return;
+            }
 
             String jsonStr =
                 reqDelLogsToJson(ReqDelLogs(recId: [syslog.recId!]));

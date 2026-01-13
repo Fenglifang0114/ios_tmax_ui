@@ -52,6 +52,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "appVersionTitle": MessageLookupByLibrary.simpleMessage("Version"),
     "appWebTitle": MessageLookupByLibrary.simpleMessage("Website"),
     "application_title": MessageLookupByLibrary.simpleMessage("Applications"),
+    "applySoftwareSeal": MessageLookupByLibrary.simpleMessage(
+      "Apply Software Seal",
+    ),
     "autoSync": MessageLookupByLibrary.simpleMessage("Auto Sync"),
     "barcodeExceedsMaxLengthShort": MessageLookupByLibrary.simpleMessage(
       "Barcode exceeds maximum length",
@@ -139,12 +142,19 @@ class MessageLookup extends MessageLookupByLibrary {
     "calibrationValue": MessageLookupByLibrary.simpleMessage(
       "Calibration Value",
     ),
+    "checkSeal": MessageLookupByLibrary.simpleMessage("Check Seal"),
+    "checkSealFailed": MessageLookupByLibrary.simpleMessage(
+      "Check Seal Failed",
+    ),
     "choose_json_file": MessageLookupByLibrary.simpleMessage("Choose json"),
     "clearUnusedFormulaCategory": MessageLookupByLibrary.simpleMessage(
       "Clear Unused Formula Category",
     ),
     "clearUnusedIngredientCategory": MessageLookupByLibrary.simpleMessage(
       "Clear Unused Ingredient Category",
+    ),
+    "contactSupplierForRemovalCode": MessageLookupByLibrary.simpleMessage(
+      "Contact your supplier for a removal code",
     ),
     "contentMissing": MessageLookupByLibrary.simpleMessage("Content missing."),
     "contentNotMeetBarcode": MessageLookupByLibrary.simpleMessage(
@@ -679,7 +689,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "gMsgSerialError": MessageLookupByLibrary.simpleMessage(
       "Serial port has been disconnected. Please check the settings.",
     ),
-    "gNetmask": MessageLookupByLibrary.simpleMessage("NetMask"),
+    "gNetmask": MessageLookupByLibrary.simpleMessage("Netmask"),
     "gNetwork": MessageLookupByLibrary.simpleMessage("Network"),
     "gOpenJson": MessageLookupByLibrary.simpleMessage("Open Json"),
     "gPageHeight": MessageLookupByLibrary.simpleMessage("Height"),
@@ -1213,6 +1223,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "go_home": MessageLookupByLibrary.simpleMessage(
       "Confirm to return to hompage?",
     ),
+    "hardwareSeal": MessageLookupByLibrary.simpleMessage("Hardware seal"),
     "iBtnZero": MessageLookupByLibrary.simpleMessage("Zero"),
     "iStable": MessageLookupByLibrary.simpleMessage("Stable"),
     "iTextNet": MessageLookupByLibrary.simpleMessage("Net"),
@@ -1359,6 +1370,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Receipt Format Download",
     ),
     "menuRetailReport": MessageLookupByLibrary.simpleMessage("Retail Report"),
+    "menuSealManagment": MessageLookupByLibrary.simpleMessage(
+      "Seal Management",
+    ),
     "menuSerialOutputDesign": MessageLookupByLibrary.simpleMessage(
       "Serial Output Design",
     ),
@@ -1377,6 +1391,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Weighing Setting",
     ),
     "menuWifiSetting": MessageLookupByLibrary.simpleMessage("Wi-Fi Setting"),
+    "menuWiredSetting": MessageLookupByLibrary.simpleMessage(
+      "Wired Network Setting",
+    ),
     "missingHeaders": MessageLookupByLibrary.simpleMessage("Missing fields"),
     "modeEmpty": MessageLookupByLibrary.simpleMessage("Mode is empty"),
     "modeInvalid": MessageLookupByLibrary.simpleMessage(
@@ -1407,6 +1424,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "noBarCodeDataTip": MessageLookupByLibrary.simpleMessage("No data"),
     "noDataImport": MessageLookupByLibrary.simpleMessage("No data to import"),
     "noPermission": MessageLookupByLibrary.simpleMessage("No permission"),
+    "notSealed": MessageLookupByLibrary.simpleMessage("Not Sealed"),
     "opDisable": MessageLookupByLibrary.simpleMessage("Disable"),
     "opEnable": MessageLookupByLibrary.simpleMessage("Enable"),
     "opExport": MessageLookupByLibrary.simpleMessage("Export"),
@@ -1417,6 +1435,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "opUpdate": MessageLookupByLibrary.simpleMessage("Update"),
     "opUpload": MessageLookupByLibrary.simpleMessage("Upload"),
     "operation": MessageLookupByLibrary.simpleMessage("Details"),
+    "operationRecord": MessageLookupByLibrary.simpleMessage("Operation Record"),
     "operationResult": MessageLookupByLibrary.simpleMessage("Result"),
     "operationType": MessageLookupByLibrary.simpleMessage("Operation Type"),
     "operator": MessageLookupByLibrary.simpleMessage("Operator"),
@@ -1562,8 +1581,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "percentNot100": MessageLookupByLibrary.simpleMessage(
       "Total percentage is not 100%",
     ),
+    "pleaseEnterRemovalCode": MessageLookupByLibrary.simpleMessage(
+      "Please enter the removal code",
+    ),
     "pleaseSetSuperAdmin": MessageLookupByLibrary.simpleMessage(
       "Set up the Super Admin account before creating new accounts.",
+    ),
+    "pleaseWait": MessageLookupByLibrary.simpleMessage(
+      "Please wait 2 seconds...",
     ),
     "plu_edit": MessageLookupByLibrary.simpleMessage("PLU Edit"),
     "plu_error_message": MessageLookupByLibrary.simpleMessage(
@@ -1599,6 +1624,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "rTitleSetVariableValues": MessageLookupByLibrary.simpleMessage(
       "Variable Value Setting",
     ),
+    "removeSoftwareSeal": MessageLookupByLibrary.simpleMessage(
+      "Remove Software Seal",
+    ),
+    "removeWithCode": MessageLookupByLibrary.simpleMessage("Remove with Code"),
     "report_hide_btn": MessageLookupByLibrary.simpleMessage("Hide Report"),
     "report_show_btn": MessageLookupByLibrary.simpleMessage("Show Reports"),
     "save_as": MessageLookupByLibrary.simpleMessage("Save as"),
@@ -1609,6 +1638,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "scale_mgr_btn_def": MessageLookupByLibrary.simpleMessage("Set Default"),
     "scale_mgr_btn_rename": MessageLookupByLibrary.simpleMessage("Rename"),
     "scale_model": MessageLookupByLibrary.simpleMessage("Scale Model:"),
+    "sealPresentCalibrationNotPermitted": MessageLookupByLibrary.simpleMessage(
+      "A seal is present on the device. Calibration is not permitted.",
+    ),
+    "sealed": MessageLookupByLibrary.simpleMessage("Sealed"),
     "search": MessageLookupByLibrary.simpleMessage("Search"),
     "searchName": MessageLookupByLibrary.simpleMessage("Search Name"),
     "selectDevice": MessageLookupByLibrary.simpleMessage("Select Device"),
@@ -1629,12 +1662,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "serial_page_weight": MessageLookupByLibrary.simpleMessage("Weight mode"),
     "server_ip": MessageLookupByLibrary.simpleMessage("Server Ip:"),
     "server_port": MessageLookupByLibrary.simpleMessage("Server Port:"),
+    "setDHCPFailed": MessageLookupByLibrary.simpleMessage("Set DHCP Failed"),
+    "setDHCPSuccess": MessageLookupByLibrary.simpleMessage("Set DHCP Success"),
+    "setIPFailed": MessageLookupByLibrary.simpleMessage("Set IP Failed"),
+    "setIPSuccess": MessageLookupByLibrary.simpleMessage("Set IP Success"),
     "setName": MessageLookupByLibrary.simpleMessage("Set Name"),
     "setPower": MessageLookupByLibrary.simpleMessage("Set Power"),
+    "setStaticIP": MessageLookupByLibrary.simpleMessage("Set Static IP"),
     "setTime": MessageLookupByLibrary.simpleMessage("Set Time"),
-    "set_ethernet_ip_title": MessageLookupByLibrary.simpleMessage(
-      "Ethernet IP Setting",
-    ),
     "sharedFolderPath": MessageLookupByLibrary.simpleMessage(
       "Shared Folder Path",
     ),
@@ -1650,6 +1685,19 @@ class MessageLookup extends MessageLookupByLibrary {
     "singlePoint": MessageLookupByLibrary.simpleMessage("Single Point"),
     "skipThisIngredient": MessageLookupByLibrary.simpleMessage(
       "Skip Ingredient",
+    ),
+    "softwareSeal": MessageLookupByLibrary.simpleMessage("Software Seal"),
+    "softwareSealAppliedFailed": MessageLookupByLibrary.simpleMessage(
+      "Software Seal Applied Failed",
+    ),
+    "softwareSealAppliedSuccessfully": MessageLookupByLibrary.simpleMessage(
+      "Software Seal Applied Successfully",
+    ),
+    "softwareSealRemovalFailed": MessageLookupByLibrary.simpleMessage(
+      "Software Seal Removal Failed. \r\nPlease retry. If the issue persists, contact your supplier for a removal code.",
+    ),
+    "softwareSealRemovedSuccessfully": MessageLookupByLibrary.simpleMessage(
+      "Software Seal Removed Successfully",
     ),
     "stable_time_error_tip": MessageLookupByLibrary.simpleMessage(
       "The value must be under 20 seconds.",
@@ -1705,6 +1753,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "subTitleRetailReport": MessageLookupByLibrary.simpleMessage(
       "Automatically collect, record, and generate reports for retail data.",
     ),
+    "subTitleSealManagment": MessageLookupByLibrary.simpleMessage(
+      "Seal management",
+    ),
     "subTitleSerialOutputDesign": MessageLookupByLibrary.simpleMessage(
       "Customize and download serial port output content.",
     ),
@@ -1722,6 +1773,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "subTitleWifiSetting": MessageLookupByLibrary.simpleMessage(
       "Obtain static/dynamic IP addresses and connect to Wi-Fi.",
+    ),
+    "subTitleWiredSetting": MessageLookupByLibrary.simpleMessage(
+      "Configure the Ethernet IP address.",
     ),
     "success": MessageLookupByLibrary.simpleMessage("Success"),
     "superAdmin": MessageLookupByLibrary.simpleMessage("Super Admin"),
@@ -1790,6 +1844,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Confidential Weighing Mode",
     ),
     "titleLogout": MessageLookupByLibrary.simpleMessage("Logout"),
+    "toBeVerified": MessageLookupByLibrary.simpleMessage("To be verified"),
     "txt_serial_port_connected": MessageLookupByLibrary.simpleMessage(
       "Serial port connected",
     ),

@@ -925,58 +925,60 @@ class TakeInPageState extends State<TakeInPage> {
                           ),
                         ),
                       ),
-                      SizedBox(
-                        width: regularPadding,
-                      ),
-                      Tooltip(
-                        message: localizedStrings.gBtnDeleteAll,
-                        child: IconButton(
-                          iconSize: 28,
-                          color: Theme.of(context).colorScheme.onPrimary,
-                          focusColor: Theme.of(context).colorScheme.outline,
-                          hoverColor: Theme.of(context)
-                              .colorScheme
-                              .onPrimary
-                              .withValues(alpha: 0.1),
-                          style: IconButton.styleFrom(
-                            disabledBackgroundColor: Theme.of(context)
+                      if (mySysUser.roleId != operatorRoleId)
+                        SizedBox(
+                          width: regularPadding,
+                        ),
+                      if (mySysUser.roleId != operatorRoleId)
+                        Tooltip(
+                          message: localizedStrings.gBtnDeleteAll,
+                          child: IconButton(
+                            iconSize: 28,
+                            color: Theme.of(context).colorScheme.onPrimary,
+                            focusColor: Theme.of(context).colorScheme.outline,
+                            hoverColor: Theme.of(context)
                                 .colorScheme
-                                .surfaceContainerLow,
-                            backgroundColor:
-                                Theme.of(context).colorScheme.error,
-                            shape: RoundedRectangleBorder(
-                              // 设置为矩形形状
-                              borderRadius: BorderRadius.zero, // 没有圆角，即正方形
+                                .onPrimary
+                                .withValues(alpha: 0.1),
+                            style: IconButton.styleFrom(
+                              disabledBackgroundColor: Theme.of(context)
+                                  .colorScheme
+                                  .surfaceContainerLow,
+                              backgroundColor:
+                                  Theme.of(context).colorScheme.error,
+                              shape: RoundedRectangleBorder(
+                                // 设置为矩形形状
+                                borderRadius: BorderRadius.zero, // 没有圆角，即正方形
+                              ),
+                              fixedSize: const Size(28, 28), // 设置固定大小
                             ),
-                            fixedSize: const Size(28, 28), // 设置固定大小
-                          ),
-                          onPressed: () {
-                            showDialog(
-                              context: context,
-                              barrierDismissible: false, // 点击对话框外部不关闭对话框
-                              builder: (BuildContext context) {
-                                return ShowDeleteTipDialog(
-                                  title: localizedStrings.fTipTitle,
-                                  msg: localizedStrings.gTipConfirmDeleteAll,
-                                );
-                              },
-                            ).then((value) {
-                              if (value) {
-                                setState(() {
-                                  PublicFunctions.newDeleteAllRecords(
-                                      mySettingParam.scaleMode);
-                                });
-                              }
-                            });
-                          },
-                          icon: getSvgIcon(
-                            deleteSvgIcon(),
-                            28,
-                            28,
-                            Theme.of(context).colorScheme.onPrimary,
+                            onPressed: () {
+                              showDialog(
+                                context: context,
+                                barrierDismissible: false, // 点击对话框外部不关闭对话框
+                                builder: (BuildContext context) {
+                                  return ShowDeleteTipDialog(
+                                    title: localizedStrings.fTipTitle,
+                                    msg: localizedStrings.gTipConfirmDeleteAll,
+                                  );
+                                },
+                              ).then((value) {
+                                if (value) {
+                                  setState(() {
+                                    PublicFunctions.newDeleteAllRecords(
+                                        mySettingParam.scaleMode);
+                                  });
+                                }
+                              });
+                            },
+                            icon: getSvgIcon(
+                              deleteSvgIcon(),
+                              28,
+                              28,
+                              Theme.of(context).colorScheme.onPrimary,
+                            ),
                           ),
                         ),
-                      ),
                     ],
                   )),
               Divider(

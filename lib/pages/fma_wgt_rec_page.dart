@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 import 'package:csv/csv.dart';
 import 'package:file_picker/file_picker.dart';
@@ -9,8 +8,6 @@ import 'package:t_max/data/formula_common.dart';
 import 'package:t_max/data/language.dart';
 import 'package:t_max/data/plu_field_status_data.dart';
 import 'package:t_max/dialog/custom_dialog_tip.dart';
-import 'package:t_max/dialog/fma_rpt_print_setting.dart';
-import 'package:t_max/dialog/fma_server_setting.dart';
 import 'package:t_max/eventbus/eventbus.dart';
 import 'package:t_max/functions/methods.dart';
 import 'package:t_max/widget/all_fma_wgt_widget.dart';

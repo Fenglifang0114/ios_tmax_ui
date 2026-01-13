@@ -11,6 +11,7 @@ import 'package:t_max/pages/apps_setting_page.dart';
 import 'package:t_max/pages/basic_data_page.dart';
 import 'package:t_max/pages/blue_tooth_setting_page.dart';
 import 'package:t_max/pages/calibration_page.dart';
+import 'package:t_max/pages/calibration_seal_page.dart';
 import 'package:t_max/pages/check_weighers_page.dart';
 import 'package:t_max/pages/configuration_center_page.dart';
 import 'package:t_max/pages/serial_protocol_page.dart';
@@ -31,6 +32,7 @@ import 'package:t_max/pages/update_firmware_page.dart';
 import 'package:t_max/pages/weighing.dart';
 import 'package:t_max/pages/weight_collection_page.dart';
 import 'package:t_max/pages/wifi_setting_page.dart';
+import 'package:t_max/pages/wired_setting_page.dart';
 
 class RouteData {
   RouteData({
@@ -56,6 +58,7 @@ List<int> allPaidConfigMenu = [
   MenuId.serialOutputDesignPage,
   MenuId.basicDataCollectionPage,
   // MenuId.parameterSettingPage,
+  MenuId.sealManagmentPage,
 ];
 
 List<RouteData> getApplication() {
@@ -136,6 +139,21 @@ List<RouteData> getAllConfigMenus() {
       subtitle: localizedStrings.subTitleBasicDataCollection,
       iconPath: basicDataSvgIcon(),
     ),
+    RouteData(
+      id: MenuId.wiredSettingPage,
+      title: localizedStrings.menuWiredSetting,
+      routeName: "/wiredSetting",
+      subtitle: localizedStrings.subTitleWiredSetting,
+      iconPath: wiredSettingSvgIcon(),
+    ),
+    RouteData(
+      id: MenuId.sealManagmentPage,
+      title: localizedStrings.menuSealManagment,
+      routeName: "/sealManagment",
+      subtitle: localizedStrings.subTitleSealManagment,
+      iconPath: sealManagmentSvgIcon(),
+    ),
+
     // RouteData(
     //     id: MenuId.parameterSettingPage.index,
     //     title: localizedStrings.menuParameterSetting,
@@ -215,7 +233,10 @@ String generateTitle(int pageId) {
     return localizedStrings.menuSerialOutputDesign;
   } else if (pageId == MenuId.basicDataCollectionPage) {
     return localizedStrings.menuBasicDataCollection;
+  } else if (pageId == MenuId.sealManagmentPage) {
+    return localizedStrings.menuSealManagment;
   }
+
   // else if (pageId == MenuId.parameterSettingPage.index) {
   //   return localizedStrings.menuParameterSetting;
   // }
@@ -247,6 +268,8 @@ String generateTitle(int pageId) {
     return localizedStrings.menuLabelDesign;
   } else if (pageId == MenuId.appRcpDesignPage) {
     return localizedStrings.menuReceiptDesign;
+  } else if (pageId == MenuId.wiredSettingPage) {
+    return localizedStrings.menuWiredSetting;
   }
 
   if (pageId == MenuId.appConfigPage) {
@@ -282,7 +305,12 @@ String generateHelpTitle(int pageId) {
     return localizedStrings.gTipLabelDesignPageHelp;
   } else if (pageId == MenuId.appRcpDesignPage) {
     return localizedStrings.gTipReceiptDesignPageHelp;
+  } else if (pageId == MenuId.wiredSettingPage) {
+    return localizedStrings.menuWiredSetting;
+  } else if (pageId == MenuId.sealManagmentPage) {
+    return localizedStrings.menuSealManagment;
   }
+
   return '';
 }
 
@@ -459,6 +487,8 @@ Widget buildPageContent(dynamic Function(String) navigateContent,
     return SetSystemTimePage();
   } else if (pageId == MenuId.wifiSettingPage) {
     return WifiSettingPage();
+  } else if (pageId == MenuId.wiredSettingPage) {
+    return WiredSettingPage();
   } else if (pageId == MenuId.btSettingPage) {
     return BluetoothPage();
   } else if (pageId == MenuId.updateFirmwarePage) {
@@ -479,7 +509,12 @@ Widget buildPageContent(dynamic Function(String) navigateContent,
     return CustomSerialProtocol();
   } else if (pageId == MenuId.basicDataCollectionPage) {
     return BasicDataPage();
+  } else if (pageId == MenuId.sealManagmentPage) {
+    return CalibrationSealPage();
+  } else if (pageId == MenuId.sealManagmentPage) {
+    return CalibrationSealPage();
   }
+
   //  else if (pageId == MenuId.parameterSettingPage.index) {
   //   return SetParameterPage();
   // }
@@ -593,10 +628,12 @@ List<RouteDataGroup> getHierarchicalConfigMenus() {
       children: [
         originalMenus.firstWhereOrNull((m) => m.id == MenuId.setSystemTimePage),
         originalMenus.firstWhereOrNull((m) => m.id == MenuId.wifiSettingPage),
+        originalMenus.firstWhereOrNull((m) => m.id == MenuId.wiredSettingPage),
         originalMenus.firstWhereOrNull((m) => m.id == MenuId.btSettingPage),
         originalMenus
             .firstWhereOrNull((m) => m.id == MenuId.updateFirmwarePage),
         originalMenus.firstWhereOrNull((m) => m.id == MenuId.calibrationPage),
+        originalMenus.firstWhereOrNull((m) => m.id == MenuId.sealManagmentPage),
       ].whereType<RouteData>().toList(),
     ),
 

@@ -75,6 +75,7 @@ Future<void> main() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String savedLanguage = prefs.getString('language') ?? 'en_US';
   String savedDarkMode = prefs.getString('darkMode') ?? 'false';
+
   ipAddress = await readIpAddr();
   if (ipAddress.isEmpty) {
     ipAddress = '127.0.0.1';
