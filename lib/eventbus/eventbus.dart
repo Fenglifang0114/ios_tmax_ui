@@ -472,6 +472,11 @@ class EventRevRemoveSoftSeal {
   EventRevRemoveSoftSeal(this.obj);
 }
 
+class EventRevRemoveSoftSealOnce {
+  dynamic obj;
+  EventRevRemoveSoftSealOnce(this.obj);
+}
+
 class EventBTResponse {
   dynamic obj;
   EventBTResponse(this.obj);
@@ -835,6 +840,16 @@ class EventRespGetAutoNext {
 class EventRespGetReportPrint {
   dynamic obj;
   EventRespGetReportPrint(this.obj);
+}
+
+class EventRespGetAllSealLog {
+  dynamic obj;
+  EventRespGetAllSealLog(this.obj);
+}
+
+class EventRespUnsealByMasterKey {
+  dynamic obj;
+  EventRespUnsealByMasterKey(this.obj);
 }
 
 class EventRespGetDraftFmaWgtRecList {

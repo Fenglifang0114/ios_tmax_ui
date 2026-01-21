@@ -167,6 +167,48 @@ class _AppsSettingPageState extends State<AppsSettingPage> {
   }
 
   void findLicType(String moduleNameStr) {
+    if (moduleNameStr.contains("T-Config*")) {
+      if (newLicInfo.isValid) {
+        if (isLongerValidityPeriod(myTConLicInfo.liceseDate, dueDate)) {
+          myTConLicInfo.isValid = newLicInfo.isValid;
+          myTConLicInfo.pId = newLicInfo.pId;
+          myTConLicInfo.liceseDate = newLicInfo.liceseDate;
+          myTConLicInfo.moduleName = "T-Config";
+          updateLicenseInfo();
+          mapActiveMenusRes.value = Map.from(mapActiveMenusRes.value)
+            ..[tConfigLic] = ShowAppActiveInfo(myTConLicInfo.liceseDate, "ok");
+          myConfigCode = moduleNameStr.replaceAll("T-Config*", "");
+        } else {
+          String configCode = moduleNameStr.replaceAll("T-Config*", "");
+          if (myConfigCode.isEmpty || myConfigCode != configCode) {
+            myTConLicInfo.isValid = newLicInfo.isValid;
+            myTConLicInfo.pId = newLicInfo.pId;
+            myTConLicInfo.liceseDate = newLicInfo.liceseDate;
+            myTConLicInfo.moduleName = "T-Config";
+            updateLicenseInfo();
+          }
+          mapActiveMenusRes.value = Map.from(mapActiveMenusRes.value)
+            ..[tConfigLic] = ShowAppActiveInfo(
+                myTConLicInfo.liceseDate, localizedStrings.gTipDateNotUpdated);
+
+          updateResCtl();
+        }
+      } else {
+        mapActiveMenusRes.value = Map.from(mapActiveMenusRes.value)
+          ..[tConfigLic] = ShowAppActiveInfo(myTConLicInfo.liceseDate, "fail");
+
+        myTConLicInfo.isValid = newLicInfo.isValid;
+        myTConLicInfo.pId = newLicInfo.pId;
+        myTConLicInfo.liceseDate = newLicInfo.liceseDate;
+        myTConLicInfo.moduleName = "T-Config";
+        updateLicenseInfo();
+        if (myConfigCode.isEmpty) {
+          myConfigCode = moduleNameStr.replaceAll("T-Config*", "");
+        }
+      }
+
+      return;
+    }
     switch (moduleNameStr) {
       case tConfigLic:
         if (newLicInfo.isValid) {
@@ -1495,7 +1537,9 @@ class _AppsSettingPageState extends State<AppsSettingPage> {
         licList = content.split('\r\n');
         List<String> tmpList = [];
         for (var i = 0; i < licList.length; i++) {
-          if (licList[i].length == 74 || licList[i].length == 78) {
+          if (licList[i].length == 74 ||
+              licList[i].length == 78 ||
+              licList[i].length == 94) {
             tmpList.add(licList[i]);
           }
         }

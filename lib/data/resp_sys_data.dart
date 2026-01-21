@@ -125,6 +125,9 @@ class RespSysMsgType {
   static const String respUploadServerGet = 'resp_upload_server_get';
   static const String respUploadServerEdit = 'resp_upload_server_edit';
   static const String respGetReportPrint = 'resp_get_set_report_print';
+  static const String respGetAllSealLog = 'resp_get_all_seal_log';
+
+  static const String respUnsealByMasterKey = 'resp_unseal_by_master_key';
 
   static final Map<String, Function> handlers = {
     RespSysMsgType.respPortsList: handlePortsList,
@@ -221,6 +224,8 @@ class RespSysMsgType {
     RespSysMsgType.respUploadServerGet: handleRespUploadServerGet,
     RespSysMsgType.respUploadServerEdit: handleRespUploadServerEdit,
     RespSysMsgType.respGetReportPrint: handleRespGetReportPrint,
+    RespSysMsgType.respGetAllSealLog: handleRespGetAllSealLog,
+    RespSysMsgType.respUnsealByMasterKey: handleRespUnsealByMasterKey,
   };
 
   static void handlePortsList(dynamic jsonData) {
@@ -452,6 +457,16 @@ class RespSysMsgType {
   static void handleRespGetReportPrint(dynamic jsonData) {
     String dataString = jsonData['MsgBody'];
     eventBus.fire(EventRespGetReportPrint(dataString));
+  }
+
+  static void handleRespGetAllSealLog(dynamic jsonData) {
+    String dataString = jsonData['MsgBody'];
+    eventBus.fire(EventRespGetAllSealLog(dataString));
+  }
+
+  static void handleRespUnsealByMasterKey(dynamic jsonData) {
+    String dataString = jsonData['MsgBody'];
+    eventBus.fire(EventRespUnsealByMasterKey(dataString));
   }
 
   static void handleFmaTypeEdit(dynamic jsonData) {

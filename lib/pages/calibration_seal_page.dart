@@ -1,12 +1,15 @@
 import 'dart:convert';
+import 'dart:io';
+import 'package:crypto/crypto.dart';
 import 'package:data_table_2/data_table_2.dart';
-import 'package:event_bus/event_bus.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/data/icons.dart';
 import 'package:t_max/data/license_data.dart';
-import 'package:t_max/data/olul_err_data.dart';
 import 'package:t_max/data/scale_info_from_db.dart';
+import 'package:t_max/data/scale_info_from_scale.dart';
+import 'package:t_max/data/seal_log.dart';
 import 'package:t_max/dialog/custom_dialog_tip.dart';
 import 'package:t_max/widget/common_widget.dart';
 import 'package:t_max/widget/dialog_head_style.dart';
@@ -14,7 +17,6 @@ import 'package:t_max/widget/scale_list.dart';
 import 'package:t_max/widget/version.dart';
 import '../../eventbus/eventbus.dart';
 import '../../functions/methods.dart';
-import '../data/manager_scale_channel.dart';
 import '../data/language.dart';
 import '../data/timer_manager.dart';
 
@@ -26,11 +28,12 @@ class CalibrationSealPage extends StatefulWidget {
 
 class CalibrationSealPageState extends State<CalibrationSealPage> {
   dynamic eventBus1;
-  dynamic eventBus2;
   dynamic eventBus3;
   dynamic eventBus4;
   dynamic eventBus5;
   dynamic eventBus6;
+  dynamic eventBus7;
+  dynamic eventBus8;
 
   bool enabledGetInfo = true;
 
@@ -38,27 +41,13 @@ class CalibrationSealPageState extends State<CalibrationSealPage> {
   String softSealStatus = '';
 
   TextEditingController olCntCtl = TextEditingController(text: '');
+  List<SealLogInfo> sealLogInfoList = [];
 
   int selScaleId = -1;
   bool isPass = false;
   Future<void> setAppInfo() async {
     await openAppJson();
   }
-
-  final List<Employee> _employees = List.generate(
-      100,
-      (i) => Employee(
-            id: i + 1,
-            name: '员工 ${i + 1}',
-            department: [
-              'unseal',
-              'seal',
-            ][i % 2],
-            salary: ' sdfjisodjf sdfjisod sdfjio test remark',
-            joinDate:
-                DateTime(2020 + i % 5, (i % 12) + 1, (i % 28) + 1, 10, 30, 20),
-            performance: ['优秀', '良好', '一般', '待改进'][i % 4],
-          ));
 
   bool _sortAscending = true;
   int? _sortColumnIndex;
@@ -71,19 +60,28 @@ class CalibrationSealPageState extends State<CalibrationSealPage> {
     setAppInfo().then((value) => setState(() {}));
     isPass = myLicenseInfo.isValid;
 
-    eventBus2 = eventBus.on<EventSelWeighingScaleId>().listen((event) {
-      //修改了ScaleId
+    eventBus1 = eventBus.on<EventRespCheckNetScale>().listen((event) {
       if (mounted) {
-        int scaleId = event.obj;
-        if (scaleId != selScaleId) {
-          setState(() {
-            selScaleId = scaleId;
-            DefScaleInfo.getDefScaleInfo(scaleId);
-            PublicFunctions.getBasicData(myDefScaleInfo.defScaleId!);
-          });
+        try {
+          OnlineInfo myOnlineInfo = event.obj;
+
+          if (selScaleId != myOnlineInfo.scaleId ||
+              myOnlineInfo.factInfo!.modelName == "" ||
+              myOnlineInfo.factInfo!.scaleSn == "") {
+            return;
+          }
+          ReqGetSealLog reqGetSealLog = ReqGetSealLog(
+              myOnlineInfo.factInfo!.modelName!,
+              myOnlineInfo.factInfo!.scaleSn!);
+          String jsonStr = jsonEncode(reqGetSealLog);
+
+          PublicFunctions.getSealLog(jsonStr);
+        } catch (e) {
+          print(e);
         }
       }
     });
+
     eventBus3 = eventBus.on<EventRevGetSealStatus>().listen((event) {
       //修改了ScaleId
       if (mounted) {
@@ -91,6 +89,7 @@ class CalibrationSealPageState extends State<CalibrationSealPage> {
         setState(() {
           enabledGetInfo = true;
         });
+        PublicFunctions.checkSerialPort(selScaleId);
 
         if (dataStr.contains('fail') || dataStr.contains('time out')) {
           showTipInfo(localizedStrings.checkSealFailed, context);
@@ -200,6 +199,49 @@ class CalibrationSealPageState extends State<CalibrationSealPage> {
       }
     });
 
+    eventBus7 = eventBus.on<EventRespGetAllSealLog>().listen((event) {
+      if (mounted) {
+        String jsonStr = event.obj;
+        if (jsonStr.isEmpty) {
+          setState(() {
+            sealLogInfoList = [];
+          });
+          return;
+        }
+        try {
+          sealLogInfoList = sealLogInfoFromJson(jsonStr);
+
+          setState(() {
+            sealLogInfoList
+                .sort((a, b) => b.operationTime!.compareTo(a.operationTime!));
+          });
+        } catch (e) {
+          print(e);
+        }
+      }
+    });
+
+    eventBus8 = eventBus.on<EventRevRemoveSoftSealOnce>().listen((event) {
+      //修改了ScaleId
+      if (mounted) {
+        String dataStr = event.obj;
+
+        if (dataStr.isEmpty) {
+          return;
+        }
+
+        if (dataStr.contains('fail')) {
+          showTipInfo(localizedStrings.removeSealFailed, context);
+          return;
+        } else {
+          PublicFunctions.getSealStatus(selScaleId);
+          setState(() {
+            enabledGetInfo = false;
+          });
+        }
+      }
+    });
+
     // 在页面构建完成后显示提示
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (myAllScalesList.isEmpty) {
@@ -214,11 +256,13 @@ class CalibrationSealPageState extends State<CalibrationSealPage> {
 
   @override
   void dispose() {
-    eventBus2.cancel();
+    eventBus1.cancel();
     eventBus3.cancel();
     eventBus4.cancel();
     eventBus5.cancel();
     eventBus6.cancel();
+    eventBus7.cancel();
+    eventBus8.cancel();
 
     super.dispose();
   }
@@ -530,9 +574,13 @@ class CalibrationSealPageState extends State<CalibrationSealPage> {
                                           softSealStatus == "false" &&
                                                   enabledGetInfo
                                               ? () {
+                                                  String sealCode =
+                                                      getSealCode();
+                                                  if (sealCode.isEmpty) {
+                                                    return;
+                                                  }
                                                   PublicFunctions.softSeal(
-                                                      selScaleId,
-                                                      '78uyy89ikoi98789');
+                                                      selScaleId, sealCode);
                                                   setState(() {
                                                     enabledGetInfo = false;
                                                   });
@@ -557,10 +605,15 @@ class CalibrationSealPageState extends State<CalibrationSealPage> {
                                           softSealStatus == "true" &&
                                                   enabledGetInfo
                                               ? () {
+                                                  String sealCode =
+                                                      getSealCode();
+                                                  if (sealCode.isEmpty) {
+                                                    return;
+                                                  }
+
                                                   PublicFunctions
                                                       .removeSoftSeal(
-                                                          selScaleId,
-                                                          '78uyy89ikoi98789');
+                                                          selScaleId, sealCode);
                                                   setState(() {
                                                     enabledGetInfo = false;
                                                   });
@@ -597,7 +650,7 @@ class CalibrationSealPageState extends State<CalibrationSealPage> {
                               columns: [
                                 DataColumn2(
                                   label: Text(
-                                    '操作',
+                                    localizedStrings.fTipOperation,
                                     style:
                                         Theme.of(context).textTheme.bodySmall,
                                     overflow: TextOverflow.ellipsis,
@@ -607,16 +660,16 @@ class CalibrationSealPageState extends State<CalibrationSealPage> {
                                     setState(() {
                                       _sortColumnIndex = columnIndex;
                                       _sortAscending = ascending;
-                                      _employees.sort((a, b) => ascending
-                                          ? a.department.compareTo(b.department)
-                                          : b.department
-                                              .compareTo(a.department));
+                                      sealLogInfoList.sort((a, b) => ascending
+                                          ? a.operation!.compareTo(b.operation!)
+                                          : b.operation!
+                                              .compareTo(a.operation!));
                                     });
                                   },
                                 ),
                                 DataColumn2(
                                   label: Text(
-                                    'ID',
+                                    localizedStrings.operator,
                                     style:
                                         Theme.of(context).textTheme.bodySmall,
                                     overflow: TextOverflow.ellipsis,
@@ -626,51 +679,15 @@ class CalibrationSealPageState extends State<CalibrationSealPage> {
                                     setState(() {
                                       _sortColumnIndex = columnIndex;
                                       _sortAscending = ascending;
-                                      _employees.sort((a, b) => ascending
-                                          ? a.id.compareTo(b.id)
-                                          : b.id.compareTo(a.id));
+                                      sealLogInfoList.sort((a, b) => ascending
+                                          ? a.operator!.compareTo(b.operator!)
+                                          : b.operator!.compareTo(a.operator!));
                                     });
                                   },
                                 ),
                                 DataColumn2(
                                   label: Text(
-                                    '操作员',
-                                    style:
-                                        Theme.of(context).textTheme.bodySmall,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                  size: ColumnSize.S,
-                                  onSort: (columnIndex, ascending) {
-                                    setState(() {
-                                      _sortColumnIndex = columnIndex;
-                                      _sortAscending = ascending;
-                                      _employees.sort((a, b) => ascending
-                                          ? a.name.compareTo(b.name)
-                                          : b.name.compareTo(a.name));
-                                    });
-                                  },
-                                ),
-                                DataColumn2(
-                                  label: Text(
-                                    '备注',
-                                    style:
-                                        Theme.of(context).textTheme.bodySmall,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                  size: ColumnSize.L,
-                                  onSort: (columnIndex, ascending) {
-                                    setState(() {
-                                      _sortColumnIndex = columnIndex;
-                                      _sortAscending = ascending;
-                                      _employees.sort((a, b) => ascending
-                                          ? a.salary.compareTo(b.salary)
-                                          : b.salary.compareTo(a.salary));
-                                    });
-                                  },
-                                ),
-                                DataColumn2(
-                                  label: Text(
-                                    '操作时间',
+                                    localizedStrings.fCreatedAtCol,
                                     style:
                                         Theme.of(context).textTheme.bodySmall,
                                     overflow: TextOverflow.ellipsis,
@@ -680,51 +697,40 @@ class CalibrationSealPageState extends State<CalibrationSealPage> {
                                     setState(() {
                                       _sortColumnIndex = columnIndex;
                                       _sortAscending = ascending;
-                                      _employees.sort((a, b) => ascending
-                                          ? a.joinDate.compareTo(b.joinDate)
-                                          : b.joinDate.compareTo(a.joinDate));
+                                      sealLogInfoList.sort((a, b) => ascending
+                                          ? a.operationTime!
+                                              .compareTo(b.operationTime!)
+                                          : b.operationTime!
+                                              .compareTo(a.operationTime!));
                                     });
                                   },
                                 ),
                               ],
-                              rows: _employees.map((employee) {
+                              rows: sealLogInfoList.map((seallog) {
                                 return DataRow(
                                   cells: [
                                     DataCell(
                                       Text(
-                                        employee.department,
+                                        seallog.operation! == "seal"
+                                            ? localizedStrings.fTipSeal
+                                            : localizedStrings.fTipUnseal,
                                         style: Theme.of(context)
                                             .textTheme
                                             .bodySmall!
                                             .copyWith(
                                                 color: _getDeptColor(
-                                                    employee.department)),
+                                                    seallog.operation!)),
                                         overflow: TextOverflow.ellipsis,
                                       ),
                                     ),
                                     DataCell(Text(
-                                      employee.id.toString(),
+                                      seallog.operator!,
                                       style:
                                           Theme.of(context).textTheme.bodySmall,
                                       overflow: TextOverflow.ellipsis,
                                     )),
                                     DataCell(Text(
-                                      employee.name,
-                                      style:
-                                          Theme.of(context).textTheme.bodySmall,
-                                      overflow: TextOverflow.ellipsis,
-                                    )),
-                                    DataCell(
-                                      Text(
-                                        employee.salary,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodySmall,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
-                                    DataCell(Text(
-                                      '${employee.joinDate.year}-${employee.joinDate.month}-${employee.joinDate.day} ${employee.joinDate.hour}:${employee.joinDate.minute}:${employee.joinDate.second}',
+                                      '${seallog.operationTime!.year}-${seallog.operationTime!.month}-${seallog.operationTime!.day} ${seallog.operationTime!.hour}:${seallog.operationTime!.minute}:${seallog.operationTime!.second}',
                                       style:
                                           Theme.of(context).textTheme.bodySmall,
                                       overflow: TextOverflow.ellipsis,
@@ -740,6 +746,21 @@ class CalibrationSealPageState extends State<CalibrationSealPage> {
             ),
           ],
         ));
+  }
+
+  String getSealCode() {
+    if (myConfigCode.isEmpty) {
+      showTipInfo(localizedStrings.reAcquireAuthCode, context);
+      return "";
+    } else {
+      String code = "$myConfigCode*T-Scale*";
+
+      final bytes = utf8.encode(code); // 将字符串转换为UTF-8字节
+      final digest = md5.convert(bytes); // 生成MD5哈希
+      String sealCode = digest.toString(); // 转换为十六进制字符串
+
+      return sealCode.substring(0, 16);
+    }
   }
 
   Widget showTextInfo(String text) {
@@ -766,12 +787,10 @@ class CalibrationSealPageState extends State<CalibrationSealPage> {
 
   //切换的时候要修改掉秤的信息
   void changeScale(int scaleId) {
-    // PublicFunctions.stopWeight(selScaleId);
     setState(() {
       selScaleId = scaleId;
+      sealLogInfoList = [];
     });
-
-    // PublicFunctions.getWeight(scaleId);
   }
 
   Color _getDeptColor(String dept) {
@@ -897,37 +916,6 @@ class ShowSealTipDialogState extends State<ShowSealTipDialog> {
                       ),
                     ),
                   ),
-
-                  // SizedBox(
-                  //   width: 20,
-                  // ),
-                  // Expanded(
-                  //   child: ElevatedButton(
-                  //     style: ElevatedButton.styleFrom(
-                  //       foregroundColor:
-                  //           Theme.of(context).colorScheme.onPrimary,
-                  //       backgroundColor: Theme.of(context)
-                  //           .colorScheme
-                  //           .surfaceContainerHighest,
-                  //       fixedSize: const Size(double.infinity, 48),
-                  //       shape: RoundedRectangleBorder(
-                  //         borderRadius: BorderRadius.zero,
-                  //       ),
-                  //     ),
-                  //     onPressed: () {
-                  //       Navigator.pop(context, false);
-                  //     },
-                  //     child: Text(
-                  //       localizedStrings.gBtnCancel,
-                  //       style: TextStyle(
-                  //         fontSize: 16,
-                  //         fontWeight: FontWeight.normal,
-                  //         color: Theme.of(context).colorScheme.onPrimary,
-                  //         overflow: TextOverflow.ellipsis,
-                  //       ),
-                  //     ),
-                  //   ),
-                  // ),
                 ],
               ),
             ),
@@ -1084,7 +1072,40 @@ class ShowUnSealOnceDialog extends StatefulWidget {
 }
 
 class ShowUnSealOnceDialogState extends State<ShowUnSealOnceDialog> {
-  TextEditingController removalCodeCtl = TextEditingController();
+  TextEditingController fileCtl = TextEditingController();
+  bool isFilePickerBusy = false;
+
+  dynamic eventBus2;
+
+  @override
+  void initState() {
+    super.initState();
+    eventBus2 = eventBus.on<EventRespUnsealByMasterKey>().listen((event) {
+      if (mounted) {
+        String dataStr = event.obj;
+
+        if (dataStr.contains('invalid')) {
+          showTipInfo(localizedStrings.invalidData, context);
+          return;
+        } else if (dataStr.contains('expired')) {
+          showTipInfo(localizedStrings.dataExpired, context);
+          return;
+        }
+
+        if (dataStr.contains("ok")) {
+          PublicFunctions.removeSoftSealOnce(widget.scaleId);
+
+          Navigator.pop(context, true);
+        }
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    eventBus2.cancel();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -1108,12 +1129,56 @@ class ShowUnSealOnceDialogState extends State<ShowUnSealOnceDialog> {
             // 中部
             Expanded(
               child: Container(
-                padding: const EdgeInsets.all(26),
+                padding: const EdgeInsets.all(14),
                 height: 200,
-                width: 500,
+                width: 520,
                 child: Column(children: [
-                  showInputBox(context, removalCodeCtl,
-                      localizedStrings.removeWithCode, (value) {}, true),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Expanded(
+                        child: showInputBox(context, fileCtl,
+                            localizedStrings.removeWithCode, (value) {}, false),
+                      ),
+                      SizedBox(width: 10),
+                      showTextButton(
+                          context, btnHeight, localizedStrings.gBtnSelectFile,
+                          () async {
+                        // 开始选择文件时，将状态设置为忙碌
+                        if (isFilePickerBusy) {
+                          return;
+                        }
+                        isFilePickerBusy = true;
+
+                        String filePath = '';
+                        try {
+                          FilePickerResult? result =
+                              await FilePicker.platform.pickFiles(
+                            type: FileType.custom,
+                            allowedExtensions: ['txt'],
+                          );
+                          if (result != null && result.files.isNotEmpty) {
+                            filePath = result.files.single.path!;
+                          }
+                          setState(() {
+                            if (filePath != '') {
+                              fileCtl.text = filePath;
+                            }
+                          });
+                        } catch (e) {
+                          return;
+                        } finally {
+                          // 无论选择文件操作成功还是失败，都将状态设置为空闲
+                          setState(() {
+                            isFilePickerBusy = false;
+                          });
+                        }
+                      },
+                          Theme.of(context).colorScheme.onPrimary,
+                          Theme.of(context).colorScheme.primary,
+                          Theme.of(context).colorScheme.onPrimary)
+                    ],
+                  ),
                   Container(
                     padding: const EdgeInsets.only(top: 10),
                     alignment: Alignment.centerLeft,
@@ -1147,10 +1212,25 @@ class ShowUnSealOnceDialogState extends State<ShowUnSealOnceDialog> {
                         borderRadius: BorderRadius.zero,
                       ),
                     ),
-                    onPressed: () {
-                      PublicFunctions.removeSoftSealOnce(widget.scaleId);
-                      Navigator.pop(context, true);
-                    },
+                    onPressed: fileCtl.text.isNotEmpty
+                        ? () async {
+                            //打开文件并读取内容
+                            try {
+                              // 读取文件内容
+                              String fileContent =
+                                  await File(fileCtl.text).readAsString();
+
+                              String codeStr = fileContent.trim();
+                              codeStr = codeStr
+                                  .replaceAll(" ", "")
+                                  .replaceAll('\n', '')
+                                  .replaceAll('\r', '');
+                              PublicFunctions.unsealByMasterKey(codeStr);
+                            } catch (e) {
+                              return;
+                            }
+                          }
+                        : null,
                     child: Text(
                       localizedStrings.removeWithCode,
                       style: TextStyle(
@@ -1199,4 +1279,14 @@ class ShowUnSealOnceDialogState extends State<ShowUnSealOnceDialog> {
       ),
     );
   }
+}
+
+class ReqGetSealLog {
+  String model;
+  String sn;
+  ReqGetSealLog(this.model, this.sn);
+  Map<String, dynamic> toJson() => {
+        'Model': model,
+        'Sn': sn,
+      };
 }

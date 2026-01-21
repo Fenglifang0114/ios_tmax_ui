@@ -186,7 +186,7 @@
     },
     "gQrcodeType": "QrCode Type",
     "@gQrcodeType": {
-      "description": "This is a button about qrcode type."
+        "description": "This is a button about qrcode type."
     },
     "gBarcodeName": "BarCode Name",
     "@gBarcodeName": {
@@ -251,7 +251,7 @@
     "gMsgNoElement": "No element selected.",
     "@gMsgNoElement": {
         "description": "This is a prompt regarding no item being selected."
-    }, 
+    },
     "gPageWidth": "Width",
     "@gPageWidth": {
         "description": "This is a prompt about the page width."
@@ -599,7 +599,7 @@
     "cBtnClosePreview": "Close preview",
     "@cBtnClosePreview": {
         "description": "This is a button about close preview in T-Config."
-    },    
+    },
     "gTitlePreview": "Preview",
     "@gTitlePreview": {
         "description": "This is a preview of the output of a custom serial port protocol."
@@ -1884,8 +1884,8 @@
     "@fNoFmaFound": {
         "description": "Display text when no formula is found"
     },
-    "fRepeatWeighingBtn": "Repeat Weighing", 
-     "@fRepeatWeighingBtn": { 
+    "fRepeatWeighingBtn": "Repeat Weighing",
+    "@fRepeatWeighingBtn": {
         "description": "Label for repeat weighing button"
     },
     "fIngredientOrder": "Order",
@@ -1907,7 +1907,7 @@
     "fPrintFmaBtn": "Print Formula",
     "@fPrintFmaBtn": {
         "description": "Button to print the formula"
-    },    
+    },
     "fScaleList": "Scale List",
     "@fScaleList": {
         "description": "Title for the scale list panel"
@@ -2163,7 +2163,7 @@
     "fAddRawMaterialTypeBtn": "Add Ingredient Category",
     "@fAddRawMaterialTypeBtn": {
         "description": "Text on the button to add raw material category"
-    }, 
+    },
     "fEditRawMaterialTypeBtn": "Edit Ingredient Category",
     "@fEditRawMaterialTypeBtn": {
         "description": "Text on the button to edit raw material category"
@@ -2335,7 +2335,7 @@
     "fFmaContainer": "Container",
     "@fFmaContainer": {
         "description": "Prompt for container requirement in operations."
-    },    
+    },
     "fNextStepBtn": "Next Step",
     "@fNextStepBtn": {
         "description": "Button to proceed to the next step"
@@ -2351,7 +2351,7 @@
     "fDeviceDisconnected": "Device disconnected, please check the connection.",
     "@fDeviceDisconnected": {
         "description": "Prompt when the device is disconnected"
-    },     
+    },
     "fSaveSuccess": "Save successful",
     "@fSaveSuccess": {
         "description": "Success message for saving operation, text"
@@ -2531,11 +2531,11 @@
     "menuApplications": "Application",
     "@menuApplications": {
         "description": "Menu item for applications"
-    },   
+    },
     "menuSystemInformation": "System Information",
     "@menuSystemInformation": {
         "description": "Menu item for system information"
-    }, 
+    },
     "menuConfiguration": "Configuration",
     "@menuConfiguration": {
         "description": "Menu item for configuration"
@@ -2580,7 +2580,7 @@
     "@gBtnActivate": {
         "description": "This is a button for activating something."
     },
-    "gTitleActivationFeedback": "Activation Feedback", 
+    "gTitleActivationFeedback": "Activation Feedback",
     "@gTitleActivationFeedback": {
         "description": "This is the title for activation feedback."
     },
@@ -2612,11 +2612,11 @@
     "@gBtnBackToPrevious": {
         "description": "This is a button to go back to the previous level."
     },
-    "gTitleActivationMethod": "Activation Method",  
+    "gTitleActivationMethod": "Activation Method",
     "@gTitleActivationMethod": {
         "description": "This is the title for activation method."
     },
-    "gSubtitleUploadActivationFile": "Upload the activation file provided by the supplier in the input box below.",  
+    "gSubtitleUploadActivationFile": "Upload the activation file provided by the supplier in the input box below.",
     "@gSubtitleUploadActivationFile": {
         "description": "This is the subtitle for uploading the activation file provided by the supplier in the input box below."
     },
@@ -2787,7 +2787,7 @@
     "gTipDownloadFail": "Download failed!",
     "@gTipDownloadFail": {
         "description": "This is a tip indicating that the download failed."
-    },    
+    },
     "gTipDefaultValue": "Default Value",
     "@gTipDefaultValue": {
         "description": "This is the prompt for the default value."
@@ -2913,8 +2913,8 @@
         "description": "This is a tip to ask to confirm the weight."
     },
     "gTipCalResult": "If calibration fails, please click 'Recalibrate'.",
-    "@gTipCalResult": { 
-        "description": "This is a tip for calibration result." 
+    "@gTipCalResult": {
+        "description": "This is a tip for calibration result."
     },
     "gTipCalibrationFailed": "Calibration failed",
     "@gTipCalibrationFailed": {
@@ -2934,7 +2934,7 @@
     },
     "gBtnPrevious": "Previous Step",
     "@gBtnPrevious": {
-        "description": "This is a button to go back to the previous step." 
+        "description": "This is a button to go back to the previous step."
     },
     "gBtnNext": "Next Step",
     "@gBtnNext": {
@@ -3031,11 +3031,11 @@
     "gTipPerformingOperation": "Performing operation...",
     "@gTipPerformingOperation": {
         "description": "This is a tip to inform the user that an operation is being performed."
-    },     
+    },
     "gTitleDeviceList": "Device List",
     "@gTitleDeviceList": {
         "description": "This is the title for the device list."
-    },    
+    },
     "gTipStandaloneMode": "Weight Independent Mode",
     "@gTipStandaloneMode": {
         "description": "This is a tip indicating the standalone operation mode."
@@ -3044,8 +3044,8 @@
     "@gTipWeightSummationMode": {
         "description": "This is a tip indicating the weight summation operation mode."
     },
-    "gBtnReportSetting":"Report Setting",
-    "@gBtnReportSetting":{
+    "gBtnReportSetting": "Report Setting",
+    "@gBtnReportSetting": {
         "description": "This is a button about report setting."
     },
     "gBtnDeleteAll": "Delete All",
@@ -3055,7 +3055,7 @@
     "gTipConfirmDeleteAll": "Are you sure you want to delete all data?",
     "@gTipConfirmDeleteAll": {
         "description": "This is a confirmation prompt for deleting all data."
-    },     
+    },
     "gTipExportSuccess": "Export successful",
     "@gTipExportSuccess": {
         "description": "This is a prompt for successful export."
@@ -3111,7 +3111,7 @@
     "subTitleDeviceTime": "Set the device's date and time.",
     "@subTitleDeviceTime": {
         "description": "SubTitle for device Time"
-    },  
+    },
     "subTitleBluetoothSetting": "Configure Bluetooth name and signal strength.",
     "@subTitleBluetoothSetting": {
         "description": "SubTitle for bluetooth setting"
@@ -3144,7 +3144,7 @@
     "@subTitleWiredSetting": {
         "description": "SubTitle for wired setting"
     },
-    "subTitleSealManagment":  "Seal management",
+    "subTitleSealManagment": "Seal management",
     "@subTitleSealManagment": {
         "description": "SubTitle for seal management"
     },
@@ -3427,7 +3427,7 @@
     "gTipConfirmContinue": "Please confirm to continue.",
     "@gTipConfirmContinue": {
         "description": "Tip for confirm continue"
-    },     
+    },
     "gBtnEnable": "Activate",
     "@gBtnEnable": {
         "description": "Button for activate"
@@ -3435,7 +3435,7 @@
     "gBtnDisable": "Deactivate",
     "@gBtnDisable": {
         "description": "Button for deactivate"
-    },     
+    },
     "gTipImportPluSame": "Duplicate PLU ignored during import",
     "@gTipImportPluSame": {
         "description": "Tip for import plu same"
@@ -3463,7 +3463,7 @@
     "tipSameScale": "Same scale can't connect simultaneously.",
     "@tipSameScale": {
         "description": "Tip for same scale"
-    },    
+    },
     "gBtnOpenFileLocation": "Open File Location",
     "@gBtnOpenFileLocation": {
         "description": "Button for open file location"
@@ -3474,19 +3474,19 @@
     },
     "gTipExportError": "Unknown export error",
     "@gTipExportError": {
-    "description": "Tip for export error"
+        "description": "Tip for export error"
     },
     "gTipExportFileError": "Export file error or file is occupied",
     "@gTipExportFileError": {
-    "description": "Tip for export file error"
+        "description": "Tip for export file error"
     },
     "gTipExportIOError": "Export IO error",
     "@gTipExportIOError": {
-    "description": "Tip for export IO error"
+        "description": "Tip for export IO error"
     },
     "gTipExportPathError": "Export path error",
     "@gTipExportPathError": {
-    "description": "Tip for export path error"
+        "description": "Tip for export path error"
     },
     "noDataImport": "No data to import",
     "@noDataImport": {
@@ -3583,11 +3583,11 @@
     "tipRow": "row",
     "@tipRow": {
         "description": "Row tip"
-    },    
+    },
     "tipImporting": "Checking completed, importing...",
     "@tipImporting": {
         "description": "Tip for importing"
-    },    
+    },
     "ingredientIdIsEmpty": "Ingredient Id cannot be empty",
     "@ingredientIdIsEmpty": {
         "description": "Prompt when Ingredient Id field is required"
@@ -3599,7 +3599,7 @@
     "ingredientNameEmpty": "Ingredient Name cannot be empty",
     "@ingredientNameEmpty": {
         "description": "Prompt when Ingredient Name field is required"
-    }, 
+    },
     "selectDevice": "Select Device",
     "@selectDevice": {
         "description": "Select Device"
@@ -3632,7 +3632,7 @@
     "@module": {
         "description": "Module"
     },
-    "funcName": "Function Module", 
+    "funcName": "Function Module",
     "@funcName": {
         "description": "Function Module"
     },
@@ -3691,7 +3691,7 @@
     "logout": "Logout",
     "@logout": {
         "description": "Logout"
-    }, 
+    },
     "logDetails": "Log Details",
     "@logDetails": {
         "description": "Log Details"
@@ -3708,8 +3708,8 @@
     "@opUpdate": {
         "description": "Update Operation"
     },
-     "opEnable": "Enable",
-     "@opEnable": {
+    "opEnable": "Enable",
+    "@opEnable": {
         "description": "Enable Operation"
     },
     "opDisable": "Disable",
@@ -3736,7 +3736,7 @@
     "@opSetting": {
         "description": "Setting Operation"
     },
-    "opUpload": "Upload",     
+    "opUpload": "Upload",
     "@opUpload": {
         "description": "Upload Operation"
     },
@@ -3883,7 +3883,7 @@
     "tipForceClearTare": "Confirm force clear tare? Please ensure the scale pan is empty.",
     "@tipForceClearTare": {
         "description": "Force clear tare"
-    }, 
+    },
     "btnForceClearTare": "Force clear tare",
     "@btnForceClearTare": {
         "description": "Force clear tare"
@@ -3975,7 +3975,7 @@
     "enableRecordAutoSync": "Enable Record Auto Sync",
     "@enableRecordAutoSync": {
         "description": "Enable Record Auto Sync"
-    },    
+    },
     "sharedFolderPath": "Shared Folder Path",
     "@sharedFolderPath": {
         "description": "Shared Folder Path"
@@ -4083,10 +4083,33 @@
     "checkSealFailed": "Check Seal Failed",
     "@checkSealFailed": {
         "description": "Error message when checking the seal status fails"
-    },    
+    },
     "contactSupplierForRemovalCode": "Contact your supplier for a removal code",
     "@contactSupplierForRemovalCode": {
         "description": "Prompt to contact the supplier for a removal code"
+    },
+    "fTipSeal": "Software Seal",
+    "@fTipSeal": {
+        "description": "Seal"
+    },
+    "fTipUnseal": "Remove Software Seal",
+    "@fTipUnseal": {
+        "description": "Unseal"
+    },
+    "invalidData": "Invalid Data",
+    "@invalidData": {
+        "description": "Error message for invalid data input"
+    },
+    "dataExpired": "Data Expired",
+    "@dataExpired": {
+        "description": "Error message for expired data input"
+    },
+    "reAcquireAuthCode": "Please re-acquire the advanced configuration authorization code.",
+    "@reAcquireAuthCode": {
+        "description": "Prompt to re-acquire the advanced configuration authorization code"
+    },
+    "removeSealFailed": "Remove Software Seal Failed",
+    "@removeSealFailed": {
+        "description": "Error message when removing the software seal fails"
     }
-
-}    
+}

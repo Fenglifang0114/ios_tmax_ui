@@ -1,5 +1,4 @@
 import 'package:t_max/data/darf_fma_data_from_db.dart';
-import 'package:t_max/data/fma_rec_list_db_data.dart';
 import 'package:t_max/data/formula_from_db_data.dart';
 import 'package:t_max/data/formula_scale_data.dart';
 import 'package:t_max/data/import_fma_data.dart';

@@ -788,6 +788,18 @@ class PublicFunctions {
     sendMsgChan0(jsonEncode(myScaleCmd));
   }
 
+  static void getSealLog(String jsonStr) {
+    myScaleCmd.cmdMode = "get_all_seal_log";
+    myScaleCmd.cmdData = jsonStr;
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
+  static void unsealByMasterKey(String masterKey) {
+    myScaleCmd.cmdMode = "unseal_by_master_key";
+    myScaleCmd.cmdData = masterKey;
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
   static void deleteAllRecords(int scaleId) {
     String modelName = myDefScaleInfo.defScaleModel == null
         ? ''

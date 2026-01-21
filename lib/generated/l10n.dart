@@ -9909,6 +9909,67 @@ class S {
       args: [],
     );
   }
+
+  /// `Software Seal`
+  String get fTipSeal {
+    return Intl.message(
+      'Software Seal',
+      name: 'fTipSeal',
+      desc: 'Seal',
+      args: [],
+    );
+  }
+
+  /// `Remove Software Seal`
+  String get fTipUnseal {
+    return Intl.message(
+      'Remove Software Seal',
+      name: 'fTipUnseal',
+      desc: 'Unseal',
+      args: [],
+    );
+  }
+
+  /// `Invalid Data`
+  String get invalidData {
+    return Intl.message(
+      'Invalid Data',
+      name: 'invalidData',
+      desc: 'Error message for invalid data input',
+      args: [],
+    );
+  }
+
+  /// `Data Expired`
+  String get dataExpired {
+    return Intl.message(
+      'Data Expired',
+      name: 'dataExpired',
+      desc: 'Error message for expired data input',
+      args: [],
+    );
+  }
+
+  /// `Please re-acquire the advanced configuration authorization code.`
+  String get reAcquireAuthCode {
+    return Intl.message(
+      'Please re-acquire the advanced configuration authorization code.',
+      name: 'reAcquireAuthCode',
+      desc:
+          'Prompt to re-acquire the advanced configuration authorization code',
+      args: [],
+    );
+  }
+
+  /// `Remove Software Seal Failed`
+  String get removeSealFailed {
+    return Intl.message(
+      'Remove Software Seal Failed',
+      name: 'removeSealFailed',
+      desc: 'Error message when removing the software seal fails',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

@@ -106,6 +106,7 @@ class RespMsgType {
   static const String respGetSealStatus = 'resp_get_seal_status';
   static const String respSoftSeal = 'resp_soft_seal';
   static const String respRemoveSoftSeal = 'resp_remove_soft_seal';
+  static const String respRemoveSoftSealOnce = 'resp_remove_soft_seal_once';
 
   static final Map<String, Function> handlers = {
     RespMsgType.respGetUIConf: handleGetUIConf,
@@ -181,6 +182,7 @@ class RespMsgType {
     RespMsgType.respGetSealStatus: handleRespGetSealStatus,
     RespMsgType.respSoftSeal: handleRespSoftSeal,
     RespMsgType.respRemoveSoftSeal: handleRespRemoveSoftSeal,
+    RespMsgType.respRemoveSoftSealOnce: handleRespRemoveSoftSealOnce,
   };
 
   static void handleGetUIConf(dynamic data) {
@@ -604,6 +606,11 @@ class RespMsgType {
   static void handleRespRemoveSoftSeal(dynamic data) {
     final jsonStrings = data['MsgBody'];
     eventBus.fire(EventRevRemoveSoftSeal(jsonStrings));
+  }
+
+  static void handleRespRemoveSoftSealOnce(dynamic data) {
+    final jsonStrings = data['MsgBody'];
+    eventBus.fire(EventRevRemoveSoftSealOnce(jsonStrings));
   }
 
   static void handleRespCheckSerialPort(dynamic data) {

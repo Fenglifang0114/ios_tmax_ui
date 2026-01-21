@@ -163,6 +163,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "customization_setting_title": MessageLookupByLibrary.simpleMessage(
       "Applications",
     ),
+    "dataExpired": MessageLookupByLibrary.simpleMessage("Data Expired"),
     "data_delete_confirm": MessageLookupByLibrary.simpleMessage(
       "Whether to delete all data?",
     ),
@@ -512,7 +513,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "No data, please add first.",
     ),
     "fTipOperation": MessageLookupByLibrary.simpleMessage("Operation"),
+    "fTipSeal": MessageLookupByLibrary.simpleMessage("Software Seal"),
     "fTipTitle": MessageLookupByLibrary.simpleMessage("Prompt"),
+    "fTipUnseal": MessageLookupByLibrary.simpleMessage("Remove Software Seal"),
     "fTotalTime": MessageLookupByLibrary.simpleMessage("Total time"),
     "fTotalWeight": MessageLookupByLibrary.simpleMessage("Total weight"),
     "fTotalWeightLabel": MessageLookupByLibrary.simpleMessage("Total Weight"),
@@ -1263,6 +1266,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "ingredientVerification": MessageLookupByLibrary.simpleMessage(
       "Ingredient Verification",
     ),
+    "invalidData": MessageLookupByLibrary.simpleMessage("Invalid Data"),
     "invalidName": MessageLookupByLibrary.simpleMessage(
       "The name is invalid. Please enter a valid name.",
     ),
@@ -1623,6 +1627,12 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "rTitleSetVariableValues": MessageLookupByLibrary.simpleMessage(
       "Variable Value Setting",
+    ),
+    "reAcquireAuthCode": MessageLookupByLibrary.simpleMessage(
+      "Please re-acquire the advanced configuration authorization code.",
+    ),
+    "removeSealFailed": MessageLookupByLibrary.simpleMessage(
+      "Remove Software Seal Failed",
     ),
     "removeSoftwareSeal": MessageLookupByLibrary.simpleMessage(
       "Remove Software Seal",

@@ -30,7 +30,6 @@ class WiredSettingPageState extends State<WiredSettingPage> {
   TextEditingController ipController = TextEditingController();
   TextEditingController gateWayController = TextEditingController();
 
-  final TextEditingController _findWifiText = TextEditingController();
   int selectedIndex = -1;
   bool passwordLock = true;
 

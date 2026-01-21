@@ -35,6 +35,8 @@ class LicenseInfo {
         liceseDate = json['ValidDate'];
 }
 
+String myConfigCode = ''; //高级配置中的配置代码
+
 LicenseInfo myLicenseInfo = LicenseInfo(false, '', '', '');
 LicenseInfo myTConLicInfo = LicenseInfo(false, '', '', '');
 LicenseInfo myRedeLicInfo = LicenseInfo(false, '', '', ''); //receipt_design
@@ -51,6 +53,15 @@ class LicenseSetting {
   void setLicInfo() {
     if (myLicenseData.licList.isNotEmpty) {
       for (var item in myLicenseData.licList) {
+        if (item.moduleName.contains("T-Config*")) {
+          myTConLicInfo.isValid = item.isValid;
+          myTConLicInfo.pId = item.pId;
+          myTConLicInfo.liceseDate = item.liceseDate;
+          myConfigCode = item.moduleName.replaceAll("T-Config*", "");
+          myLicenseInfo = myTConLicInfo;
+          continue;
+        }
+
         switch (item.moduleName) {
           case tConfigLic:
             myTConLicInfo = item;
