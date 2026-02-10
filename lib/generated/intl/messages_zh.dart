@@ -55,6 +55,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "batch_delivery_title": MessageLookupByLibrary.simpleMessage("批量下发"),
     "batch_down_export": MessageLookupByLibrary.simpleMessage("导出"),
     "batch_down_slt_folder": MessageLookupByLibrary.simpleMessage("选择文件夹"),
+    "bluetooth": MessageLookupByLibrary.simpleMessage("蓝牙"),
+    "bluetoothAddress": MessageLookupByLibrary.simpleMessage("蓝牙地址"),
+    "bluetoothName": MessageLookupByLibrary.simpleMessage("蓝牙名称"),
     "bt_setting_title": MessageLookupByLibrary.simpleMessage("蓝牙设置"),
     "btnContinueWeighing": MessageLookupByLibrary.simpleMessage("继续称重"),
     "btnForceClearTare": MessageLookupByLibrary.simpleMessage("强制清除扣重"),
@@ -165,6 +168,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "enableOrDisable": MessageLookupByLibrary.simpleMessage("启用或禁用"),
     "enableRecordAutoSync": MessageLookupByLibrary.simpleMessage("开启记录自动传输"),
+    "ensureBluetoothIsEnabled": MessageLookupByLibrary.simpleMessage(
+      "请确保蓝牙已开启",
+    ),
     "fAbandonBtn": MessageLookupByLibrary.simpleMessage("放弃"),
     "fAbandonIngredientsBtn": MessageLookupByLibrary.simpleMessage("放弃配料"),
     "fActualError": MessageLookupByLibrary.simpleMessage("实际误差"),
@@ -990,6 +996,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "nameNotEntered": MessageLookupByLibrary.simpleMessage("名称未输入或内容为空，请检查！"),
     "new_license_text": MessageLookupByLibrary.simpleMessage("新认证:"),
     "noBarCodeDataTip": MessageLookupByLibrary.simpleMessage("暂无数据"),
+    "noBluetoothDevicesFound": MessageLookupByLibrary.simpleMessage("未发现蓝牙设备"),
     "noDataImport": MessageLookupByLibrary.simpleMessage("没有数据可导入"),
     "noPermission": MessageLookupByLibrary.simpleMessage("没有权限"),
     "notSealed": MessageLookupByLibrary.simpleMessage("未铅封"),
@@ -1150,12 +1157,16 @@ class MessageLookup extends MessageLookupByLibrary {
     "scale_mgr_btn_def": MessageLookupByLibrary.simpleMessage("设置默认"),
     "scale_mgr_btn_rename": MessageLookupByLibrary.simpleMessage("重命名"),
     "scale_model": MessageLookupByLibrary.simpleMessage("选择机型:"),
+    "scanBluetoothDevices": MessageLookupByLibrary.simpleMessage("重新扫描"),
     "sealPresentCalibrationNotPermitted": MessageLookupByLibrary.simpleMessage(
       "设备存在铅封，无法标定",
     ),
     "sealed": MessageLookupByLibrary.simpleMessage("已铅封"),
     "search": MessageLookupByLibrary.simpleMessage("搜索"),
     "searchName": MessageLookupByLibrary.simpleMessage("搜索名称"),
+    "searchingBluetoothDevices": MessageLookupByLibrary.simpleMessage(
+      "正在搜索蓝牙设备...（约20秒）",
+    ),
     "selectDevice": MessageLookupByLibrary.simpleMessage("选择设备"),
     "select_firmware_btn": MessageLookupByLibrary.simpleMessage("选择 Firmware"),
     "selected": MessageLookupByLibrary.simpleMessage("已选"),
@@ -1196,6 +1207,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "软铅封解除成功",
     ),
     "stable_time_error_tip": MessageLookupByLibrary.simpleMessage("20秒以内."),
+    "startSearchBluetoothDevices": MessageLookupByLibrary.simpleMessage("开始搜索"),
     "subTitleBasicDataCollection": MessageLookupByLibrary.simpleMessage(
       "读取秤的运行数据，以了解任何异常活动。",
     ),
@@ -1239,7 +1251,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "subTitleRetailReport": MessageLookupByLibrary.simpleMessage(
       "自动收集和记录零售数据，并形成报表供用户下载。",
     ),
-    "subTitleSealManagment": MessageLookupByLibrary.simpleMessage("铅封管理"),
+    "subTitleSealManagment": MessageLookupByLibrary.simpleMessage(
+      "施加软件铅封，进一步防止设备篡改",
+    ),
     "subTitleSerialOutputDesign": MessageLookupByLibrary.simpleMessage(
       "自定义并下发串口输出内容",
     ),

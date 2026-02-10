@@ -3144,7 +3144,7 @@
     "@subTitleWiredSetting": {
         "description": "SubTitle for wired setting"
     },
-    "subTitleSealManagment": "Seal management",
+    "subTitleSealManagment": "Applying a software seal to further prevent device tampering.",
     "@subTitleSealManagment": {
         "description": "SubTitle for seal management"
     },
@@ -4111,5 +4111,37 @@
     "removeSealFailed": "Remove Software Seal Failed",
     "@removeSealFailed": {
         "description": "Error message when removing the software seal fails"
+    },
+    "bluetooth": "Bluetooth",
+    "@bluetooth": {
+        "description": "Bluetooth"
+    },
+    "noBluetoothDevicesFound": "No bluetooth devices found",
+    "@noBluetoothDevicesFound": {
+        "description": "No Bluetooth devices found"
+    },
+    "ensureBluetoothIsEnabled": "Please ensure Bluetooth is enabled",
+    "@ensureBluetoothIsEnabled": {
+        "description": "Please ensure Bluetooth is enabled"
+    },
+    "bluetoothName": "Bluetooth name",
+    "@bluetoothName": {
+        "description": "Bluetooth name"
+    },
+    "bluetoothAddress": "Bluetooth address",
+    "@bluetoothAddress": {
+        "description": "Bluetooth address"
+    },
+    "scanBluetoothDevices": "Scan for Bluetooth devices",
+    "@scanBluetoothDevices": {
+        "description": "Scan for Bluetooth devices"
+    },
+    "searchingBluetoothDevices": "Searching for nearby Bluetooth devices - this may take up to 20 seconds",
+    "@searchingBluetoothDevices": {
+        "description": "Searching for nearby Bluetooth devices - this may take up to 20 seconds"
+    },
+    "startSearchBluetoothDevices": "Start searching for Bluetooth devices",
+    "@startSearchBluetoothDevices": {
+        "description": "Start searching for Bluetooth devices"
     }
 }

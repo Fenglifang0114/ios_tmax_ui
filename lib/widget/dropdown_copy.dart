@@ -77,11 +77,9 @@ showDropDownButtonValue(BuildContext context, String value, List<String> items,
           }
         },
         onTap: onTap,
-        style: TextStyle(
-          color: Theme.of(context).colorScheme.onSurfaceVariant,
-          fontSize: 14,
-          fontWeight: FontWeight.normal,
-        ),
+        style: Theme.of(context).textTheme.bodySmall!.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
       ));
 }
 
@@ -125,10 +123,10 @@ Widget buildTabOrderAndTyptText(
       child: Row(
         children: [
           Expanded(
-            child: SizedBox(
+            child: Container(
+              alignment: Alignment.centerLeft,
               child: Text(
                 title,
-                textAlign: TextAlign.right,
                 style: Theme.of(context).textTheme.bodySmall!.apply(
                       color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
@@ -145,9 +143,9 @@ Widget buildTabOrderAndTyptText(
                   alignment: Alignment.center,
                   child: Text(
                     value,
-                    style: TextStyle(
-                        fontSize: 14,
-                        color: Theme.of(context).colorScheme.primary),
+                    style: Theme.of(context).textTheme.bodySmall!.apply(
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
                   )))
         ],
       ));

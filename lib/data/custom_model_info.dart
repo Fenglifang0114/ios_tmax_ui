@@ -114,12 +114,12 @@ class ModelNameInfoList {
     String modelStr = "";
     try {
       modelStr = await getModelStrFromJson();
-      print(modelStr);
+      // print(modelStr);
       if (modelStr.isEmpty) {
         modelStr = defaultModelString;
       }
       modelNameInfoList = modelNameInfoFromJson(modelStr);
-      print(modelNameInfoList);
+      // print(modelNameInfoList);
     } catch (e) {
       modelNameInfoList = modelNameInfoFromJson(defaultModelString);
     }

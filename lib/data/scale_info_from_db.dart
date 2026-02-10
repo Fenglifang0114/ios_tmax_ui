@@ -78,6 +78,27 @@ class NetworkMediaConfig implements MediaConfig {
   }
 }
 
+//蓝牙媒体配置
+class BluetoothMediaConfig implements MediaConfig {
+  @override
+  final int type = 2; // 蓝牙类型
+
+  final String mac;
+  final String name;
+
+  BluetoothMediaConfig({
+    required this.mac,
+    required this.name,
+  });
+
+  factory BluetoothMediaConfig.fromJson(Map<String, dynamic> json) {
+    return BluetoothMediaConfig(
+      mac: json['Mac'] as String,
+      name: json['Name'] as String,
+    );
+  }
+}
+
 // 统一的秤实现类
 class UnifiedScale implements Scale {
   late bool _isOnline;
@@ -166,7 +187,7 @@ class UnifiedScale implements Scale {
     } else if (mediaType == 1) {
       config = NetworkMediaConfig.fromJson(mediaInfo);
     } else {
-      throw ArgumentError('Unsupported media type: $mediaType');
+      config = BluetoothMediaConfig.fromJson(mediaInfo);
     }
 
     return UnifiedScale(
@@ -198,6 +219,7 @@ List<Scale> myAllScalesList = []; // 用于存储所有秤的列表，包括串�
 
 final int comScaleType = 0; // 串口秤
 final int netScaleType = 1; // 网口秤
+final int btScaleType = 2; // 蓝牙秤
 
 // // 使用示例
 // void main() {

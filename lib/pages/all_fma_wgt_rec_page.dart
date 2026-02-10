@@ -400,24 +400,24 @@ class _AllFmaWgtRecPageState extends State<AllFmaWgtRecPage> {
     return _selectedOrders.values.where((item) => item).length;
   }
 
-  // 更新全选状态
-  void _updateSelectAllState() {
-    final headerItems = _orderDataList.where((item) => item.isHeader).toList();
-    if (headerItems.isEmpty) {
-      setState(() {
-        _selectAll = false;
-      });
-      return;
-    }
+  // // 更新全选状态
+  // void _updateSelectAllState() {
+  //   final headerItems = _orderDataList.where((item) => item.isHeader).toList();
+  //   if (headerItems.isEmpty) {
+  //     setState(() {
+  //       _selectAll = false;
+  //     });
+  //     return;
+  //   }
 
-    final allSelected = _selectedOrders.values.every((item) => item);
+  //   final allSelected = _selectedOrders.values.every((item) => item);
 
-    setState(() {
-      _selectAll = allSelected;
-    });
-    _dataSource?.updateData(
-        _orderDataList, _expandedOrders, _selectedOrders, _selectAll);
-  }
+  //   setState(() {
+  //     _selectAll = allSelected;
+  //   });
+  //   _dataSource?.updateData(
+  //       _orderDataList, _expandedOrders, _selectedOrders, _selectAll);
+  // }
 
   Widget titleText(String data) {
     return Text(

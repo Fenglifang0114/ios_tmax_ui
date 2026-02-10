@@ -7607,10 +7607,10 @@ class S {
     );
   }
 
-  /// `Seal management`
+  /// `Applying a software seal to further prevent device tampering.`
   String get subTitleSealManagment {
     return Intl.message(
-      'Seal management',
+      'Applying a software seal to further prevent device tampering.',
       name: 'subTitleSealManagment',
       desc: 'SubTitle for seal management',
       args: [],
@@ -9967,6 +9967,87 @@ class S {
       'Remove Software Seal Failed',
       name: 'removeSealFailed',
       desc: 'Error message when removing the software seal fails',
+      args: [],
+    );
+  }
+
+  /// `Bluetooth`
+  String get bluetooth {
+    return Intl.message(
+      'Bluetooth',
+      name: 'bluetooth',
+      desc: 'Bluetooth',
+      args: [],
+    );
+  }
+
+  /// `No bluetooth devices found`
+  String get noBluetoothDevicesFound {
+    return Intl.message(
+      'No bluetooth devices found',
+      name: 'noBluetoothDevicesFound',
+      desc: 'No Bluetooth devices found',
+      args: [],
+    );
+  }
+
+  /// `Please ensure Bluetooth is enabled`
+  String get ensureBluetoothIsEnabled {
+    return Intl.message(
+      'Please ensure Bluetooth is enabled',
+      name: 'ensureBluetoothIsEnabled',
+      desc: 'Please ensure Bluetooth is enabled',
+      args: [],
+    );
+  }
+
+  /// `Bluetooth name`
+  String get bluetoothName {
+    return Intl.message(
+      'Bluetooth name',
+      name: 'bluetoothName',
+      desc: 'Bluetooth name',
+      args: [],
+    );
+  }
+
+  /// `Bluetooth address`
+  String get bluetoothAddress {
+    return Intl.message(
+      'Bluetooth address',
+      name: 'bluetoothAddress',
+      desc: 'Bluetooth address',
+      args: [],
+    );
+  }
+
+  /// `Scan for Bluetooth devices`
+  String get scanBluetoothDevices {
+    return Intl.message(
+      'Scan for Bluetooth devices',
+      name: 'scanBluetoothDevices',
+      desc: 'Scan for Bluetooth devices',
+      args: [],
+    );
+  }
+
+  /// `Searching for nearby Bluetooth devices - this may take up to 20 seconds`
+  String get searchingBluetoothDevices {
+    return Intl.message(
+      'Searching for nearby Bluetooth devices - this may take up to 20 seconds',
+      name: 'searchingBluetoothDevices',
+      desc:
+          'Searching for nearby Bluetooth devices - this may take up to 20 seconds',
+      args: [],
+    );
+  }
+
+  /// `Start searching for Bluetooth devices`
+  String get startSearchBluetoothDevices {
+    return Intl.message(
+      'Start searching for Bluetooth devices',
+      name: 'startSearchBluetoothDevices',
+      desc: 'Start searching for Bluetooth devices',
       args: [],
     );
   }

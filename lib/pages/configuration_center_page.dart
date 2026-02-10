@@ -477,7 +477,9 @@ class _ConfigurationPageState extends State<ConfigurationPage>
         licList = content.split('\r\n');
         List<String> tmpList = [];
         for (var i = 0; i < licList.length; i++) {
-          if (licList[i].length == 74 || licList[i].length == 78) {
+          if (licList[i].length == 74 ||
+              licList[i].length == 78 ||
+              licList[i].contains('++==')) {
             tmpList.add(licList[i]);
           }
         }

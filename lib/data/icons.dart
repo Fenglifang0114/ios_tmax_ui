@@ -394,3 +394,11 @@ String softwareSealSvgIcon() {
 String failedSvgIcon() {
   return 'assets/images/failed.svg';
 }
+
+String btSvgIcon() {
+  return 'assets/images/bt.svg';
+}
+
+String btDeviceSvgIcon() {
+  return 'assets/images/bt_device.svg';
+}

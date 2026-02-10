@@ -262,6 +262,12 @@ class PublicFunctions {
     sendMsgChan0(jsonEncode(myScaleCmd));
   }
 
+  static void getBtList() {
+    myScaleCmd.cmdMode = "get_bt_list";
+    myScaleCmd.cmdData = "";
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
   static void delProduct(String str) {
     myScaleCmd.cmdMode = "del_product";
     myScaleCmd.cmdData = str;

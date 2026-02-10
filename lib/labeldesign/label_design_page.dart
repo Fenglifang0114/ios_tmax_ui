@@ -1708,109 +1708,6 @@ class LabelDesignPageState extends State<LabelDesignPage> {
     }
   }
 
-  buildWidthWidget(BuildContext context) {
-    return Row(
-      children: [
-        SizedBox(
-          height: 40,
-          child: Row(
-            children: [
-              SizedBox(
-                width: 120,
-                child: Text(
-                  'Width(mm):',
-                  textAlign: TextAlign.right,
-                  style: TextStyle(
-                      color: Theme.of(context).colorScheme.primary,
-                      fontSize: 14,
-                      fontWeight: FontWeight.normal),
-                ),
-              ),
-              const SizedBox(
-                width: 10,
-              ),
-              SizedBox(
-                width: 80, // 设置固定宽度
-                height: 30,
-                child: TextField(
-                  textAlign: TextAlign.right,
-                  textAlignVertical: TextAlignVertical.bottom,
-                  controller: _widthController,
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                          borderSide: BorderSide(
-                        width: 1,
-                        color: Theme.of(context).colorScheme.primary,
-                      )),
-                      labelStyle: TextStyle(
-                          color: Theme.of(context).colorScheme.primary,
-                          fontSize: 14,
-                          fontWeight: FontWeight.normal), // 设置label字体大小为20
-                      hintText: 'Width'),
-                  onChanged: (value) {
-                    updateCanvasSize(context);
-                  },
-                ),
-              ),
-            ],
-          ),
-        )
-      ],
-    );
-  }
-
-  buildHeightWidget(BuildContext context) {
-    return Row(
-      children: [
-        SizedBox(
-          height: 40,
-          child: Row(
-            children: [
-              SizedBox(
-                width: 120,
-                child: Text(
-                  'Height(mm):',
-                  textAlign: TextAlign.right,
-                  style: TextStyle(
-                      color: Theme.of(context).colorScheme.primary,
-                      fontSize: 14,
-                      fontWeight: FontWeight.normal),
-                ),
-              ),
-              const SizedBox(
-                width: 10,
-              ),
-              SizedBox(
-                  width: 80, // 设置固定宽度
-                  height: 30,
-                  child: TextField(
-                    textAlign: TextAlign.right,
-                    textAlignVertical: TextAlignVertical.bottom,
-                    controller: _heightController,
-                    keyboardType: TextInputType.number,
-                    decoration: InputDecoration(
-                        border: OutlineInputBorder(
-                            borderSide: BorderSide(
-                          width: 1,
-                          color: Theme.of(context).colorScheme.primary,
-                        )),
-                        labelStyle: TextStyle(
-                            color: Theme.of(context).colorScheme.primary,
-                            fontSize: 14,
-                            fontWeight: FontWeight.normal), // 设置label字体大小为20
-                        hintText: 'Height'),
-                    onChanged: (value) {
-                      updateCanvasSize(context);
-                    },
-                  )),
-            ],
-          ),
-        )
-      ],
-    );
-  }
-
   Widget showHeadWidget(double width) {
     return Container(
       height: topBtnHeight,
@@ -1835,11 +1732,13 @@ class LabelDesignPageState extends State<LabelDesignPage> {
                               child: Text(
                                 localizedStrings.gPrinter,
                                 textAlign: TextAlign.right,
-                                style: TextStyle(
-                                    color:
-                                        Theme.of(context).colorScheme.primary,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.normal),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall!
+                                    .apply(
+                                      color:
+                                          Theme.of(context).colorScheme.primary,
+                                    ),
                               ),
                             ),
                             const SizedBox(
@@ -1871,11 +1770,13 @@ class LabelDesignPageState extends State<LabelDesignPage> {
                               child: Text(
                                 localizedStrings.gPrintDirection,
                                 textAlign: TextAlign.right,
-                                style: TextStyle(
-                                    color:
-                                        Theme.of(context).colorScheme.primary,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.normal),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall!
+                                    .apply(
+                                      color:
+                                          Theme.of(context).colorScheme.primary,
+                                    ),
                               ),
                             ),
                             const SizedBox(
@@ -2034,11 +1935,10 @@ class LabelDesignPageState extends State<LabelDesignPage> {
                             setState(() {
                               ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
-                                      content: const Text('Open fail',
-                                          style: TextStyle(
-                                              fontSize: 14,
-                                              fontWeight:
-                                                  FontWeight.bold)), ////此处需要秤回复
+                                      content: Text('Open fail',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodySmall), ////此处需要秤回复
                                       duration: const Duration(seconds: 1),
                                       backgroundColor:
                                           Theme.of(context).colorScheme.error));
@@ -2137,375 +2037,11 @@ class LabelDesignPageState extends State<LabelDesignPage> {
       child: Text(
         textStr,
         textAlign: TextAlign.right,
-        style: TextStyle(
-            color: Theme.of(context).colorScheme.primary,
-            fontSize: 14,
-            fontWeight: FontWeight.normal),
+        style: Theme.of(context).textTheme.bodySmall!.apply(
+              color: Theme.of(context).colorScheme.primary,
+            ),
       ),
     );
-  }
-
-  PreferredSize buildAppBar(Size screenSize, BuildContext context) {
-    return PreferredSize(
-        preferredSize: const Size.fromHeight(92),
-        child: Column(
-          children: [
-            Container(
-              height: 10,
-              color: Theme.of(context).colorScheme.primary,
-            ),
-            Container(
-              height: 80,
-              width: screenSize.width - 10,
-              color: Theme.of(context).colorScheme.onPrimary,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      buildWidthWidget(context),
-                      buildHeightWidget(context),
-                    ],
-                  ),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      SizedBox(
-                        height: 40,
-                        child: Row(
-                          children: [
-                            Row(
-                              children: [
-                                SizedBox(
-                                  height: 40,
-                                  child: Row(
-                                    children: [
-                                      SizedBox(
-                                        width: 80,
-                                        child: Text(
-                                          'print_rotation',
-                                          textAlign: TextAlign.right,
-                                          style: TextStyle(
-                                              color: Theme.of(context)
-                                                  .colorScheme
-                                                  .primary,
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.normal),
-                                        ),
-                                      ),
-                                      const SizedBox(
-                                        width: 10,
-                                      ),
-                                      SizedBox(
-                                        width: 100, // 设置固定宽度
-                                        child: DropdownButton<String>(
-                                          dropdownColor: Theme.of(context)
-                                              .colorScheme
-                                              .surfaceBright,
-                                          style: TextStyle(
-                                              color: Theme.of(context)
-                                                  .colorScheme
-                                                  .primary,
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.normal),
-                                          hint: Text(
-                                            'print_rotation',
-                                            style: TextStyle(
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .primary,
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.normal),
-                                          ),
-                                          value: _selectedPrintDirection,
-                                          items: printDirections
-                                              .map((String value) =>
-                                                  DropdownMenuItem<String>(
-                                                    value: value,
-                                                    child: Text(value),
-                                                  ))
-                                              .toList(),
-                                          onChanged: (String? newValue) {
-                                            setState(() {
-                                              _selectedPrintDirection =
-                                                  newValue!;
-                                            });
-                                          },
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                )
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(
-                        width: 180,
-                        child: OutlinedButton(
-                            onPressed: () {
-                              //0322 屏蔽
-                              deleteAllElements();
-                            },
-                            style: OutlinedButton.styleFrom(
-                              side: BorderSide(
-                                width: 1,
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
-                              foregroundColor:
-                                  Theme.of(context).colorScheme.secondary,
-                              backgroundColor: Theme.of(context)
-                                  .colorScheme
-                                  .onPrimary, // 设置按钮的背景色
-                              shape: RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.circular(4), // 设置按钮的圆角
-                              ),
-                            ),
-                            child: Text(
-                              'new_format',
-                              style: TextStyle(
-                                  color: Theme.of(context).colorScheme.primary,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.normal),
-                            )),
-                      ),
-                    ],
-                  ),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      SizedBox(
-                        width: 180,
-                        child: OutlinedButton(
-                          style: OutlinedButton.styleFrom(
-                            side: BorderSide(
-                              width: 1,
-                              color: Theme.of(context).colorScheme.primary,
-                            ),
-                            foregroundColor:
-                                Theme.of(context).colorScheme.secondary,
-                            backgroundColor: Theme.of(context)
-                                .colorScheme
-                                .onPrimary, // 设置按钮的背景色
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(4), // 设置按钮的圆角
-                            ),
-                          ),
-                          child: Text(
-                            'save_file',
-                            style: TextStyle(
-                                color: Theme.of(context).colorScheme.primary,
-                                fontSize: 14,
-                                fontWeight: FontWeight.normal),
-                          ),
-                          onPressed: () async {
-                            //0322 屏蔽
-                            if (elements.isEmpty) {
-                              showConfirmationDialog(context);
-                              return;
-                            }
-                            String executablePath = Platform.resolvedExecutable;
-                            var directory = p.dirname(executablePath);
-                            final formatfilePath =
-                                Directory('$directory\\format');
-                            if (!await formatfilePath.exists()) {
-                              await formatfilePath.create(recursive: true);
-                            }
-                            directory = formatfilePath.path;
-
-                            String? outputFile =
-                                (await FilePicker.platform.saveFile(
-                              initialDirectory: directory,
-                              dialogTitle: 'Output file:',
-                              type: FileType.custom,
-                              allowedExtensions: ['json'],
-                              fileName: 'format.json',
-                            ));
-                            if (outputFile != null) {
-                              if (elements.isNotEmpty) {
-                                _saveFormatToJson(outputFile); //同时保存一份到json
-                              } else {
-                                showConfirmationDialog(context);
-                              }
-                            }
-                          },
-                        ),
-                      ),
-                      SizedBox(
-                        width: 180,
-                        child: OutlinedButton(
-                            onPressed: () async {
-                              //0322 屏蔽
-                              String filePath = '';
-                              try {
-                                String executablePath =
-                                    Platform.resolvedExecutable;
-                                var directory = p.dirname(executablePath);
-
-                                final formatfilePath =
-                                    Directory('$directory\\format');
-                                if (!await formatfilePath.exists()) {
-                                  await formatfilePath.create(recursive: true);
-                                }
-                                directory = formatfilePath.path;
-                                FilePickerResult? result =
-                                    await FilePicker.platform.pickFiles(
-                                  initialDirectory: directory,
-                                  type: FileType.custom,
-                                  allowedExtensions: ['json'],
-                                );
-                                if (result != null && result.files.isNotEmpty) {
-                                  filePath = result.files.single.path!;
-                                }
-                              } catch (e) {
-                                setState(() {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                          content: const Text('Open fail',
-                                              style: TextStyle(
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight
-                                                      .bold)), ////此处需要秤回复
-                                          duration: const Duration(seconds: 1),
-                                          backgroundColor: Theme.of(context)
-                                              .colorScheme
-                                              .error));
-                                });
-                              }
-                              if (filePath != '') {
-                                deleteAllElements();
-
-                                _openJsonFile(filePath);
-                              }
-                            },
-                            style: OutlinedButton.styleFrom(
-                              side: BorderSide(
-                                width: 1,
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
-                              foregroundColor:
-                                  Theme.of(context).colorScheme.secondary,
-                              backgroundColor: Theme.of(context)
-                                  .colorScheme
-                                  .onPrimary, // 设置按钮的背景色
-                              shape: RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.circular(4), // 设置按钮的圆角
-                              ),
-                            ),
-                            child: Text(
-                              'open_file',
-                              style: TextStyle(
-                                  color: Theme.of(context).colorScheme.primary,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.normal),
-                            )),
-                      ),
-                    ],
-                  ),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      SizedBox(
-                        width: 180,
-                        child: OutlinedButton(
-                          style: OutlinedButton.styleFrom(
-                            side: BorderSide(
-                              width: 1,
-                              color: Theme.of(context).colorScheme.primary,
-                            ),
-                            foregroundColor:
-                                Theme.of(context).colorScheme.secondary,
-                            backgroundColor: Theme.of(context)
-                                .colorScheme
-                                .onPrimary, // 设置按钮的背景色
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(4), // 设置按钮的圆角
-                            ),
-                          ),
-                          child: Text(
-                            'barcode_edit',
-                            style: TextStyle(
-                                color: Theme.of(context).colorScheme.primary,
-                                fontSize: 14,
-                                fontWeight: FontWeight.normal),
-                          ),
-                          onPressed: () async {
-                            //0322 屏蔽
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return const MyBarCodeDialog();
-                              },
-                            ).then((value) {
-                              if (value != null) {
-                                setState(() {
-                                  // rowDataList = value;
-                                });
-                              }
-                            });
-                          },
-                        ),
-                      ),
-                      SizedBox(
-                        width: 180,
-                        child: OutlinedButton(
-                          style: OutlinedButton.styleFrom(
-                            side: BorderSide(
-                              width: 1,
-                              color: Theme.of(context).colorScheme.primary,
-                            ),
-                            foregroundColor:
-                                Theme.of(context).colorScheme.secondary,
-                            backgroundColor: Theme.of(context)
-                                .colorScheme
-                                .onPrimary, // 设置按钮的背景色
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(4), // 设置按钮的圆角
-                            ),
-                          ),
-                          child: Text(
-                            'qrcode_edit',
-                            style: TextStyle(
-                                color: Theme.of(context).colorScheme.primary,
-                                fontSize: 14,
-                                fontWeight: FontWeight.normal),
-                          ),
-                          onPressed: () async {
-                            //0322 屏蔽
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return const MyQrcodeDialog();
-                              },
-                            ).then((value) {
-                              if (value != null) {
-                                setState(() {
-                                  // rowDataList = value;
-                                });
-                              }
-                            });
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                  Divider(
-                    height: 2,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              height: 2,
-              color: Theme.of(context).colorScheme.primary,
-            ),
-          ],
-        ));
   }
 
   _textproperties(DraggableElement element) {
@@ -2553,34 +2089,6 @@ class LabelDesignPageState extends State<LabelDesignPage> {
     );
   }
 
-  // List<Widget> showDeleteBtn() {
-  //   return [
-  //     ElevatedButton(
-  //         style: OutlinedButton.styleFrom(
-  //           side: BorderSide(
-  //             width: 1,
-  //             color: Theme.of(context).colorScheme.primary,
-  //           ),
-  //           foregroundColor: Theme.of(context).colorScheme.secondary,
-  //           backgroundColor: Theme.of(context).colorScheme.primary, //设置按钮的背景色
-  //           shape: RoundedRectangleBorder(
-  //             borderRadius: BorderRadius.circular(4), //设置按钮的圆角
-  //           ),
-  //         ),
-  //         onPressed: () {
-  //           deleteSelectedElements();
-  //         },
-  //         child: Text('button_delete',
-  //             style: TextStyle(
-  //                 fontSize: 14,
-  //                 fontWeight: FontWeight.normal,
-  //                 color: Theme.of(context).colorScheme.onPrimary))),
-  //     SizedBox(
-  //       height: 20,
-  //     )
-  //   ];
-  // }
-
   Widget deleteBtnBuild() {
     return SizedBox(
         width: 200,
@@ -2602,13 +2110,11 @@ class LabelDesignPageState extends State<LabelDesignPage> {
           Container(
             height: 48,
             width: 50,
-            alignment: Alignment.centerRight,
+            alignment: Alignment.centerLeft,
             padding: const EdgeInsets.only(right: smallPadding),
             child: Text("X:",
-                textAlign: TextAlign.right,
-                style: TextStyle(
-                  fontSize: 14,
-                )),
+                textAlign: TextAlign.left,
+                style: Theme.of(context).textTheme.bodySmall),
           ),
           Expanded(
             child: TextField(
@@ -2621,6 +2127,9 @@ class LabelDesignPageState extends State<LabelDesignPage> {
                       color: Theme.of(context).colorScheme.outlineVariant),
                 ),
               ),
+              style: Theme.of(context).textTheme.bodySmall!.apply(
+                    color: Theme.of(context).colorScheme.outline,
+                  ),
             ),
           ),
         ],
@@ -2633,13 +2142,11 @@ class LabelDesignPageState extends State<LabelDesignPage> {
           Container(
             height: 48,
             width: 50,
-            alignment: Alignment.centerRight,
+            alignment: Alignment.centerLeft,
             padding: const EdgeInsets.only(right: smallPadding),
             child: Text("Y:",
                 textAlign: TextAlign.right,
-                style: TextStyle(
-                  fontSize: 14,
-                )),
+                style: Theme.of(context).textTheme.bodySmall),
           ),
           Expanded(
             child: TextField(
@@ -2652,69 +2159,9 @@ class LabelDesignPageState extends State<LabelDesignPage> {
                       color: Theme.of(context).colorScheme.outlineVariant),
                 ),
               ),
-            ),
-          ),
-        ],
-      ),
-    ];
-  }
-
-  List<Widget> buildShowXY() {
-    return [
-      Container(
-        height: 20,
-        color: Theme.of(context).colorScheme.tertiary,
-        child: Text('position',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-                fontSize: 14,
-                color: Theme.of(context).colorScheme.primary,
-                fontWeight: FontWeight.normal)),
-      ),
-      Row(
-        children: [
-          const SizedBox(
-            width: 100,
-            child: Text("X:",
-                textAlign: TextAlign.left,
-                style: TextStyle(
-                  fontSize: 14,
-                )),
-          ),
-          Expanded(
-            child: TextField(
-              enabled: false,
-              controller: _positionXController,
-              decoration: InputDecoration(
-                hintStyle: TextStyle(
-                    color: Theme.of(context).colorScheme.primary,
-                    fontSize: 14,
-                    fontWeight: FontWeight.normal),
-              ),
-            ),
-          ),
-        ],
-      ),
-      Row(
-        children: [
-          const SizedBox(
-            width: 100,
-            child: Text("Y:",
-                textAlign: TextAlign.left,
-                style: TextStyle(
-                  fontSize: 14,
-                )),
-          ),
-          Expanded(
-            child: TextField(
-              enabled: false,
-              controller: _positionYController,
-              decoration: InputDecoration(
-                labelStyle: TextStyle(
-                    color: Theme.of(context).colorScheme.primary,
-                    fontSize: 14,
-                    fontWeight: FontWeight.normal), // 设置label字体大小为20
-              ),
+              style: Theme.of(context).textTheme.bodySmall!.apply(
+                    color: Theme.of(context).colorScheme.outline,
+                  ),
             ),
           ),
         ],
@@ -2726,13 +2173,11 @@ class LabelDesignPageState extends State<LabelDesignPage> {
     return [
       Row(
         children: [
-          const SizedBox(
+          SizedBox(
             width: 100,
-            child: Text("Width:",
+            child: Text(localizedStrings.gPageWidth,
                 textAlign: TextAlign.left,
-                style: TextStyle(
-                  fontSize: 14,
-                )),
+                style: Theme.of(context).textTheme.bodySmall),
           ),
           Expanded(
             child: TextField(
@@ -2740,10 +2185,9 @@ class LabelDesignPageState extends State<LabelDesignPage> {
               focusNode: textWidthFocusNode,
               keyboardType: TextInputType.number,
               decoration: InputDecoration(
-                hintStyle: TextStyle(
-                    color: Theme.of(context).colorScheme.primary,
-                    fontSize: 14,
-                    fontWeight: FontWeight.normal),
+                hintStyle: Theme.of(context).textTheme.bodySmall!.apply(
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
               ),
               style: Theme.of(context).textTheme.bodySmall,
               inputFormatters: [
@@ -2760,13 +2204,11 @@ class LabelDesignPageState extends State<LabelDesignPage> {
       ),
       Row(
         children: [
-          const SizedBox(
+          SizedBox(
             width: 100,
-            child: Text("Height:",
+            child: Text(localizedStrings.gPageHeight,
                 textAlign: TextAlign.left,
-                style: TextStyle(
-                  fontSize: 14,
-                )),
+                style: Theme.of(context).textTheme.bodySmall),
           ),
           Expanded(
             child: TextField(
@@ -2774,10 +2216,9 @@ class LabelDesignPageState extends State<LabelDesignPage> {
               focusNode: textHeightFocusNode,
               keyboardType: TextInputType.number,
               decoration: InputDecoration(
-                labelStyle: TextStyle(
-                    color: Theme.of(context).colorScheme.primary,
-                    fontSize: 14,
-                    fontWeight: FontWeight.normal), // 设置label字体大小为20
+                labelStyle: Theme.of(context).textTheme.bodySmall!.apply(
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
               ),
               style: Theme.of(context).textTheme.bodySmall,
               inputFormatters: [
@@ -2872,17 +2313,16 @@ class LabelDesignPageState extends State<LabelDesignPage> {
       const SizedBox(height: 20),
       SizedBox(
         width: 100,
-        child: Text('max_length',
+        child: Text(localizedStrings.gMaxLength,
             textAlign: TextAlign.left,
-            style: const TextStyle(
-              fontSize: 14,
-            )),
+            style: Theme.of(context).textTheme.bodySmall),
       ),
       TextField(
         controller: maxLenthController,
         onChanged: (value) {
           updateMaxLenth(context);
         },
+        style: Theme.of(context).textTheme.bodySmall,
       ),
       const SizedBox(width: 10),
       ...showAlignment(),
@@ -2987,19 +2427,20 @@ class LabelDesignPageState extends State<LabelDesignPage> {
       Container(
         height: 20,
         color: Theme.of(context).colorScheme.tertiary,
-        child: Text('editor',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-                fontSize: 14,
+        child: Text(
+          'editor',
+          textAlign: TextAlign.center,
+          style: Theme.of(context).textTheme.bodySmall!.apply(
                 color: Theme.of(context).colorScheme.primary,
-                fontWeight: FontWeight.normal)),
+              ),
+        ),
       ),
       SizedBox(
         height: 10,
       ),
       Text(
-        "Variable:",
-        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
+        localizedStrings.l_var_title,
+        style: Theme.of(context).textTheme.bodySmall!.apply(),
       ),
       showVarSelect(),
       SizedBox(
@@ -3012,9 +2453,7 @@ class LabelDesignPageState extends State<LabelDesignPage> {
             children: [
               Text('Image path:',
                   textAlign: TextAlign.left,
-                  style: const TextStyle(
-                    fontSize: 14,
-                  )),
+                  style: Theme.of(context).textTheme.bodySmall),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   side: BorderSide(
@@ -3047,9 +2486,7 @@ class LabelDesignPageState extends State<LabelDesignPage> {
         child: Text(
           element.content.toString(),
           textAlign: TextAlign.left,
-          style: const TextStyle(
-            fontSize: 14,
-          ),
+          style: Theme.of(context).textTheme.bodySmall!.apply(),
         ),
       ),
       SizedBox(
@@ -3057,9 +2494,7 @@ class LabelDesignPageState extends State<LabelDesignPage> {
       ),
       Text(
         'select_rotation',
-        style: const TextStyle(
-          fontSize: 14,
-        ),
+        style: Theme.of(context).textTheme.bodySmall!.apply(),
       ),
       buildDropdownButton(
         context: context,
@@ -3089,8 +2524,7 @@ class LabelDesignPageState extends State<LabelDesignPage> {
           .map((e) => DropdownMenuItem<String>(
                 value: e,
                 child: Text(e,
-                    style:
-                        TextStyle(fontSize: 14, fontWeight: FontWeight.normal)),
+                    style: Theme.of(context).textTheme.bodySmall!.apply()),
               ))
           .toList(),
       onChanged: (value) {

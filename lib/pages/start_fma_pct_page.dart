@@ -503,7 +503,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
           setState(() {
             dynamic jsonData = json.decode(dataStr);
             FmaRecFromDb reportData = FmaRecFromDb.fromJson(jsonData);
-            print(reportData.header!.actualFmaTotalWgt);
+            // print(reportData.header!.actualFmaTotalWgt);
             if (isPrint) {
               isPrint = false;
               showDialog(

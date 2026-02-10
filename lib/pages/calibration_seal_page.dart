@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:crypto/crypto.dart';
 import 'package:data_table_2/data_table_2.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -77,7 +76,7 @@ class CalibrationSealPageState extends State<CalibrationSealPage> {
 
           PublicFunctions.getSealLog(jsonStr);
         } catch (e) {
-          print(e);
+          // print(e);
         }
       }
     });
@@ -216,7 +215,7 @@ class CalibrationSealPageState extends State<CalibrationSealPage> {
                 .sort((a, b) => b.operationTime!.compareTo(a.operationTime!));
           });
         } catch (e) {
-          print(e);
+          // print(e);
         }
       }
     });
@@ -753,12 +752,13 @@ class CalibrationSealPageState extends State<CalibrationSealPage> {
       showTipInfo(localizedStrings.reAcquireAuthCode, context);
       return "";
     } else {
-      String code = "$myConfigCode*T-Scale*";
-
-      final bytes = utf8.encode(code); // 将字符串转换为UTF-8字节
-      final digest = md5.convert(bytes); // 生成MD5哈希
-      String sealCode = digest.toString(); // 转换为十六进制字符串
-
+      String code = myConfigCode;
+      // 将处理后的字节转换16进制字符串
+      String sealCode = code.length.toString();
+      sealCode += code;
+      if (sealCode.length < 16) {
+        sealCode = sealCode.padRight(16, '0');
+      }
       return sealCode.substring(0, 16);
     }
   }

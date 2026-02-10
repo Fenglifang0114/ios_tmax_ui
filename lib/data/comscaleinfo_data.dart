@@ -1,5 +1,36 @@
 import 'dart:convert';
 
+// To parse this JSON data, do
+//
+//     final blueToothInfo = blueToothInfoFromJson(jsonString);
+
+BlueToothInfo blueToothInfoFromJson(String str) =>
+    BlueToothInfo.fromJson(json.decode(str));
+
+String blueToothInfoToJson(BlueToothInfo data) => json.encode(data.toJson());
+
+class BlueToothInfo {
+  String? mac;
+  String? name;
+
+  BlueToothInfo({
+    this.mac,
+    this.name,
+  });
+
+  factory BlueToothInfo.fromJson(Map<String, dynamic> json) => BlueToothInfo(
+        mac: json["Mac"],
+        name: json["Name"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "Mac": mac,
+        "Name": name,
+      };
+}
+
+BlueToothInfo myBluetoothInfo = BlueToothInfo();
+
 class ComScaleInfo {
   int scaleId;
   int tMedia;

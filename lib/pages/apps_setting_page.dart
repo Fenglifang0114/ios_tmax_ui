@@ -1539,7 +1539,7 @@ class _AppsSettingPageState extends State<AppsSettingPage> {
         for (var i = 0; i < licList.length; i++) {
           if (licList[i].length == 74 ||
               licList[i].length == 78 ||
-              licList[i].length == 94) {
+              licList[i].contains('++==')) {
             tmpList.add(licList[i]);
           }
         }

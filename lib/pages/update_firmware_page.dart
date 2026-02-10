@@ -568,11 +568,16 @@ class SelectScalesPageNewState extends State<SelectScalesPageNew> {
             }
           });
         } else {
+          if (myRespDataFromScale.msgBody.contains('completed')) {
+            updateProgress(100, myRespDataFromScale.scaleId);
+            return;
+          }
+
           if (int.tryParse(myRespDataFromScale.msgBody) != null) {
             // 字符串全是数字
             int numericValue = int.parse(myRespDataFromScale.msgBody);
-            if (numericValue < 100 && numericValue * 1.5 < 100.0) {
-              numericValue = (numericValue * 1.5).toInt();
+            if (numericValue <= 100) {
+              numericValue = (numericValue).toInt();
             }
             updateProgress(numericValue, myRespDataFromScale.scaleId);
           } else {
@@ -985,9 +990,13 @@ class SelectScalesPageNewState extends State<SelectScalesPageNew> {
                                     ? (tempScale.mediaConfig
                                             as SerialMediaConfig)
                                         .devPath
-                                    : (tempScale.mediaConfig
-                                            as NetworkMediaConfig)
-                                        .ipAddress,
+                                    : tempScale.tMedia == netScaleType
+                                        ? (tempScale.mediaConfig
+                                                as NetworkMediaConfig)
+                                            .ipAddress
+                                        : (tempScale.mediaConfig
+                                                as BluetoothMediaConfig)
+                                            .mac,
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
                                     color: Theme.of(context)
@@ -1002,10 +1011,14 @@ class SelectScalesPageNewState extends State<SelectScalesPageNew> {
                                             as SerialMediaConfig)
                                         .baudRate
                                         .toString()
-                                    : (tempScale.mediaConfig
-                                            as NetworkMediaConfig)
-                                        .port
-                                        .toString(),
+                                    : tempScale.tMedia == netScaleType
+                                        ? (tempScale.mediaConfig
+                                                as NetworkMediaConfig)
+                                            .port
+                                            .toString()
+                                        : (tempScale.mediaConfig
+                                                as BluetoothMediaConfig)
+                                            .name,
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
                                     color: Theme.of(context)

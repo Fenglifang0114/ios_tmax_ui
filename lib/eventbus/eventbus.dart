@@ -167,6 +167,11 @@ class EventComInfoList {
   EventComInfoList(this.obj);
 }
 
+class EventBtInfoList {
+  dynamic obj;
+  EventBtInfoList(this.obj);
+}
+
 class EventScaleList {
   dynamic obj;
   EventScaleList(this.obj);

@@ -750,9 +750,12 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                         height: regularPadding,
                       ),
                       Text(
-                        localizedStrings.gTipConnectedInfo,
+                        getScaleModel() == "DPM"
+                            ? localizedStrings.gTipConnectedInfo +
+                                "            (Port: 8580)"
+                            : localizedStrings.gTipConnectedInfo,
                         style: Theme.of(context).textTheme.bodyMedium!.apply(
-                              color: Theme.of(context).colorScheme.onSurface,
+                              color: Theme.of(context).colorScheme.primary,
                             ),
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -1160,6 +1163,19 @@ class WifiSettingPageState extends State<WifiSettingPage> {
         ),
       ],
     ));
+  }
+
+  String getScaleModel() {
+    String model = "";
+    if (myAllScalesList.isNotEmpty) {
+      for (var i = 0; i < myAllScalesList.length; i++) {
+        if (myAllScalesList[i].scaleId == selScaleId) {
+          model = myAllScalesList[i].scaleModel;
+          break;
+        }
+      }
+    }
+    return model;
   }
 
   bool isValidData() {

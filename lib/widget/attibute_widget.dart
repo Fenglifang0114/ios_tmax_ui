@@ -41,10 +41,10 @@ Widget buildTabOrderAndTyptTextNew(
       child: Row(
         children: [
           Expanded(
-            child: SizedBox(
+            child: Container(
+              alignment: Alignment.centerLeft,
               child: Text(
                 title,
-                textAlign: TextAlign.right,
                 style: Theme.of(context).textTheme.bodySmall!.apply(
                       color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),

@@ -2953,25 +2953,27 @@ class FormulationScalePageState extends State<FormulationScalePage>
             },
           ).then((fmaValue) {
             if (fmaValue != null) {
-              showDialog(
-                  context: context,
-                  builder: (context) {
-                    return ShowFormulaDetailDialog(
-                      selectFormula: fmaValue,
-                      selectScaleId: selScaleId,
-                    );
-                  }).then((value) {
-                if (value) {
-                  selectedFormula = fmaValue;
-                  //判断秤是否在线
-                  bool isOk = checkScaleOnline(selectedFormula);
-                  if (!isOk) {
-                    return;
+              if (mounted) {
+                showDialog(
+                    context: context,
+                    builder: (context) {
+                      return ShowFormulaDetailDialog(
+                        selectFormula: fmaValue,
+                        selectScaleId: selScaleId,
+                      );
+                    }).then((value) {
+                  if (value) {
+                    selectedFormula = fmaValue;
+                    //判断秤是否在线
+                    bool isOk = checkScaleOnline(selectedFormula);
+                    if (!isOk) {
+                      return;
+                    }
+                    stopTestScaleOnline();
+                    startWeighting();
                   }
-                  stopTestScaleOnline();
-                  startWeighting();
-                }
-              });
+                });
+              }
             }
           });
         }),

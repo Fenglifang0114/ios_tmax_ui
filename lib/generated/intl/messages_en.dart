@@ -69,6 +69,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "batch_down_slt_folder": MessageLookupByLibrary.simpleMessage(
       "Select Folder",
     ),
+    "bluetooth": MessageLookupByLibrary.simpleMessage("Bluetooth"),
+    "bluetoothAddress": MessageLookupByLibrary.simpleMessage(
+      "Bluetooth address",
+    ),
+    "bluetoothName": MessageLookupByLibrary.simpleMessage("Bluetooth name"),
     "bt_setting_title": MessageLookupByLibrary.simpleMessage(
       "Bluetooth Setting",
     ),
@@ -234,6 +239,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "enableRecordAutoSync": MessageLookupByLibrary.simpleMessage(
       "Enable Record Auto Sync",
+    ),
+    "ensureBluetoothIsEnabled": MessageLookupByLibrary.simpleMessage(
+      "Please ensure Bluetooth is enabled",
     ),
     "fAbandonBtn": MessageLookupByLibrary.simpleMessage("Abandon"),
     "fAbandonIngredientsBtn": MessageLookupByLibrary.simpleMessage("Abandon"),
@@ -1426,6 +1434,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "new_license_text": MessageLookupByLibrary.simpleMessage("New License:"),
     "noBarCodeDataTip": MessageLookupByLibrary.simpleMessage("No data"),
+    "noBluetoothDevicesFound": MessageLookupByLibrary.simpleMessage(
+      "No bluetooth devices found",
+    ),
     "noDataImport": MessageLookupByLibrary.simpleMessage("No data to import"),
     "noPermission": MessageLookupByLibrary.simpleMessage("No permission"),
     "notSealed": MessageLookupByLibrary.simpleMessage("Not Sealed"),
@@ -1648,12 +1659,18 @@ class MessageLookup extends MessageLookupByLibrary {
     "scale_mgr_btn_def": MessageLookupByLibrary.simpleMessage("Set Default"),
     "scale_mgr_btn_rename": MessageLookupByLibrary.simpleMessage("Rename"),
     "scale_model": MessageLookupByLibrary.simpleMessage("Scale Model:"),
+    "scanBluetoothDevices": MessageLookupByLibrary.simpleMessage(
+      "Scan for Bluetooth devices",
+    ),
     "sealPresentCalibrationNotPermitted": MessageLookupByLibrary.simpleMessage(
       "A seal is present on the device. Calibration is not permitted.",
     ),
     "sealed": MessageLookupByLibrary.simpleMessage("Sealed"),
     "search": MessageLookupByLibrary.simpleMessage("Search"),
     "searchName": MessageLookupByLibrary.simpleMessage("Search Name"),
+    "searchingBluetoothDevices": MessageLookupByLibrary.simpleMessage(
+      "Searching for nearby Bluetooth devices - this may take up to 20 seconds",
+    ),
     "selectDevice": MessageLookupByLibrary.simpleMessage("Select Device"),
     "select_firmware_btn": MessageLookupByLibrary.simpleMessage(
       "Select Firmware",
@@ -1712,6 +1729,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "stable_time_error_tip": MessageLookupByLibrary.simpleMessage(
       "The value must be under 20 seconds.",
     ),
+    "startSearchBluetoothDevices": MessageLookupByLibrary.simpleMessage(
+      "Start searching for Bluetooth devices",
+    ),
     "subTitleBasicDataCollection": MessageLookupByLibrary.simpleMessage(
       "Read device usage info from scales to understand any abnormal activity.",
     ),
@@ -1764,7 +1784,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Automatically collect, record, and generate reports for retail data.",
     ),
     "subTitleSealManagment": MessageLookupByLibrary.simpleMessage(
-      "Seal management",
+      "Applying a software seal to further prevent device tampering.",
     ),
     "subTitleSerialOutputDesign": MessageLookupByLibrary.simpleMessage(
       "Customize and download serial port output content.",

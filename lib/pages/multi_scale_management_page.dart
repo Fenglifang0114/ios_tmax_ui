@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:t_max/data/btinfodata.dart';
 import 'package:t_max/data/comscaleinfo_data.dart';
 import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/data/icons.dart';
@@ -9,6 +10,8 @@ import 'package:t_max/data/scale_info_from_db.dart';
 import 'package:t_max/data/scalecmd_data.dart';
 import 'package:t_max/data/writelog.dart';
 import 'package:t_max/dialog/custom_dialog_tip.dart';
+import 'package:t_max/pages/btlist.dart';
+import 'package:t_max/pages/gif.dart';
 import 'package:t_max/widget/common_widget.dart';
 import 'package:t_max/widget/no_device_widget.dart';
 import '../data/cominfoslist_data.dart';
@@ -47,6 +50,9 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
   TextEditingController baudRateCtl = TextEditingController(text: '115200');
   TextEditingController protocolCtl = TextEditingController(text: 'None');
 
+  TextEditingController macCtl = TextEditingController(text: '');
+  TextEditingController btNameCtl = TextEditingController(text: '');
+
   int selScaleId = -1;
 
   bool isAddScale = false;
@@ -61,6 +67,11 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
   bool isDC500 = false; //是否是旧的版本的秤
   bool isAddNewScale = false;
   bool editWifiInfo = false; //是否是修改wifi信息
+  bool isBtSearching = false; //是否正在搜索蓝牙设备
+  bool isBtSearched = false; //是否搜索完蓝牙设备
+
+  List<BtInfo> btInfoList = [];
+  BtInfo selectBtInfo = BtInfo();
 
   dynamic _eventbus1;
   dynamic _eventbus2;
@@ -71,7 +82,7 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
   dynamic _eventbus7;
   dynamic _eventbus8;
   dynamic _eventbus9;
-  // dynamic _eventbus10;
+  dynamic _eventbus10;
 
   Timer? checkIsOnlineTimer;
   List<String> comLists = [];
@@ -258,6 +269,30 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
         });
       }
     });
+
+    _eventbus10 = eventBus.on<EventBtInfoList>().listen((event) {
+      if (mounted) {
+        var data = event.obj;
+
+        setState(() {
+          if (data.isNotEmpty && !data.contains('fail')) {
+            btInfoList = btInfoFromJson(data);
+            // print(btInfoList);
+
+            //按信号强度排序
+            btInfoList.sort((a, b) {
+              // 处理null值：null值视为最弱信号
+              int rssiA = a.rssi ?? -999;
+              int rssiB = b.rssi ?? -999;
+              // 降序排列：b.compareTo(a) 或 b.rssi - a.rssi
+              return rssiB.compareTo(rssiA);
+            });
+          }
+          isBtSearching = false;
+          isBtSearched = true;
+        });
+      }
+    });
   }
 
   void _onPortChanged() {
@@ -349,6 +384,7 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
     _eventbus8.cancel();
     _eventbus9.cancel();
     _eventbus6.cancel();
+    _eventbus10.cancel();
 
     scaleNameCtl.dispose();
     ipCtl.dispose();
@@ -408,7 +444,9 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
                   ? SizedBox()
                   : getScaleType() == comScaleType
                       ? showSerialScaleInfo()
-                      : showNetworkScaleInfo(), //网络秤
+                      : getScaleType() == netScaleType
+                          ? showNetworkScaleInfo() //网络秤
+                          : showBluetoothScaleInfo(), //蓝牙秤
             ],
           ),
         ),
@@ -429,12 +467,40 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
 //增加秤时显示
   Widget showAddScaleInfo(double maxWidth) {
     return Column(children: [
-      subTitleInfo(context, maxWidth - headWidthPadding,
-          localizedStrings.gBtnAdd, localizedStrings.gTipScaleMgrPageHelp),
+      if (addScaleType == "bt" && isBtSearched && !isBtSearching)
+        Row(
+          children: [
+            subTitleInfo(
+                context,
+                maxWidth - headWidthPadding,
+                localizedStrings.gBtnAdd,
+                localizedStrings.gTipScaleMgrPageHelp),
+            Spacer(),
+            TextButton(
+              onPressed: () {
+                PublicFunctions.getBtList();
+                setState(() {
+                  btInfoList.clear();
+                  selectBtInfo = BtInfo();
+                  isBtSearching = true;
+                });
+              },
+              child: Text(localizedStrings.gMsgRefresh,
+                  style: Theme.of(context).textTheme.bodySmall!.apply(
+                        color: Theme.of(context).colorScheme.primary,
+                      )),
+            ),
+          ],
+        ),
+      if (addScaleType != "bt")
+        subTitleInfo(context, maxWidth - headWidthPadding,
+            localizedStrings.gBtnAdd, localizedStrings.gTipScaleMgrPageHelp),
       Expanded(
         child: addScaleType == "com"
             ? showAddComScaleInfo()
-            : showAddNetScaleInfo(),
+            : addScaleType == "wifi"
+                ? showAddNetScaleInfo()
+                : showAddBtScaleInfo(),
       ),
     ]);
   }
@@ -587,6 +653,250 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
         )
       ],
     );
+  }
+
+  //PublicFunctions.getBtList();
+  Widget showAddBtScaleInfo() {
+    if (isBtSearching) {
+      return SizedBox(
+          child: Column(
+        children: [
+          SizedBox(
+            height: regularPadding,
+          ),
+          SizedBox(
+            height: 60,
+          ),
+          showGif(),
+          SizedBox(
+            height: 80,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                localizedStrings.searchingBluetoothDevices,
+                style: Theme.of(context).textTheme.bodySmall,
+              )
+            ],
+          ),
+          Spacer(),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              showTextButton(
+                  context,
+                  btnHeight,
+                  localizedStrings.gBtnConfirm,
+                  macCtl.text.isNotEmpty && btNameCtl.text.isNotEmpty
+                      ? () {
+                          isAddScale = false;
+                          isRename = false;
+                          addScaleType = '';
+
+                          addBtScale();
+                        }
+                      : null,
+                  Theme.of(context).colorScheme.onPrimary,
+                  Theme.of(context).colorScheme.primary,
+                  Theme.of(context).colorScheme.onPrimary),
+              const SizedBox(width: regularPadding),
+              SizedBox(
+                width: regularPadding,
+              ),
+              showTextButton(context, btnHeight, localizedStrings.gBtnCancel,
+                  () {
+                setState(() {
+                  isAddScale = false;
+                  isRename = false;
+                  addScaleType = '';
+                  selScaleId = -1;
+
+                  if (isComSetting) {
+                    isComSetting = false;
+                  }
+                });
+              },
+                  Theme.of(context).colorScheme.onPrimary,
+                  Theme.of(context).colorScheme.onSurfaceVariant,
+                  Theme.of(context).colorScheme.onPrimary),
+            ],
+          )
+        ],
+      ));
+    } else if (isBtSearched) {
+      return SizedBox(
+          child: Column(
+        children: [
+          // 设备列表
+          Expanded(
+            child: btInfoList.isEmpty
+                ? Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.bluetooth_disabled,
+                          size: 80,
+                          color: Colors.grey[300],
+                        ),
+                        SizedBox(height: 16),
+                        Text(
+                          localizedStrings.noBluetoothDevicesFound,
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        ),
+                        SizedBox(height: 8),
+                        Text(
+                          localizedStrings.ensureBluetoothIsEnabled,
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        ),
+                      ],
+                    ),
+                  )
+                : BtInfoListWidget(
+                    devices: btInfoList,
+                    onRefresh: () {
+                      // 刷新逻辑
+                    },
+                    onDeviceTap: (device) {
+                      setState(() {
+                        selectBtInfo = device;
+                      });
+                    },
+                  ),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              showTextButton(
+                  context,
+                  btnHeight,
+                  localizedStrings.gBtnConfirm,
+                  selectBtInfo.mac != null
+                      ? () {
+                          isAddScale = false;
+                          isRename = false;
+                          addScaleType = '';
+
+                          isBtSearching = false;
+                          isBtSearched = false;
+
+                          addBtScale();
+                        }
+                      : null,
+                  Theme.of(context).colorScheme.onPrimary,
+                  Theme.of(context).colorScheme.primary,
+                  Theme.of(context).colorScheme.onPrimary),
+              const SizedBox(width: regularPadding),
+              SizedBox(
+                width: regularPadding,
+              ),
+              showTextButton(context, btnHeight, localizedStrings.gBtnCancel,
+                  () {
+                setState(() {
+                  isAddScale = false;
+                  isRename = false;
+                  addScaleType = '';
+                  selScaleId = -1;
+                  selectBtInfo = BtInfo();
+                  btInfoList.clear();
+                  isBtSearching = false;
+                  isBtSearched = false;
+
+                  if (isComSetting) {
+                    isComSetting = false;
+                  }
+                });
+              },
+                  Theme.of(context).colorScheme.onPrimary,
+                  Theme.of(context).colorScheme.onSurfaceVariant,
+                  Theme.of(context).colorScheme.onPrimary),
+            ],
+          )
+        ],
+      ));
+    } else {
+      return SizedBox(
+          child: Column(
+        children: [
+          SizedBox(
+            height: regularPadding,
+          ),
+          SizedBox(
+            height: 60,
+          ),
+          Image.asset(
+            'assets/images/bt_tips.png',
+            width: 600,
+            height: 100,
+            fit: BoxFit.scaleDown,
+          ),
+          SizedBox(
+            height: 80,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(
+                width: 300,
+                child: showTextButton(context, btnHeight,
+                    localizedStrings.startSearchBluetoothDevices, () {
+                  PublicFunctions.getBtList();
+                  setState(() {
+                    isBtSearching = true;
+                  });
+                },
+                    Theme.of(context).colorScheme.onPrimary,
+                    Theme.of(context).colorScheme.primary,
+                    Theme.of(context).colorScheme.onPrimary),
+              ),
+            ],
+          ),
+          Spacer(),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              showTextButton(
+                  context,
+                  btnHeight,
+                  localizedStrings.gBtnConfirm,
+                  portCtl.text.isNotEmpty && _isValidIP
+                      ? () {
+                          isAddScale = false;
+                          isRename = false;
+                          addScaleType = '';
+
+                          addNetScale();
+                        }
+                      : null,
+                  Theme.of(context).colorScheme.onPrimary,
+                  Theme.of(context).colorScheme.primary,
+                  Theme.of(context).colorScheme.onPrimary),
+              const SizedBox(width: regularPadding),
+              SizedBox(
+                width: regularPadding,
+              ),
+              showTextButton(context, btnHeight, localizedStrings.gBtnCancel,
+                  () {
+                setState(() {
+                  isAddScale = false;
+                  isRename = false;
+                  addScaleType = '';
+                  selScaleId = -1;
+
+                  if (isComSetting) {
+                    isComSetting = false;
+                  }
+                });
+              },
+                  Theme.of(context).colorScheme.onPrimary,
+                  Theme.of(context).colorScheme.onSurfaceVariant,
+                  Theme.of(context).colorScheme.onPrimary),
+            ],
+          )
+        ],
+      ));
+    }
   }
 
   Widget showAddNetScaleInfo() {
@@ -800,6 +1110,8 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
                               ipCtl.text = "";
                               snCtl.text = "";
                               portCtl.text = "";
+                              macCtl.text = "";
+                              btNameCtl.text = "";
                             });
                           }
                         });
@@ -920,15 +1232,21 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
                           comPortCtl.text = serialConfig.devPath;
                           dataBitCtl.text = serialConfig.dataBits.toString();
                           baudRateCtl.text = serialConfig.baudRate.toString();
+
                           usingComLists = List<String>.from(comLists);
                           if (!comLists.contains(comPortCtl.text)) {
                             comPortCtl.text = '';
                           }
-                        } else {
+                        } else if (scale.tMedia == netScaleType) {
                           final netConfig =
                               scale.mediaConfig as NetworkMediaConfig;
                           ipCtl.text = netConfig.ipAddress;
                           portCtl.text = netConfig.port.toString();
+                        } else {
+                          final bluetoothConfig =
+                              scale.mediaConfig as BluetoothMediaConfig;
+                          macCtl.text = bluetoothConfig.mac;
+                          btNameCtl.text = bluetoothConfig.name;
                         }
                         if ((scale.scaleModel == 'T-Max' ||
                                 scale.scaleModel == 'TMax') &&
@@ -982,21 +1300,37 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
                                                   : Theme.of(context)
                                                       .colorScheme
                                                       .onPrimary))
-                                      : Container(
-                                          alignment: Alignment.center,
-                                          width: iconMenuSize,
-                                          height: iconMenuSize,
-                                          child: getSvgIcon(
-                                              networkSvgIcon(),
-                                              iconMenuSize,
-                                              iconMenuSize,
-                                              (!isSelect)
-                                                  ? Theme.of(context)
-                                                      .colorScheme
-                                                      .primary
-                                                  : Theme.of(context)
-                                                      .colorScheme
-                                                      .onPrimary)))),
+                                      : scale.tMedia == 1
+                                          ? Container(
+                                              alignment: Alignment.center,
+                                              width: iconMenuSize,
+                                              height: iconMenuSize,
+                                              child: getSvgIcon(
+                                                  networkSvgIcon(),
+                                                  iconMenuSize,
+                                                  iconMenuSize,
+                                                  (!isSelect)
+                                                      ? Theme.of(context)
+                                                          .colorScheme
+                                                          .primary
+                                                      : Theme.of(context)
+                                                          .colorScheme
+                                                          .onPrimary))
+                                          : Container(
+                                              alignment: Alignment.center,
+                                              width: iconMenuSize,
+                                              height: iconMenuSize,
+                                              child: getSvgIcon(
+                                                  btSvgIcon(),
+                                                  iconMenuSize,
+                                                  iconMenuSize,
+                                                  (!isSelect)
+                                                      ? Theme.of(context)
+                                                          .colorScheme
+                                                          .primary
+                                                      : Theme.of(context)
+                                                          .colorScheme
+                                                          .onPrimary)))),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -1308,6 +1642,97 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
             })));
   }
 
+  Widget showBluetoothScaleInfo() {
+    return Expanded(
+        child: SizedBox(
+            width: double.infinity,
+            child: LayoutBuilder(
+                builder: (BuildContext context, BoxConstraints constraints) {
+              return ListView(
+                children: [
+                  const SizedBox(
+                    height: regularPadding,
+                  ),
+                  buildItemInfo(
+                      showItemNameWithStar(
+                          context, localizedStrings.gScaleName, false),
+                      showScaleNameInputBox(
+                          context,
+                          scaleNameCtl,
+                          '',
+                          IconButton(
+                            icon: Icon(Icons.edit_outlined), // 清除按钮图标
+                            onPressed: () {
+                              setState(() {
+                                isRename = true;
+                              });
+                            },
+                          ), (value) {
+                        setState(() {});
+                      }, isRename),
+                      showItemNameWithStar(
+                          context, localizedStrings.gModelName, false),
+                      showInputBox(context, scaleModelCtl, '', (value) {
+                        setState(() {});
+                      }, false)),
+                  const SizedBox(
+                    height: regularPadding,
+                  ),
+                  buildItemInfo(
+                      showItemNameWithStar(
+                          context, localizedStrings.gScaleSn, false),
+                      showInputBox(context, snCtl, '', (value) {
+                        setState(() {});
+                      }, false),
+                      showItemNameWithStar(
+                          context, localizedStrings.bluetoothName, false),
+                      showInputBox(context, btNameCtl, '', (value) {
+                        setState(() {});
+                      }, false)),
+                  const SizedBox(
+                    height: regularPadding,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                                width: inputWidth,
+                                child: showItemNameWithStar(context,
+                                    localizedStrings.bluetoothAddress, false)),
+                            SizedBox(
+                                width: inputWidth,
+                                child:
+                                    showInputBox(context, macCtl, '', (value) {
+                                  setState(() {});
+                                }, false))
+                          ]),
+                      Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                              width: inputWidth,
+                            ),
+                            SizedBox(
+                              width: inputWidth,
+                            )
+                          ])
+                    ],
+                  ),
+                  const SizedBox(
+                    height: regularPadding,
+                  ),
+                  const SizedBox(
+                    height: regularPadding,
+                  ),
+                  isRename ? showRenameConfirmBtn() : buttonRow(),
+                ],
+              );
+            })));
+  }
+
   void checkPortList() {
     if (myComInfoList.msgBody!.isEmpty) {
       comLists = [];
@@ -1555,6 +1980,26 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
     isAddNewScale = true;
   }
 
+  void addBtScale() {
+    if (selectBtInfo.mac == null || selectBtInfo.mac == "") {
+      return;
+    }
+
+    macCtl.text = selectBtInfo.mac ?? "";
+    btNameCtl.text = selectBtInfo.name ?? "";
+
+    myBluetoothInfo.mac = selectBtInfo.mac ?? "";
+    myBluetoothInfo.name = selectBtInfo.name ?? "";
+    String btInfoStr = blueToothInfoToJson(myBluetoothInfo);
+    myMediaConf.mediaInfoJson = btInfoStr;
+    myMediaConf.type = 2;
+    myAddNetScale.scaleId = 10;
+    myAddNetScale.scaleModel = 'TMax';
+    myAddNetScale.mediaConf = myMediaConf;
+    PublicFunctions.sendAddScale(jsonEncode(myAddNetScale));
+    isAddNewScale = true;
+  }
+
   bool isValidScaleName(String name) {
     for (Scale tempScale in myAllScalesList) {
       if (tempScale.scaleName == scaleNameCtl.text) {
@@ -1584,10 +2029,28 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
   }
 
   void delScale() {
-    DelScaleInfo delScale = DelScaleInfo();
-    delScale.scaleId = selScaleId;
-    String delStr = jsonEncode(delScale);
-    PublicFunctions.sendDelScale(delStr);
+    Scale? delScaleInfo;
+    for (var scale in myAllScalesList) {
+      if (scale.scaleId == selScaleId) {
+        delScaleInfo = scale;
+        break;
+      }
+    }
+
+    if (delScaleInfo!.mediaConfig.type == btScaleType) {
+      PublicFunctions.getBuildInfo(selScaleId);
+      Future.delayed(const Duration(seconds: 3), () {
+        DelScaleInfo delScale = DelScaleInfo();
+        delScale.scaleId = selScaleId;
+        String delStr = jsonEncode(delScale);
+        PublicFunctions.sendDelScale(delStr);
+      });
+    } else {
+      DelScaleInfo delScale = DelScaleInfo();
+      delScale.scaleId = selScaleId;
+      String delStr = jsonEncode(delScale);
+      PublicFunctions.sendDelScale(delStr);
+    }
   }
 
   void sendStaticIpInfo(String ip, String gateway, String netmask) {
@@ -1771,6 +2234,59 @@ class AddScaleDialogState extends State<AddScaleDialog> {
                                             .bodyMedium!
                                             .apply(
                                                 color: isWifiHovered
+                                                    ? Theme.of(context)
+                                                        .colorScheme
+                                                        .onPrimary
+                                                    : Theme.of(context)
+                                                        .colorScheme
+                                                        .primary),
+                                      )
+                                    ])),
+                          ),
+                        ),
+                        SizedBox(
+                          width: largePadding,
+                        ),
+                        MouseRegion(
+                          onEnter: (_) => setState(() => isBtHovered = true),
+                          onExit: (_) => setState(() => isBtHovered = false),
+                          child: InkWell(
+                            onTap: () {
+                              Navigator.pop(context, 'bt');
+                            },
+                            child: Container(
+                                width: 140,
+                                height: 120,
+                                alignment: Alignment.center,
+                                color: isBtHovered
+                                    ? Theme.of(context).colorScheme.primary
+                                    : Theme.of(context)
+                                        .colorScheme
+                                        .surfaceContainerLow,
+                                child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      getSvgIcon(
+                                          btSvgIcon(),
+                                          btnHeight,
+                                          btnHeight,
+                                          isBtHovered
+                                              ? Theme.of(context)
+                                                  .colorScheme
+                                                  .onPrimary
+                                              : Theme.of(context)
+                                                  .colorScheme
+                                                  .primary),
+                                      SizedBox(
+                                        height: regularPadding,
+                                      ),
+                                      Text(
+                                        localizedStrings.bluetooth,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyMedium!
+                                            .apply(
+                                                color: isBtHovered
                                                     ? Theme.of(context)
                                                         .colorScheme
                                                         .onPrimary

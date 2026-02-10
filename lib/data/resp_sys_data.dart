@@ -20,6 +20,7 @@ import '../eventbus/eventbus.dart';
 
 class RespSysMsgType {
   static const String respPortsList = 'resp_ports_list';
+  static const String respBtList = 'resp_bt_list';
   static const String respScalesList = 'resp_scales_list';
   static const String respScaleModify = 'resp_scale_modify';
   static const String respProductList = 'resp_product_list';
@@ -131,6 +132,7 @@ class RespSysMsgType {
 
   static final Map<String, Function> handlers = {
     RespSysMsgType.respPortsList: handlePortsList,
+    RespSysMsgType.respBtList: handleBtList,
     RespSysMsgType.respScalesList: handleScalesList,
     RespSysMsgType.respScaleModify: handleScaleModify,
     RespSysMsgType.respProductList: handleProductList,
@@ -227,6 +229,13 @@ class RespSysMsgType {
     RespSysMsgType.respGetAllSealLog: handleRespGetAllSealLog,
     RespSysMsgType.respUnsealByMasterKey: handleRespUnsealByMasterKey,
   };
+
+  static void handleBtList(dynamic jsonData) {
+    String dataString;
+    dataString = jsonData['MsgBody'];
+    String dataJson = json.decode(dataString); // 第一次解析：去掉外层的引号和转义
+    eventBus.fire(EventBtInfoList(dataJson));
+  }
 
   static void handlePortsList(dynamic jsonData) {
     String dataString;

@@ -1013,7 +1013,6 @@ class SyslogDataSource extends DataGridSource {
 
   Widget _buildCellContent(
       DataGridCell dataGridCell, SysLog syslog, int rowIndex, bool isSelected) {
-    final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
     switch (dataGridCell.columnName) {

@@ -3144,7 +3144,7 @@
     "@subTitleWiredSetting": {
         "description": "SubTitle for wired setting"
     },
-    "subTitleSealManagment": "铅封管理",
+    "subTitleSealManagment": "施加软件铅封，进一步防止设备篡改",
     "@subTitleSealManagment": {
         "description": "SubTitle for seal management"
     },
@@ -4111,5 +4111,37 @@
     "removeSealFailed": "解除软铅封失败",
     "@removeSealFailed": {
         "description": "Error message when removing the software seal fails"
+    },
+    "bluetooth": "蓝牙",
+    "@bluetooth": {
+        "description": "Bluetooth"
+    },
+    "noBluetoothDevicesFound": "未发现蓝牙设备",
+    "@noBluetoothDevicesFound": {
+        "description": "No Bluetooth devices found"
+    },
+    "ensureBluetoothIsEnabled": "请确保蓝牙已开启",
+    "@ensureBluetoothIsEnabled": {
+        "description": "Please ensure Bluetooth is enabled"
+    },
+    "bluetoothName": "蓝牙名称",
+    "@bluetoothName": {
+        "description": "Bluetooth name"
+    },
+    "bluetoothAddress": "蓝牙地址",
+    "@bluetoothAddress": {
+        "description": "Bluetooth address"
+    },
+    "scanBluetoothDevices": "重新扫描",
+    "@scanBluetoothDevices": {
+        "description": "Scan for Bluetooth devices"
+    },
+    "searchingBluetoothDevices": "正在搜索蓝牙设备...（约20秒）",
+    "@searchingBluetoothDevices": {
+        "description": "Searching for nearby Bluetooth devices - this may take up to 20 seconds"
+    },
+    "startSearchBluetoothDevices": "开始搜索",
+    "@startSearchBluetoothDevices": {
+        "description": "Start searching for Bluetooth devices"
     }
 }

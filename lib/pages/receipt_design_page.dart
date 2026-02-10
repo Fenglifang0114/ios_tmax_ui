@@ -612,11 +612,13 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
                               child: Text(
                                 localizedStrings.gPrinter,
                                 textAlign: TextAlign.right,
-                                style: TextStyle(
-                                    color:
-                                        Theme.of(context).colorScheme.primary,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.normal),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall!
+                                    .apply(
+                                      color:
+                                          Theme.of(context).colorScheme.primary,
+                                    ),
                               ),
                             ),
                             const SizedBox(
@@ -649,11 +651,13 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
                               child: Text(
                                 localizedStrings.gPrintDirection,
                                 textAlign: TextAlign.right,
-                                style: TextStyle(
-                                    color:
-                                        Theme.of(context).colorScheme.primary,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.normal),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall!
+                                    .apply(
+                                      color:
+                                          Theme.of(context).colorScheme.primary,
+                                    ),
                               ),
                             ),
                             const SizedBox(
@@ -2191,10 +2195,9 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
         height: 50,
         child: Text(
           localizedStrings.gMsgNoElement,
-          style: TextStyle(
-              fontSize: 20,
-              color: Theme.of(context).colorScheme.error,
-              fontWeight: FontWeight.normal),
+          style: Theme.of(context).textTheme.bodySmall!.apply(
+                color: Theme.of(context).colorScheme.error,
+              ),
         ),
       ),
     ];
@@ -2206,10 +2209,9 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
       child: Text(
         textStr,
         textAlign: TextAlign.right,
-        style: TextStyle(
-            color: Theme.of(context).colorScheme.primary,
-            fontSize: 14,
-            fontWeight: FontWeight.normal),
+        style: Theme.of(context).textTheme.bodySmall!.apply(
+              color: Theme.of(context).colorScheme.primary,
+            ),
       ),
     );
   }
@@ -2220,12 +2222,12 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
     return TextField(
       controller: controller,
       decoration: InputDecoration(
-        labelStyle:
-            const TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
-        hintStyle: const TextStyle(fontSize: 14),
+        labelStyle: Theme.of(context).textTheme.bodySmall!.apply(),
+        hintStyle: Theme.of(context).textTheme.bodySmall!.apply(),
         labelText: labelText,
         hintText: hintText,
       ),
+      style: Theme.of(context).textTheme.bodySmall!.apply(),
       onEditingComplete: () {
         _onSubmit(controller.text, num);
       },
@@ -2304,13 +2306,13 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
           Container(
             height: 48,
             width: 50,
-            alignment: Alignment.centerRight,
+            alignment: Alignment.centerLeft,
             padding: const EdgeInsets.only(right: smallPadding),
-            child: Text("X:",
-                textAlign: TextAlign.right,
-                style: TextStyle(
-                  fontSize: 14,
-                )),
+            child: Text(
+              "X:",
+              textAlign: TextAlign.right,
+              style: Theme.of(context).textTheme.bodySmall!.apply(),
+            ),
           ),
           Expanded(
             child: TextField(
@@ -2327,6 +2329,7 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
                 _onSubmit(xPosvar.text, 2);
               }, // 点击“完成”按钮后，调用失去焦点方法
               focusNode: _focusNodexPos, // 将FocusNode对象绑定到TextField
+              style: Theme.of(context).textTheme.bodySmall!.apply(),
             ),
           ),
         ],
@@ -2339,13 +2342,13 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
           Container(
             height: 48,
             width: 50,
-            alignment: Alignment.centerRight,
+            alignment: Alignment.centerLeft,
             padding: const EdgeInsets.only(right: smallPadding),
-            child: Text("Y:",
-                textAlign: TextAlign.right,
-                style: TextStyle(
-                  fontSize: 14,
-                )),
+            child: Text(
+              "Y:",
+              textAlign: TextAlign.right,
+              style: Theme.of(context).textTheme.bodySmall!.apply(),
+            ),
           ),
           Expanded(
             child: TextField(
@@ -2362,6 +2365,7 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
                 _onSubmit(yPosvar.text, 3);
               }, // 点击“完成”按钮后，调用失去焦点方法
               focusNode: _focusNodeyPos, // 将FocusNode对象绑定到TextField
+              style: Theme.of(context).textTheme.bodySmall!.apply(),
             ),
           ),
         ],

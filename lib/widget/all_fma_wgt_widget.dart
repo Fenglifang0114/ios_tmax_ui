@@ -110,7 +110,7 @@ class OrderDataSource extends DataGridSource {
                     value: isSelected,
                     onChanged: (value) => _onSelectionChanged(header.recordId!),
                   )
-                : Container(
+                : SizedBox(
                     width: 40,
                     height: 40,
                   ), // 明细行留空
