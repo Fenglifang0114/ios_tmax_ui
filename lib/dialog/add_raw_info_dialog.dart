@@ -4,12 +4,14 @@ import 'package:t_max/data/formula_scale_data.dart';
 import 'package:t_max/data/g_data.dart';
 import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/data/language.dart';
+import 'package:t_max/data/readoutput.dart';
 import 'package:t_max/data/req_formula_data.dart';
 import 'package:t_max/data/scale_info_from_db.dart';
 import 'package:t_max/dialog/custom_dialog_tip.dart';
 import 'package:t_max/dialog/raw_type_mgr.dart';
 import 'package:t_max/eventbus/eventbus.dart';
 import 'package:t_max/functions/methods.dart';
+import 'package:t_max/generated/l10n.dart';
 import 'package:t_max/widget/common_widget.dart';
 import 'package:t_max/widget/dialog_head_style.dart';
 
@@ -41,10 +43,15 @@ class AddRawDialogState extends State<AddRawDialog> {
   TextEditingController rawTypeCtl = TextEditingController();
   TextEditingController scaleNameCtl = TextEditingController();
   TextEditingController checkCodeCtl = TextEditingController();
+  TextEditingController outputPortCtl = TextEditingController();
   dynamic _eventbus1;
+  dynamic _eventbus2;
+
+  List<RespOutputInfo> outputPortStatusList = [];
 
   @override
   void initState() {
+    PublicFunctions.getOutputPortStatus();
     _eventbus1 = eventBus.on<EventRespGetRawTypeList>().listen((event) {
       if (mounted) {
         String dataStr = event.obj;
@@ -59,6 +66,27 @@ class AddRawDialogState extends State<AddRawDialog> {
         }
       }
     });
+
+    _eventbus2 = eventBus.on<EventRespGetOutputPortStatus>().listen((event) {
+      if (mounted) {
+        String dataStr = event.obj;
+        if (dataStr != '' && dataStr != 'null') {
+          try {
+            List<RespOutputInfo> tempList = respOutputInfoFromJson(dataStr);
+
+            setState(() {
+              if (tempList.isNotEmpty) {
+                outputPortStatusList = tempList;
+              }
+            });
+          } catch (e) {
+            setState(() {});
+          }
+        } else {
+          setState(() {});
+        }
+      }
+    });
     super.initState();
   }
 
@@ -67,12 +95,15 @@ class AddRawDialogState extends State<AddRawDialog> {
   @override
   void dispose() {
     _eventbus1.cancel();
+    _eventbus2.cancel();
+
     rawCodeCtl.dispose();
     rawNameCtl.dispose();
     rawRemarkCtl.dispose();
     rawTypeCtl.dispose();
     scaleNameCtl.dispose();
     checkCodeCtl.dispose();
+    outputPortCtl.dispose();
 
     super.dispose();
   }
@@ -157,7 +188,7 @@ class AddRawDialogState extends State<AddRawDialog> {
   }
 
 //选择秤
-  showScaleDropDownBtn(String hintText) {
+  Widget showScaleDropDownBtn(String hintText) {
     return Container(
         height: 48,
         padding: const EdgeInsets.only(left: 10, right: 10),
@@ -229,6 +260,98 @@ class AddRawDialogState extends State<AddRawDialog> {
                 )));
   }
 
+  String getOutputPortRemarkString(String port) {
+    RespOutputInfo? info = outputPortStatusList.firstWhere(
+        (element) => element.port.toString() == port,
+        orElse: () => RespOutputInfo());
+    return info.remark ?? "";
+  }
+
+  List<String> outputPortList = [
+    "0",
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9",
+    "10",
+    "11",
+    "12"
+  ];
+
+  //选择输出端口
+  Widget showOutputDropDownBtn(String hintText) {
+    // 过滤掉"0"后的选项列表
+    final filteredList = outputPortList.where((item) => item != "0").toList();
+
+    // 检查当前value是否在过滤后的列表中
+    String? currentValue = outputPortCtl.text;
+    if (currentValue != null && !filteredList.contains(currentValue)) {
+      // 如果当前值不在过滤后的列表中（比如是"0"），则设置为null
+      currentValue = null;
+    }
+
+    return Container(
+        height: 48,
+        padding: const EdgeInsets.only(left: 10, right: 10),
+        decoration: BoxDecoration(
+          border: Border.all(
+              color: Theme.of(context).colorScheme.outlineVariant), // 设置边框颜色
+          borderRadius: BorderRadius.circular(0), // 设置圆角
+        ),
+        child: DropdownButton<String>(
+            // 明确指定泛型类型
+            underline: SizedBox(),
+            isExpanded: true,
+            value: currentValue, // 使用检查后的值
+            items: [
+              // 提示项
+              DropdownMenuItem<String>(
+                value: null,
+                child: Text(
+                  hintText,
+                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                        color: Theme.of(context)
+                            .colorScheme
+                            .surfaceContainerHighest,
+                      ),
+                ),
+              ),
+              // 选项列表（已过滤掉"0"）
+              ...filteredList.map((String item) {
+                return DropdownMenuItem<String>(
+                  value: item,
+                  child:
+                      Text("$item    :    ${getOutputPortRemarkString(item)}",
+                          style: Theme.of(context).textTheme.bodySmall!.apply(
+                                color: Theme.of(context).colorScheme.onSurface,
+                              )),
+                );
+              }),
+            ],
+            onChanged: (String? value) {
+              // 明确参数类型
+              if (value == null) {
+                setState(() {
+                  outputPortCtl.text = ''; // 修正：应该是outputPortCtl，不是scaleNameCtl
+                });
+                return;
+              }
+
+              setState(() {
+                outputPortCtl.text =
+                    value; // 修正：应该是outputPortCtl，不是scaleNameCtl
+              });
+            },
+            style: Theme.of(context).textTheme.bodySmall!.apply(
+                  color: Theme.of(context).colorScheme.onSurface,
+                )));
+  }
+
   // 显示原料类型管理的对话框
   void showRawTypeMgrDialog() {
     showDialog(
@@ -264,7 +387,7 @@ class AddRawDialogState extends State<AddRawDialog> {
       backgroundColor: Colors.transparent,
       child: Container(
         width: 610,
-        height: 593,
+        height: 665,
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(0),
@@ -516,7 +639,30 @@ class AddRawDialogState extends State<AddRawDialog> {
                 ]),
               ),
               SizedBox(
-                height: 160,
+                height: 90,
+                width: 582,
+                child: Row(children: [
+                  SizedBox(
+                    width: 20,
+                  ),
+                  Expanded(
+                      flex: 1,
+                      child: Column(children: [
+                        showItemNameWithStar(
+                            context, localizedStrings.outputPort, false),
+                        showOutputDropDownBtn(localizedStrings.outputPort),
+                      ])),
+                  SizedBox(
+                    width: largePadding,
+                  ),
+                  Expanded(flex: 1, child: SizedBox()),
+                  SizedBox(
+                    width: largePadding,
+                  ),
+                ]),
+              ),
+              SizedBox(
+                height: 150,
                 width: 582,
                 child: Row(
                   children: [
@@ -561,44 +707,48 @@ class AddRawDialogState extends State<AddRawDialog> {
                           borderRadius: BorderRadius.zero,
                         ),
                       ),
-                      onPressed:
-                          (rawCodeCtl.text.isEmpty || rawNameCtl.text.isEmpty)
-                              ? null
-                              : () {
-                                  // 检查原料是否已经存在
-                                  for (var item in rawDataList) {
-                                    if (item.materialId == rawCodeCtl.text) {
-                                      showTipInfo(
-                                          localizedStrings.fRawIdDuplicate,
-                                          context);
-                                      return;
-                                    }
-                                  }
+                      onPressed: (rawCodeCtl.text.isEmpty ||
+                              rawNameCtl.text.isEmpty)
+                          ? null
+                          : () {
+                              // 检查原料是否已经存在
+                              for (var item in rawDataList) {
+                                if (item.materialId == rawCodeCtl.text) {
+                                  showTipInfo(localizedStrings.fRawIdDuplicate,
+                                      context);
+                                  return;
+                                }
+                              }
 
-                                  int typeId = getRawTypeId(rawTypeCtl.text);
-                                  if (typeId == -1) {
-                                    typeId = 0;
-                                    // return;
-                                  }
-                                  int? scaleId = 0;
-                                  if (scaleNameCtl.text != "") {
-                                    scaleId = int.tryParse(scaleNameCtl.text);
-                                  }
-                                  AddRawData data = AddRawData(
-                                      materialId: rawCodeCtl.text,
-                                      materialName: rawNameCtl.text,
-                                      categoryId: typeId,
-                                      ingredient: rawRemarkCtl.text,
-                                      createdBy: mySysUser.nickName!,
-                                      updatedBy: mySysUser.nickName!,
-                                      remark: "",
-                                      remark1: "",
-                                      scaleId: scaleId,
-                                      checkCode: checkCodeCtl.text);
+                              int typeId = getRawTypeId(rawTypeCtl.text);
+                              if (typeId == -1) {
+                                typeId = 0;
+                                // return;
+                              }
+                              int? scaleId = 0;
+                              if (scaleNameCtl.text != "") {
+                                scaleId = int.tryParse(scaleNameCtl.text);
+                              }
+                              int output = 0;
+                              if (outputPortCtl.text != "") {
+                                output = int.tryParse(outputPortCtl.text) ?? 0;
+                              }
+                              AddRawData data = AddRawData(
+                                  materialId: rawCodeCtl.text,
+                                  materialName: rawNameCtl.text,
+                                  categoryId: typeId,
+                                  ingredient: rawRemarkCtl.text,
+                                  createdBy: mySysUser.nickName!,
+                                  updatedBy: mySysUser.nickName!,
+                                  remark: "",
+                                  remark1: "",
+                                  scaleId: scaleId,
+                                  checkCode: checkCodeCtl.text,
+                                  output: output);
 
-                                  PublicFunctions.addRawData(data);
-                                  Navigator.pop(context);
-                                },
+                              PublicFunctions.addRawData(data);
+                              Navigator.pop(context);
+                            },
                       child: Text(
                         localizedStrings.gBtnConfirm,
                         style: Theme.of(context).textTheme.labelMedium!.apply(
@@ -715,8 +865,13 @@ class EditRawDialogState extends State<EditRawDialog> {
   TextEditingController rawTypeCtl = TextEditingController();
   TextEditingController scaleIdCtl = TextEditingController();
   TextEditingController checkCodeCtl = TextEditingController();
+  TextEditingController outputPortCtl = TextEditingController();
 
   dynamic _eventbus1;
+
+  dynamic _eventbus2;
+
+  List<RespOutputInfo> outputPortStatusList = [];
 
   @override
   void initState() {
@@ -731,6 +886,11 @@ class EditRawDialogState extends State<EditRawDialog> {
             ? ""
             : widget.rawData.scaleId.toString();
     checkCodeCtl.text = widget.rawData.checkCode!;
+    outputPortCtl.text =
+        (widget.rawData.output == 0 || widget.rawData.output == null)
+            ? ""
+            : widget.rawData.output.toString();
+    PublicFunctions.getOutputPortStatus();
     _eventbus1 = eventBus.on<EventRespGetRawTypeList>().listen((event) {
       if (mounted) {
         String dataStr = event.obj;
@@ -745,15 +905,40 @@ class EditRawDialogState extends State<EditRawDialog> {
         }
       }
     });
+
+    _eventbus2 = eventBus.on<EventRespGetOutputPortStatus>().listen((event) {
+      if (mounted) {
+        String dataStr = event.obj;
+        if (dataStr != '' && dataStr != 'null') {
+          try {
+            List<RespOutputInfo> tempList = respOutputInfoFromJson(dataStr);
+
+            setState(() {
+              if (tempList.isNotEmpty) {
+                outputPortStatusList = tempList;
+              }
+            });
+          } catch (e) {
+            setState(() {});
+          }
+        } else {
+          setState(() {});
+        }
+      }
+    });
   }
 
   @override
   void dispose() {
     _eventbus1.cancel();
+    _eventbus2.cancel();
     rawCodeCtl.dispose();
     rawNameCtl.dispose();
     rawRemarkCtl.dispose();
     rawTypeCtl.dispose();
+    scaleIdCtl.dispose();
+    checkCodeCtl.dispose();
+    outputPortCtl.dispose();
 
     super.dispose();
   }
@@ -877,6 +1062,99 @@ class EditRawDialogState extends State<EditRawDialog> {
                 )));
   }
 
+  String getOutputPortRemarkString(String port) {
+    RespOutputInfo? info = outputPortStatusList.firstWhere(
+        (element) => element.port.toString() == port,
+        orElse: () => RespOutputInfo());
+    return info.remark ?? "";
+  }
+
+  List<String> outputPortList = [
+    "0",
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9",
+    "10",
+    "11",
+    "12"
+  ];
+
+  //选择输出端口
+  Widget showOutputDropDownBtn(String hintText) {
+    // 过滤掉"0"后的选项列表
+    final filteredList = outputPortList.where((item) => item != "0").toList();
+
+    // 检查当前value是否在过滤后的列表中
+    String? currentValue = outputPortCtl.text;
+    if (currentValue != null && !filteredList.contains(currentValue)) {
+      // 如果当前值不在过滤后的列表中（比如是"0"），则设置为null
+      currentValue = null;
+    }
+
+    return Container(
+        height: 48,
+        padding: const EdgeInsets.only(left: 10, right: 10),
+        decoration: BoxDecoration(
+          border: Border.all(
+              color: Theme.of(context).colorScheme.outlineVariant), // 设置边框颜色
+          borderRadius: BorderRadius.circular(0), // 设置圆角
+        ),
+        child: DropdownButton<String>(
+            // 明确指定泛型类型
+            underline: SizedBox(),
+            isExpanded: true,
+            value: currentValue, // 使用检查后的值
+            items: [
+              // 提示项
+              DropdownMenuItem<String>(
+                value: null,
+                child: Text(
+                  hintText,
+                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                        fontSize: 12,
+                        color: Theme.of(context)
+                            .colorScheme
+                            .surfaceContainerHighest,
+                      ),
+                ),
+              ),
+              // 选项列表（已过滤掉"0"）
+              ...filteredList.map((String item) {
+                return DropdownMenuItem<String>(
+                  value: item,
+                  child:
+                      Text("$item    :    ${getOutputPortRemarkString(item)}",
+                          style: Theme.of(context).textTheme.bodySmall!.apply(
+                                color: Theme.of(context).colorScheme.onSurface,
+                              )),
+                );
+              }),
+            ],
+            onChanged: (String? value) {
+              // 明确参数类型
+              if (value == null) {
+                setState(() {
+                  outputPortCtl.text = ''; // 修正：应该是outputPortCtl，不是scaleNameCtl
+                });
+                return;
+              }
+
+              setState(() {
+                outputPortCtl.text =
+                    value; // 修正：应该是outputPortCtl，不是scaleNameCtl
+              });
+            },
+            style: Theme.of(context).textTheme.bodySmall!.apply(
+                  color: Theme.of(context).colorScheme.onSurface,
+                )));
+  }
+
   //// 显示原料类型管理的对话框
   void showRawTypeMgrDialog() {
     showDialog(
@@ -896,7 +1174,7 @@ class EditRawDialogState extends State<EditRawDialog> {
       backgroundColor: Colors.transparent,
       child: Container(
         width: 610,
-        height: 593,
+        height: 665,
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(0),
@@ -1154,6 +1432,29 @@ class EditRawDialogState extends State<EditRawDialog> {
                 ]),
               ),
               SizedBox(
+                height: 90,
+                width: 582,
+                child: Row(children: [
+                  SizedBox(
+                    width: 20,
+                  ),
+                  Expanded(
+                      flex: 1,
+                      child: Column(children: [
+                        showItemNameWithStar(
+                            context, localizedStrings.outputPort, false),
+                        showOutputDropDownBtn(localizedStrings.outputPort),
+                      ])),
+                  SizedBox(
+                    width: largePadding,
+                  ),
+                  Expanded(flex: 1, child: SizedBox()),
+                  SizedBox(
+                    width: largePadding,
+                  ),
+                ]),
+              ),
+              SizedBox(
                 height: 116,
                 width: 582,
                 child: Row(children: [
@@ -1247,6 +1548,11 @@ class EditRawDialogState extends State<EditRawDialog> {
                                   if (scaleIdCtl.text.isNotEmpty) {
                                     scaleId = int.parse(scaleIdCtl.text);
                                   }
+                                  int output = 0;
+                                  if (outputPortCtl.text.isNotEmpty) {
+                                    output = int.parse(outputPortCtl.text);
+                                  }
+
                                   EditRawData data = EditRawData(
                                     recId: widget.rawData.recId!,
                                     materialId: rawCodeCtl.text,
@@ -1259,6 +1565,7 @@ class EditRawDialogState extends State<EditRawDialog> {
                                     remark1: "",
                                     scaleId: scaleId,
                                     checkCode: checkCodeCtl.text,
+                                    output: output,
                                   );
                                   PublicFunctions.editRawData(data);
 

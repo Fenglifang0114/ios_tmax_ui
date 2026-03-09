@@ -12,6 +12,7 @@ import 'package:t_max/data/formula_wgt_process_data.dart';
 import 'package:t_max/data/g_data.dart';
 import 'package:t_max/data/get_auto_next_data.dart';
 import 'package:t_max/data/home_page_common_data.dart';
+import 'package:t_max/data/readoutput.dart';
 import 'package:t_max/data/req_add_fma_rec_data.dart';
 import 'package:t_max/data/req_formula_data.dart';
 import 'package:t_max/data/reqweightdata_data.dart';
@@ -74,6 +75,14 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
   bool checkCodeOk = true; //当前校验码是否正确
   bool checkCodeDialogShowing = false; //校验码对话框是否正在显示
   bool isPrint = false; //是否打印配方
+  bool openIoPortFlag = false; //是否打开输出端口 开启后才能自动送出原料开启仓门
+
+  CurrentPortSetting currentPortSetting = CurrentPortSetting(
+      isEnable: false,
+      isOpen: false,
+      portNo: 0,
+      triggerValue: 0.0,
+      delayedTime: 0); //当前的输出端口设置
 
   Map<int, bool> scaleMap = {}; //scaleId , isWgtStart
   Map<String, int> rawScaleMap = {}; //原料名称，秤ID
@@ -87,9 +96,12 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
 
   dynamic _eventbus5;
   dynamic _eventbus6;
-  dynamic _eventbus7; // 配方打印事件
+  dynamic _eventbus7;
   dynamic _eventbus8;
   dynamic _eventbus9;
+  dynamic _eventbus10;
+  dynamic _eventbus11;
+  dynamic _eventbus12;
 
   Timer? setWgtStartFalseTimer; // 用于每3秒将isWgtStart设置为false的定时器
   Timer? checkWgtStartTimer; // 用于每5秒检查isWgtStart的定时器
@@ -109,6 +121,9 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
   FormulaInfoDb myFmaInfo = FormulaInfoDb(); //当前配方信息
   ColorScheme get colorScheme => Theme.of(context).colorScheme;
   TextTheme get textTheme => Theme.of(context).textTheme;
+
+  List<RespOutputInfo> outputPortStatusList = [];
+  List<RawOutputInfo> rawOutputInfoList = []; // 原料重量信息列表
 
   // 启动发送存活消息的定时器
   void startCntAliveTimer(int time) {
@@ -557,6 +572,13 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
     myFmaInfo = widget.selectFormula;
     fmaUnit = widget.fmaUnit; //获取传入的配方单位
 
+    PublicFunctions.getOutputPortStatus();
+
+    GetRawOutputByFmaId getRawOutputByFmaId = GetRawOutputByFmaId(
+      formulaId: widget.selectFormula.header!.formulaId,
+    );
+    PublicFunctions.getRawOutputByFmaId(jsonEncode(getRawOutputByFmaId));
+
     initScaleMap();
     initTotalWgtUnit(); //初始化百分比的总重量和单位
     initWgtList();
@@ -698,6 +720,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
                 // print('Failed to parse weight value: $e');
                 currentRawWgt = 0.0;
               }
+              handleStopIoPort();
             }
           }
         });
@@ -728,6 +751,51 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
         }
       }
     });
+
+    _eventbus10 = eventBus.on<EventRespGetOutputPortStatus>().listen((event) {
+      if (mounted) {
+        String dataStr = event.obj;
+        if (dataStr != '' && dataStr != 'null') {
+          try {
+            outputPortStatusList = respOutputInfoFromJson(dataStr);
+
+            setState(() {});
+          } catch (e) {
+            setState(() {});
+          }
+        } else {
+          setState(() {});
+        }
+      }
+    });
+
+    _eventbus11 = eventBus.on<EventRespRawOutputByFmaId>().listen((event) {
+      if (mounted) {
+        String dataStr = event.obj;
+        if (dataStr != '' && !dataStr.contains("fail")) {
+          try {
+            List<RawOutputInfo> tempList = rawOutputInfoFromJson(dataStr);
+
+            setState(() {
+              rawOutputInfoList = tempList;
+            });
+          } catch (e) {
+            setState(() {});
+          }
+        } else {
+          setState(() {});
+        }
+      }
+    });
+
+    _eventbus12 = eventBus.on<EventRespOpenOutputPort>().listen((event) {
+      if (mounted) {
+        String dataStr = event.obj;
+        if (dataStr.contains("fail")) {
+          showTipInfo(localizedStrings.openOutputPortFailed, context);
+        }
+      }
+    });
   }
 
   @override
@@ -740,6 +808,9 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
     _eventbus7.cancel();
     _eventbus8.cancel();
     _eventbus9.cancel();
+    _eventbus10.cancel();
+    _eventbus11.cancel();
+    _eventbus12.cancel();
 
     stopCntAliveTimer();
     currentWgtStrNotifier.dispose();
@@ -2641,8 +2712,12 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
       _switchScaleByRawId(selectedProcessWgt.rawId!);
     }
     currentRawWgt = 0.0;
+    handleCloseIoPort();
+
     if (checkCodeflag) {
       showCheckCodeDialog();
+    } else {
+      handleIoPortStatus();
     }
   }
 
@@ -2755,6 +2830,8 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
       currentRawWgt = 0.000;
       if (checkCodeflag) {
         showCheckCodeDialog();
+      } else {
+        handleIoPortStatus();
       }
     } catch (e) {
       // 如果没有 isOK 不为 'ok' 的项，说明配方完成了
@@ -2762,6 +2839,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
         isEnableNext = false; // 禁用按钮
       });
       showTipInfo(localizedStrings.fFormulaCompletionMsg, context);
+      handleCloseIoPort();
       saveFormula();
       return;
     }
@@ -2834,6 +2912,8 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
 
     if (checkCodeflag) {
       showCheckCodeDialog();
+    } else {
+      handleIoPortStatus();
     }
   }
 
@@ -2915,6 +2995,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
         if (autoTare) {
           PublicFunctions.performTareWithScaleId(myScale.scaleId);
         }
+        handleCloseIoPort();
         //查找下一个
         findOkNextRaw();
 
@@ -2924,6 +3005,185 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
         // print('未找到匹配的原料重量项: $e');
       }
     }
+  }
+
+  void handleCloseIoPort() {
+    if (!openIoPortFlag ||
+        !currentPortSetting.isOpen ||
+        !currentPortSetting.isEnable ||
+        currentPortSetting.portNo == 0) {
+      return;
+    }
+
+    closeIoPort();
+  }
+
+  //换算单位 重量单位有三种可能，1.kg 2.g 3.lb
+  //原单位是g
+  //如果是g，不处理
+  //如果是kg，将重量转换为kg
+  //如果是lb，将重量转换为lb
+  //保留最多三位小数
+  double convertWeightUnit(double wgt) {
+    //如果是0，不处理
+    if (wgt == 0) {
+      return wgt;
+    }
+
+    if (myFmaInfo.header!.formulaUnit == 'g') {
+      return wgt;
+    } else if (myFmaInfo.header!.formulaUnit == 'kg') {
+      wgt = wgt / 1000;
+    } else if (myFmaInfo.header!.formulaUnit == 'lb') {
+      wgt = wgt / 2.20462;
+    }
+    wgt = double.parse(wgt.toStringAsFixed(3));
+    return wgt;
+  }
+
+  void handleStopIoPort() {
+    if (!openIoPortFlag ||
+        !currentPortSetting.isOpen ||
+        !currentPortSetting.isEnable ||
+        currentPortSetting.portNo == 0) {
+      return;
+    }
+
+    try {
+      //找出触发关闭的重量值  先进行单位转换
+      double triggerWgt = currentPortSetting.triggerValue;
+      triggerWgt = convertWeightUnit(triggerWgt);
+
+      //单位转换完成后，判断当前重量是否大于等于触发关闭的重量值
+      //触发值是目标值减去触发值
+      if (selectedProcessWgt.targetWgt == null) {
+        return;
+      }
+
+      if (selectedProcessWgt.targetWgt! - selectedProcessWgt.currentWgt! <=
+          triggerWgt) {
+        return;
+      }
+
+      if (selectedProcessWgt.targetWgt! <= triggerWgt) {
+        return;
+      }
+
+      triggerWgt = selectedProcessWgt.targetWgt! -
+          selectedProcessWgt.currentWgt! -
+          triggerWgt;
+      triggerWgt = double.parse(triggerWgt.toStringAsFixed(3));
+
+      if (currentRawWgt >= triggerWgt) {
+        closeIoPort();
+      }
+    } catch (e) {
+      print(e.toString());
+      return;
+    }
+  }
+
+  Future<void> handleIoPortStatus() async {
+    // 前置条件检查保持不变...
+    if (!openIoPortFlag) return;
+    if (rawOutputInfoList.isEmpty) return;
+    if (selectedProcessWgt.no == 0) return;
+    if (selectedProcessWgt.isOK == okStr) return;
+    if (currentRawWgt >= selectedProcessWgt.targetWgt!) return;
+    if (currentRawWgt + selectedProcessWgt.currentWgt! >=
+        selectedProcessWgt.targetWgt!) {
+      return;
+    }
+    if (myReqWeightCountine.msgBody!.weightUnit !=
+        myFmaInfo.header!.formulaUnit) {
+      return;
+    }
+
+    // 查找端口配置（保持不变）
+    for (var rawOutputInfo in rawOutputInfoList) {
+      if (rawOutputInfo.materialId == selectedProcessWgt.rawId) {
+        currentPortSetting.isEnable = false;
+        currentPortSetting.portNo = rawOutputInfo.output!;
+        currentPortSetting.isOpen = false;
+        break;
+      }
+    }
+
+    // 获取端口状态和延迟时间
+    for (var portInfo in outputPortStatusList) {
+      if (portInfo.port == currentPortSetting.portNo) {
+        currentPortSetting.isEnable = portInfo.status!;
+        currentPortSetting.triggerValue = portInfo.endValue!;
+        currentPortSetting.delayedTime = portInfo.startTime!;
+        break;
+      }
+    }
+
+    if (!currentPortSetting.isEnable || currentPortSetting.portNo == 0) {
+      return;
+    }
+    int delayedTime = currentPortSetting.delayedTime;
+    if (delayedTime < 1000) {
+      delayedTime = 1000;
+    }
+
+    // 延迟后重新检查条件并打开端口
+    await Future.delayed(Duration(milliseconds: delayedTime));
+
+    // 重新检查所有关键条件
+    if (!await checkConditionsStillValid()) {
+      return;
+    }
+
+    openIoPort();
+  }
+
+// 提取条件检查为单独的方法
+  Future<bool> checkConditionsStillValid() {
+    // 重新获取最新的状态数据（可能需要从硬件或状态管理获取）
+    // 这里需要根据你的实际架构来实现
+
+    return Future.value(openIoPortFlag &&
+        rawOutputInfoList.isNotEmpty &&
+        selectedProcessWgt.no != 0 &&
+        selectedProcessWgt.isOK != okStr &&
+        currentRawWgt < selectedProcessWgt.targetWgt! &&
+        currentRawWgt + selectedProcessWgt.currentWgt! <
+            selectedProcessWgt.targetWgt! &&
+        myReqWeightCountine.msgBody!.weightUnit ==
+            myFmaInfo.header!.formulaUnit &&
+        currentPortSetting.isEnable &&
+        currentPortSetting.portNo != 0);
+  }
+
+  void openIoPort() {
+    if (openIoPortFlag &&
+        currentPortSetting.isEnable &&
+        currentPortSetting.portNo != 0) {
+      ReqPortInfo reqPortInfo =
+          ReqPortInfo(portId: currentPortSetting.portNo, status: true);
+      String jsonStr = reqPortInfoToJson(reqPortInfo);
+      PublicFunctions.writeModbusCoils(jsonStr);
+    }
+    setState(() {
+      currentPortSetting.isOpen = true;
+    });
+  }
+
+  void closeIoPort() {
+    if (openIoPortFlag &&
+        currentPortSetting.isOpen &&
+        currentPortSetting.portNo != 0) {
+      ReqPortInfo reqPortInfo =
+          ReqPortInfo(portId: currentPortSetting.portNo, status: false);
+      String jsonStr = reqPortInfoToJson(reqPortInfo);
+      PublicFunctions.writeModbusCoils(jsonStr);
+    }
+
+    setState(() {
+      currentPortSetting.isOpen = false;
+      currentPortSetting.portNo = 0;
+    });
   }
 
 //单据编号
@@ -2944,6 +3204,32 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
                 .labelMedium!
                 .apply(color: colorScheme.onSurface),
           )),
+          SizedBox(
+            height: 40,
+            child: IconButton(
+                iconSize: 35,
+                padding: EdgeInsets.zero,
+                visualDensity: VisualDensity.compact,
+                icon: Icon(openIoPortFlag
+                    ? Icons.toggle_on_outlined
+                    : Icons.toggle_off_outlined),
+                tooltip: localizedStrings.ioPort,
+                color: openIoPortFlag
+                    ? Theme.of(context).colorScheme.onTertiaryFixedVariant
+                    : Theme.of(context).colorScheme.onSurfaceVariant,
+                onPressed: () {
+                  setState(() {
+                    closeIoPort();
+                    openIoPortFlag = !openIoPortFlag;
+                  });
+                  if (openIoPortFlag) {
+                    handleIoPortStatus();
+                  }
+                }),
+          ),
+          SizedBox(
+            width: 5,
+          ),
           SizedBox(
             height: 40,
             child: IconButton(

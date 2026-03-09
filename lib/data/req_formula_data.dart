@@ -84,6 +84,7 @@ class AddRawData {
   String remark1;
   int? scaleId;
   String? checkCode;
+  int? output;
 
   AddRawData({
     required this.materialId,
@@ -96,6 +97,7 @@ class AddRawData {
     required this.remark1,
     this.scaleId,
     this.checkCode,
+    this.output,
   });
 
   Map<String, dynamic> toJson() => {
@@ -109,6 +111,7 @@ class AddRawData {
         "Remark1": remark1,
         "ScaleId": scaleId,
         "CheckCode": checkCode,
+        "Output": output,
       };
 }
 
@@ -126,19 +129,22 @@ class EditRawData {
   String remark1;
   int? scaleId;
   String? checkCode;
+  int? output;
 
-  EditRawData(
-      {required this.recId,
-      required this.materialId,
-      required this.materialName,
-      required this.categoryId,
-      required this.ingredient,
-      required this.createdBy,
-      required this.updatedBy,
-      required this.remark,
-      required this.remark1,
-      this.scaleId,
-      this.checkCode});
+  EditRawData({
+    required this.recId,
+    required this.materialId,
+    required this.materialName,
+    required this.categoryId,
+    required this.ingredient,
+    required this.createdBy,
+    required this.updatedBy,
+    required this.remark,
+    required this.remark1,
+    this.scaleId,
+    this.checkCode,
+    this.output,
+  });
 
   Map<String, dynamic> toJson() => {
         "RecID": recId,
@@ -152,6 +158,7 @@ class EditRawData {
         "Remark1": remark1,
         "ScaleId": scaleId,
         "CheckCode": checkCode,
+        "Output": output,
       };
 }
 

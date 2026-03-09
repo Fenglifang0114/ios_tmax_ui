@@ -454,6 +454,8 @@ class _RawMaterialTableState extends State<RawMaterialTable> {
           textTheme, colorScheme),
       getColumnWidget(200, 'checkCode', localizedStrings.verificationCode,
           textTheme, colorScheme),
+      getColumnWidget(
+          150, 'output', localizedStrings.outputPort, textTheme, colorScheme),
       getColumnWidget(150, 'scaleName', localizedStrings.gDeviceName, textTheme,
           colorScheme),
       getColumnWidget(200, 'category', localizedStrings.fRawMaterialTypeNameCol,
@@ -533,6 +535,10 @@ class RawMaterialDataSource extends DataGridSource {
           value: raw.checkCode,
         ),
         DataGridCell<String>(
+          columnName: 'output',
+          value: _getOutput(raw.output),
+        ),
+        DataGridCell<String>(
           columnName: 'scaleName',
           value: _getScaleName(raw.scaleId),
         ),
@@ -555,6 +561,15 @@ class RawMaterialDataSource extends DataGridSource {
         DataGridCell<Widget>(columnName: 'operation', value: null),
       ]);
     }).toList();
+  }
+
+  String _getOutput(int? output) {
+    if (output == null) return '-';
+    if (output == 0) {
+      return '-';
+    }
+
+    return output.toString();
   }
 
   String _getScaleName(int? scaleId) {

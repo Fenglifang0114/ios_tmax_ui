@@ -185,6 +185,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "defaultValueNotMeetBarcode": MessageLookupByLibrary.simpleMessage(
       "The default value does not meet barcode requirements!",
     ),
+    "delayedStart": MessageLookupByLibrary.simpleMessage("Delayed Start"),
     "delete": MessageLookupByLibrary.simpleMessage("Delete"),
     "deleteFormula": MessageLookupByLibrary.simpleMessage("Delete Formula"),
     "deleteFormulaCategory": MessageLookupByLibrary.simpleMessage(
@@ -1278,6 +1279,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "invalidName": MessageLookupByLibrary.simpleMessage(
       "The name is invalid. Please enter a valid name.",
     ),
+    "ioPort": MessageLookupByLibrary.simpleMessage("I/O Port"),
+    "ioSetting": MessageLookupByLibrary.simpleMessage("I/O Setting"),
     "ipAddressAndPortIsAlreadyInUse": MessageLookupByLibrary.simpleMessage(
       "IP address and port is already in use",
     ),
@@ -1449,11 +1452,15 @@ class MessageLookup extends MessageLookupByLibrary {
     "opSetting": MessageLookupByLibrary.simpleMessage("Setting"),
     "opUpdate": MessageLookupByLibrary.simpleMessage("Update"),
     "opUpload": MessageLookupByLibrary.simpleMessage("Upload"),
+    "openOutputPortFailed": MessageLookupByLibrary.simpleMessage(
+      "Failed to open the output port.",
+    ),
     "operation": MessageLookupByLibrary.simpleMessage("Details"),
     "operationRecord": MessageLookupByLibrary.simpleMessage("Operation Record"),
     "operationResult": MessageLookupByLibrary.simpleMessage("Result"),
     "operationType": MessageLookupByLibrary.simpleMessage("Operation Type"),
     "operator": MessageLookupByLibrary.simpleMessage("Operator"),
+    "outputPort": MessageLookupByLibrary.simpleMessage("Output Port"),
     "output_confirm_info": MessageLookupByLibrary.simpleMessage(
       "Please confirm the folder name!",
     ),
@@ -1875,6 +1882,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "titleLogout": MessageLookupByLibrary.simpleMessage("Logout"),
     "toBeVerified": MessageLookupByLibrary.simpleMessage("To be verified"),
+    "triggerOffValue": MessageLookupByLibrary.simpleMessage(
+      "Trigger off value",
+    ),
     "txt_serial_port_connected": MessageLookupByLibrary.simpleMessage(
       "Serial port connected",
     ),

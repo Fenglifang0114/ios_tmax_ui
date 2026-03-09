@@ -266,3 +266,46 @@ class RptPrintSetting {
         "RawActualWgt": rawActualWgt,
       };
 }
+
+class GetRawOutputByFmaId {
+  String? formulaId;
+
+  GetRawOutputByFmaId({
+    this.formulaId,
+  });
+
+  Map<String, dynamic> toJson() => {
+        "FormulaId": formulaId,
+      };
+}
+
+// To parse this JSON data, do
+//
+//     final rawOutputInfo = rawOutputInfoFromJson(jsonString);
+
+List<RawOutputInfo> rawOutputInfoFromJson(String str) =>
+    List<RawOutputInfo>.from(
+        json.decode(str).map((x) => RawOutputInfo.fromJson(x)));
+
+String rawOutputInfoToJson(List<RawOutputInfo> data) =>
+    json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
+
+class RawOutputInfo {
+  String? materialId;
+  int? output;
+
+  RawOutputInfo({
+    this.materialId,
+    this.output,
+  });
+
+  factory RawOutputInfo.fromJson(Map<String, dynamic> json) => RawOutputInfo(
+        materialId: json["MaterialId"],
+        output: json["Output"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "MaterialId": materialId,
+        "Output": output,
+      };
+}

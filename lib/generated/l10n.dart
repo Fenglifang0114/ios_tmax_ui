@@ -10051,6 +10051,61 @@ class S {
       args: [],
     );
   }
+
+  /// `I/O Setting`
+  String get ioSetting {
+    return Intl.message(
+      'I/O Setting',
+      name: 'ioSetting',
+      desc: 'I/O Setting',
+      args: [],
+    );
+  }
+
+  /// `I/O Port`
+  String get ioPort {
+    return Intl.message('I/O Port', name: 'ioPort', desc: 'I/O Port', args: []);
+  }
+
+  /// `Output Port`
+  String get outputPort {
+    return Intl.message(
+      'Output Port',
+      name: 'outputPort',
+      desc: 'Output Port',
+      args: [],
+    );
+  }
+
+  /// `Delayed Start`
+  String get delayedStart {
+    return Intl.message(
+      'Delayed Start',
+      name: 'delayedStart',
+      desc: 'Delayed Start',
+      args: [],
+    );
+  }
+
+  /// `Trigger off value`
+  String get triggerOffValue {
+    return Intl.message(
+      'Trigger off value',
+      name: 'triggerOffValue',
+      desc: 'Trigger off value',
+      args: [],
+    );
+  }
+
+  /// `Failed to open the output port.`
+  String get openOutputPortFailed {
+    return Intl.message(
+      'Failed to open the output port.',
+      name: 'openOutputPortFailed',
+      desc: 'Failed to open the output port.',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

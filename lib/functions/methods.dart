@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:t_max/data/new_get_recs.dart';
+import 'package:t_max/data/readoutput.dart';
 import 'package:t_max/data/req_formula_data.dart';
 import 'package:t_max/data/scale_info_from_db.dart';
 import 'package:t_max/data/sys_user_req.dart';
@@ -803,6 +804,41 @@ class PublicFunctions {
   static void unsealByMasterKey(String masterKey) {
     myScaleCmd.cmdMode = "unseal_by_master_key";
     myScaleCmd.cmdData = masterKey;
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
+  //获取输出端口状态
+  static void getOutputPortStatus() {
+    myScaleCmd.cmdMode = "get_output_port";
+    myScaleCmd.cmdData = "";
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
+  //根据配方ID获取原料输出端口
+  static void getRawOutputByFmaId(String jsonStr) {
+    myScaleCmd.cmdMode = "get_raw_output_by_fma_id";
+    myScaleCmd.cmdData = jsonStr;
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
+  //更新输出端口状态
+  static void updateOutputPortStatus(String jsonStr) {
+    myScaleCmd.cmdMode = "update_output_port";
+    myScaleCmd.cmdData = jsonStr;
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
+  //读modbus线圈
+  static void readModbusCoils(String jsonStr) {
+    myScaleCmd.cmdMode = "read_output_port";
+    myScaleCmd.cmdData = jsonStr;
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
+  //写modbus线圈
+  static void writeModbusCoils(String jsonStr) {
+    myScaleCmd.cmdMode = "open_output_port";
+    myScaleCmd.cmdData = jsonStr;
     sendMsgChan0(jsonEncode(myScaleCmd));
   }
 

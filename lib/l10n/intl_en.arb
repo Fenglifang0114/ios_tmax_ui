@@ -4143,5 +4143,29 @@
     "startSearchBluetoothDevices": "Start searching for Bluetooth devices",
     "@startSearchBluetoothDevices": {
         "description": "Start searching for Bluetooth devices"
+    },
+    "ioSetting": "I/O Setting",
+    "@ioSetting": {
+        "description": "I/O Setting"
+    },
+    "ioPort": "I/O Port",
+    "@ioPort": {
+        "description": "I/O Port"
+    },
+    "outputPort": "Output Port",
+    "@outputPort": {
+        "description": "Output Port"
+    },
+    "delayedStart": "Delayed Start",
+    "@delayedStart": {
+        "description": "Delayed Start"
+    },
+    "triggerOffValue": "Trigger off value",
+    "@triggerOffValue": {
+        "description": "Trigger off value"
+    },
+    "openOutputPortFailed": "Failed to open the output port.",
+    "@openOutputPortFailed": {
+        "description": "Failed to open the output port."
     }
 }

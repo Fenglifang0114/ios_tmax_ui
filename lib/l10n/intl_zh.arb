@@ -4143,5 +4143,29 @@
     "startSearchBluetoothDevices": "开始搜索",
     "@startSearchBluetoothDevices": {
         "description": "Start searching for Bluetooth devices"
+    },
+    "ioSetting": "I/O 设置",
+    "@ioSetting": {
+        "description": "I/O Setting"
+    },
+    "ioPort": "I/O 端口",
+    "@ioPort": {
+        "description": "I/O Port"
+    },
+    "outputPort": "输出端口",
+    "@outputPort": {
+        "description": "Output Port"
+    },
+    "delayedStart": "延时启动",
+    "@delayedStart": {
+        "description": "Delayed Start"
+    },
+    "triggerOffValue": "触发关闭值",
+    "@triggerOffValue": {
+        "description": "Trigger off value"
+    },
+    "openOutputPortFailed": "打开输出端口失败",
+    "@openOutputPortFailed": {
+        "description": "Failed to open the output port."
     }
 }

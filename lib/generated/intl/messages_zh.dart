@@ -127,6 +127,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "defaultValueNotMeetBarcode": MessageLookupByLibrary.simpleMessage(
       "默认值不符合条码要求！",
     ),
+    "delayedStart": MessageLookupByLibrary.simpleMessage("延时启动"),
     "delete": MessageLookupByLibrary.simpleMessage("删除"),
     "deleteFormula": MessageLookupByLibrary.simpleMessage("删除配方"),
     "deleteFormulaCategory": MessageLookupByLibrary.simpleMessage("删除配方类别"),
@@ -886,6 +887,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "ingredientVerification": MessageLookupByLibrary.simpleMessage("原料验证"),
     "invalidData": MessageLookupByLibrary.simpleMessage("数据错误"),
     "invalidName": MessageLookupByLibrary.simpleMessage("名称无效，请输入有效名称。"),
+    "ioPort": MessageLookupByLibrary.simpleMessage("I/O 端口"),
+    "ioSetting": MessageLookupByLibrary.simpleMessage("I/O 设置"),
     "ipAddressAndPortIsAlreadyInUse": MessageLookupByLibrary.simpleMessage(
       "IP地址和端口已被使用",
     ),
@@ -1009,11 +1012,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "opSetting": MessageLookupByLibrary.simpleMessage("设置"),
     "opUpdate": MessageLookupByLibrary.simpleMessage("更新"),
     "opUpload": MessageLookupByLibrary.simpleMessage("上传"),
+    "openOutputPortFailed": MessageLookupByLibrary.simpleMessage("打开输出端口失败"),
     "operation": MessageLookupByLibrary.simpleMessage("具体操作"),
     "operationRecord": MessageLookupByLibrary.simpleMessage("操作记录"),
     "operationResult": MessageLookupByLibrary.simpleMessage("结果"),
     "operationType": MessageLookupByLibrary.simpleMessage("操作类型"),
     "operator": MessageLookupByLibrary.simpleMessage("操作员"),
+    "outputPort": MessageLookupByLibrary.simpleMessage("输出端口"),
     "output_confirm_info": MessageLookupByLibrary.simpleMessage("请确认文件夹的名字!"),
     "output_no_file": MessageLookupByLibrary.simpleMessage("没有文件匹配!"),
     "output_res_folder": MessageLookupByLibrary.simpleMessage("资源文件夹"),
@@ -1319,6 +1324,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "titleLogout": MessageLookupByLibrary.simpleMessage("登出"),
     "toBeVerified": MessageLookupByLibrary.simpleMessage("待验证"),
+    "triggerOffValue": MessageLookupByLibrary.simpleMessage("触发关闭值"),
     "txt_serial_port_connected": MessageLookupByLibrary.simpleMessage("串口已连接"),
     "txt_serial_port_connected_fail": MessageLookupByLibrary.simpleMessage(
       "无法连接",

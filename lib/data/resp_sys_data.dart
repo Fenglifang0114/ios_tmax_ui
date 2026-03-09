@@ -129,6 +129,12 @@ class RespSysMsgType {
   static const String respGetAllSealLog = 'resp_get_all_seal_log';
 
   static const String respUnsealByMasterKey = 'resp_unseal_by_master_key';
+  static const String respGetOutputPortStatus = 'resp_get_output_port';
+
+  static const String respUpdateOutputPort = 'resp_update_output_port';
+  static const String respRawOutputByFmaId = 'resp_raw_output_by_fma_id';
+
+  static const String respOpenOutputPort = 'resp_open_output_port';
 
   static final Map<String, Function> handlers = {
     RespSysMsgType.respPortsList: handlePortsList,
@@ -228,6 +234,10 @@ class RespSysMsgType {
     RespSysMsgType.respGetReportPrint: handleRespGetReportPrint,
     RespSysMsgType.respGetAllSealLog: handleRespGetAllSealLog,
     RespSysMsgType.respUnsealByMasterKey: handleRespUnsealByMasterKey,
+    RespSysMsgType.respGetOutputPortStatus: handleRespGetOutputPortStatus,
+    RespSysMsgType.respUpdateOutputPort: handleRespUpdateOutputPort,
+    RespSysMsgType.respRawOutputByFmaId: handleRespRawOutputByFmaId,
+    RespSysMsgType.respOpenOutputPort: handleRespOpenOutputPort,
   };
 
   static void handleBtList(dynamic jsonData) {
@@ -471,6 +481,25 @@ class RespSysMsgType {
   static void handleRespGetAllSealLog(dynamic jsonData) {
     String dataString = jsonData['MsgBody'];
     eventBus.fire(EventRespGetAllSealLog(dataString));
+  }
+
+  static void handleRespGetOutputPortStatus(dynamic jsonData) {
+    String dataString = jsonData['MsgBody'];
+    eventBus.fire(EventRespGetOutputPortStatus(dataString));
+  }
+
+  static void handleRespUpdateOutputPort(dynamic jsonData) {
+    eventBus.fire(EventRespUpdateOutputPort(""));
+  }
+
+  static void handleRespOpenOutputPort(dynamic jsonData) {
+    String dataString = jsonData['MsgBody'];
+    eventBus.fire(EventRespOpenOutputPort(dataString));
+  }
+
+  static void handleRespRawOutputByFmaId(dynamic jsonData) {
+    String dataString = jsonData['MsgBody'];
+    eventBus.fire(EventRespRawOutputByFmaId(dataString));
   }
 
   static void handleRespUnsealByMasterKey(dynamic jsonData) {

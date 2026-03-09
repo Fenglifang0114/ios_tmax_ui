@@ -17,6 +17,7 @@ import 'data/setting_version_info.dart';
 import 'generated/l10n.dart';
 import 'widget/theme_color.dart';
 import 'package:win32/win32.dart';
+import 'package:t_max/pages/test_modbus.dart';
 
 const String serviceName = "TmaxService";
 const bool isServiceVersion = true; //是否是服务版本
@@ -199,7 +200,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       initialRoute: '/login',
       routes: {
-        '/login': (context) => LoginPage(),
+        '/login': (context) => TestModbus(), //LoginPage(),
         '/home': (context) => MyHomePage(),
       },
     );

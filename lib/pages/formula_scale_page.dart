@@ -33,6 +33,7 @@ import 'package:t_max/widget/f_open_file.dart';
 import 'package:t_max/widget/f_raw_tab.dart';
 import 'package:t_max/widget/formula_widget.dart';
 import 'package:t_max/data/formula_from_db_data.dart';
+import 'package:t_max/widget/io_output.dart';
 import 'package:t_max/widget/page_head.dart';
 import 'package:t_max/widget/scale_list.dart';
 import 'package:t_max/widget/search_fma_barcode.dart';
@@ -1393,6 +1394,43 @@ class FormulationScalePageState extends State<FormulationScalePage>
                                   : colorScheme.outline),
                         ),
                       )),
+
+                const SizedBox(
+                  width: regularPadding,
+                ),
+                SizedBox(
+                  width: 80,
+                  height: 36,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: colorScheme.onPrimary,
+                      backgroundColor: colorScheme.onTertiaryFixedVariant,
+                      fixedSize: const Size(double.infinity, 48),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.zero, // 可以根据需要调整圆角
+                      ),
+                    ),
+                    onPressed: (selectedFormula == null)
+                        ? null
+                        : () {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return SetOutputPortDialog();
+                              },
+                            ).then((fmaValue) {
+                              if (fmaValue != null) {}
+                            });
+                          },
+                    child: Text(
+                      "I/O",
+                      style: textTheme.bodySmall!.copyWith(
+                        color: colorScheme.onPrimary,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ),
 
                 const SizedBox(
                   width: regularPadding,

@@ -857,6 +857,26 @@ class EventRespUnsealByMasterKey {
   EventRespUnsealByMasterKey(this.obj);
 }
 
+class EventRespGetOutputPortStatus {
+  dynamic obj;
+  EventRespGetOutputPortStatus(this.obj);
+}
+
+class EventRespUpdateOutputPort {
+  dynamic obj;
+  EventRespUpdateOutputPort(this.obj);
+}
+
+class EventRespRawOutputByFmaId {
+  dynamic obj;
+  EventRespRawOutputByFmaId(this.obj);
+}
+
+class EventRespOpenOutputPort {
+  dynamic obj;
+  EventRespOpenOutputPort(this.obj);
+}
+
 class EventRespGetDraftFmaWgtRecList {
   dynamic obj;
   EventRespGetDraftFmaWgtRecList(this.obj);

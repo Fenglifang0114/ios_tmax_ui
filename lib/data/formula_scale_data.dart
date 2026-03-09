@@ -20,6 +20,7 @@ class RawDataInfo {
   String? remark1;
   int? scaleId;
   String? checkCode;
+  int? output;
 
   RawDataInfo({
     this.recId,
@@ -35,6 +36,7 @@ class RawDataInfo {
     this.remark1,
     this.scaleId,
     this.checkCode,
+    this.output,
   });
 
   factory RawDataInfo.fromJson(Map<String, dynamic> json) => RawDataInfo(
@@ -55,6 +57,7 @@ class RawDataInfo {
         remark1: json["Remark1"],
         scaleId: json["ScaleId"],
         checkCode: json["CheckCode"],
+        output: json["Output"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -71,6 +74,7 @@ class RawDataInfo {
         "Remark1": remark1,
         "ScaleId": scaleId,
         "CheckCode": checkCode,
+        "Output": output,
       };
 }
 

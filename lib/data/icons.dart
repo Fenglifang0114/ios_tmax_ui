@@ -402,3 +402,7 @@ String btSvgIcon() {
 String btDeviceSvgIcon() {
   return 'assets/images/bt_device.svg';
 }
+
+String outputSvgIcon() {
+  return 'assets/images/output.svg';
+}
