@@ -200,7 +200,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       initialRoute: '/login',
       routes: {
-        '/login': (context) => TestModbus(), //LoginPage(),
+        '/login': (context) => LoginPage(),
         '/home': (context) => MyHomePage(),
       },
     );
