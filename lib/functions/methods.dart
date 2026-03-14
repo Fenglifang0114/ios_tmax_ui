@@ -1238,6 +1238,26 @@ class PublicFunctions {
     sendMsg(scaleId, jsonEncode(myScaleCmd));
   }
 
+  static void getScaleModel(int scaleId) {
+    myScaleCmd.cmdMode = "get_model";
+    myScaleCmd.cmdData = '';
+    sendMsg(scaleId, jsonEncode(myScaleCmd));
+  }
+
+  // 关闭发送内码
+  static void disContCode(int scaleId) {
+    myScaleCmd.cmdMode = "dis_code";
+    myScaleCmd.cmdData = '';
+    sendMsg(scaleId, jsonEncode(myScaleCmd));
+  }
+
+// 关闭发送内码
+  static void enContCode(int scaleId) {
+    myScaleCmd.cmdMode = "en_code";
+    myScaleCmd.cmdData = '';
+    sendMsg(scaleId, jsonEncode(myScaleCmd));
+  }
+
   static void calibrationWeight(int scaleId, String value) {
     myScaleCmd.cmdMode = "cal_weight";
     myScaleCmd.cmdData = value;

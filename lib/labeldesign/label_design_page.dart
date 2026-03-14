@@ -1283,29 +1283,60 @@ class LabelDesignPageState extends State<LabelDesignPage> {
           tempContent,
           elements[i].index,
         ]);
-      } else if (elements[i].type.name == 'line') {
-        if (elements[i].lineWidth! <= elements[i].x2Pos!) {
+      }
+      //线条备份
+      // else if (elements[i].type.name == 'line') {
+      //   if (elements[i].lineWidth! <= elements[i].x2Pos!) {
+      //     csvData.add([
+      //       'L',
+      //       elements[i].position.dx.toInt(),
+      //       elements[i].position.dy.toInt(),
+      //       (elements[i].x2Pos! + elements[i].position.dx.toInt()).toInt(),
+      //       elements[i].position.dy.toInt(),
+      //       elements[i].lineWidth!.toInt(),
+      //       0, //线类型
+      //       elements[i].index,
+      //     ]);
+      //   } else {
+      //     csvData.add([
+      //       'L',
+      //       elements[i].position.dx.toInt(),
+      //       elements[i].position.dy.toInt(),
+      //       elements[i].position.dx.toInt(),
+      //       (elements[i].lineWidth! + elements[i].position.dy.toInt()).toInt(),
+      //       elements[i].x2Pos!.toInt(),
+      //       0, //线类型
+      //       elements[i].index,
+      //     ]);
+      //   }
+      // }
+//x1,y1,x2,y2,lineWidth,lineType,index
+      else if (elements[i].type.name == 'line') {
+        //横线
+        if (elements[i].height! <= elements[i].width!) {
           csvData.add([
             'L',
             elements[i].position.dx.toInt(),
             elements[i].position.dy.toInt(),
-            (elements[i].x2Pos! + elements[i].position.dx.toInt()).toInt(),
+            (elements[i].width! + elements[i].position.dx.toInt()).toInt(),
             elements[i].position.dy.toInt(),
-            elements[i].lineWidth!.toInt(),
+            elements[i].height!.toInt(),
             0, //线类型
             elements[i].index,
           ]);
+          print(csvData.last);
         } else {
           csvData.add([
             'L',
             elements[i].position.dx.toInt(),
             elements[i].position.dy.toInt(),
             elements[i].position.dx.toInt(),
-            (elements[i].lineWidth! + elements[i].position.dy.toInt()).toInt(),
-            elements[i].x2Pos!.toInt(),
+            (elements[i].height! + elements[i].position.dy.toInt()).toInt(),
+            elements[i].width!.toInt(),
             0, //线类型
             elements[i].index,
           ]);
+          print(csvData.last);
         }
       }
     }
@@ -1314,6 +1345,7 @@ class LabelDesignPageState extends State<LabelDesignPage> {
     csv = const ListToCsvConverter(
       textDelimiter: '',
     ).convert(csvData);
+    print(csv);
   }
 
   void _saveFormatToCsv(String csv, String path) async {

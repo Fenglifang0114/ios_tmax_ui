@@ -338,71 +338,212 @@ class PluDataModel {
   }
 }
 
-Excel performExportTemplate(Map<String, bool> columnVisibility) {
-  final excel = Excel.createExcel();
-  final sheet = excel['Sheet1'];
+// Excel performExportTemplate(Map<String, bool> columnVisibility) {
+//   final excel = Excel.createExcel();
+//   final sheet = excel['Sheet1'];
 
-  List<String> selectedColumns = [];
-  for (var element in columnVisibility.keys) {
-    if (columnVisibility[element] == true) {
-      selectedColumns.add(element);
-    }
-  }
+//   List<String> selectedColumns = [];
+//   for (var element in columnVisibility.keys) {
+//     if (columnVisibility[element] == true) {
+//       selectedColumns.add(element);
+//     }
+//   }
+
+//   // 写入表头
+//   sheet.appendRow([
+//     if (selectedColumns.contains('plu')) TextCellValue('PLU'),
+//     if (selectedColumns.contains('productCode')) TextCellValue('ProductCode'),
+//     if (selectedColumns.contains('itemCode')) TextCellValue('ItemCode'),
+//     if (selectedColumns.contains('productName')) TextCellValue('ProductName'),
+//     if (selectedColumns.contains('generalUnit')) TextCellValue('GeneralUnit'),
+//     if (selectedColumns.contains('taxType')) TextCellValue('TaxType'),
+//     if (selectedColumns.contains('price')) TextCellValue('Price'),
+//     if (selectedColumns.contains('unitWeight')) TextCellValue('UnitWeight'),
+//     if (selectedColumns.contains('pretare')) TextCellValue('PreTare'),
+//     if (selectedColumns.contains('limitHigh')) TextCellValue('LimitHigh'),
+//     if (selectedColumns.contains('limitLow')) TextCellValue('LimitLow'),
+//     if (selectedColumns.contains('category')) TextCellValue('Category'),
+//   ]);
+
+//   // 写入数据行
+
+//   sheet.appendRow([
+//     if (selectedColumns.contains('plu')) TextCellValue("1"),
+//     if (selectedColumns.contains('productCode')) TextCellValue('1'),
+//     if (selectedColumns.contains('itemCode')) TextCellValue('1'),
+//     if (selectedColumns.contains('productName')) TextCellValue('Apple'),
+//     if (selectedColumns.contains('generalUnit')) TextCellValue('kg'),
+//     if (selectedColumns.contains('taxType')) TextCellValue('tax1'),
+//     if (selectedColumns.contains('price')) TextCellValue('8.88'),
+//     if (selectedColumns.contains('unitWeight')) TextCellValue('8'),
+//     if (selectedColumns.contains('pretare')) TextCellValue('0.88'),
+//     if (selectedColumns.contains('limitHigh')) TextCellValue('10'),
+//     if (selectedColumns.contains('limitLow')) TextCellValue('2'),
+//     if (selectedColumns.contains('category')) TextCellValue('Fruits'),
+//   ]);
+
+//   sheet.appendRow([
+//     if (selectedColumns.contains('plu')) TextCellValue("1-99999"),
+//     if (selectedColumns.contains('productCode'))
+//       TextCellValue('Not in use yet'),
+//     if (selectedColumns.contains('itemCode')) TextCellValue('Not in use yet'),
+//     if (selectedColumns.contains('productName'))
+//       TextCellValue(
+//           'The length is 30. Characters need scale support for display and only printer support for printing.'),
+//     if (selectedColumns.contains('generalUnit'))
+//       TextCellValue('kg,100g,pcs,lb,g,oz,lboz,tj,hj,t'),
+//     if (selectedColumns.contains('taxType')) TextCellValue('tax1 tax2 tax3'),
+//     if (selectedColumns.contains('price')) TextCellValue('unit Price'),
+//     if (selectedColumns.contains('unitWeight')) TextCellValue('Unit: g'),
+//     if (selectedColumns.contains('pretare')) TextCellValue('Unit: Kg'),
+//     if (selectedColumns.contains('limitHigh'))
+//       TextCellValue(
+//           'With unit weight, upper & lower limit units are pcs and must be integers; without, they are the same as GeneralUnit.'),
+//     if (selectedColumns.contains('limitLow'))
+//       TextCellValue(
+//           'With unit weight, upper & lower limit units are pcs and must be integers; without, they are the same as GeneralUnit.'),
+//   ]);
+
+//   return excel;
+// }
+
+/// 将模板导出为 CSV 字符串（基于列可见性）
+String exportTemplateToCSV(Map<String, bool> columnVisibility) {
+  // 所有可能的列（按原代码顺序）
+  const allColumns = [
+    'plu',
+    'productCode',
+    'itemCode',
+    'productName',
+    'generalUnit',
+    'taxType',
+    'price',
+    'unitWeight',
+    'pretare',
+    'limitHigh',
+    'limitLow',
+    'category'
+  ];
+
+  // 筛选出可见的列（保持原顺序）
+  final selectedColumns =
+      allColumns.where((col) => columnVisibility[col] == true).toList();
+
+  final csv = StringBuffer();
 
   // 写入表头
-  sheet.appendRow([
-    if (selectedColumns.contains('plu')) TextCellValue('PLU'),
-    if (selectedColumns.contains('productCode')) TextCellValue('ProductCode'),
-    if (selectedColumns.contains('itemCode')) TextCellValue('ItemCode'),
-    if (selectedColumns.contains('productName')) TextCellValue('ProductName'),
-    if (selectedColumns.contains('generalUnit')) TextCellValue('GeneralUnit'),
-    if (selectedColumns.contains('taxType')) TextCellValue('TaxType'),
-    if (selectedColumns.contains('price')) TextCellValue('Price'),
-    if (selectedColumns.contains('unitWeight')) TextCellValue('UnitWeight'),
-    if (selectedColumns.contains('pretare')) TextCellValue('PreTare'),
-    if (selectedColumns.contains('limitHigh')) TextCellValue('LimitHigh'),
-    if (selectedColumns.contains('limitLow')) TextCellValue('LimitLow'),
-    if (selectedColumns.contains('category')) TextCellValue('Category'),
-  ]);
+  final header = selectedColumns
+      .map((col) {
+        switch (col) {
+          case 'plu':
+            return 'PLU';
+          case 'productCode':
+            return 'ProductCode';
+          case 'itemCode':
+            return 'ItemCode';
+          case 'productName':
+            return 'ProductName';
+          case 'generalUnit':
+            return 'GeneralUnit';
+          case 'taxType':
+            return 'TaxType';
+          case 'price':
+            return 'Price';
+          case 'unitWeight':
+            return 'UnitWeight';
+          case 'pretare':
+            return 'PreTare';
+          case 'limitHigh':
+            return 'LimitHigh';
+          case 'limitLow':
+            return 'LimitLow';
+          case 'category':
+            return 'Category';
+          default:
+            return col;
+        }
+      })
+      .map(_csvEscape)
+      .join(',');
+  csv.writeln(header);
 
-  // 写入数据行
+  // 第一行数据
+  final row1 = selectedColumns
+      .map((col) {
+        switch (col) {
+          case 'plu':
+            return '1';
+          case 'productCode':
+            return '1';
+          case 'itemCode':
+            return '1';
+          case 'productName':
+            return 'Apple';
+          case 'generalUnit':
+            return 'kg';
+          case 'taxType':
+            return 'tax1';
+          case 'price':
+            return '8.88';
+          case 'unitWeight':
+            return '8';
+          case 'pretare':
+            return '0.88';
+          case 'limitHigh':
+            return '10';
+          case 'limitLow':
+            return '2';
+          case 'category':
+            return 'Fruits';
+          default:
+            return '';
+        }
+      })
+      .map(_csvEscape)
+      .join(',');
+  csv.writeln(row1);
 
-  sheet.appendRow([
-    if (selectedColumns.contains('plu')) TextCellValue("1"),
-    if (selectedColumns.contains('productCode')) TextCellValue('1'),
-    if (selectedColumns.contains('itemCode')) TextCellValue('1'),
-    if (selectedColumns.contains('productName')) TextCellValue('Apple'),
-    if (selectedColumns.contains('generalUnit')) TextCellValue('kg'),
-    if (selectedColumns.contains('taxType')) TextCellValue('tax1'),
-    if (selectedColumns.contains('price')) TextCellValue('8.88'),
-    if (selectedColumns.contains('unitWeight')) TextCellValue('8'),
-    if (selectedColumns.contains('pretare')) TextCellValue('0.88'),
-    if (selectedColumns.contains('limitHigh')) TextCellValue('10'),
-    if (selectedColumns.contains('limitLow')) TextCellValue('2'),
-    if (selectedColumns.contains('category')) TextCellValue('Fruits'),
-  ]);
+  // 第二行数据
+  final row2 = selectedColumns
+      .map((col) {
+        switch (col) {
+          case 'plu':
+            return '1-99999';
+          case 'productCode':
+            return 'Not in use yet';
+          case 'itemCode':
+            return 'Not in use yet';
+          case 'productName':
+            return 'The length is 30. Characters need scale support for display and only printer support for printing.';
+          case 'generalUnit':
+            return 'kg,100g,pcs,lb,g,oz,lboz,tj,hj,t';
+          case 'taxType':
+            return 'tax1 tax2 tax3';
+          case 'price':
+            return 'unit Price';
+          case 'unitWeight':
+            return 'Unit: g';
+          case 'pretare':
+            return 'Unit: Kg';
+          case 'limitHigh':
+            return 'With unit weight, upper & lower limit units are pcs and must be integers; without, they are the same as GeneralUnit.';
+          case 'limitLow':
+            return 'With unit weight, upper & lower limit units are pcs and must be integers; without, they are the same as GeneralUnit.';
+          default:
+            return '';
+        }
+      })
+      .map(_csvEscape)
+      .join(',');
+  csv.writeln(row2);
 
-  sheet.appendRow([
-    if (selectedColumns.contains('plu')) TextCellValue("1-99999"),
-    if (selectedColumns.contains('productCode'))
-      TextCellValue('Not in use yet'),
-    if (selectedColumns.contains('itemCode')) TextCellValue('Not in use yet'),
-    if (selectedColumns.contains('productName'))
-      TextCellValue(
-          'The length is 30. Characters need scale support for display and only printer support for printing.'),
-    if (selectedColumns.contains('generalUnit'))
-      TextCellValue('kg,100g,pcs,lb,g,oz,lboz,tj,hj,t'),
-    if (selectedColumns.contains('taxType')) TextCellValue('tax1 tax2 tax3'),
-    if (selectedColumns.contains('price')) TextCellValue('unit Price'),
-    if (selectedColumns.contains('unitWeight')) TextCellValue('Unit: g'),
-    if (selectedColumns.contains('pretare')) TextCellValue('Unit: Kg'),
-    if (selectedColumns.contains('limitHigh'))
-      TextCellValue(
-          'With unit weight, upper & lower limit units are pcs and must be integers; without, they are the same as GeneralUnit.'),
-    if (selectedColumns.contains('limitLow'))
-      TextCellValue(
-          'With unit weight, upper & lower limit units are pcs and must be integers; without, they are the same as GeneralUnit.'),
-  ]);
+  return csv.toString();
+}
 
-  return excel;
+/// CSV 字段转义：若字段含逗号、换行或双引号，则用双引号包围，内部双引号替换为两个双引号
+String _csvEscape(String field) {
+  if (field.contains(RegExp(r'[,"\n]'))) {
+    return '"${field.replaceAll('"', '""')}"';
+  }
+  return field;
 }

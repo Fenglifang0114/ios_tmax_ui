@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:csv/csv.dart';
 import 'package:excel/excel.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -552,9 +553,8 @@ class _PluEidtPageState extends State<PluEidtPage> {
 
   Future<ExportResult> exportRawTemplate(String filePath) async {
     try {
-      Excel excel = performExportTemplate(_columnVisibility);
-      File file = File(filePath);
-      await file.writeAsBytes(excel.save()!);
+      writeTemplateToFile(filePath, _columnVisibility);
+
       return ExportResult(isSuccess: true);
     } catch (e) {
       String errorMessage = localizedStrings.gTipExportError;
@@ -567,11 +567,14 @@ class _PluEidtPageState extends State<PluEidtPage> {
     }
   }
 
+  // 使用示例：将 CSV 写入文件
+  void writeTemplateToFile(
+      String filePath, Map<String, bool> columnVisibility) {
+    final csvContent = exportTemplateToCSV(columnVisibility);
+    File(filePath).writeAsStringSync(csvContent, encoding: utf8);
+  }
+
   Future<void> performImport() async {
-    List<int> nowPluList = [];
-    for (var element in dataModels) {
-      nowPluList.add(element.pluData.plu ?? 0);
-    }
     String filePath = await pickFiles();
     if (filePath.isEmpty) {
       setState(() {
@@ -579,7 +582,7 @@ class _PluEidtPageState extends State<PluEidtPage> {
       });
       return;
     }
-    String msg = await handleImportExcel(nowPluList, filePath);
+    String msg = await handleImportCsv(filePath);
     if (context.mounted && msg.isNotEmpty && mounted) {
       showErrorDialog(context, msg);
       setState(() {
@@ -593,7 +596,7 @@ class _PluEidtPageState extends State<PluEidtPage> {
       // initialDirectory: directory,
       allowMultiple: false,
       type: FileType.custom,
-      allowedExtensions: ['xlsx'],
+      allowedExtensions: ['csv'],
     );
     String filePath = '';
     if (result != null) {
@@ -603,10 +606,9 @@ class _PluEidtPageState extends State<PluEidtPage> {
     return filePath;
   }
 
-  Future<String> handleImportExcel(
-      List<int> nowPluList, String filePath) async {
+  Future<String> handleImportCsv(String filePath) async {
     importPlu.clear();
-    await importDataFromXlsx(filePath, nowPluList);
+    await importDataFromCSV(filePath);
 
     if (importPlu.isEmpty) {
       return localizedStrings.gTipNoData;
@@ -624,12 +626,12 @@ class _PluEidtPageState extends State<PluEidtPage> {
   }
 
   bool isImportAll = false; //是否全部导入，有重复的PLU会去掉
-  bool checkImportPLu(int plu, List<int> nowPluList) {
-    if (nowPluList.isEmpty) {
+  bool checkImportPLu(int plu, List<PluDataModel> importPluList) {
+    if (importPluList.isEmpty) {
       return true;
     }
-    for (var item in nowPluList) {
-      if (item == plu) {
+    for (var item in importPluList) {
+      if (item.pluData.plu == plu) {
         isImportAll = true;
         return false;
       }
@@ -637,125 +639,279 @@ class _PluEidtPageState extends State<PluEidtPage> {
     return true;
   }
 
-  Future<void> importDataFromXlsx(String filePath, List<int> nowPluList) async {
-    // 读取Excel文件
-    Excel? excel = Excel.decodeBytes(await File(filePath).readAsBytes());
+  /// 从 CSV 文件导入数据
+  /// [filePath] CSV 文件路径
+  /// [nowPluList] 当前已存在的 PLU 列表，用于去重
+  Future<void> importDataFromCSV(String filePath) async {
+    // 1. 按行读取文件（自动处理 \n 或 \r\n）
+    List<String> lines = await File(filePath).readAsLines(encoding: utf8);
+    if (lines.isEmpty) return; // 空文件，应有弹框提示
 
-    if (excel.tables.isEmpty) {
-      return; //要弹框提示
-    }
-    // 数据在第一个工作表
-    var firstTable = excel.tables.values.first;
-    excel = null;
-    Sheet sheet = firstTable;
+    // 2. 移除第一行可能存在的 BOM 字符
+    lines[0] = lines[0].replaceFirst(RegExp(r'^\uFEFF'), '');
 
-    // 获取首行标题作为字段名列表
-    List<String> headerTitles = [];
-    for (int col = 0; col < sheet.maxColumns; col++) {
-      headerTitles.add(sheet
-          .cell(CellIndex.indexByColumnRow(columnIndex: col, rowIndex: 0))
-          .value
-          .toString());
-    }
+    // 3. 解析标题行（使用自定义解析器，支持引号）
+    List<String> headerTitles =
+        parseCsvLine(lines[0]).map((e) => e.trim()).toList();
 
-    // 遍历每一行数据（从第二行开始，假设第一行是标题行）
-    // 用于存储当前行对应的数据
-    for (int row = 1; row < sheet.maxRows; row++) {
-      Map<String, dynamic> rowData = {};
+    // 可选：打印标题，便于调试
+    print('标题行: $headerTitles');
 
-      // 遍历每一列，将单元格的值与对应的标题关联起来
-      for (int col = 0; col < sheet.maxColumns; col++) {
-        rowData[headerTitles[col]] = sheet
-            .cell(CellIndex.indexByColumnRow(columnIndex: col, rowIndex: row))
-            .value;
+    // 4. 遍历数据行（从第二行开始）
+    for (int i = 1; i < lines.length; i++) {
+      String line = lines[i].trim();
+      if (line.isEmpty) continue; // 跳过空行
+
+      // 解析当前行
+      List<String> values = parseCsvLine(line).map((e) => e.trim()).toList();
+
+      // 如果列数不足，用空字符串补齐
+      if (values.length < headerTitles.length) {
+        values.addAll(List.filled(headerTitles.length - values.length, ''));
       }
-      if ((rowData.containsKey('PLU') ||
-              rowData.containsKey('ProductNumber')) &&
-          (rowData['ProductNumber'] != null || rowData['PLU'] != null)) {
-        double priceValue = 0.0;
-        if (rowData.containsKey('Price')) {
-          double value = double.tryParse(rowData['Price'].toString()) ?? 0;
-          priceValue = roundToTwoDecimalPlaces(value);
-        }
-        // 根据标题与字段名的对应关系创建Dessert对象
-        String unit = rowData['GeneralUnit'].toString();
-        unit = unit.replaceAll(' ', '');
-        unit = unit.toLowerCase();
-        int unitInt = 0;
-        for (var entry in pluUnit.entries) {
-          if (entry.value == unit) {
-            unitInt = entry.key;
-            break;
-          }
-        }
 
-        String taxStr = rowData['TaxType'].toString();
-        int taxInt = 0;
-        for (var entry in pluTax.entries) {
-          if (entry.value == taxStr) {
-            taxInt = entry.key;
-            break;
-          }
-        }
+      // 构建行数据映射（标题 -> 值）
+      Map<String, String> rowData = {};
+      for (int j = 0; j < headerTitles.length; j++) {
+        rowData[headerTitles[j]] = values[j];
+      }
 
-        PluData dessert = PluData(
-          rowData.containsKey('recId')
-              ? int.tryParse(rowData['recId'].toString()) ?? 0
-              : 0,
-          rowData.containsKey('PLU')
-              ? int.tryParse(rowData['PLU'].toString()) ?? 0
-              : rowData.containsKey('ProductNumber')
-                  ? int.tryParse(rowData['ProductNumber'].toString()) ?? 0
-                  : 0,
-          rowData.containsKey('ProductCode')
-              ? int.tryParse(rowData['ProductCode'].toString()) ?? 0
-              : 0,
-          rowData.containsKey('ItemCode')
-              ? int.tryParse(rowData['ItemCode'].toString()) ?? 0
-              : 0,
-          rowData.containsKey('Category')
-              ? rowData['Category'].toString()
-              : '-',
-          rowData.containsKey('ProductName')
-              ? rowData['ProductName'].toString()
-              : '-',
-          rowData.containsKey('GeneralUnit') ? unitInt : 0,
-          rowData.containsKey('TaxType') ? taxInt : 0,
-          rowData.containsKey('Price') ? priceValue : 0.0,
-          rowData.containsKey('UnitWeight')
-              ? double.tryParse(rowData['UnitWeight'].toString()) ?? 0
-              : 0.0,
-          rowData.containsKey('PreTare')
-              ? double.tryParse(rowData['PreTare'].toString()) ?? 0
-              : rowData.containsKey('Pretare')
-                  ? double.tryParse(rowData['Pretare'].toString()) ?? 0
-                  : 0.0,
-          rowData.containsKey('LimitHigh')
-              ? double.tryParse(rowData['LimitHigh'].toString()) ?? 0
-              : 0.0,
-          rowData.containsKey('LimitLow')
-              ? double.tryParse(rowData['LimitLow'].toString()) ?? 0
-              : 0.0,
-          '',
-          rowData.containsKey('ebabled')
-              ? rowData['ebabled'].toString() == '1'
-              : true,
-          '',
-          0,
-          0,
-          '',
-          '',
-        );
-        PluDataModel pluDataModel = PluDataModel(pluData: dessert);
+      // 5. 核心数据提取（与 Excel 版本逻辑一致，但键名需匹配实际标题）
+      // 检查必须字段：PLU 或 ProductNumber
+      String? pluStr = rowData['PLU']?.isNotEmpty == true
+          ? rowData['PLU']
+          : rowData['ProductNumber'];
+      if (pluStr == null || pluStr.isEmpty) continue; // 缺少 PLU 则跳过该行
 
-        if (checkImportPLu(dessert.plu ?? 0, nowPluList)) {
-          importPlu.add(pluDataModel);
+      // 处理价格
+      double priceValue = 0.0;
+      if (rowData.containsKey('Price')) {
+        double value = double.tryParse(rowData['Price']!) ?? 0.0;
+        priceValue = roundToTwoDecimalPlaces(value); // 假设此函数已定义
+      }
+
+      // 单位映射（标题为 "Unit"）
+      String unit = rowData['Unit'] ?? '';
+      unit = unit.replaceAll(' ', '').toLowerCase();
+      int unitInt = 0;
+      for (var entry in pluUnit.entries) {
+        if (entry.value == unit) {
+          unitInt = entry.key;
+          break;
         }
+      }
+
+      // 税类型映射（标题为 "Tax Type"）
+      String taxStr = rowData['Tax Type'] ?? '';
+      int taxInt = 0;
+      for (var entry in pluTax.entries) {
+        if (entry.value == taxStr) {
+          taxInt = entry.key;
+          break;
+        }
+      }
+
+      // 构建 PluData 对象
+      PluData dessert = PluData(
+        // recId（通常 CSV 中没有，默认 0）
+        int.tryParse(rowData['recId'] ?? '0') ?? 0,
+        // plu
+        int.tryParse(pluStr) ?? 0,
+        // productCode
+        int.tryParse(rowData['Product Code'] ?? '0') ?? 0,
+        // itemCode
+        int.tryParse(rowData['Item Code'] ?? '0') ?? 0,
+        // category
+        rowData['Category'] ?? '-',
+        // productName
+        rowData['Product Name'] ?? '-',
+        // generalUnit（已转换）
+        unitInt,
+        // taxType（已转换）
+        taxInt,
+        // price
+        priceValue,
+        // unitWeight
+        double.tryParse(rowData['Unit Weight'] ?? '0') ?? 0.0,
+        // pretare（注意 CSV 中是 "Pretare"）
+        double.tryParse(rowData['Pretare'] ?? '0') ?? 0.0,
+        // limitHigh
+        double.tryParse(rowData['Limit High'] ?? '0') ?? 0.0,
+        // limitLow
+        double.tryParse(rowData['Limit Low'] ?? '0') ?? 0.0,
+        // 以下字段 CSV 中没有，使用默认值
+        '',
+        // ebabled（默认 true）
+        rowData['ebabled']?.toLowerCase() == '1' ||
+            rowData['ebabled']?.toLowerCase() == 'true',
+        '',
+        0,
+        0,
+        '',
+        '',
+      );
+
+      PluDataModel pluDataModel = PluDataModel(pluData: dessert);
+
+      // 检查 PLU 是否已存在（假设 checkImportPLu 函数存在）
+      if (checkImportPLu(dessert.plu ?? 0, importPlu)) {
+        importPlu.add(pluDataModel); // 假设 importPlu 列表在外部定义
       }
     }
 
     return;
   }
+
+  /// 解析一行 CSV，处理引号内的逗号、换行及双引号转义
+  /// 返回字段列表
+  List<String> parseCsvLine(String line) {
+    final List<String> result = [];
+    bool inQuotes = false;
+    final StringBuffer field = StringBuffer();
+
+    for (int i = 0; i < line.length; i++) {
+      final char = line[i];
+      if (char == '"') {
+        if (inQuotes && i + 1 < line.length && line[i + 1] == '"') {
+          // 两个连续的双引号表示一个转义的双引号
+          field.write('"');
+          i++; // 跳过下一个引号
+        } else {
+          // 切换引号状态
+          inQuotes = !inQuotes;
+        }
+      } else if (char == ',' && !inQuotes) {
+        // 逗号分隔符（不在引号内）
+        result.add(field.toString());
+        field.clear();
+      } else {
+        field.write(char);
+      }
+    }
+    // 添加最后一个字段
+    result.add(field.toString());
+    return result;
+  }
+
+  // Future<void> importDataFromCSV(String filePath, List<int> nowPluList) async {
+  //   // 读取Excel文件
+  //   Excel? excel = Excel.decodeBytes(await File(filePath).readAsBytes());
+
+  //   if (excel.tables.isEmpty) {
+  //     return; //要弹框提示
+  //   }
+  //   // 数据在第一个工作表
+  //   var firstTable = excel.tables.values.first;
+  //   excel = null;
+  //   Sheet sheet = firstTable;
+
+  //   // 获取首行标题作为字段名列表
+  //   List<String> headerTitles = [];
+  //   for (int col = 0; col < sheet.maxColumns; col++) {
+  //     headerTitles.add(sheet
+  //         .cell(CellIndex.indexByColumnRow(columnIndex: col, rowIndex: 0))
+  //         .value
+  //         .toString());
+  //   }
+
+  //   // 遍历每一行数据（从第二行开始，假设第一行是标题行）
+  //   // 用于存储当前行对应的数据
+  //   for (int row = 1; row < sheet.maxRows; row++) {
+  //     Map<String, dynamic> rowData = {};
+
+  //     // 遍历每一列，将单元格的值与对应的标题关联起来
+  //     for (int col = 0; col < sheet.maxColumns; col++) {
+  //       rowData[headerTitles[col]] = sheet
+  //           .cell(CellIndex.indexByColumnRow(columnIndex: col, rowIndex: row))
+  //           .value;
+  //     }
+  //     if ((rowData.containsKey('PLU') ||
+  //             rowData.containsKey('ProductNumber')) &&
+  //         (rowData['ProductNumber'] != null || rowData['PLU'] != null)) {
+  //       double priceValue = 0.0;
+  //       if (rowData.containsKey('Price')) {
+  //         double value = double.tryParse(rowData['Price'].toString()) ?? 0;
+  //         priceValue = roundToTwoDecimalPlaces(value);
+  //       }
+  //       // 根据标题与字段名的对应关系创建Dessert对象
+  //       String unit = rowData['GeneralUnit'].toString();
+  //       unit = unit.replaceAll(' ', '');
+  //       unit = unit.toLowerCase();
+  //       int unitInt = 0;
+  //       for (var entry in pluUnit.entries) {
+  //         if (entry.value == unit) {
+  //           unitInt = entry.key;
+  //           break;
+  //         }
+  //       }
+
+  //       String taxStr = rowData['TaxType'].toString();
+  //       int taxInt = 0;
+  //       for (var entry in pluTax.entries) {
+  //         if (entry.value == taxStr) {
+  //           taxInt = entry.key;
+  //           break;
+  //         }
+  //       }
+
+  //       PluData dessert = PluData(
+  //         rowData.containsKey('recId')
+  //             ? int.tryParse(rowData['recId'].toString()) ?? 0
+  //             : 0,
+  //         rowData.containsKey('PLU')
+  //             ? int.tryParse(rowData['PLU'].toString()) ?? 0
+  //             : rowData.containsKey('ProductNumber')
+  //                 ? int.tryParse(rowData['ProductNumber'].toString()) ?? 0
+  //                 : 0,
+  //         rowData.containsKey('ProductCode')
+  //             ? int.tryParse(rowData['ProductCode'].toString()) ?? 0
+  //             : 0,
+  //         rowData.containsKey('ItemCode')
+  //             ? int.tryParse(rowData['ItemCode'].toString()) ?? 0
+  //             : 0,
+  //         rowData.containsKey('Category')
+  //             ? rowData['Category'].toString()
+  //             : '-',
+  //         rowData.containsKey('ProductName')
+  //             ? rowData['ProductName'].toString()
+  //             : '-',
+  //         rowData.containsKey('GeneralUnit') ? unitInt : 0,
+  //         rowData.containsKey('TaxType') ? taxInt : 0,
+  //         rowData.containsKey('Price') ? priceValue : 0.0,
+  //         rowData.containsKey('UnitWeight')
+  //             ? double.tryParse(rowData['UnitWeight'].toString()) ?? 0
+  //             : 0.0,
+  //         rowData.containsKey('PreTare')
+  //             ? double.tryParse(rowData['PreTare'].toString()) ?? 0
+  //             : rowData.containsKey('Pretare')
+  //                 ? double.tryParse(rowData['Pretare'].toString()) ?? 0
+  //                 : 0.0,
+  //         rowData.containsKey('LimitHigh')
+  //             ? double.tryParse(rowData['LimitHigh'].toString()) ?? 0
+  //             : 0.0,
+  //         rowData.containsKey('LimitLow')
+  //             ? double.tryParse(rowData['LimitLow'].toString()) ?? 0
+  //             : 0.0,
+  //         '',
+  //         rowData.containsKey('ebabled')
+  //             ? rowData['ebabled'].toString() == '1'
+  //             : true,
+  //         '',
+  //         0,
+  //         0,
+  //         '',
+  //         '',
+  //       );
+  //       PluDataModel pluDataModel = PluDataModel(pluData: dessert);
+
+  //       if (checkImportPLu(dessert.plu ?? 0, nowPluList)) {
+  //         importPlu.add(pluDataModel);
+  //       }
+  //     }
+  //   }
+
+  //   return;
+  // }
 
   double roundToTwoDecimalPlaces(double num) {
     double multiplier = 100;
@@ -1141,7 +1297,7 @@ class _PluEidtPageState extends State<PluEidtPage> {
                       return '';
                     }
                     final String filePath =
-                        path.join(result, 'ProductTemplate.xlsx');
+                        path.join(result, 'ProductTemplate.csv');
                     ExportResult msg = await exportRawTemplate(filePath);
                     if (!mounted) return '';
                     if (msg.isSuccess) {

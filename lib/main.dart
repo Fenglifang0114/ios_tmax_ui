@@ -17,7 +17,6 @@ import 'data/setting_version_info.dart';
 import 'generated/l10n.dart';
 import 'widget/theme_color.dart';
 import 'package:win32/win32.dart';
-import 'package:t_max/pages/test_modbus.dart';
 
 const String serviceName = "TmaxService";
 const bool isServiceVersion = true; //是否是服务版本
@@ -208,7 +207,7 @@ class MyApp extends StatelessWidget {
 
   Future<bool> checkServerExists() async {
     try {
-      var channel = await Socket.connect('127.0.0.1', 7878);
+      var channel = await Socket.connect('127.0.0.1', webPort);
       channel.close();
       return true;
     } catch (e) {
