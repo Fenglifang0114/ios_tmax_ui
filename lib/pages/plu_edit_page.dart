@@ -654,8 +654,12 @@ class _PluEidtPageState extends State<PluEidtPage> {
     List<String> headerTitles =
         parseCsvLine(lines[0]).map((e) => e.trim()).toList();
 
-    // 可选：打印标题，便于调试
-    print('标题行: $headerTitles');
+    //适配大小写 空格
+    for (int i = 0; i < headerTitles.length; i++) {
+      headerTitles[i] = headerTitles[i].trim().toLowerCase();
+    }
+
+    print(headerTitles); // 输出: [hello, world, dart]
 
     // 4. 遍历数据行（从第二行开始）
     for (int i = 1; i < lines.length; i++) {
@@ -678,20 +682,20 @@ class _PluEidtPageState extends State<PluEidtPage> {
 
       // 5. 核心数据提取（与 Excel 版本逻辑一致，但键名需匹配实际标题）
       // 检查必须字段：PLU 或 ProductNumber
-      String? pluStr = rowData['PLU']?.isNotEmpty == true
-          ? rowData['PLU']
-          : rowData['ProductNumber'];
+      String? pluStr = rowData['plu']?.isNotEmpty == true
+          ? rowData['plu']
+          : rowData['productnumber'];
       if (pluStr == null || pluStr.isEmpty) continue; // 缺少 PLU 则跳过该行
 
       // 处理价格
       double priceValue = 0.0;
-      if (rowData.containsKey('Price')) {
-        double value = double.tryParse(rowData['Price']!) ?? 0.0;
+      if (rowData.containsKey('price')) {
+        double value = double.tryParse(rowData['price']!) ?? 0.0;
         priceValue = roundToTwoDecimalPlaces(value); // 假设此函数已定义
       }
 
       // 单位映射（标题为 "Unit"）
-      String unit = rowData['Unit'] ?? '';
+      String unit = rowData['unit'] ?? '';
       unit = unit.replaceAll(' ', '').toLowerCase();
       int unitInt = 0;
       for (var entry in pluUnit.entries) {
@@ -702,7 +706,7 @@ class _PluEidtPageState extends State<PluEidtPage> {
       }
 
       // 税类型映射（标题为 "Tax Type"）
-      String taxStr = rowData['Tax Type'] ?? '';
+      String taxStr = rowData['taxtype'] ?? '';
       int taxInt = 0;
       for (var entry in pluTax.entries) {
         if (entry.value == taxStr) {
@@ -718,13 +722,13 @@ class _PluEidtPageState extends State<PluEidtPage> {
         // plu
         int.tryParse(pluStr) ?? 0,
         // productCode
-        int.tryParse(rowData['Product Code'] ?? '0') ?? 0,
+        int.tryParse(rowData['productcode'] ?? '0') ?? 0,
         // itemCode
-        int.tryParse(rowData['Item Code'] ?? '0') ?? 0,
+        int.tryParse(rowData['itemcode'] ?? '0') ?? 0,
         // category
-        rowData['Category'] ?? '-',
+        rowData['category'] ?? '-',
         // productName
-        rowData['Product Name'] ?? '-',
+        rowData['productname'] ?? '-',
         // generalUnit（已转换）
         unitInt,
         // taxType（已转换）
@@ -732,13 +736,13 @@ class _PluEidtPageState extends State<PluEidtPage> {
         // price
         priceValue,
         // unitWeight
-        double.tryParse(rowData['Unit Weight'] ?? '0') ?? 0.0,
+        double.tryParse(rowData['unitweight'] ?? '0') ?? 0.0,
         // pretare（注意 CSV 中是 "Pretare"）
-        double.tryParse(rowData['Pretare'] ?? '0') ?? 0.0,
+        double.tryParse(rowData['pretare'] ?? '0') ?? 0.0,
         // limitHigh
-        double.tryParse(rowData['Limit High'] ?? '0') ?? 0.0,
+        double.tryParse(rowData['limithigh'] ?? '0') ?? 0.0,
         // limitLow
-        double.tryParse(rowData['Limit Low'] ?? '0') ?? 0.0,
+        double.tryParse(rowData['limitlow'] ?? '0') ?? 0.0,
         // 以下字段 CSV 中没有，使用默认值
         '',
         // ebabled（默认 true）
