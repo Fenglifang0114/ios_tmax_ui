@@ -1195,7 +1195,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
       Text(
         (mySerialProtocolText.varName == 'isstable')
             ? localizedStrings.gTipStableText
-            : localizedStrings.gTipGrossText,
+            : localizedStrings.gTipNetText,
         style: TextStyle(color: colorScheme.primary),
       ),
       TextField(
@@ -1217,7 +1217,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
       Text(
         (mySerialProtocolText.varName == 'isstable')
             ? localizedStrings.gTipUnstableText
-            : localizedStrings.gTipNetText,
+            : localizedStrings.gTipGrossText,
         style: TextStyle(color: colorScheme.primary),
       ),
       TextField(

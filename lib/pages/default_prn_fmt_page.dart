@@ -44,6 +44,12 @@ class _DefaultPrnFmtPageState extends State<DefaultPrnFmtPage> {
   List<String> paths = [];
   Timer? _downloadTimer;
 
+  // 当前选中的值，默认设为 'EPM205'
+  String? _selectedValue = 'EPM205';
+
+  // 下拉选项列表
+  final List<String> _options = ['EPM205', 'LP50'];
+
   @override
   void initState() {
     super.initState();
@@ -108,10 +114,50 @@ class _DefaultPrnFmtPageState extends State<DefaultPrnFmtPage> {
               height: 10,
             ),
             _buildDownloading(),
-            Expanded(
-              flex: 1,
+            SizedBox(
+              height: 60,
               child: _buildButtonRow(),
             ),
+            SizedBox(
+                height: 60,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      width: 300,
+                      alignment: Alignment.centerRight,
+                      child: Text(
+                        localizedStrings.gPrinter + '    ',
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
+                    ),
+                    SizedBox(
+                      width: 300,
+                      child: DropdownButtonFormField<String>(
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(0),
+                          ),
+                        ),
+                        value: _selectedValue,
+                        items: _options.map((String option) {
+                          return DropdownMenuItem<String>(
+                            value: option,
+                            child: Text(
+                              option,
+                              style: Theme.of(context).textTheme.bodySmall,
+                            ),
+                          );
+                        }).toList(),
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            _selectedValue = newValue;
+                          });
+                        },
+                      ),
+                    )
+                  ],
+                )),
             Expanded(
               flex: 5,
               child: SingleChildScrollView(
@@ -251,7 +297,7 @@ class _DefaultPrnFmtPageState extends State<DefaultPrnFmtPage> {
             style: ButtonStyle(
               shape: WidgetStateProperty.all(
                 RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(4),
+                  borderRadius: BorderRadius.circular(0),
                 ),
               ),
             ),
@@ -299,6 +345,9 @@ class _DefaultPrnFmtPageState extends State<DefaultPrnFmtPage> {
       context: context,
       builder: (BuildContext ctx) {
         return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(0),
+          ),
           title: Text(
             localizedStrings.gTitleConfirm,
             style: TextStyle(color: Theme.of(context).colorScheme.primary),
@@ -306,6 +355,7 @@ class _DefaultPrnFmtPageState extends State<DefaultPrnFmtPage> {
           content: Text(error),
           actions: <Widget>[
             Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 CustomElevatedButton(
                   btnWidth: 100,
@@ -329,6 +379,9 @@ class _DefaultPrnFmtPageState extends State<DefaultPrnFmtPage> {
       context: context,
       builder: (BuildContext ctx) {
         return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(0),
+          ),
           title: Text(
             localizedStrings.gTitleConfirm,
             style: TextStyle(color: Theme.of(context).colorScheme.primary),
@@ -336,6 +389,7 @@ class _DefaultPrnFmtPageState extends State<DefaultPrnFmtPage> {
           content: Text(localizedStrings.gConfirmPrnFmtOrderTip),
           actions: <Widget>[
             Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 CustomElevatedButton(
                   btnWidth: 100,
@@ -389,30 +443,13 @@ class _DefaultPrnFmtPageState extends State<DefaultPrnFmtPage> {
     if (fmtSequence.isEmpty) {
       return "";
     }
-
     myDefaultPrtFmt.scaleModel = 'TMax';
-    myDefaultPrtFmt.printerModel = 'EPM205';
+    myDefaultPrtFmt.printerModel = _selectedValue;
     myDefaultPrtFmt.filePathList = fmtSequence;
     myScaleCmd.cmdData = json.encode(myDefaultPrtFmt);
 
     writelog(jsonEncode(myScaleCmd));
     return jsonEncode(myScaleCmd);
-  }
-
-  void sendFormatToScale(List<String> fmtSequence) async {
-    myScaleCmd.cmdMode = "down_def_print_format";
-
-    if (fmtSequence.isNotEmpty) {
-      myDefaultPrtFmt.scaleModel = 'TMax';
-      myDefaultPrtFmt.printerModel = 'EPM205';
-      myDefaultPrtFmt.filePathList = fmtSequence;
-
-      myScaleCmd.cmdData = json.encode(myDefaultPrtFmt);
-      PublicFunctions.sendMsg(
-          myDefScaleInfo.defScaleId!, jsonEncode(myScaleCmd));
-    }
-
-    writelog(jsonEncode(myScaleCmd));
   }
 
   Future pickFiles(TextEditingController showFilePath) async {

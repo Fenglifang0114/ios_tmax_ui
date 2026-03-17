@@ -274,8 +274,7 @@ class BluetoothPageState extends State<BluetoothPage> {
                                           setState(() {
                                             _deviceNameController.clear();
                                           });
-                                          PublicFunctions.getBtName(
-                                              myDefScaleInfo.defScaleId!);
+                                          PublicFunctions.getBtName(selScaleId);
                                           _startTimer(15);
                                         },
                                   Theme.of(context).colorScheme.primary,
@@ -391,13 +390,12 @@ class BluetoothPageState extends State<BluetoothPage> {
                             : () {
                                 if (emissionPowerVale == 'Strong') {
                                   PublicFunctions.modifyBtPowerStrong(
-                                      myDefScaleInfo.defScaleId!);
+                                      selScaleId);
                                 } else if (emissionPowerVale == 'Normal') {
                                   PublicFunctions.modifyBtPowerNormal(
-                                      myDefScaleInfo.defScaleId!);
+                                      selScaleId);
                                 } else {
-                                  PublicFunctions.modifyBtPowerWeak(
-                                      myDefScaleInfo.defScaleId!);
+                                  PublicFunctions.modifyBtPowerWeak(selScaleId);
                                 }
                                 _startTimer(15);
                               },
@@ -416,8 +414,7 @@ class BluetoothPageState extends State<BluetoothPage> {
 
   void sendBluetoothName() async {
     if (_deviceNameController.text.isNotEmpty) {
-      PublicFunctions.modifyBtName(
-          _deviceNameController.text, myDefScaleInfo.defScaleId!);
+      PublicFunctions.modifyBtName(_deviceNameController.text, selScaleId);
       isSetting = true;
       _startTimer(15);
     } else {

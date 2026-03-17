@@ -22,31 +22,24 @@ class CustomElevatedButton extends StatelessWidget {
         backgroundColor: Theme.of(context).colorScheme.primary, // 设置按钮的背景色
         elevation: 5, // 设置按钮的阴影
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(4), // 设置按钮的圆角
+          borderRadius: BorderRadius.circular(0), // 设置按钮的圆角
         ),
       ),
       onPressed: onPressed,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          Icon(
-            icon,
-            size: 20,
-            color: Theme.of(context).colorScheme.onPrimary,
-          ),
           SizedBox(
             width: btnWidth,
             height: btnHeight,
             child: Center(
-              child: Text(
-                text,
-                maxLines: 1,
-                textAlign: TextAlign.left,
-                style: TextStyle(
-                  overflow: TextOverflow.ellipsis,
-                  color: Theme.of(context).colorScheme.onPrimary,
-                ),
-              ),
+              child: Text(text,
+                  maxLines: 1,
+                  textAlign: TextAlign.left,
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        overflow: TextOverflow.ellipsis,
+                        color: Theme.of(context).colorScheme.onPrimary,
+                      )),
             ),
           )
         ],
@@ -75,18 +68,13 @@ class CustomOutlinedButton extends StatelessWidget {
     return OutlinedButton(
       style: ElevatedButton.styleFrom(
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(4), // 设置按钮的圆角
+          borderRadius: BorderRadius.circular(0), // 设置按钮的圆角
         ),
       ),
       onPressed: onPressed,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          Icon(
-            icon,
-            size: 20,
-          ),
-          const SizedBox(width: 4),
           SizedBox(
             width: btnWidth,
             height: btnHeight,
@@ -95,9 +83,9 @@ class CustomOutlinedButton extends StatelessWidget {
                 text,
                 maxLines: 1,
                 textAlign: TextAlign.left,
-                style: const TextStyle(
-                  overflow: TextOverflow.ellipsis,
-                ),
+                style: (Theme.of(context).textTheme.bodySmall?.copyWith(
+                    overflow: TextOverflow.ellipsis,
+                    color: Theme.of(context).colorScheme.primary))!,
               ),
             ),
           )

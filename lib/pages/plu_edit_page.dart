@@ -695,7 +695,7 @@ class _PluEidtPageState extends State<PluEidtPage> {
       }
 
       // 单位映射（标题为 "Unit"）
-      String unit = rowData['unit'] ?? '';
+      String unit = rowData['unit'] ?? rowData['generalunit'] ?? '';
       unit = unit.replaceAll(' ', '').toLowerCase();
       int unitInt = 0;
       for (var entry in pluUnit.entries) {

@@ -849,12 +849,12 @@ class LabelDesignPageState extends State<LabelDesignPage> {
     for (var i = 0; i < myBarCodeListList.barCodeListList.length; i++) {
       if (myBarCodeListList.barCodeListList[i].barCodeName == name &&
           myBarCodeListList.barCodeListList[i].barCodeType == 'Qrcode' &&
-          type == 'Qrcode') {
+          type == 'qrcode') {
         findIndex = i;
         break;
       } else if (myBarCodeListList.barCodeListList[i].barCodeName == name &&
           myBarCodeListList.barCodeListList[i].barCodeType != 'Qrcode' &&
-          type != 'Qrcode') {
+          type != 'qrcode') {
         findIndex = i;
         break;
       }
@@ -1312,15 +1312,17 @@ class LabelDesignPageState extends State<LabelDesignPage> {
       // }
 //x1,y1,x2,y2,lineWidth,lineType,index
       else if (elements[i].type.name == 'line') {
+        int lineWidth = elements[i].size.width.toInt();
+        int lineHeight = elements[i].size.height.toInt();
         //横线
-        if (elements[i].height! <= elements[i].width!) {
+        if (lineHeight <= lineWidth) {
           csvData.add([
             'L',
             elements[i].position.dx.toInt(),
             elements[i].position.dy.toInt(),
-            (elements[i].width! + elements[i].position.dx.toInt()).toInt(),
+            (lineWidth + elements[i].position.dx.toInt()).toInt(),
             elements[i].position.dy.toInt(),
-            elements[i].height!.toInt(),
+            lineHeight,
             0, //线类型
             elements[i].index,
           ]);
@@ -1331,8 +1333,8 @@ class LabelDesignPageState extends State<LabelDesignPage> {
             elements[i].position.dx.toInt(),
             elements[i].position.dy.toInt(),
             elements[i].position.dx.toInt(),
-            (elements[i].height! + elements[i].position.dy.toInt()).toInt(),
-            elements[i].width!.toInt(),
+            (lineHeight + elements[i].position.dy.toInt()).toInt(),
+            lineWidth,
             0, //线类型
             elements[i].index,
           ]);
@@ -1549,6 +1551,7 @@ class LabelDesignPageState extends State<LabelDesignPage> {
         // final file = await _localFilepath; ///////获取固定位置
         final file = File(p.join(path));
         // 将字符串写入文件中
+        print(formatjson);
         file.writeAsStringSync(formatjson);
 
         // await loadData();   此处已经写好了如何捞回来条码信息

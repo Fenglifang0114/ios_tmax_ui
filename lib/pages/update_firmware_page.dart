@@ -1154,12 +1154,12 @@ class SelectScalesPageNewState extends State<SelectScalesPageNew> {
               scaleResMap[id]!.process = 1;
               // });
               timer.cancel();
-            } else if (scaleResMap[id]!.process < 0.9 &&
+            } else if (scaleResMap[id]!.process < 0.8 &&
                 !scaleResMap[id]!
                     .res
                     .contains(localizedStrings.gTipRebootForUpdate)) {
               setState(() {
-                scaleResMap[id]!.process += 0.9 / downTime;
+                scaleResMap[id]!.process += 0.8 / downTime;
               });
             }
           });
@@ -1173,9 +1173,9 @@ class SelectScalesPageNewState extends State<SelectScalesPageNew> {
             scaleResMap[id]!.process = 1;
             // });
             timer.cancel();
-          } else if (scaleResMap[id]!.process < 0.9) {
+          } else if (scaleResMap[id]!.process < 0.8) {
             setState(() {
-              scaleResMap[id]!.process += 0.9 / downTime;
+              scaleResMap[id]!.process += 0.8 / downTime;
             });
           }
         });
@@ -1224,7 +1224,7 @@ class SelectScalesPageNewState extends State<SelectScalesPageNew> {
     scaleResMap.forEach((key, value) {
       sendMessage(key);
     });
-    buildProcessTimer(240);
+    buildProcessTimer(120);
   }
 
   void sendMessage(int scaleId) {

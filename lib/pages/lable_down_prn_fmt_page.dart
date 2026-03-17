@@ -147,7 +147,7 @@ class _DownloadPageState extends State<DownloadLabelPage> {
                             decoration: const InputDecoration(
                               border: OutlineInputBorder(
                                 borderRadius:
-                                    BorderRadius.all(Radius.circular(4)),
+                                    BorderRadius.all(Radius.circular(0)),
                               ),
                             ),
                           ),
@@ -195,7 +195,7 @@ class _DownloadPageState extends State<DownloadLabelPage> {
                             decoration: const InputDecoration(
                               border: OutlineInputBorder(
                                 borderRadius:
-                                    BorderRadius.all(Radius.circular(4)),
+                                    BorderRadius.all(Radius.circular(0)),
                               ),
                             ),
                           ),
@@ -243,7 +243,7 @@ class _DownloadPageState extends State<DownloadLabelPage> {
                             decoration: const InputDecoration(
                               border: OutlineInputBorder(
                                 borderRadius:
-                                    BorderRadius.all(Radius.circular(4)),
+                                    BorderRadius.all(Radius.circular(0)),
                               ),
                             ),
                           ),
@@ -291,7 +291,7 @@ class _DownloadPageState extends State<DownloadLabelPage> {
                             decoration: const InputDecoration(
                               border: OutlineInputBorder(
                                 borderRadius:
-                                    BorderRadius.all(Radius.circular(4)),
+                                    BorderRadius.all(Radius.circular(0)),
                               ),
                             ),
                           ),
@@ -441,6 +441,9 @@ class _DownloadPageState extends State<DownloadLabelPage> {
       context: context,
       builder: (BuildContext ctx) {
         return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.zero, // 设置为直角
+          ),
           title: Text(
             localizedStrings.gTitleConfirm,
             style: TextStyle(color: Theme.of(context).colorScheme.primary),
@@ -448,6 +451,7 @@ class _DownloadPageState extends State<DownloadLabelPage> {
           content: Text(localizedStrings.jump_confirm_info),
           actions: <Widget>[
             Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 CustomElevatedButton(
                   btnWidth: 100,
