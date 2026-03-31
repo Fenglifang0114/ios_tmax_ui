@@ -4167,5 +4167,21 @@
     "openOutputPortFailed": "打开输出端口失败",
     "@openOutputPortFailed": {
         "description": "Failed to open the output port."
+    },
+    "selectS15Scale": "请选择 S15 标定",
+    "@selectS15Scale": {
+        "description": "Prompt to select S15 scale"
+    },
+    "inputSetting": "输入口设置",
+    "@inputSetting": {
+        "description": "Input Setting"
+    },
+    "outputSetting": "输出口设置",
+    "@outputSetting": {
+        "description": "Output Setting"
+    },
+    "inputPort": "输入口",
+    "@inputPort": {
+        "description": "Input"
     }
 }

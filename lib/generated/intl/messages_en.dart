@@ -1275,6 +1275,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "ingredientVerification": MessageLookupByLibrary.simpleMessage(
       "Ingredient Verification",
     ),
+    "inputPort": MessageLookupByLibrary.simpleMessage("Input"),
+    "inputSetting": MessageLookupByLibrary.simpleMessage("Input Setting"),
     "invalidData": MessageLookupByLibrary.simpleMessage("Invalid Data"),
     "invalidName": MessageLookupByLibrary.simpleMessage(
       "The name is invalid. Please enter a valid name.",
@@ -1461,6 +1463,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "operationType": MessageLookupByLibrary.simpleMessage("Operation Type"),
     "operator": MessageLookupByLibrary.simpleMessage("Operator"),
     "outputPort": MessageLookupByLibrary.simpleMessage("Output Port"),
+    "outputSetting": MessageLookupByLibrary.simpleMessage("Output Setting"),
     "output_confirm_info": MessageLookupByLibrary.simpleMessage(
       "Please confirm the folder name!",
     ),
@@ -1679,6 +1682,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Searching for nearby Bluetooth devices - this may take up to 20 seconds",
     ),
     "selectDevice": MessageLookupByLibrary.simpleMessage("Select Device"),
+    "selectS15Scale": MessageLookupByLibrary.simpleMessage(
+      "Please select S15 scale",
+    ),
     "select_firmware_btn": MessageLookupByLibrary.simpleMessage(
       "Select Firmware",
     ),

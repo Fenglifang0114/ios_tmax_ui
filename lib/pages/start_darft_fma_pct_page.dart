@@ -93,7 +93,6 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
 
   dynamic _eventbus1;
   dynamic _eventbus2;
-
   dynamic _eventbus5;
   dynamic _eventbus6;
   dynamic _eventbus7;
@@ -102,6 +101,9 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
   dynamic _eventbus10;
   dynamic _eventbus11;
   dynamic _eventbus12;
+  dynamic _eventbus13;
+  dynamic _eventbus14;
+  dynamic _eventbus15;
 
   Timer? setWgtStartFalseTimer; // 用于每3秒将isWgtStart设置为false的定时器
   Timer? checkWgtStartTimer; // 用于每5秒检查isWgtStart的定时器
@@ -124,6 +126,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
 
   List<RespOutputInfo> outputPortStatusList = [];
   List<RawOutputInfo> rawOutputInfoList = []; // 原料重量信息列表
+  List<InputInfo> inputPortStatusList = []; // 输入端口状态列表
 
   // 启动发送存活消息的定时器
   void startCntAliveTimer(int time) {
@@ -572,6 +575,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
     myFmaInfo = widget.selectFormula;
     fmaUnit = widget.fmaUnit; //获取传入的配方单位
 
+    PublicFunctions.getScaleInputSetting();
     PublicFunctions.getOutputPortStatus();
 
     GetRawOutputByFmaId getRawOutputByFmaId = GetRawOutputByFmaId(
@@ -796,6 +800,51 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
         }
       }
     });
+
+    _eventbus13 = eventBus.on<EventRespScaleInput>().listen((event) {
+      if (mounted) {
+        String dataStr = event.obj;
+        if (dataStr != '') {
+          //处理按键事件
+          handleInputPortStatus(dataStr);
+        }
+      }
+    });
+
+    _eventbus14 = eventBus.on<EventRespGetOutputPortStatus>().listen((event) {
+      if (mounted) {
+        String dataStr = event.obj;
+        if (dataStr != '' && dataStr != 'null') {
+          try {
+            outputPortStatusList = respOutputInfoFromJson(dataStr);
+
+            setState(() {});
+          } catch (e) {
+            setState(() {});
+          }
+        } else {
+          setState(() {});
+        }
+      }
+    });
+
+    _eventbus15 = eventBus.on<EventRespGetInputPortStatus>().listen((event) {
+      if (mounted) {
+        String dataStr = event.obj;
+        if (dataStr != '' && dataStr != 'null') {
+          try {
+            List<InputInfo> tempList = inputInfoFromJson(dataStr);
+            inputPortStatusList = tempList;
+
+            setState(() {});
+          } catch (e) {
+            setState(() {});
+          }
+        } else {
+          setState(() {});
+        }
+      }
+    });
   }
 
   @override
@@ -811,6 +860,9 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
     _eventbus10.cancel();
     _eventbus11.cancel();
     _eventbus12.cancel();
+    _eventbus13.cancel();
+    _eventbus14.cancel();
+    _eventbus15.cancel();
 
     stopCntAliveTimer();
     currentWgtStrNotifier.dispose();
@@ -820,6 +872,46 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
 
     autoNextStepNotifier.dispose();
     stableTimeCtl.dispose();
+  }
+
+  void handleInputPortStatus(String dataStr) {
+    if (inputPortStatusList.isEmpty) {
+      return;
+    }
+
+    for (var port in inputPortStatusList) {
+      if (port.port.toString() == dataStr) {
+        handleInputBtn(port.btn ?? '');
+        break;
+      }
+    }
+  }
+
+  void handleInputBtn(String btn) {
+    if (btn == 'None') {
+      return;
+    }
+    if (btn == 'Tare') {
+      PublicFunctions.performTareWithScaleId(myScale.scaleId);
+    } else if (btn == 'Zero') {
+      PublicFunctions.performZeroWithScaleId(myScale.scaleId);
+    } else if (btn == 'Pause') {
+      if (!openIoPortFlag) {
+        return;
+      }
+      handleCloseIoPort();
+      setState(() {
+        openIoPortFlag = false;
+      });
+    } else if (btn == 'Start') {
+      if (openIoPortFlag) {
+        return;
+      }
+      setState(() {
+        openIoPortFlag = true;
+      });
+      handleIoPortStatus();
+    }
   }
 
   // 提示切换单位对话框
@@ -2414,7 +2506,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
                             ),
                             onPressed: () {
                               PublicFunctions.performZeroWithScaleId(
-                                  widget.selScaleId);
+                                  myScale.scaleId);
                             },
                             child: Text(
                               localizedStrings.iBtnZero,
@@ -3078,7 +3170,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
         closeIoPort();
       }
     } catch (e) {
-      print(e.toString());
+      // print(e.toString());
       return;
     }
   }

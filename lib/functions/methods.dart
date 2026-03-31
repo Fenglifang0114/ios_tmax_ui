@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:t_max/data/new_get_recs.dart';
-import 'package:t_max/data/readoutput.dart';
 import 'package:t_max/data/req_formula_data.dart';
 import 'package:t_max/data/scale_info_from_db.dart';
 import 'package:t_max/data/sys_user_req.dart';
@@ -413,8 +412,14 @@ class PublicFunctions {
     sendMsgChan0(jsonEncode(myScaleCmd));
   }
 
-  //获取自动下一步
+  //获取按键设置
+  static void getScaleInputSetting() {
+    myScaleCmd.cmdMode = "get_input_port";
+    myScaleCmd.cmdData = '';
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
 
+  //获取自动下一步
   static void getAutoNext() {
     myScaleCmd.cmdMode = "get_auto_next";
     myScaleCmd.cmdData = '';
@@ -804,6 +809,20 @@ class PublicFunctions {
   static void unsealByMasterKey(String masterKey) {
     myScaleCmd.cmdMode = "unseal_by_master_key";
     myScaleCmd.cmdData = masterKey;
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
+  //更新输入端口状态
+  static void updateInputPortStatus(String jsonStr) {
+    myScaleCmd.cmdMode = "update_input_port";
+    myScaleCmd.cmdData = jsonStr;
+    sendMsgChan0(jsonEncode(myScaleCmd));
+  }
+
+  //获取输入端口状态
+  static void getInputPortStatus() {
+    myScaleCmd.cmdMode = "get_input_port";
+    myScaleCmd.cmdData = "";
     sendMsgChan0(jsonEncode(myScaleCmd));
   }
 

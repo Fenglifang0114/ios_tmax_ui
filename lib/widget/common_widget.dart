@@ -181,6 +181,9 @@ showDropDownButton(
     List<String> dropList,
     void Function(String?) onChanged,
     {Function()? onTap}) {
+  if (dropList.isNotEmpty && !dropList.contains(valueCtl.text)) {
+    valueCtl.text = "";
+  }
   return SizedBox(
       height: inputHeight,
       child: DropdownButtonFormField<String>(

@@ -22,10 +22,10 @@ class BtInfoListWidget extends StatefulWidget {
   });
 
   @override
-  _BtInfoListWidgetState createState() => _BtInfoListWidgetState();
+  BtInfoListWidgetState createState() => BtInfoListWidgetState();
 }
 
-class _BtInfoListWidgetState extends State<BtInfoListWidget> {
+class BtInfoListWidgetState extends State<BtInfoListWidget> {
   final Set<int> _selectedIndices = <int>{};
   final Set<String> _selectedMacs = <String>{};
 
@@ -358,11 +358,11 @@ class AlternatingGridBtInfoList extends StatefulWidget {
   });
 
   @override
-  _AlternatingGridBtInfoListState createState() =>
-      _AlternatingGridBtInfoListState();
+  AlternatingGridBtInfoListState createState() =>
+      AlternatingGridBtInfoListState();
 }
 
-class _AlternatingGridBtInfoListState extends State<AlternatingGridBtInfoList> {
+class AlternatingGridBtInfoListState extends State<AlternatingGridBtInfoList> {
 
   @override
   Widget build(BuildContext context) {

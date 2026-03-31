@@ -130,11 +130,14 @@ class RespSysMsgType {
 
   static const String respUnsealByMasterKey = 'resp_unseal_by_master_key';
   static const String respGetOutputPortStatus = 'resp_get_output_port';
-
   static const String respUpdateOutputPort = 'resp_update_output_port';
   static const String respRawOutputByFmaId = 'resp_raw_output_by_fma_id';
 
   static const String respOpenOutputPort = 'resp_open_output_port';
+  static const String respGetInputPortStatus = 'resp_get_input_port';
+  static const String respUpdateInputPort = 'resp_update_input_port';
+
+  static const String respScaleInput = 'resp_scale_input'; // 按键输入
 
   static final Map<String, Function> handlers = {
     RespSysMsgType.respPortsList: handlePortsList,
@@ -238,6 +241,9 @@ class RespSysMsgType {
     RespSysMsgType.respUpdateOutputPort: handleRespUpdateOutputPort,
     RespSysMsgType.respRawOutputByFmaId: handleRespRawOutputByFmaId,
     RespSysMsgType.respOpenOutputPort: handleRespOpenOutputPort,
+    RespSysMsgType.respGetInputPortStatus: handleRespGetInputPortStatus,
+    RespSysMsgType.respUpdateInputPort: handleRespUpdateInputPort,
+    RespSysMsgType.respScaleInput: handleRespScaleInput,
   };
 
   static void handleBtList(dynamic jsonData) {
@@ -490,6 +496,20 @@ class RespSysMsgType {
 
   static void handleRespUpdateOutputPort(dynamic jsonData) {
     eventBus.fire(EventRespUpdateOutputPort(""));
+  }
+
+  static void handleRespGetInputPortStatus(dynamic jsonData) {
+    String dataString = jsonData['MsgBody'];
+    eventBus.fire(EventRespGetInputPortStatus(dataString));
+  }
+
+  static void handleRespUpdateInputPort(dynamic jsonData) {
+    eventBus.fire(EventRespUpdateInputPort(""));
+  }
+
+  static void handleRespScaleInput(dynamic jsonData) {
+    String dataString = jsonData['MsgBody'];
+    eventBus.fire(EventRespScaleInput(dataString));
   }
 
   static void handleRespOpenOutputPort(dynamic jsonData) {

@@ -10106,6 +10106,41 @@ class S {
       args: [],
     );
   }
+
+  /// `Please select S15 scale`
+  String get selectS15Scale {
+    return Intl.message(
+      'Please select S15 scale',
+      name: 'selectS15Scale',
+      desc: 'Prompt to select S15 scale',
+      args: [],
+    );
+  }
+
+  /// `Input Setting`
+  String get inputSetting {
+    return Intl.message(
+      'Input Setting',
+      name: 'inputSetting',
+      desc: 'Input Setting',
+      args: [],
+    );
+  }
+
+  /// `Output Setting`
+  String get outputSetting {
+    return Intl.message(
+      'Output Setting',
+      name: 'outputSetting',
+      desc: 'Output Setting',
+      args: [],
+    );
+  }
+
+  /// `Input`
+  String get inputPort {
+    return Intl.message('Input', name: 'inputPort', desc: 'Input', args: []);
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

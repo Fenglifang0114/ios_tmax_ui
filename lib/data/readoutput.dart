@@ -130,3 +130,65 @@ class CurrentPortSetting {
       required this.triggerValue,
       required this.delayedTime});
 }
+
+// To parse this JSON data, do
+//
+//     final inputInfo = inputInfoFromJson(jsonString);
+
+List<InputInfo> inputInfoFromJson(String str) =>
+    List<InputInfo>.from(json.decode(str).map((x) => InputInfo.fromJson(x)));
+
+String inputInfoToJson(List<InputInfo> data) =>
+    json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
+
+class InputInfo {
+  int? recId;
+  int? port;
+  String? btn;
+  DateTime? updateAt;
+
+  InputInfo({
+    this.recId,
+    this.port,
+    this.btn,
+    this.updateAt,
+  });
+
+  factory InputInfo.fromJson(Map<String, dynamic> json) => InputInfo(
+        recId: json["RecID"],
+        port: json["Port"],
+        btn: json["Btn"],
+        updateAt:
+            json["UpdateAt"] == null ? null : DateTime.parse(json["UpdateAt"]),
+      );
+
+  Map<String, dynamic> toJson() => {
+        "RecID": recId,
+        "Port": port,
+        "Btn": btn,
+        "UpdateAt": updateAt?.toIso8601String(),
+      };
+}
+
+String setInputInfoToJson(List<SetBtnInfo> data) =>
+    json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
+
+class SetBtnInfo {
+  int? port;
+  String? btn;
+
+  SetBtnInfo({
+    this.port,
+    this.btn,
+  });
+
+  factory SetBtnInfo.fromJson(Map<String, dynamic> json) => SetBtnInfo(
+        port: json["Port"],
+        btn: json["Btn"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "Port": port,
+        "Btn": btn,
+      };
+}

@@ -857,6 +857,21 @@ class EventRespUnsealByMasterKey {
   EventRespUnsealByMasterKey(this.obj);
 }
 
+class EventRespGetInputPortStatus {
+  dynamic obj;
+  EventRespGetInputPortStatus(this.obj);
+}
+
+class EventRespUpdateInputPort {
+  dynamic obj;
+  EventRespUpdateInputPort(this.obj);
+}
+
+class EventRespScaleInput {
+  dynamic obj;
+  EventRespScaleInput(this.obj);
+}
+
 class EventRespGetOutputPortStatus {
   dynamic obj;
   EventRespGetOutputPortStatus(this.obj);

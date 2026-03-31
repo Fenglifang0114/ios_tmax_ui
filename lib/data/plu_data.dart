@@ -2,7 +2,6 @@
 // 0-kg 1-100g 2-amount 3-lb 4-g 5-oz 6-lboz 7-tj 8-hj 9-t
 // 0-tax1 1-tax2  2-tax3
 
-import 'package:excel/excel.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import 'package:t_max/data/language.dart';

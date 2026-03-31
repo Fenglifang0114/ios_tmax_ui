@@ -11,7 +11,6 @@ import 'package:t_max/dialog/custom_dialog_tip.dart';
 import 'package:t_max/dialog/raw_type_mgr.dart';
 import 'package:t_max/eventbus/eventbus.dart';
 import 'package:t_max/functions/methods.dart';
-import 'package:t_max/generated/l10n.dart';
 import 'package:t_max/widget/common_widget.dart';
 import 'package:t_max/widget/dialog_head_style.dart';
 

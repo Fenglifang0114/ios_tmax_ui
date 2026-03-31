@@ -5,6 +5,7 @@ import 'package:t_max/data/language.dart';
 import 'package:t_max/data/readoutput.dart';
 import 'package:t_max/eventbus/eventbus.dart';
 import 'package:t_max/functions/methods.dart';
+import 'package:t_max/widget/common_widget.dart';
 import 'package:t_max/widget/dialog_head_style.dart';
 
 class SetOutputPortDialog extends StatefulWidget {
@@ -14,6 +15,21 @@ class SetOutputPortDialog extends StatefulWidget {
 }
 
 class _SetOutputPortDialogState extends State<SetOutputPortDialog> {
+  TextEditingController btnTypeCtl0 = TextEditingController(text: "None");
+  TextEditingController btnTypeCtl1 = TextEditingController(text: "None");
+  TextEditingController btnTypeCtl2 = TextEditingController(text: "None");
+  TextEditingController btnTypeCtl3 = TextEditingController(text: "None");
+
+  List<String> btnTypeList = [
+    "None",
+    "Start",
+    "Pause",
+    "Tare",
+    "Zero",
+  ];
+
+  // 《无》《启动》《暂停》《扣重》《归零》
+
   List<TextEditingController> delayedStartCtl = [];
   List<TextEditingController> triggerOffCtl = [];
   List<TextEditingController> remarkCtl = [];
@@ -22,8 +38,11 @@ class _SetOutputPortDialogState extends State<SetOutputPortDialog> {
   String errString = '';
   dynamic _eventbus1;
   dynamic _eventbus2;
+  dynamic _eventbus3;
+  dynamic _eventbus4;
 
   List<RespOutputInfo> outputPortStatusList = [];
+  List<InputInfo> inputPortStatusList = [];
 
   @override
   void initState() {
@@ -38,6 +57,7 @@ class _SetOutputPortDialogState extends State<SetOutputPortDialog> {
     }
 
     PublicFunctions.getOutputPortStatus();
+    PublicFunctions.getInputPortStatus();
 
     _eventbus1 = eventBus.on<EventRespGetOutputPortStatus>().listen((event) {
       if (mounted) {
@@ -78,6 +98,49 @@ class _SetOutputPortDialogState extends State<SetOutputPortDialog> {
         PublicFunctions.getOutputPortStatus();
       }
     });
+
+    _eventbus3 = eventBus.on<EventRespGetInputPortStatus>().listen((event) {
+      if (mounted) {
+        String dataStr = event.obj;
+        if (dataStr != '' && dataStr != 'null') {
+          try {
+            List<InputInfo> tempList = inputInfoFromJson(dataStr);
+
+            setState(() {
+              if (tempList.isNotEmpty) {
+                inputPortStatusList = tempList;
+
+                // 更新每个端口的控制器值
+                for (var element in tempList) {
+                  if (element.port == 1) {
+                    btnTypeCtl0.text = element.btn ?? '';
+                  }
+                  if (element.port == 2) {
+                    btnTypeCtl1.text = element.btn ?? '';
+                  }
+                  if (element.port == 3) {
+                    btnTypeCtl2.text = element.btn ?? '';
+                  }
+                  if (element.port == 4) {
+                    btnTypeCtl3.text = element.btn ?? '';
+                  }
+                }
+              }
+            });
+          } catch (e) {
+            setState(() {});
+          }
+        } else {
+          setState(() {});
+        }
+      }
+    });
+
+    _eventbus4 = eventBus.on<EventRespUpdateInputPort>().listen((event) {
+      if (mounted) {
+        PublicFunctions.getInputPortStatus();
+      }
+    });
   }
 
   @override
@@ -97,6 +160,8 @@ class _SetOutputPortDialogState extends State<SetOutputPortDialog> {
 
     _eventbus1?.cancel();
     _eventbus2?.cancel();
+    _eventbus3?.cancel();
+    _eventbus4?.cancel();
   }
 
   // 更新所有输出端口状态
@@ -122,6 +187,82 @@ class _SetOutputPortDialogState extends State<SetOutputPortDialog> {
     PublicFunctions.updateOutputPortStatus(jsonStr);
   }
 
+  // 更新所有输入端口状态
+  void updateAllInputPorts() {
+    List<SetBtnInfo> btnInfoList = [];
+
+    if (btnTypeCtl0.text.isNotEmpty) {
+      int portNumber = 1;
+      SetBtnInfo btnInfo = SetBtnInfo(port: portNumber, btn: btnTypeCtl0.text);
+
+      btnInfoList.add(btnInfo);
+    }
+    if (btnTypeCtl1.text.isNotEmpty) {
+      int portNumber = 2;
+      SetBtnInfo btnInfo = SetBtnInfo(port: portNumber, btn: btnTypeCtl1.text);
+
+      btnInfoList.add(btnInfo);
+    }
+    if (btnTypeCtl2.text.isNotEmpty) {
+      int portNumber = 3;
+      SetBtnInfo btnInfo = SetBtnInfo(port: portNumber, btn: btnTypeCtl2.text);
+
+      btnInfoList.add(btnInfo);
+    }
+    if (btnTypeCtl3.text.isNotEmpty) {
+      int portNumber = 4;
+      SetBtnInfo btnInfo = SetBtnInfo(port: portNumber, btn: btnTypeCtl3.text);
+
+      btnInfoList.add(btnInfo);
+    }
+
+    String jsonStr = setInputInfoToJson(btnInfoList);
+    PublicFunctions.updateInputPortStatus(jsonStr);
+  }
+
+  Widget showTypeDropDownButton(
+      String hintText, TextEditingController valueCtl) {
+    return Container(
+        height: 48,
+        padding: const EdgeInsets.only(left: 10, right: 10),
+        decoration: BoxDecoration(
+          border: Border.all(
+              color: Theme.of(context).colorScheme.outlineVariant), // 设置边框颜色
+          borderRadius: BorderRadius.circular(0), // 设置圆角
+        ),
+        child: DropdownButton(
+            underline: SizedBox(),
+            isExpanded: true,
+            value: valueCtl.text == "" ? null : valueCtl.text,
+            items: [
+              ...btnTypeList.map((String item) {
+                return DropdownMenuItem<String>(
+                  value: item,
+                  child: Text(item,
+                      style: Theme.of(context).textTheme.bodySmall!.apply(
+                            color: Theme.of(context).colorScheme.onSurface,
+                          )),
+                );
+              })
+            ],
+            onChanged: (value) {
+              if (value == null) {
+                setState(() {
+                  valueCtl.text = '';
+                });
+
+                return;
+              }
+
+              setState(() {
+                valueCtl.text = value.toString();
+              });
+            },
+            style: Theme.of(context).textTheme.bodySmall!.apply(
+                  color: Theme.of(context).colorScheme.onSurface,
+                )));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Dialog(
@@ -145,6 +286,104 @@ class _SetOutputPortDialogState extends State<SetOutputPortDialog> {
               },
             ),
 
+            SizedBox(
+              height: 150,
+              child: Column(
+                children: [
+                  Container(
+                    height: 40,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: largePadding,
+                    ),
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      localizedStrings.inputSetting,
+                      style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                    ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      SizedBox(
+                        width: 200,
+                        height: 90,
+                        child: Column(children: [
+                          showItemNameWithStar(context,
+                              localizedStrings.inputPort + " 1", false),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: showTypeDropDownButton("", btnTypeCtl0),
+                              ),
+                            ],
+                          )
+                        ]),
+                      ),
+                      SizedBox(
+                        width: 200,
+                        height: 90,
+                        child: Column(children: [
+                          showItemNameWithStar(context,
+                              localizedStrings.inputPort + " 2", false),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: showTypeDropDownButton("", btnTypeCtl1),
+                              ),
+                            ],
+                          )
+                        ]),
+                      ),
+                      SizedBox(
+                        width: 200,
+                        height: 90,
+                        child: Column(children: [
+                          showItemNameWithStar(context,
+                              localizedStrings.inputPort + " 3", false),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: showTypeDropDownButton("", btnTypeCtl2),
+                              ),
+                            ],
+                          )
+                        ]),
+                      ),
+                      SizedBox(
+                        width: 200,
+                        height: 90,
+                        child: Column(children: [
+                          showItemNameWithStar(context,
+                              localizedStrings.inputPort + " 4", false),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: showTypeDropDownButton("", btnTypeCtl3),
+                              ),
+                            ],
+                          )
+                        ]),
+                      ),
+                    ],
+                  )
+                ],
+              ),
+            ),
+            Container(
+              height: 40,
+              padding: const EdgeInsets.symmetric(
+                horizontal: largePadding,
+              ),
+              alignment: Alignment.centerLeft,
+              child: Text(
+                localizedStrings.outputSetting,
+                style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+              ),
+            ),
             // 表头
             Container(
               padding: const EdgeInsets.symmetric(
@@ -388,6 +627,10 @@ class _SetOutputPortDialogState extends State<SetOutputPortDialog> {
                       ),
                       onPressed: () {
                         updateAllOutputPorts();
+                        Future.delayed(const Duration(seconds: 1), () {
+                          updateAllInputPorts();
+                        });
+
                         Navigator.of(context).pop();
                       },
                       child: Text(
@@ -442,484 +685,3 @@ class _SetOutputPortDialogState extends State<SetOutputPortDialog> {
         );
   }
 }
-
-// import 'package:flutter/material.dart';
-// import 'package:flutter/services.dart';
-// import 'package:t_max/data/home_page_common_data.dart';
-// import 'package:t_max/data/icons.dart';
-// import 'package:t_max/data/language.dart';
-// import 'package:t_max/data/readoutput.dart';
-// import 'package:t_max/eventbus/eventbus.dart';
-// import 'package:t_max/functions/methods.dart';
-// import 'package:t_max/widget/common_widget.dart';
-// import 'package:t_max/widget/dialog_head_style.dart';
-
-// class SetOutputPortDialog extends StatefulWidget {
-//   const SetOutputPortDialog({super.key});
-//   @override
-//   State<SetOutputPortDialog> createState() => _SetOutputPortDialogState();
-// }
-
-// class _SetOutputPortDialogState extends State<SetOutputPortDialog> {
-//   TextEditingController outputPortCtl = TextEditingController();
-//   TextEditingController delayedStartCtl = TextEditingController();
-//   TextEditingController triggerOffCtl = TextEditingController();
-
-//   String errString = '';
-//   dynamic _eventbus1;
-//   dynamic _eventbus2;
-//   bool isPortOn = false;
-
-//   List<RespOutputInfo> outputPortStatusList = [];
-
-//   @override
-//   void initState() {
-//     super.initState();
-//     PublicFunctions.getOutputPortStatus();
-
-//     _eventbus1 = eventBus.on<EventRespGetOutputPortStatus>().listen((event) {
-//       if (mounted) {
-//         String dataStr = event.obj;
-//         if (dataStr != '' && dataStr != 'null') {
-//           try {
-//             List<RespOutputInfo> tempList = respOutputInfoFromJson(dataStr);
-
-//             setState(() {
-//               if (tempList.isNotEmpty) {
-//                 outputPortStatusList = tempList;
-//               }
-//             });
-//           } catch (e) {
-//             print(e);
-//             setState(() {});
-//           }
-//         } else {
-//           setState(() {});
-//         }
-//       }
-//     });
-//     _eventbus2 = eventBus.on<EventRespUpdateOutputPort>().listen((event) {
-//       if (mounted) {
-//         PublicFunctions.getOutputPortStatus();
-//       }
-//     });
-//   }
-
-//   @override
-//   void dispose() {
-//     super.dispose();
-//     outputPortCtl.dispose();
-//     delayedStartCtl.dispose();
-//     triggerOffCtl.dispose();
-
-//     _eventbus1?.cancel();
-//     _eventbus2?.cancel();
-//   }
-
-//   bool searchFmaBarcode(String barcode) {
-//     if (barcode.isEmpty) {
-//       return false;
-//     }
-//     // 搜索配方
-//     return true;
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Dialog(
-//       backgroundColor: Colors.transparent,
-//       child: Container(
-//         width: 861,
-//         height: 688,
-//         decoration: BoxDecoration(
-//           color: Theme.of(context).colorScheme.surface,
-//           borderRadius: BorderRadius.circular(0),
-//         ),
-//         child: Column(
-//           children: [
-//             // 头部
-//             ...dialogHeadStyle(
-//               context,
-//               localizedStrings.ioSetting,
-//               true,
-//               onClose: () {
-//                 Navigator.of(context).pop();
-//               },
-//             ),
-//             // 中部
-//             Expanded(
-//               child: Container(
-//                 padding: const EdgeInsets.only(
-//                     left: largePadding,
-//                     right: largePadding,
-//                     bottom: largePadding * 2),
-//                 child: Column(children: [
-//                   Container(
-//                     height: largePadding,
-//                     alignment: Alignment.centerLeft,
-//                   ),
-//                   Row(
-//                       mainAxisAlignment: MainAxisAlignment.spaceAround,
-//                       children: [
-//                         SizedBox(
-//                           height: 40,
-//                           child: Row(
-//                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                             children: [
-//                               // 使用 ConstrainedBox 限制按钮的最大宽度为 300
-//                               getSvgIcon(outputSvgIcon(), 50, 50,
-//                                   Theme.of(context).colorScheme.primary),
-//                               SizedBox(width: largePadding),
-//                               Text(
-//                                   "${localizedStrings.outputPort} ${outputPortCtl.text}",
-//                                   textAlign: TextAlign.left,
-//                                   style: Theme.of(context)
-//                                       .textTheme
-//                                       .bodySmall!
-//                                       .apply(
-//                                         color: Theme.of(context)
-//                                             .colorScheme
-//                                             .onSurface,
-//                                       )),
-//                             ],
-//                           ),
-//                         ),
-//                         Expanded(flex: 1, child: SizedBox()),
-//                         SizedBox(
-//                           width: 40,
-//                           height: 40,
-//                           child: Row(
-//                             mainAxisAlignment: MainAxisAlignment.end,
-//                             children: [
-//                               // 使用 ConstrainedBox 限制按钮的最大宽度为 300
-//                               SizedBox(
-//                                 child: IconButton(
-//                                     iconSize: 36,
-//                                     padding: EdgeInsets.zero,
-//                                     visualDensity: VisualDensity.compact,
-//                                     icon: Icon(isPortOn
-//                                         ? Icons.toggle_on_outlined
-//                                         : Icons.toggle_off_outlined),
-//                                     color: isPortOn
-//                                         ? Theme.of(context)
-//                                             .colorScheme
-//                                             .onTertiaryFixedVariant
-//                                         : Theme.of(context)
-//                                             .colorScheme
-//                                             .onSurfaceVariant,
-//                                     onPressed: () {
-//                                       setState(() {
-//                                         isPortOn = !isPortOn;
-//                                       });
-//                                     }),
-//                               ),
-//                             ],
-//                           ),
-//                         ),
-//                       ]),
-//                   Container(
-//                     height: largePadding,
-//                     alignment: Alignment.centerLeft,
-//                   ),
-//                   SizedBox(
-//                     height: 90,
-//                     width: 590,
-//                     child: Row(children: [
-//                       Expanded(
-//                           flex: 1,
-//                           child: Column(children: [
-//                             showItemNameWithStar(
-//                                 context, localizedStrings.outputPort, false),
-//                             showOutputDropDownBtn(localizedStrings.outputPort),
-//                           ])),
-//                       SizedBox(
-//                         width: largePadding,
-//                       ),
-//                       Expanded(
-//                           flex: 1,
-//                           child: Column(children: [
-//                             showItemNameWithStar(
-//                                 context, localizedStrings.delayedStart, false),
-//                             SizedBox(
-//                                 height: 48,
-//                                 child: Row(children: [
-//                                   Expanded(
-//                                     child: TextField(
-//                                       onChanged: (value) {
-//                                         setState(() {});
-//                                       },
-//                                       controller: delayedStartCtl,
-//                                       inputFormatters: [
-//                                         FilteringTextInputFormatter.allow(
-//                                             RegExp(
-//                                                 r'^(0|[1-9]\d*)(\.\d{0,4})?$')),
-//                                         LengthLimitingTextInputFormatter(10),
-//                                       ],
-//                                       decoration: InputDecoration(
-//                                         border: OutlineInputBorder(
-//                                             borderRadius: BorderRadius.all(
-//                                                 Radius.circular(0.0))),
-//                                         hintText: "",
-//                                         hintStyle: getTextStyle(
-//                                           color: colorScheme
-//                                               .surfaceContainerHighest,
-//                                         ),
-//                                         suffixIcon: Container(
-//                                             width: 50,
-//                                             alignment: Alignment.center,
-//                                             child: Center(
-//                                               child: Text(
-//                                                 "ms",
-//                                                 style: getTextStyle(
-//                                                   color: colorScheme
-//                                                       .onSurfaceVariant,
-//                                                 ),
-//                                               ),
-//                                             )),
-//                                       ),
-//                                       style: getTextStyle(),
-//                                     ),
-//                                   ),
-//                                 ]))
-//                           ])),
-//                       SizedBox(
-//                         width: largePadding,
-//                       ),
-//                       Expanded(
-//                           flex: 1,
-//                           child: Column(children: [
-//                             showItemNameWithStar(context,
-//                                 localizedStrings.triggerOffValue, false),
-//                             SizedBox(
-//                                 height: 48,
-//                                 child: Row(children: [
-//                                   Expanded(
-//                                     child: TextField(
-//                                       onChanged: (value) {
-//                                         setState(() {});
-//                                       },
-//                                       controller: triggerOffCtl,
-//                                       inputFormatters: [
-//                                         FilteringTextInputFormatter.allow(
-//                                             RegExp(
-//                                                 r'^(0|[1-9]\d*)(\.\d{0,4})?$')),
-//                                         LengthLimitingTextInputFormatter(10),
-//                                       ],
-//                                       decoration: InputDecoration(
-//                                         border: OutlineInputBorder(
-//                                             borderRadius: BorderRadius.all(
-//                                                 Radius.circular(0.0))),
-//                                         hintText: "",
-//                                         hintStyle: getTextStyle(
-//                                           color: colorScheme
-//                                               .surfaceContainerHighest,
-//                                         ),
-//                                         prefixIcon: Container(
-//                                           width: 30,
-//                                           alignment: Alignment.center,
-//                                           child: Text(
-//                                             "<",
-//                                             style: getTextStyle(
-//                                               color:
-//                                                   colorScheme.onSurfaceVariant,
-//                                             ),
-//                                           ),
-//                                         ),
-//                                         suffixIcon: Container(
-//                                             width: 50,
-//                                             alignment: Alignment.center,
-//                                             child: Center(
-//                                               child: Text(
-//                                                 "g",
-//                                                 style: getTextStyle(
-//                                                   color: colorScheme
-//                                                       .onSurfaceVariant,
-//                                                 ),
-//                                               ),
-//                                             )),
-//                                       ),
-//                                       style: getTextStyle(),
-//                                     ),
-//                                   ),
-//                                 ]))
-//                           ])),
-//                     ]),
-//                   ),
-//                 ]),
-//               ),
-//             ),
-//             // 底部
-//             Container(
-//               height: 96,
-//               width: 400,
-//               padding: const EdgeInsets.symmetric(horizontal: 20),
-//               child: Row(
-//                 mainAxisAlignment: MainAxisAlignment.center,
-//                 children: [
-//                   Expanded(
-//                     child: ElevatedButton(
-//                       style: ElevatedButton.styleFrom(
-//                         foregroundColor:
-//                             Theme.of(context).colorScheme.onPrimary,
-//                         backgroundColor: Theme.of(context).colorScheme.primary,
-//                         fixedSize: const Size(double.infinity, 48),
-//                         shape: RoundedRectangleBorder(
-//                           borderRadius: BorderRadius.zero,
-//                         ),
-//                       ),
-//                       onPressed: outputPortCtl.text.isEmpty ||
-//                               delayedStartCtl.text.isEmpty ||
-//                               triggerOffCtl.text.isEmpty
-//                           ? null
-//                           : () {
-//                               int port = int.parse(outputPortCtl.text);
-//                               int delayedStart =
-//                                   int.parse(delayedStartCtl.text);
-//                               double triggerOff =
-//                                   double.parse(triggerOffCtl.text);
-
-//                               ReqGetOutput reqGetOutput = ReqGetOutput(
-//                                   port: port,
-//                                   status: isPortOn,
-//                                   startTime: delayedStart,
-//                                   endValue: triggerOff);
-
-//                               String jsonStr = reqGetOutputToJson(reqGetOutput);
-//                               PublicFunctions.updateOutputPortStatus(jsonStr);
-//                             },
-//                       child: Text(
-//                         localizedStrings.gBtnConfirm,
-//                         style: Theme.of(context).textTheme.bodySmall!.apply(
-//                               color: Theme.of(context).colorScheme.onPrimary,
-//                               overflow: TextOverflow.ellipsis,
-//                             ),
-//                       ),
-//                     ),
-//                   ),
-//                   SizedBox(width: 20),
-//                   Expanded(
-//                     child: ElevatedButton(
-//                       style: ElevatedButton.styleFrom(
-//                         foregroundColor:
-//                             Theme.of(context).colorScheme.onSurfaceVariant,
-//                         backgroundColor: Theme.of(context)
-//                             .colorScheme
-//                             .surfaceContainerHighest,
-//                         fixedSize: const Size(double.infinity, 48),
-//                         shape: RoundedRectangleBorder(
-//                           borderRadius: BorderRadius.zero,
-//                         ),
-//                       ),
-//                       onPressed: () {
-//                         Navigator.of(context).pop();
-//                       },
-//                       child: Text(
-//                         localizedStrings.gBtnCancel,
-//                         style: Theme.of(context).textTheme.bodySmall!.apply(
-//                               color: Theme.of(context).colorScheme.onPrimary,
-//                               overflow: TextOverflow.ellipsis,
-//                             ),
-//                       ),
-//                     ),
-//                   )
-//                 ],
-//               ),
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-
-//   ColorScheme get colorScheme => Theme.of(context).colorScheme;
-
-//   TextStyle getTextStyle({Color? color}) {
-//     return Theme.of(context).textTheme.bodySmall!.apply(
-//           color: color ?? colorScheme.onSurface,
-//         );
-//   }
-
-//   List<String> outputPortList = [
-//     "1",
-//     "2",
-//     "3",
-//     "4",
-//     "5",
-//     "6",
-//     "7",
-//     "8",
-//     "9",
-//     "10",
-//     "11",
-//     "12"
-//   ];
-
-//   //选择输出端口
-//   Widget showOutputDropDownBtn(String hintText) {
-//     return Container(
-//         height: 48,
-//         padding: const EdgeInsets.only(left: 10, right: 10),
-//         decoration: BoxDecoration(
-//           border: Border.all(
-//               color: Theme.of(context).colorScheme.outlineVariant), // 设置边框颜色
-//           borderRadius: BorderRadius.circular(0), // 设置圆角
-//         ),
-//         child: DropdownButton<String>(
-//             // 明确指定泛型类型
-//             underline: SizedBox(),
-//             isExpanded: true,
-//             value: outputPortCtl.text.isEmpty
-//                 ? null
-//                 : outputPortCtl.text, // 使用检查后的值
-//             items: [
-//               // 提示项
-//               DropdownMenuItem<String>(
-//                 value: null,
-//                 child: Text(
-//                   hintText,
-//                   style: Theme.of(context).textTheme.bodySmall!.copyWith(
-//                         fontSize: 12,
-//                         color: Theme.of(context)
-//                             .colorScheme
-//                             .surfaceContainerHighest,
-//                       ),
-//                 ),
-//               ),
-
-//               ...outputPortList.map((String item) {
-//                 return DropdownMenuItem<String>(
-//                   value: item,
-//                   child: Text(item,
-//                       style: Theme.of(context).textTheme.bodySmall!.apply(
-//                             color: Theme.of(context).colorScheme.onSurface,
-//                           )),
-//                 );
-//               }),
-//             ],
-//             onChanged: (String? value) {
-//               // 明确参数类型
-//               if (value == null) {
-//                 setState(() {
-//                   outputPortCtl.text = '';
-//                 });
-//                 return;
-//               }
-
-//               setState(() {
-//                 outputPortCtl.text = value;
-
-//                 for (var element in outputPortStatusList) {
-//                   if (element.port == int.parse(value)) {
-//                     isPortOn = element.status ?? false;
-//                     delayedStartCtl.text = element.startTime?.toString() ?? '';
-//                     triggerOffCtl.text = element.endValue?.toString() ?? '';
-//                     break;
-//                   }
-//                 }
-//               });
-//             },
-//             style: Theme.of(context).textTheme.bodySmall!.apply(
-//                   color: Theme.of(context).colorScheme.onSurface,
-//                 )));
-//   }
-// }

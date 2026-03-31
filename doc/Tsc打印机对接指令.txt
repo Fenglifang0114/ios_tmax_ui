@@ -1,0 +1,147 @@
+SIZE 4,3
+GAP 0,0
+DIRECTION 1
+CLS
+TEXT 10,10,"0",0,12,12,"TSPL 2"
+TEXT 10,40,"0",0,8,8,"align left"
+BAR 0,70,800,4
+TEXT 10,110,"0",0,12,12,"FONT 0"
+TEXT 10,160,"1",0,1,1,"FONT 1"
+TEXT 10,210,"2",0,1,1,"FONT 2"
+TEXT 10,260,"3",0,1,1,0,"FONT 3"
+TEXT 10,310,"4",0,1,1,0,"FONT 4"
+TEXT 10,360,"5",0,1,1,0,"FONT 5"
+TEXT 10,410,"6",0,1,1,1,"FONT 6"
+TEXT 10,460,"7",0,1,1,1,"FONT 7"
+TEXT 10,510,"8",0,1,1,1,"FONT 8"
+TEXT 10,560,"ROMAN.TTF",0,12,12,"FONT ROMAN.TTF"
+TEXT 400,10,"0",0,12,12,2,"EPL 2"
+TEXT 400,40,"0",0,8,8,2,"align center"
+TEXT 400,110,"1.EFT",0,1,1,2,"FONT 1"
+TEXT 400,160,"2.EFT",0,1,1,2,"FONT 2"
+TEXT 400,210,"3.EFT",0,1,1,2,"FONT 3"
+TEXT 400,260,"4.EFT",0,1,1,2,"FONT 4"
+TEXT 400,310,"5.EFT",0,1,1,2,"FONT 5"
+TEXT 800,10,"0",0,12,12,3,"ZPL 2"
+TEXT 800,40,"0",0,8,8,3,"align right"
+TEXT 800,110,"A.FNT",0,1,1,3,"FONT A"
+TEXT 800,160,"B.FNT",0,1,1,3,"FONT B"
+TEXT 800,210,"D.FNT",0,1,1,3,"FONT D"
+TEXT 800,260,"E8.FNT",0,1,1,3,"FONT E8"
+TEXT 800,310,"F.FNT",0,1,1,3,"FONT F"
+TEXT 800,360,"G.FNT",0,1,1,3,"FONT G"
+TEXT 800,410,"H8.FNT",0,1,1,3,"FONT H8"
+TEXT 800,460,"GS.FNT",0,1,1,3,"ABCDEF"
+PRINT 1
+
+
+
+
+
+打印文本
+SIZE 20 mm,30 mm
+GAP 0,0
+DIRECTION 1
+CLS
+TEXT 400,10,"0",0,12,12,2,"EPL 2"
+TEXT 400,40,"0",0,8,8,2,"align center"
+TEXT 400,110,"1.EFT",0,1,1,2,"FONT 1"
+TEXT 400,160,"2.EFT",0,1,1,2,"FONT 2"
+TEXT 400,210,"3.EFT",0,1,1,2,"FONT 3"
+TEXT 400,260,"4.EFT",0,1,1,2,"FONT 4"
+TEXT 400,310,"5.EFT",0,1,1,2,"FONT 5"
+PRINT 1
+
+打印条码
+SIZE 35 mm,30 mm
+GAP 3 mm,0 mm
+DIRECTION 1
+CLS
+TEXT 10,10,"2",0,1,1,"Code 128,switch code subset 
+automatically."
+BARCODE 10,50,"128",100,1,0,2,2,"123456abcd123456"
+PRINT 1
+
+
+CLS   //此条指令用来清除打印机中的图像缓存 此条指令必须在 SIZE 后进行设定
+
+AUTODETECT// 自动判定纸缝，但是不能每次都发送。
+
+
+SIZE 40 mm,30 mm
+GAP 0,0
+DIRECTION 1
+CLS
+TEXT 10,10,"3",0,1,1,"Two labels are printed without stop."
+PRINT 1
+PRINT 1
+
+1 纸张大小
+SIZE 100 mm,100 mm   宽度  高度  
+
+2 自检
+SELFTEST
+
+3 画线
+BAR x,y,width,height
+起始位置  宽度和高度
+
+SIZE 40 mm,30 mm
+DIRECTION 1
+CLS
+TEXT 10,10,"3",0,1,1,"Two labels are printed without stop."
+BAR 10,30,100,2
+PRINT 1
+
+4 PRINT m[,n]
+
+5 浓度
+DENSITY n   0-15 默认8
+
+
+6 条码
+BARCODE X,Y,”code type”,height,human readable,rotation,narrow,wide,[alignment,]”content“
+BARCODE 10,50,"128",    100,       1,            0,      2,    2,               "left"
+
+-----------------------------
+SIZE 40 mm,30 mm
+GAP 0,0
+DIRECTION 1
+CLS
+TEXT 10,10,"2",0,1,1,"Human readable alignment"
+BARCODE 10,50,"128",100,1,0,2,2,"left"
+BARCODE 200,50,"128",100,2,0,2,2,"center"
+BARCODE 300,50,"128",100,3,0,2,2,"right"
+PRINT 1
+
+---------------------
+code128
+---------------------
+SIZE 40 mm,30 mm
+GAP 0,0
+DIRECTION 1
+CLS
+TEXT 10,10,"2",0,1,1,"Human readable alignment"
+BARCODE 10,50,"128",100,1,0,2,2,"123456abcd123456"
+PRINT 1
+---------------------
+
+7 QRCODE 
+
+QRCODE x,y,  ECC Level,cell width,mode,rotation,[justification,]model,]mask,]area] "content"
+
+QRCODE 310,310,M,          4,       A,   0,                         M2,             "印表機 ABCabc123"
+QRCODE 160,160,H,          4,       A,   0,                                         "123ABCabc"
+
+SIZE 40 mm,30 mm
+GAP 0,0
+DIRECTION 1
+CLS
+QRCODE 10,10,H,4,A,0,"ABCabc123"
+QRCODE 160,160,H,4,A,0,"123ABCabc"
+QRCODE 310,310,M,4,A,0,M2,"印表機 ABCabc123"
+PRINT 1,1
+
+
+8  文字
+TEXT x,y,"font",rotation,x-multiplication,y-multiplication,[alignment,]"content"

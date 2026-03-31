@@ -100,6 +100,9 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
   dynamic _eventbus8;
   dynamic _eventbus9;
   dynamic _eventbus10;
+  dynamic _eventbus11;
+  dynamic _eventbus12;
+  dynamic _eventbus13;
 
   Timer? setWgtStartFalseTimer; // 用于每3秒将isWgtStart设置为false的定时器
   Timer? checkWgtStartTimer; // 用于每5秒检查isWgtStart的定时器
@@ -124,6 +127,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
 
   List<RespOutputInfo> outputPortStatusList = [];
   List<RawOutputInfo> rawOutputInfoList = []; // 原料重量信息列表
+  List<InputInfo> inputPortStatusList = []; // 输入端口状态列表
 
   // 启动发送存活消息的定时器
   void startCntAliveTimer(int time) {
@@ -374,6 +378,8 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
   void initState() {
     super.initState();
     PublicFunctions.getOutputPortStatus();
+    PublicFunctions.getScaleInputSetting();
+
     GetRawOutputByFmaId getRawOutputByFmaId = GetRawOutputByFmaId(
       formulaId: widget.selectFormula.header!.formulaId,
     );
@@ -584,6 +590,91 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
         }
       }
     });
+
+    _eventbus11 = eventBus.on<EventRespScaleInput>().listen((event) {
+      if (mounted) {
+        String dataStr = event.obj;
+        if (dataStr != '') {
+          //处理按键事件
+          handleInputPortStatus(dataStr);
+        }
+      }
+    });
+
+    _eventbus12 = eventBus.on<EventRespGetOutputPortStatus>().listen((event) {
+      if (mounted) {
+        String dataStr = event.obj;
+        if (dataStr != '' && dataStr != 'null') {
+          try {
+            outputPortStatusList = respOutputInfoFromJson(dataStr);
+
+            setState(() {});
+          } catch (e) {
+            setState(() {});
+          }
+        } else {
+          setState(() {});
+        }
+      }
+    });
+
+    _eventbus13 = eventBus.on<EventRespGetInputPortStatus>().listen((event) {
+      if (mounted) {
+        String dataStr = event.obj;
+        if (dataStr != '' && dataStr != 'null') {
+          try {
+            List<InputInfo> tempList = inputInfoFromJson(dataStr);
+            inputPortStatusList = tempList;
+
+            setState(() {});
+          } catch (e) {
+            setState(() {});
+          }
+        } else {
+          setState(() {});
+        }
+      }
+    });
+  }
+
+  void handleInputPortStatus(String dataStr) {
+    if (inputPortStatusList.isEmpty) {
+      return;
+    }
+
+    for (var port in inputPortStatusList) {
+      if (port.port.toString() == dataStr) {
+        handleInputBtn(port.btn ?? '');
+        break;
+      }
+    }
+  }
+
+  void handleInputBtn(String btn) {
+    if (btn == 'None') {
+      return;
+    }
+    if (btn == 'Tare') {
+      PublicFunctions.performTareWithScaleId(myScale.scaleId);
+    } else if (btn == 'Zero') {
+      PublicFunctions.performZeroWithScaleId(myScale.scaleId);
+    } else if (btn == 'Pause') {
+      if (!openIoPortFlag) {
+        return;
+      }
+      handleCloseIoPort();
+      setState(() {
+        openIoPortFlag = false;
+      });
+    } else if (btn == 'Start') {
+      if (openIoPortFlag) {
+        return;
+      }
+      setState(() {
+        openIoPortFlag = true;
+      });
+      handleIoPortStatus();
+    }
   }
 
   /// 销毁EventBus订阅
@@ -598,6 +689,9 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
     _eventbus8.cancel();
     _eventbus9.cancel();
     _eventbus10.cancel();
+    _eventbus11.cancel();
+    _eventbus12.cancel();
+    _eventbus13.cancel();
   }
 
   @override
@@ -2340,7 +2434,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
                             ),
                             onPressed: () {
                               PublicFunctions.performZeroWithScaleId(
-                                  widget.selScaleId);
+                                  myScale.scaleId);
                             },
                             child: Text(
                               localizedStrings.iBtnZero,
@@ -3005,7 +3099,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
         closeIoPort();
       }
     } catch (e) {
-      print(e.toString());
+      // print(e.toString());
       return;
     }
   }

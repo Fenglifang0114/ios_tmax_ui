@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'package:csv/csv.dart';
 import 'package:excel/excel.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -659,7 +658,7 @@ class _PluEidtPageState extends State<PluEidtPage> {
       headerTitles[i] = headerTitles[i].trim().toLowerCase();
     }
 
-    print(headerTitles); // 输出: [hello, world, dart]
+    // print(headerTitles); // 输出: [hello, world, dart]
 
     // 4. 遍历数据行（从第二行开始）
     for (int i = 1; i < lines.length; i++) {

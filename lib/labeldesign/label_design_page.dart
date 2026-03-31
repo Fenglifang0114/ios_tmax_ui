@@ -1014,6 +1014,7 @@ class LabelDesignPageState extends State<LabelDesignPage> {
     'EPM205',
     'ZEBRA',
     'LP50',
+    'TSC',
   ];
 
   void getLanguageVarMap() {
@@ -1326,7 +1327,7 @@ class LabelDesignPageState extends State<LabelDesignPage> {
             0, //线类型
             elements[i].index,
           ]);
-          print(csvData.last);
+          // print(csvData.last);
         } else {
           csvData.add([
             'L',
@@ -1338,7 +1339,7 @@ class LabelDesignPageState extends State<LabelDesignPage> {
             0, //线类型
             elements[i].index,
           ]);
-          print(csvData.last);
+          // print(csvData.last);
         }
       }
     }
@@ -1347,7 +1348,7 @@ class LabelDesignPageState extends State<LabelDesignPage> {
     csv = const ListToCsvConverter(
       textDelimiter: '',
     ).convert(csvData);
-    print(csv);
+    // print(csv);
   }
 
   void _saveFormatToCsv(String csv, String path) async {
@@ -1551,7 +1552,7 @@ class LabelDesignPageState extends State<LabelDesignPage> {
         // final file = await _localFilepath; ///////获取固定位置
         final file = File(p.join(path));
         // 将字符串写入文件中
-        print(formatjson);
+        // print(formatjson);
         file.writeAsStringSync(formatjson);
 
         // await loadData();   此处已经写好了如何捞回来条码信息

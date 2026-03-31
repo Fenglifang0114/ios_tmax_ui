@@ -638,7 +638,20 @@ class CalibrationPageState extends State<CalibrationPage> {
                               selScaleId: selScaleId,
                               clickScale: (scale) {
                                 setState(() {
-                                  changeScale(scale.scaleId);
+                                  bool isS15 = false;
+                                  for (var item in myAllScalesList) {
+                                    if (item.scaleId == scale.scaleId) {
+                                      if (item.scaleModel != "S15") {
+                                        showTipInfo(
+                                            "Please select S15 scale", context);
+                                      } else {
+                                        isS15 = true;
+                                      }
+                                    }
+                                  }
+                                  if (isS15) {
+                                    changeScale(scale.scaleId);
+                                  }
                                 });
                               },
                             ),

@@ -382,7 +382,7 @@ class _ScaleWgtTakeInWidgetState extends State<ScaleWgtTakeInWidget> {
   void onStartTimer() {
     startTimer = Timer.periodic(Duration(seconds: 3), (timer) {
       isCnting = false; // 重置计时器状态
-      innerTimer = Timer(Duration(milliseconds: 1000), () {
+      innerTimer = Timer(Duration(milliseconds: 2500), () {
         if (!isCnting) {
           isStart = false;
           setState(() {

@@ -4167,5 +4167,21 @@
     "openOutputPortFailed": "Failed to open the output port.",
     "@openOutputPortFailed": {
         "description": "Failed to open the output port."
+    },
+    "selectS15Scale": "Please select S15 scale",
+    "@selectS15Scale": {
+        "description": "Prompt to select S15 scale"
+    },
+    "inputSetting": "Input Setting",
+    "@inputSetting": {
+        "description": "Input Setting"
+    },
+    "outputSetting": "Output Setting",
+    "@outputSetting": {
+        "description": "Output Setting"
+    },
+    "inputPort": "Input",
+    "@inputPort": {
+        "description": "Input"
     }
 }

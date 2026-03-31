@@ -8,7 +8,6 @@ import 'package:t_max/dialog/custom_dialog_tip.dart';
 import 'package:t_max/widget/common_widget.dart';
 import 'package:t_max/widget/scale_list.dart';
 import '../data/downloadresponse.dart';
-import '../data/manager_scale_channel.dart';
 import 'package:t_max/functions/methods.dart';
 import '../../eventbus/eventbus.dart';
 import '../data/language.dart';
