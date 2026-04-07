@@ -258,7 +258,7 @@ class SysUserManagerPageState extends State<SysUserManagerPage>
   }
 
   // 搜索方法
-  void performFmaSearch() {
+  void performSearch() {
     final String keyword = _searchUserNameCtl.text.trim();
 
     setState(() {
@@ -783,7 +783,7 @@ class SysUserManagerPageState extends State<SysUserManagerPage>
                       onPressed: () {
                         setState(() {
                           _searchUserNameCtl.clear();
-                          performFmaSearch();
+                          performSearch();
                         });
                       },
                     ),
@@ -802,7 +802,7 @@ class SysUserManagerPageState extends State<SysUserManagerPage>
                   onChanged: (value) {
                     setState(() {
                       // 这里可以添加搜索逻辑
-                      performFmaSearch();
+                      performSearch();
                     });
                   }),
             )),
@@ -822,6 +822,16 @@ class SysUserManagerPageState extends State<SysUserManagerPage>
               )),
           child: DropdownButton<RoleValue>(
             underline: SizedBox(),
+            hint: Text(
+              localizedStrings.userRole,
+              style: textTheme.bodySmall!.copyWith(
+                // 设置提示文本样式
+                fontSize: 12,
+                color: Theme.of(context)
+                    .colorScheme
+                    .primary, //surfaceContainerHighest,
+              ),
+            ),
             isExpanded: true,
             value: searchRoleCtl.text == ""
                 ? null
@@ -859,7 +869,7 @@ class SysUserManagerPageState extends State<SysUserManagerPage>
                 } else if (value == RoleValue.operator) {
                   selRoleId = 3;
                 }
-                performFmaSearch();
+                performSearch();
               });
             },
             style: textTheme.bodySmall!.copyWith(
@@ -883,7 +893,7 @@ class SysUserManagerPageState extends State<SysUserManagerPage>
                   _searchUserNameCtl.clear();
                   searchRoleCtl.clear();
                   selRoleId = -1;
-                  performFmaSearch(); // 调用搜索方法
+                  performSearch(); // 调用搜索方法
                 });
               },
               iconSize: 24,

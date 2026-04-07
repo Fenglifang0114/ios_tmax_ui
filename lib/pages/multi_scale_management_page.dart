@@ -525,7 +525,7 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
             showItemNameWithStar(context, localizedStrings.gSerialPort, false),
             showDropDownButton(
               context,
-              localizedStrings.gTipRefreshPort,
+              "",
               comPortCtl,
               usingComLists,
               (value) {
@@ -721,7 +721,10 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
                   Theme.of(context).colorScheme.onSurfaceVariant,
                   Theme.of(context).colorScheme.onPrimary),
             ],
-          )
+          ),
+          SizedBox(
+            height: regularPadding * 2,
+          ),
         ],
       ));
     } else if (isBtSearched) {
@@ -812,7 +815,10 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
                   Theme.of(context).colorScheme.onSurfaceVariant,
                   Theme.of(context).colorScheme.onPrimary),
             ],
-          )
+          ),
+          SizedBox(
+            height: regularPadding * 2,
+          ),
         ],
       ));
     } else {
@@ -893,7 +899,10 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
                   Theme.of(context).colorScheme.onSurfaceVariant,
                   Theme.of(context).colorScheme.onPrimary),
             ],
-          )
+          ),
+          SizedBox(
+            height: regularPadding * 2,
+          ),
         ],
       ));
     }
@@ -1463,7 +1472,7 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
                       context, localizedStrings.gSerialPort, false),
                   showDropDownButton(
                     context,
-                    localizedStrings.gTipRefreshPort,
+                    "",
                     comPortCtl,
                     usingComLists,
                     (value) {
@@ -1636,7 +1645,9 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
                   const SizedBox(
                     height: regularPadding,
                   ),
-                  isRename ? showRenameConfirmBtn() : buttonRow(),
+                  isRename
+                      ? showRenameConfirmBtn()
+                      : buttonRow(showModify: true),
                 ],
               );
             })));
@@ -1880,7 +1891,7 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
         : const SizedBox();
   }
 
-  Widget buttonRow() {
+  Widget buttonRow({bool showModify = false}) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -1899,22 +1910,23 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
             Theme.of(context).colorScheme.onPrimary,
             Theme.of(context).colorScheme.onTertiaryFixedVariant,
             Theme.of(context).colorScheme.onPrimary),
-        const SizedBox(width: regularPadding),
-        // showTextButton(
-        //     context,
-        //     btnHeight,
-        //     localizedStrings.gBtnModify,
-        //     !isAddScale && !isTesting && !isDel && !isComSetting
-        //         ? () {
-        //             PublicFunctions.checkSerialPort(selScaleId);
-        //             setState(() {
-        //               editWifiInfo = true;
-        //             });
-        //           }
-        //         : null,
-        //     Theme.of(context).colorScheme.onPrimary,
-        //     Theme.of(context).colorScheme.primary,
-        //     Theme.of(context).colorScheme.onPrimary),
+        if (showModify) ...[
+          const SizedBox(width: regularPadding),
+          showTextButton(
+              context,
+              btnHeight,
+              localizedStrings.gBtnModify,
+              !isAddScale && !isTesting && !isDel && !isComSetting
+                  ? () {
+                      setState(() {
+                        editWifiInfo = true;
+                      });
+                    }
+                  : null,
+              Theme.of(context).colorScheme.onPrimary,
+              Theme.of(context).colorScheme.primary,
+              Theme.of(context).colorScheme.onPrimary),
+        ]
       ],
     );
   }

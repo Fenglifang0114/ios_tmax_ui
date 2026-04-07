@@ -33,14 +33,27 @@ Map<String, String> pluTaxSwitch = {
   '2': "tax3",
 };
 
-class WgtDataTable extends StatelessWidget {
+class WgtDataTable extends StatefulWidget {
   const WgtDataTable({super.key});
+
+  @override
+  State<WgtDataTable> createState() => _WgtDataTableState();
+}
+
+class _WgtDataTableState extends State<WgtDataTable> {
+  final ScrollController scrollController = ScrollController();
+  final ScrollController horizontalScrollController = ScrollController();
+
+  @override
+  void dispose() {
+    scrollController.dispose();
+    horizontalScrollController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final tableState = Provider.of<TableState>(context);
-    ScrollController scrollController = ScrollController();
-    ScrollController horizontalScrollController = ScrollController();
 
     // 延迟初始化数据
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -105,34 +118,84 @@ class WgtDataTable extends StatelessWidget {
                                         tableState.currentPageData[index];
                                     return Column(
                                       children: [
-                                        Container(
-                                          width: minWidth,
-                                          color: item.isExpanded
-                                              ? Theme.of(context)
-                                                  .colorScheme
-                                                  .surfaceDim
-                                              : Theme.of(context)
-                                                  .colorScheme
-                                                  .surface,
-                                          child: DataTable(
-                                              columns: _buildDataColumns(
-                                                  context, tableState),
-                                              rows: [
-                                                DataRow(
-                                                  cells: _buildDataCells(
-                                                      context,
-                                                      tableState,
-                                                      item),
-                                                  onSelectChanged: (_) =>
-                                                      tableState.toggleExpanded(
-                                                          item.id),
+                                        Stack(
+                                          clipBehavior: Clip.none,
+                                          children: [
+                                            Container(
+                                              width: minWidth,
+                                              color: item.isExpanded
+                                                  ? Theme.of(context)
+                                                      .colorScheme
+                                                      .surfaceDim
+                                                  : Theme.of(context)
+                                                      .colorScheme
+                                                      .surface,
+                                              child: DataTable(
+                                                  columns: _buildDataColumns(
+                                                      context, tableState),
+                                                  rows: [
+                                                    DataRow(
+                                                      cells: _buildDataCells(
+                                                          context,
+                                                          tableState,
+                                                          item),
+                                                      onSelectChanged: (_) =>
+                                                          tableState.toggleExpanded(
+                                                              item.id),
+                                                    ),
+                                                  ],
+                                                  headingRowHeight: 0, // 隐藏主行的表头
+                                                  showCheckboxColumn:
+                                                      false, // 隐藏主行的复选框
+                                                  columnSpacing: 5,
+                                                  horizontalMargin: 10),
+                                            ),
+                                            if (item.scaleRec.details != null && item.scaleRec.details!.isNotEmpty)
+                                              AnimatedBuilder(
+                                                animation: horizontalScrollController,
+                                                builder: (context, child) {
+                                                  double offsetData = 0.0;
+                                                  if (horizontalScrollController.hasClients) {
+                                                    offsetData = horizontalScrollController.offset;
+                                                  }
+                                                  
+                                                  double currentViewportWidth = width;
+                                                  if (minWidth < width) currentViewportWidth = minWidth;
+                                                  double leftPos = offsetData + currentViewportWidth - 90;
+                                                  
+                                                  if (leftPos > minWidth - 90) leftPos = minWidth - 90;
+                                                  
+                                                  return Positioned(
+                                                    left: leftPos,
+                                                    top: 0,
+                                                    bottom: 0,
+                                                    child: child!,
+                                                  );
+                                                },
+                                                child: Container(
+                                                  width: 90,
+                                                  alignment: Alignment.center,
+                                                  decoration: BoxDecoration(
+                                                    color: item.isExpanded
+                                                        ? Theme.of(context).colorScheme.surfaceDim
+                                                        : Theme.of(context).colorScheme.surface,
+                                                    boxShadow: [
+                                                      BoxShadow(
+                                                        color: Colors.black.withValues(alpha: 0.05),
+                                                        blurRadius: 2,
+                                                        offset: const Offset(-2, 0),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  child: IconButton(
+                                                    alignment: Alignment.center,
+                                                    icon: Icon(
+                                                        item.isExpanded ? Icons.expand_less : Icons.expand_more),
+                                                    onPressed: () => tableState.toggleExpanded(item.id),
+                                                  ),
                                                 ),
-                                              ],
-                                              headingRowHeight: 0, // 隐藏主行的表头
-                                              showCheckboxColumn:
-                                                  false, // 隐藏主行的复选框
-                                              columnSpacing: 5,
-                                              horizontalMargin: 10),
+                                              ),
+                                          ],
                                         ),
                                         // 明细行
                                         if (item.isExpanded)
@@ -665,20 +728,8 @@ class WgtDataTable extends StatelessWidget {
       ));
     }
     cells.add(
-      DataCell(
-        item.scaleRec.details == null || item.scaleRec.details!.isEmpty
-            ? SizedBox(
-                // width: 100,
-                )
-            : SizedBox(
-                // width: 100,
-                child: IconButton(
-                  alignment: Alignment.center,
-                  icon: Icon(
-                      item.isExpanded ? Icons.expand_less : Icons.expand_more),
-                  onPressed: () => tableState.toggleExpanded(item.id),
-                ),
-              ),
+      const DataCell(
+        SizedBox(),
       ),
     );
     return cells;

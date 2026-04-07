@@ -118,19 +118,37 @@ class SelScaleDialogState extends State<SelScaleDialog> {
                                         : Theme.of(context)
                                             .colorScheme
                                             .onPrimary))
-                            : Container(
-                                alignment: Alignment.center,
-                                width: iconMenuSize,
-                                height: iconMenuSize,
-                                child: getSvgIcon(
-                                    networkSvgIcon(),
-                                    iconMenuSize,
-                                    iconMenuSize,
-                                    (!isSelect)
-                                        ? Theme.of(context).colorScheme.primary
-                                        : Theme.of(context)
-                                            .colorScheme
-                                            .onPrimary)),
+                            : scale.tMedia == 1
+                                ? Container(
+                                    alignment: Alignment.center,
+                                    width: iconMenuSize,
+                                    height: iconMenuSize,
+                                    child: getSvgIcon(
+                                        networkSvgIcon(),
+                                        iconMenuSize,
+                                        iconMenuSize,
+                                        (!isSelect)
+                                            ? Theme.of(context)
+                                                .colorScheme
+                                                .primary
+                                            : Theme.of(context)
+                                                .colorScheme
+                                                .onPrimary))
+                                : Container(
+                                    alignment: Alignment.center,
+                                    width: iconMenuSize,
+                                    height: iconMenuSize,
+                                    child: getSvgIcon(
+                                        btSvgIcon(),
+                                        iconMenuSize,
+                                        iconMenuSize,
+                                        (!isSelect)
+                                            ? Theme.of(context)
+                                                .colorScheme
+                                                .primary
+                                            : Theme.of(context)
+                                                .colorScheme
+                                                .onPrimary)),
                       )),
                   Expanded(
                     child: Column(

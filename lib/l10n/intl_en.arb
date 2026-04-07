@@ -2460,7 +2460,7 @@
     "@menuWiredSetting": {
         "description": "Menu item for wired setting"
     },
-    "menuSealManagment": "Seal Management",
+    "menuSealManagment": "Calibration Lock",
     "@menuSealManagment": {
         "description": "Menu item for seal management"
     },
@@ -4016,11 +4016,11 @@
     "@pleaseWait": {
         "description": "Please wait message"
     },
-    "hardwareSeal": "Hardware seal",
+    "hardwareSeal": "Hardware Calibration Switch",
     "@hardwareSeal": {
         "description": "Term for a hardware-based tamper-proof seal"
     },
-    "softwareSeal": "Software Seal",
+    "softwareSeal": "Software Calibration Lock",
     "@softwareSeal": {
         "description": "Term for a software-based tamper-proof seal"
     },
@@ -4028,23 +4028,23 @@
     "@toBeVerified": {
         "description": "Status indicating an item is pending verification"
     },
-    "checkSeal": "Check Seal",
+    "checkSeal": "Check Status",
     "@checkSeal": {
         "description": "Action to inspect or verify the seal status"
     },
-    "sealed": "Sealed",
+    "sealed": "On",
     "@sealed": {
         "description": "Status indicating the device has been sealed"
     },
-    "notSealed": "Not Sealed",
+    "notSealed": "Off",
     "@notSealed": {
         "description": "Status indicating the device is not sealed"
     },
-    "applySoftwareSeal": "Apply Software Seal",
+    "applySoftwareSeal": "Enable Software Calibration Lock",
     "@applySoftwareSeal": {
         "description": "Action to apply a software seal to the device"
     },
-    "removeSoftwareSeal": "Remove Software Seal",
+    "removeSoftwareSeal": "Disable Software Calibration Lock",
     "@removeSoftwareSeal": {
         "description": "Action to remove a software seal from the device"
     },
@@ -4052,19 +4052,19 @@
     "@operationRecord": {
         "description": "Title for a log of operations performed"
     },
-    "softwareSealAppliedSuccessfully": "Software Seal Applied Successfully",
+    "softwareSealAppliedSuccessfully": "Software Calibration Lock Enabled Successfully",
     "@softwareSealAppliedSuccessfully": {
         "description": "Success message when a software seal is successfully applied"
     },
-    "softwareSealAppliedFailed": "Software Seal Applied Failed",
+    "softwareSealAppliedFailed": "Software Calibration Lock Enable Failed",
     "@softwareSealAppliedFailed": {
         "description": "Error message when a software seal application fails"
     },
-    "softwareSealRemovedSuccessfully": "Software Seal Removed Successfully",
+    "softwareSealRemovedSuccessfully": "Software Calibration Lock Disabled Successfully",
     "@softwareSealRemovedSuccessfully": {
         "description": "Success message when a software seal is successfully removed"
     },
-    "softwareSealRemovalFailed": "Software Seal Removal Failed. \r\nPlease retry. If the issue persists, contact your supplier for a removal code.",
+    "softwareSealRemovalFailed": "Software Calibration Lock Disable Failed. \r\nPlease retry. If the issue persists, contact your supplier for a removal code.",
     "@softwareSealRemovalFailed": {
         "description": "Error message when software seal removal fails, prompting for a retry or removal code"
     },
@@ -4080,7 +4080,7 @@
     "@sealPresentCalibrationNotPermitted": {
         "description": "Warning message indicating calibration is prohibited because a seal is present on the device"
     },
-    "checkSealFailed": "Check Seal Failed",
+    "checkSealFailed": "Check Status Failed",
     "@checkSealFailed": {
         "description": "Error message when checking the seal status fails"
     },
@@ -4088,11 +4088,11 @@
     "@contactSupplierForRemovalCode": {
         "description": "Prompt to contact the supplier for a removal code"
     },
-    "fTipSeal": "Software Seal",
+    "fTipSeal": "Enable Software Calibration Lock",
     "@fTipSeal": {
         "description": "Seal"
     },
-    "fTipUnseal": "Remove Software Seal",
+    "fTipUnseal": "Disable Software Calibration Lock",
     "@fTipUnseal": {
         "description": "Unseal"
     },
@@ -4108,7 +4108,7 @@
     "@reAcquireAuthCode": {
         "description": "Prompt to re-acquire the advanced configuration authorization code"
     },
-    "removeSealFailed": "Remove Software Seal Failed",
+    "removeSealFailed": "Software Calibration Lock Disable Failed",
     "@removeSealFailed": {
         "description": "Error message when removing the software seal fails"
     },

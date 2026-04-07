@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:t_max/data/g_data.dart';
 import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/data/icons.dart';
+import 'package:t_max/data/scale_info_from_db.dart';
 import 'package:t_max/data/language.dart';
 import 'package:t_max/data/license_data.dart';
 import 'package:t_max/labeldesign/label_design_page.dart';
@@ -606,6 +607,8 @@ List<RouteDataGroup> getHierarchicalConfigMenus() {
   final originalMenus = getCurrentConfigMenus();
   final appMemu = getApplication();
 
+  bool hasS15 = myAllScalesList.any((scale) => scale.scaleModel == "S15");
+
   return [
     // 多秤管理组
     RouteDataGroup(
@@ -632,7 +635,8 @@ List<RouteDataGroup> getHierarchicalConfigMenus() {
         originalMenus.firstWhereOrNull((m) => m.id == MenuId.btSettingPage),
         originalMenus
             .firstWhereOrNull((m) => m.id == MenuId.updateFirmwarePage),
-        originalMenus.firstWhereOrNull((m) => m.id == MenuId.calibrationPage),
+        if (hasS15)
+          originalMenus.firstWhereOrNull((m) => m.id == MenuId.calibrationPage),
         originalMenus.firstWhereOrNull((m) => m.id == MenuId.sealManagmentPage),
       ].whereType<RouteData>().toList(),
     ),

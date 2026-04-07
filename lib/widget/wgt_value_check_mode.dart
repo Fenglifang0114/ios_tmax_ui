@@ -472,69 +472,6 @@ class _ScaleWgtCheckModeWidgetState extends State<ScaleWgtCheckModeWidget> {
                                 localizedStrings.iTextZero,
                                 weightInfo?.isZero,
                                 3,
-                              ),
-                              SizedBox(
-                                width: 20,
-                                child: Column(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceAround,
-                                  children: [
-                                    SizedBox(
-                                        width: 10,
-                                        height: 10,
-                                        child: getSvgIcon(
-                                            wgtStableSvgIcon(),
-                                            iconBtnSize,
-                                            iconBtnSize,
-                                            lowValue == 0 && highValue == 0
-                                                ? Theme.of(context)
-                                                    .colorScheme
-                                                    .error
-                                                : isStart && _isHigh
-                                                    ? Theme.of(context)
-                                                        .colorScheme
-                                                        .error
-                                                    : Theme.of(context)
-                                                        .colorScheme
-                                                        .outlineVariant)),
-                                    SizedBox(
-                                        width: 10,
-                                        height: 10,
-                                        child: getSvgIcon(
-                                            wgtStableSvgIcon(),
-                                            iconBtnSize,
-                                            iconBtnSize,
-                                            lowValue == 0 && highValue == 0
-                                                ? Theme.of(context)
-                                                    .colorScheme
-                                                    .onTertiaryFixedVariant
-                                                : isStart && _isOK
-                                                    ? Theme.of(context)
-                                                        .colorScheme
-                                                        .onTertiaryFixedVariant
-                                                    : Theme.of(context)
-                                                        .colorScheme
-                                                        .outlineVariant)),
-                                    SizedBox(
-                                        width: 10,
-                                        height: 10,
-                                        child: getSvgIcon(
-                                            wgtStableSvgIcon(),
-                                            iconBtnSize,
-                                            iconBtnSize,
-                                            lowValue == 0 && highValue == 0
-                                                ? Theme.of(context)
-                                                    .colorScheme
-                                                    .onTertiaryContainer
-                                                : isStart && _isLow
-                                                    ? Theme.of(context)
-                                                        .colorScheme
-                                                        .onTertiaryContainer
-                                                    : Theme.of(context)
-                                                        .colorScheme
-                                                        .outlineVariant)),
-                                  ],
-                                ),
                               )
                             ],
                           ),
@@ -639,8 +576,15 @@ class _ScaleWgtCheckModeWidgetState extends State<ScaleWgtCheckModeWidget> {
                   height: 1,
                   color: Theme.of(context).colorScheme.surfaceContainerLow,
                 ),
-                SizedBox(
+                Container(
                   height: 60,
+                  color: (lowValue == 0 && highValue == 0 || !isStart || (!_isHigh && !_isOK && !_isLow))
+                      ? Colors.transparent
+                      : (_isHigh
+                          ? Theme.of(context).colorScheme.error
+                          : (_isOK
+                              ? Theme.of(context).colorScheme.onTertiaryFixedVariant
+                              : Theme.of(context).colorScheme.onTertiaryContainer)),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
@@ -659,11 +603,13 @@ class _ScaleWgtCheckModeWidgetState extends State<ScaleWgtCheckModeWidget> {
                                   .headlineLarge!
                                   .copyWith(
                                     fontSize: 40,
-                                    color: isStart
-                                        ? Theme.of(context)
-                                            .colorScheme
-                                            .onTertiaryFixedVariant
-                                        : Theme.of(context).colorScheme.error,
+                                    color: (lowValue == 0 && highValue == 0 || !isStart || (!_isHigh && !_isOK && !_isLow))
+                                        ? (isStart
+                                            ? Theme.of(context)
+                                                .colorScheme
+                                                .onTertiaryFixedVariant
+                                            : Theme.of(context).colorScheme.error)
+                                        : Colors.white,
                                   )),
                         ),
                       )),
@@ -675,8 +621,9 @@ class _ScaleWgtCheckModeWidgetState extends State<ScaleWgtCheckModeWidget> {
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: Theme.of(context).textTheme.bodyLarge!.apply(
-                                  color:
-                                      Theme.of(context).colorScheme.onSurface,
+                                  color: (lowValue == 0 && highValue == 0 || !isStart || (!_isHigh && !_isOK && !_isLow))
+                                      ? Theme.of(context).colorScheme.onSurface
+                                      : Colors.white,
                                 )),
                       )
                     ],

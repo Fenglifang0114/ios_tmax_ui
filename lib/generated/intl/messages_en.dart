@@ -53,7 +53,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "appWebTitle": MessageLookupByLibrary.simpleMessage("Website"),
     "application_title": MessageLookupByLibrary.simpleMessage("Applications"),
     "applySoftwareSeal": MessageLookupByLibrary.simpleMessage(
-      "Apply Software Seal",
+      "Enable Software Calibration Lock",
     ),
     "autoSync": MessageLookupByLibrary.simpleMessage("Auto Sync"),
     "barcodeExceedsMaxLengthShort": MessageLookupByLibrary.simpleMessage(
@@ -147,9 +147,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "calibrationValue": MessageLookupByLibrary.simpleMessage(
       "Calibration Value",
     ),
-    "checkSeal": MessageLookupByLibrary.simpleMessage("Check Seal"),
+    "checkSeal": MessageLookupByLibrary.simpleMessage("Check Status"),
     "checkSealFailed": MessageLookupByLibrary.simpleMessage(
-      "Check Seal Failed",
+      "Check Status Failed",
     ),
     "choose_json_file": MessageLookupByLibrary.simpleMessage("Choose json"),
     "clearUnusedFormulaCategory": MessageLookupByLibrary.simpleMessage(
@@ -522,9 +522,13 @@ class MessageLookup extends MessageLookupByLibrary {
       "No data, please add first.",
     ),
     "fTipOperation": MessageLookupByLibrary.simpleMessage("Operation"),
-    "fTipSeal": MessageLookupByLibrary.simpleMessage("Software Seal"),
+    "fTipSeal": MessageLookupByLibrary.simpleMessage(
+      "Enable Software Calibration Lock",
+    ),
     "fTipTitle": MessageLookupByLibrary.simpleMessage("Prompt"),
-    "fTipUnseal": MessageLookupByLibrary.simpleMessage("Remove Software Seal"),
+    "fTipUnseal": MessageLookupByLibrary.simpleMessage(
+      "Disable Software Calibration Lock",
+    ),
     "fTotalTime": MessageLookupByLibrary.simpleMessage("Total time"),
     "fTotalWeight": MessageLookupByLibrary.simpleMessage("Total weight"),
     "fTotalWeightLabel": MessageLookupByLibrary.simpleMessage("Total Weight"),
@@ -1235,7 +1239,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "go_home": MessageLookupByLibrary.simpleMessage(
       "Confirm to return to hompage?",
     ),
-    "hardwareSeal": MessageLookupByLibrary.simpleMessage("Hardware seal"),
+    "hardwareSeal": MessageLookupByLibrary.simpleMessage(
+      "Hardware Calibration Switch",
+    ),
     "iBtnZero": MessageLookupByLibrary.simpleMessage("Zero"),
     "iStable": MessageLookupByLibrary.simpleMessage("Stable"),
     "iTextNet": MessageLookupByLibrary.simpleMessage("Net"),
@@ -1388,7 +1394,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "menuRetailReport": MessageLookupByLibrary.simpleMessage("Retail Report"),
     "menuSealManagment": MessageLookupByLibrary.simpleMessage(
-      "Seal Management",
+      "Calibration Lock",
     ),
     "menuSerialOutputDesign": MessageLookupByLibrary.simpleMessage(
       "Serial Output Design",
@@ -1444,7 +1450,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "noDataImport": MessageLookupByLibrary.simpleMessage("No data to import"),
     "noPermission": MessageLookupByLibrary.simpleMessage("No permission"),
-    "notSealed": MessageLookupByLibrary.simpleMessage("Not Sealed"),
+    "notSealed": MessageLookupByLibrary.simpleMessage("Off"),
     "opDisable": MessageLookupByLibrary.simpleMessage("Disable"),
     "opEnable": MessageLookupByLibrary.simpleMessage("Enable"),
     "opExport": MessageLookupByLibrary.simpleMessage("Export"),
@@ -1653,10 +1659,10 @@ class MessageLookup extends MessageLookupByLibrary {
       "Please re-acquire the advanced configuration authorization code.",
     ),
     "removeSealFailed": MessageLookupByLibrary.simpleMessage(
-      "Remove Software Seal Failed",
+      "Software Calibration Lock Disable Failed",
     ),
     "removeSoftwareSeal": MessageLookupByLibrary.simpleMessage(
-      "Remove Software Seal",
+      "Disable Software Calibration Lock",
     ),
     "removeWithCode": MessageLookupByLibrary.simpleMessage("Remove with Code"),
     "report_hide_btn": MessageLookupByLibrary.simpleMessage("Hide Report"),
@@ -1675,7 +1681,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "sealPresentCalibrationNotPermitted": MessageLookupByLibrary.simpleMessage(
       "A seal is present on the device. Calibration is not permitted.",
     ),
-    "sealed": MessageLookupByLibrary.simpleMessage("Sealed"),
+    "sealed": MessageLookupByLibrary.simpleMessage("On"),
     "search": MessageLookupByLibrary.simpleMessage("Search"),
     "searchName": MessageLookupByLibrary.simpleMessage("Search Name"),
     "searchingBluetoothDevices": MessageLookupByLibrary.simpleMessage(
@@ -1726,18 +1732,20 @@ class MessageLookup extends MessageLookupByLibrary {
     "skipThisIngredient": MessageLookupByLibrary.simpleMessage(
       "Skip Ingredient",
     ),
-    "softwareSeal": MessageLookupByLibrary.simpleMessage("Software Seal"),
+    "softwareSeal": MessageLookupByLibrary.simpleMessage(
+      "Software Calibration Lock",
+    ),
     "softwareSealAppliedFailed": MessageLookupByLibrary.simpleMessage(
-      "Software Seal Applied Failed",
+      "Software Calibration Lock Enable Failed",
     ),
     "softwareSealAppliedSuccessfully": MessageLookupByLibrary.simpleMessage(
-      "Software Seal Applied Successfully",
+      "Software Calibration Lock Enabled Successfully",
     ),
     "softwareSealRemovalFailed": MessageLookupByLibrary.simpleMessage(
-      "Software Seal Removal Failed. \r\nPlease retry. If the issue persists, contact your supplier for a removal code.",
+      "Software Calibration Lock Disable Failed. \r\nPlease retry. If the issue persists, contact your supplier for a removal code.",
     ),
     "softwareSealRemovedSuccessfully": MessageLookupByLibrary.simpleMessage(
-      "Software Seal Removed Successfully",
+      "Software Calibration Lock Disabled Successfully",
     ),
     "stable_time_error_tip": MessageLookupByLibrary.simpleMessage(
       "The value must be under 20 seconds.",

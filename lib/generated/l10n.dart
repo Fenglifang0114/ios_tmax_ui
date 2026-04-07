@@ -5886,10 +5886,10 @@ class S {
     );
   }
 
-  /// `Seal Management`
+  /// `Calibration Lock`
   String get menuSealManagment {
     return Intl.message(
-      'Seal Management',
+      'Calibration Lock',
       name: 'menuSealManagment',
       desc: 'Menu item for seal management',
       args: [],
@@ -9728,20 +9728,20 @@ class S {
     );
   }
 
-  /// `Hardware seal`
+  /// `Hardware Calibration Switch`
   String get hardwareSeal {
     return Intl.message(
-      'Hardware seal',
+      'Hardware Calibration Switch',
       name: 'hardwareSeal',
       desc: 'Term for a hardware-based tamper-proof seal',
       args: [],
     );
   }
 
-  /// `Software Seal`
+  /// `Software Calibration Lock`
   String get softwareSeal {
     return Intl.message(
-      'Software Seal',
+      'Software Calibration Lock',
       name: 'softwareSeal',
       desc: 'Term for a software-based tamper-proof seal',
       args: [],
@@ -9758,50 +9758,50 @@ class S {
     );
   }
 
-  /// `Check Seal`
+  /// `Check Status`
   String get checkSeal {
     return Intl.message(
-      'Check Seal',
+      'Check Status',
       name: 'checkSeal',
       desc: 'Action to inspect or verify the seal status',
       args: [],
     );
   }
 
-  /// `Sealed`
+  /// `On`
   String get sealed {
     return Intl.message(
-      'Sealed',
+      'On',
       name: 'sealed',
       desc: 'Status indicating the device has been sealed',
       args: [],
     );
   }
 
-  /// `Not Sealed`
+  /// `Off`
   String get notSealed {
     return Intl.message(
-      'Not Sealed',
+      'Off',
       name: 'notSealed',
       desc: 'Status indicating the device is not sealed',
       args: [],
     );
   }
 
-  /// `Apply Software Seal`
+  /// `Enable Software Calibration Lock`
   String get applySoftwareSeal {
     return Intl.message(
-      'Apply Software Seal',
+      'Enable Software Calibration Lock',
       name: 'applySoftwareSeal',
       desc: 'Action to apply a software seal to the device',
       args: [],
     );
   }
 
-  /// `Remove Software Seal`
+  /// `Disable Software Calibration Lock`
   String get removeSoftwareSeal {
     return Intl.message(
-      'Remove Software Seal',
+      'Disable Software Calibration Lock',
       name: 'removeSoftwareSeal',
       desc: 'Action to remove a software seal from the device',
       args: [],
@@ -9818,40 +9818,40 @@ class S {
     );
   }
 
-  /// `Software Seal Applied Successfully`
+  /// `Software Calibration Lock Enabled Successfully`
   String get softwareSealAppliedSuccessfully {
     return Intl.message(
-      'Software Seal Applied Successfully',
+      'Software Calibration Lock Enabled Successfully',
       name: 'softwareSealAppliedSuccessfully',
       desc: 'Success message when a software seal is successfully applied',
       args: [],
     );
   }
 
-  /// `Software Seal Applied Failed`
+  /// `Software Calibration Lock Enable Failed`
   String get softwareSealAppliedFailed {
     return Intl.message(
-      'Software Seal Applied Failed',
+      'Software Calibration Lock Enable Failed',
       name: 'softwareSealAppliedFailed',
       desc: 'Error message when a software seal application fails',
       args: [],
     );
   }
 
-  /// `Software Seal Removed Successfully`
+  /// `Software Calibration Lock Disabled Successfully`
   String get softwareSealRemovedSuccessfully {
     return Intl.message(
-      'Software Seal Removed Successfully',
+      'Software Calibration Lock Disabled Successfully',
       name: 'softwareSealRemovedSuccessfully',
       desc: 'Success message when a software seal is successfully removed',
       args: [],
     );
   }
 
-  /// `Software Seal Removal Failed. \r\nPlease retry. If the issue persists, contact your supplier for a removal code.`
+  /// `Software Calibration Lock Disable Failed. \r\nPlease retry. If the issue persists, contact your supplier for a removal code.`
   String get softwareSealRemovalFailed {
     return Intl.message(
-      'Software Seal Removal Failed. \r\nPlease retry. If the issue persists, contact your supplier for a removal code.',
+      'Software Calibration Lock Disable Failed. \r\nPlease retry. If the issue persists, contact your supplier for a removal code.',
       name: 'softwareSealRemovalFailed',
       desc:
           'Error message when software seal removal fails, prompting for a retry or removal code',
@@ -9890,10 +9890,10 @@ class S {
     );
   }
 
-  /// `Check Seal Failed`
+  /// `Check Status Failed`
   String get checkSealFailed {
     return Intl.message(
-      'Check Seal Failed',
+      'Check Status Failed',
       name: 'checkSealFailed',
       desc: 'Error message when checking the seal status fails',
       args: [],
@@ -9910,20 +9910,20 @@ class S {
     );
   }
 
-  /// `Software Seal`
+  /// `Enable Software Calibration Lock`
   String get fTipSeal {
     return Intl.message(
-      'Software Seal',
+      'Enable Software Calibration Lock',
       name: 'fTipSeal',
       desc: 'Seal',
       args: [],
     );
   }
 
-  /// `Remove Software Seal`
+  /// `Disable Software Calibration Lock`
   String get fTipUnseal {
     return Intl.message(
-      'Remove Software Seal',
+      'Disable Software Calibration Lock',
       name: 'fTipUnseal',
       desc: 'Unseal',
       args: [],
@@ -9961,10 +9961,10 @@ class S {
     );
   }
 
-  /// `Remove Software Seal Failed`
+  /// `Software Calibration Lock Disable Failed`
   String get removeSealFailed {
     return Intl.message(
-      'Remove Software Seal Failed',
+      'Software Calibration Lock Disable Failed',
       name: 'removeSealFailed',
       desc: 'Error message when removing the software seal fails',
       args: [],

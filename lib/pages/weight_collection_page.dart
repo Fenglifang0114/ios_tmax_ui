@@ -529,7 +529,6 @@ class WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
     return scaleName;
   }
 
-  //实时查看是否是同一台秤，如果是的话，给出提示，并去掉一个
   void checkSameScale() {
     if (mySelScaleIdList.length > 1) {
       Map<int, dynamic> scaleMap = {};
@@ -537,34 +536,36 @@ class WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
         scaleMap[scale.scaleId] = scale;
       }
 
-      // 分离已选择的串口秤和WiFi秤
-      List<Scale> serialScales = [];
-      List<Scale> wifiScales = [];
-
+      // 根据物理设备（型号 + 序列号）对选中的秤进行分组
+      Map<String, List<Scale>> groups = {};
       for (var scaleId in mySelScaleIdList) {
         var scale = scaleMap[scaleId];
-        if (scale.tMedia == comScaleType) {
-          serialScales.add(scale);
-        } else if (scale.tMedia == netScaleType) {
-          wifiScales.add(scale);
+        if (scale != null) {
+          String key = "${scale.scaleModel}_${scale.scaleSn}";
+          groups.putIfAbsent(key, () => []).add(scale);
         }
       }
 
-      for (var serialScale in serialScales) {
-        for (var wifiScale in wifiScales) {
-          if (wifiScale.scaleModel == serialScale.scaleModel &&
-              wifiScale.scaleSn == serialScale.scaleSn) {
-            // 显示冲突提示对话框
-            showTipInfo(localizedStrings.tipSameScale, context);
-            if (mySelScaleIdList.contains(wifiScale.scaleId)) {
-              addOrRemoveSelScale(wifiScale.scaleId);
+      for (var group in groups.values) {
+        if (group.length > 1) {
+          // 冲突：同一个物理设备选择了多种连接方式
+          showTipInfo(localizedStrings.tipSameScale, context);
+
+          // 优先级：串口(0) > 网口(1) > 蓝牙(2)。排序并保留最高优先级的连接。
+          group.sort((a, b) => a.tMedia.compareTo(b.tMedia));
+
+          // 移除除第一个（优先级最高）之外的所有连接
+          for (int i = 1; i < group.length; i++) {
+            if (mySelScaleIdList.contains(group[i].scaleId)) {
+              addOrRemoveSelScale(group[i].scaleId);
             }
-            break;
           }
+          break; // 每个检查周期只显示一次提示
         }
       }
     }
   }
+
 
   void addOrRemoveSelScale(int scaleId) {
     if (mySelScaleIdList.contains(scaleId)) {

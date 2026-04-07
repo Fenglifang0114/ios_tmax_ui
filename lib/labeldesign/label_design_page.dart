@@ -25,6 +25,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:t_max/widget/attibute_widget.dart';
 import 'package:t_max/widget/common_widget.dart';
 import 'package:t_max/widget/page_head.dart';
+import 'package:t_max/labeldesign/ai_design_dialog.dart';
 
 class LabelDesignPage extends StatefulWidget {
   final String type;
@@ -1744,6 +1745,27 @@ class LabelDesignPageState extends State<LabelDesignPage> {
     }
   }
 
+  void _openAIDesignDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AIDesignDialog(
+        apiKey: 'sk-1ceff395c8a44ad5898f4ab8d540ee0d',
+        onApply: (generatedElements, width, height, printer, direction) {
+          setState(() {
+            _widthController.text = width.toInt().toString();
+            _heightController.text = height.toInt().toString();
+            printerCtl.text = printer;
+            _selectedPrintDirection =
+                (direction == '1' ? 'Reverse' : 'Forward');
+            printDirectionCtl.text = direction;
+            elements = generatedElements;
+            updateCanvasSize(context);
+          });
+        },
+      ),
+    );
+  }
+
   Widget showHeadWidget(double width) {
     return Container(
       height: topBtnHeight,
@@ -1901,10 +1923,6 @@ class LabelDesignPageState extends State<LabelDesignPage> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     SizedBox(
-                      width: btnWidth,
-                      height: 40,
-                    ),
-                    SizedBox(
                         width: btnWidth,
                         height: 40,
                         child: showTextButton(
@@ -1914,6 +1932,15 @@ class LabelDesignPageState extends State<LabelDesignPage> {
                             Theme.of(context).colorScheme.onPrimary,
                             Theme.of(context).colorScheme.primary,
                             Theme.of(context).colorScheme.onPrimary)),
+                    SizedBox(
+                        width: btnWidth,
+                        height: 40,
+                        child: showTextButton(context, 40, 'AI Design', () {
+                          _openAIDesignDialog();
+                        },
+                            Theme.of(context).colorScheme.primaryContainer,
+                            Theme.of(context).colorScheme.onPrimaryContainer,
+                            Theme.of(context).colorScheme.primaryContainer)),
                   ],
                 ),
                 SizedBox(
@@ -2658,12 +2685,26 @@ class LabelDesignPageState extends State<LabelDesignPage> {
                     switch (element.type) {
                       case ElementType.text:
                       case ElementType.data:
+                        String displayContent = element.content ?? '';
+                        if (element.type == ElementType.data &&
+                            element.varName != null &&
+                            element.varName!.isNotEmpty) {
+                          getLanguageVarMap();
+                          displayContent = langVarMap[element.varName] ??
+                              element.varName ??
+                              '';
+                        }
+                        if (displayContent.isEmpty &&
+                            element.type == ElementType.text) {
+                          displayContent = 'Text';
+                        }
+
                         child = RotatedBox(
                           quarterTurns: quarterTurns,
                           child: SizedBox(
                               width: element.size.width,
                               height: element.size.height,
-                              child: Text(element.content ?? 'Text',
+                              child: Text(displayContent,
                                   softWrap: true,
                                   style: TextStyle(
                                       fontFamily: "simsunb",
@@ -2680,7 +2721,6 @@ class LabelDesignPageState extends State<LabelDesignPage> {
                                           ? FontWeight.bold
                                           : FontWeight.normal))),
                         );
-
                         break;
 
                       case ElementType.line:

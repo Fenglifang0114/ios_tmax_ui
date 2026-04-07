@@ -2460,7 +2460,7 @@
     "@menuWiredSetting": {
         "description": "Menu item for wired setting"
     },
-    "menuSealManagment": "铅封管理",
+    "menuSealManagment": "软件校正锁",
     "@menuSealManagment": {
         "description": "Menu item for seal management"
     },
@@ -3144,7 +3144,7 @@
     "@subTitleWiredSetting": {
         "description": "SubTitle for wired setting"
     },
-    "subTitleSealManagment": "施加软件铅封，进一步防止设备篡改",
+    "subTitleSealManagment": "打开软件校正锁，以防止设备参数修改",
     "@subTitleSealManagment": {
         "description": "SubTitle for seal management"
     },
@@ -4016,11 +4016,11 @@
     "@pleaseWait": {
         "description": "Please wait message"
     },
-    "hardwareSeal": "硬铅封",
+    "hardwareSeal": "硬件校正开关",
     "@hardwareSeal": {
         "description": "Term for a hardware-based tamper-proof seal"
     },
-    "softwareSeal": "软铅封",
+    "softwareSeal": "软件校正锁",
     "@softwareSeal": {
         "description": "Term for a software-based tamper-proof seal"
     },
@@ -4028,23 +4028,23 @@
     "@toBeVerified": {
         "description": "Status indicating an item is pending verification"
     },
-    "checkSeal": "检查铅封",
+    "checkSeal": "检查状态",
     "@checkSeal": {
         "description": "Action to inspect or verify the seal status"
     },
-    "sealed": "已铅封",
+    "sealed": "开启",
     "@sealed": {
         "description": "Status indicating the device has been sealed"
     },
-    "notSealed": "未铅封",
+    "notSealed": "关闭",
     "@notSealed": {
         "description": "Status indicating the device is not sealed"
     },
-    "applySoftwareSeal": "施加软铅封",
+    "applySoftwareSeal": "打开软件校正锁",
     "@applySoftwareSeal": {
         "description": "Action to apply a software seal to the device"
     },
-    "removeSoftwareSeal": "解除软铅封",
+    "removeSoftwareSeal": "关闭软件校正锁",
     "@removeSoftwareSeal": {
         "description": "Action to remove a software seal from the device"
     },
@@ -4052,19 +4052,19 @@
     "@operationRecord": {
         "description": "Title for a log of operations performed"
     },
-    "softwareSealAppliedSuccessfully": "软铅封施加成功",
+    "softwareSealAppliedSuccessfully": "软件校正锁打开成功",
     "@softwareSealAppliedSuccessfully": {
         "description": "Success message when a software seal is successfully applied"
     },
-    "softwareSealAppliedFailed": "软铅封施加失败",
+    "softwareSealAppliedFailed": "软件校正锁打开失败",
     "@softwareSealAppliedFailed": {
         "description": "Error message when a software seal application fails"
     },
-    "softwareSealRemovedSuccessfully": "软铅封解除成功",
+    "softwareSealRemovedSuccessfully": "软件校正锁关闭成功",
     "@softwareSealRemovedSuccessfully": {
         "description": "Success message when a software seal is successfully removed"
     },
-    "softwareSealRemovalFailed": "软铅封解除失败，请尝试重新操作。若多次失败，请联系供应商提供解除码协助解除。",
+    "softwareSealRemovalFailed": "软件校正锁关闭失败，请尝试重新操作。若仍然失败，请联系供应商获取卸载码",
     "@softwareSealRemovalFailed": {
         "description": "Error message when software seal removal fails, prompting for a retry or removal code"
     },
@@ -4080,7 +4080,7 @@
     "@sealPresentCalibrationNotPermitted": {
         "description": "Warning message indicating calibration is prohibited because a seal is present on the device"
     },
-    "checkSealFailed": "检查铅封失败",
+    "checkSealFailed": "检查状态失败",
     "@checkSealFailed": {
         "description": "Error message when checking the seal status fails"
     },
@@ -4088,11 +4088,11 @@
     "@contactSupplierForRemovalCode": {
         "description": "Prompt to contact the supplier for a removal code"
     },
-    "fTipSeal": "施加软铅封",
+    "fTipSeal": "打开软件校正锁",
     "@fTipSeal": {
         "description": "Seal"
     },
-    "fTipUnseal": "解除软铅封",
+    "fTipUnseal": "关闭软件校正锁",
     "@fTipUnseal": {
         "description": "Unseal"
     },
@@ -4108,7 +4108,7 @@
     "@reAcquireAuthCode": {
         "description": "Prompt to re-acquire the advanced configuration authorization code"
     },
-    "removeSealFailed": "解除软铅封失败",
+    "removeSealFailed": "软件校正锁关闭失败",
     "@removeSealFailed": {
         "description": "Error message when removing the software seal fails"
     },
