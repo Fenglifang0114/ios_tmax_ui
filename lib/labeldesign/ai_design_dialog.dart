@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:t_max/data/language.dart';
 import 'package:t_max/labeldesign/ai_service.dart';
 import 'package:t_max/labeldesign/label_element.dart';
 import 'package:t_max/labeldesign/label_formatdata.dart';
@@ -162,8 +163,7 @@ class _AIDesignDialogState extends State<AIDesignDialog> {
                 controller: _promptController,
                 maxLines: 4,
                 decoration: InputDecoration(
-                  hintText:
-                      "示例：55x50mm标签，机型EPM205。第一行显示净重和单位，第二行显示一条分割线，底部显示一个条码。",
+                  hintText: localizedStrings.aiDesignHintText,
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8)),
                 ),

@@ -820,6 +820,18 @@ class _ScaleWgtLogTabPageState extends State<ScaleWgtLogTabPage> {
                             dateEndCtl.text.isNotEmpty ? dateEndCtl.text : null,
                       ),
                       translation: WgtLogTranslator.getLanguageMap(),
+                      headers: [
+                        'ID',
+                        localizedStrings.operator,
+                        localizedStrings.userRole,
+                        localizedStrings.module,
+                        localizedStrings.fTotalWeight,
+                        localizedStrings.fWgtUnit,
+                        localizedStrings.gDeviceName,
+                        localizedStrings.gModelName,
+                        localizedStrings.gScaleSn,
+                        localizedStrings.fCreatedAtCol,
+                      ],
                     );
                     String jsonStr = json.encode(exportLog.toJson());
 

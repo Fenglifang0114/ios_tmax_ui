@@ -840,7 +840,7 @@ class SysUserManagerPageState extends State<SysUserManagerPage>
             items: [
               DropdownMenuItem<RoleValue>(
                 value: null,
-                child: Text('',
+                child: Text(localizedStrings.userRole,
                     style: textTheme.bodySmall!.copyWith(
                       // 设置提示文本样式
                       fontSize: 12,
@@ -861,13 +861,17 @@ class SysUserManagerPageState extends State<SysUserManagerPage>
               }),
             ],
             onChanged: (value) {
-              if (value == null) return;
               setState(() {
-                searchRoleCtl.text = value.getTranslation(context);
-                if (value == RoleValue.admin) {
-                  selRoleId = 2;
-                } else if (value == RoleValue.operator) {
-                  selRoleId = 3;
+                if (value == null) {
+                  searchRoleCtl.text = "";
+                  selRoleId = -1;
+                } else {
+                  searchRoleCtl.text = value.getTranslation(context);
+                  if (value == RoleValue.admin) {
+                    selRoleId = 2;
+                  } else if (value == RoleValue.operator) {
+                    selRoleId = 3;
+                  }
                 }
                 performSearch();
               });

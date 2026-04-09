@@ -2474,13 +2474,13 @@ class FormulationScalePageState extends State<FormulationScalePage>
       initialDirectory: directory,
       type: FileType.custom,
       dialogTitle: 'Output file:',
-      allowedExtensions: ["xlsx"],
-      fileName: 'Ingredient_template.xlsx',
+      allowedExtensions: ["csv"],
+      fileName: 'Ingredient_template.csv',
     ));
     if (outputFile == null) return;
 
-    if (!outputFile.contains(".xlsx")) {
-      outputFile = "$outputFile.xlsx";
+    if (!outputFile.contains(".csv")) {
+      outputFile = "$outputFile.csv";
     }
     String filePath = outputFile;
     ExportResult result = await exportRawTemplate(filePath);
@@ -2498,13 +2498,13 @@ class FormulationScalePageState extends State<FormulationScalePage>
       initialDirectory: directory,
       type: FileType.custom,
       dialogTitle: 'Output file:',
-      allowedExtensions: ["xlsx"],
-      fileName: 'Formula_template.xlsx',
+      allowedExtensions: ["csv"],
+      fileName: 'Formula_template.csv',
     ));
     if (outputFile == null) return;
 
-    if (!outputFile.contains(".xlsx")) {
-      outputFile = "$outputFile.xlsx";
+    if (!outputFile.contains(".csv")) {
+      outputFile = "$outputFile.csv";
     }
     String filePath = outputFile;
     ExportResult result = await exportFmaTemplate(filePath);
@@ -2522,7 +2522,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
     //选择一个csv文件
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
-      allowedExtensions: ['xlsx'],
+      allowedExtensions: ['csv'],
     );
     if (result == null) return;
     File file = File(result.files.single.path!);
@@ -2636,10 +2636,10 @@ class FormulationScalePageState extends State<FormulationScalePage>
   }
 
   void importFormula() async {
-    //选择一个xlsx文件
+    //选择一个csv文件
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
-      allowedExtensions: ['xlsx'],
+      allowedExtensions: ['csv'],
     );
     if (result == null) return;
     File file = File(result.files.single.path!);
@@ -2714,18 +2714,18 @@ class FormulationScalePageState extends State<FormulationScalePage>
       initialDirectory: directory,
       type: FileType.custom,
       dialogTitle: 'Output file:',
-      allowedExtensions: ["xlsx"],
-      fileName: 'ingredient_list.xlsx',
+      allowedExtensions: ["csv"],
+      fileName: 'ingredient_list.csv',
     ));
     if (outputFile == null) return;
 
-    if (!outputFile.contains(".xlsx")) {
-      outputFile = "$outputFile.xlsx";
+    if (!outputFile.contains(".csv")) {
+      outputFile = "$outputFile.csv";
     }
     String filePath = outputFile;
 
     // 将 CSV 数据写入文件
-    ExportResult result = await exportRawListToExcel(exportRawList, filePath);
+    ExportResult result = await exportRawListToCsv(exportRawList, filePath);
     if (!mounted) return;
     if (result.isSuccess) {
       showExportDialog(filePath, context);
@@ -2746,19 +2746,19 @@ class FormulationScalePageState extends State<FormulationScalePage>
       initialDirectory: directory,
       type: FileType.custom,
       dialogTitle: 'Output file:',
-      allowedExtensions: ["xlsx"],
-      fileName: 'formula_list.xlsx',
+      allowedExtensions: ["csv"],
+      fileName: 'formula_list.csv',
     ));
     if (outputFile == null) return;
 
-    if (!outputFile.contains(".xlsx")) {
-      outputFile = "$outputFile.xlsx";
+    if (!outputFile.contains(".csv")) {
+      outputFile = "$outputFile.csv";
     }
     String filePath = outputFile;
 
     // 将 CSV 数据写入文件
     ExportResult result =
-        await exportFormulaListToExcel(exportFormulaList, filePath);
+        await exportFormulaListToCsv(exportFormulaList, filePath);
     if (!mounted) return;
     if (result.isSuccess) {
       showExportDialog(filePath, context);

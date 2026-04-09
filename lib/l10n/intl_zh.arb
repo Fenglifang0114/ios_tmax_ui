@@ -2456,7 +2456,7 @@
     "@menuBasicDataCollection": {
         "description": "Menu item for basic data collection"
     },
-    "menuWiredSetting": "有线网络设置",
+    "menuWiredSetting": "有线网设置",
     "@menuWiredSetting": {
         "description": "Menu item for wired setting"
     },
@@ -4040,6 +4040,22 @@
     "@notSealed": {
         "description": "Status indicating the device is not sealed"
     },
+    "softwareLocked": "已锁定",
+    "@softwareLocked": {
+        "description": "Status indicating the software lock is applied"
+    },
+    "softwareUnlocked": "未锁定",
+    "@softwareUnlocked": {
+        "description": "Status indicating the software lock is removed"
+    },
+    "commonApp": "普通应用",
+    "@commonApp": {
+        "description": "Common Application"
+    },
+    "aiDesignHintText": "示例：55x50mm标签，机型EPM205。第一行显示净重和单位，第二行显示一条分割线，底部显示一个条码。",
+    "@aiDesignHintText": {
+        "description": "Hint text for AI design prompt input"
+    },
     "applySoftwareSeal": "打开软件校正锁",
     "@applySoftwareSeal": {
         "description": "Action to apply a software seal to the device"
@@ -4064,11 +4080,11 @@
     "@softwareSealRemovedSuccessfully": {
         "description": "Success message when a software seal is successfully removed"
     },
-    "softwareSealRemovalFailed": "软件校正锁关闭失败，请尝试重新操作。若仍然失败，请联系供应商获取卸载码",
+    "softwareSealRemovalFailed": "软件校正锁关闭失败，请尝试重新操作。若仍然失败，请联系供应商获取解锁码",
     "@softwareSealRemovalFailed": {
         "description": "Error message when software seal removal fails, prompting for a retry or removal code"
     },
-    "removeWithCode": "解锁码解锁软铅封",
+    "removeWithCode": "解锁码关闭软件矫正锁",
     "@removeWithCode": {
         "description": "Option or button to remove a seal using a special code"
     },
@@ -4183,5 +4199,9 @@
     "inputPort": "输入口",
     "@inputPort": {
         "description": "Input"
+    },
+    "gMsgUseUtf8": "请使用UTF-8 编码",
+    "@gMsgUseUtf8": {
+        "description": "Error message when CSV encoding is unrecognized"
     }
 }

@@ -1,7 +1,10 @@
 //配方导入方法
 
+import 'dart:convert';
 import 'dart:io';
-import 'package:excel/excel.dart';
+
+import 'package:csv/csv.dart';
+import 'package:fast_gbk/fast_gbk.dart';
 import 'package:flutter/foundation.dart';
 import 'package:t_max/data/formula_common.dart';
 import 'package:t_max/data/import_fma_data.dart';
@@ -42,23 +45,34 @@ Future<ImportFmaResult> importFormulasFromExcel(File file) async {
 
   final stopwatch = Stopwatch()..start(); // 用于监控导入性能
   try {
-    // 1. 读取Excel并解析
-    final bytes = await file.readAsBytes();
-    final excelData = Excel.decodeBytes(bytes);
+    // 1. 读取CSV并解析
+    var bytes = await file.readAsBytes();
+    final localizedMap = _getFormulaHeaderMap();
+    final decodeResult = _decodeCsvBytes(bytes, localizedMap, fmaHeaders);
+    String csvString = decodeResult.content;
 
-    if (excelData.tables.isEmpty) {
-      result.errorMessage = localizedStrings.noDataImport;
-      return result;
+    if (decodeResult.matchCount == 0) {
+      try {
+        csvString = gbk.decode(bytes);
+      } catch (e) {
+        result.errorMessage = localizedStrings.gMsgUseUtf8;
+        return result;
+      }
     }
+    
+    // 增加一步：处理首行可能残留的 BOM 字符
+    if (csvString.startsWith('\uFEFF')) {
+      csvString = csvString.substring(1);
+    }
+    List<List<dynamic>> sheetRows = const CsvToListConverter().convert(csvString);
 
-    final sheet = excelData.tables.values.first;
-    if (sheet.rows.isEmpty) {
+    if (sheetRows.isEmpty) {
       result.errorMessage = localizedStrings.noDataImport;
       return result;
     }
 
     //大于1000行 提示用户一次读取1000行
-    if (sheet.rows.length > 1001) {
+    if (sheetRows.length > 1001) {
       result.errorMessage = localizedStrings.max1000Rows;
       return result;
     }
@@ -66,20 +80,33 @@ Future<ImportFmaResult> importFormulasFromExcel(File file) async {
     // 2. 解析表头并映射列索引（关键优化：用索引定位列，避免多次查找）
     final Map<String, int> columnIndexMap = {};
 
-    for (var i = 0; i < sheet.rows.first.length; i++) {
-      final cell = sheet.rows.first[i];
-      if (cell != null && cell.value != null) {
-        String header = cell.value.toString().trim();
-        String head = header.replaceAll(" ", "");
-        head = head.replaceAll("*", "");
-        head = head.toLowerCase();
+    for (var i = 0; i < sheetRows.first.length; i++) {
+      final cell = sheetRows.first[i];
+      if (cell != null && cell.toString().isNotEmpty) {
+        String header = cell.toString().trim();
+        String head = _cleanHeader(header);
+        
+        // 查找匹配的内部键
+        String? internalKey;
         if (fmaHeaders.contains(head)) {
-          if (columnIndexMap.containsKey(head)) {
+          internalKey = head;
+        } else {
+          // 查找是否匹配中文/英文本地化名称
+          for (var entry in localizedMap.entries) {
+            if (_cleanHeader(entry.value) == head) {
+              internalKey = entry.key;
+              break;
+            }
+          }
+        }
+
+        if (internalKey != null) {
+          if (columnIndexMap.containsKey(internalKey)) {
             result.errorMessage =
                 localizedStrings.duplicateHeaders + '：$header  ';
             return result;
           }
-          columnIndexMap[head] = i;
+          columnIndexMap[internalKey] = i;
         }
       }
     }
@@ -93,8 +120,8 @@ Future<ImportFmaResult> importFormulasFromExcel(File file) async {
     int count = 1; //计算序号
 
     final List<Map<String, dynamic>> validRows = [];
-    for (int rowIdx = 1; rowIdx < sheet.maxRows; rowIdx++) {
-      final row = sheet.rows[rowIdx];
+    for (int rowIdx = 1; rowIdx < sheetRows.length; rowIdx++) {
+      final row = sheetRows[rowIdx];
       if (_isRowEmpty(row)) {
         debugPrint('跳过空行: $rowIdx');
         continue;
@@ -378,11 +405,11 @@ Future<ImportFmaResult> importFormulasFromExcel(File file) async {
 }
 
 // 辅助函数：获取单元格值（处理空单元格）
-String _getCellValue(List<Data?> row, int colIndex) {
+String _getCellValue(List<dynamic> row, int colIndex) {
   if (colIndex >= row.length) return '';
   final cell = row[colIndex];
-  if (cell == null || cell.value == null) return '';
-  return cell.value.toString().trim();
+  if (cell == null || cell.toString().isEmpty) return '';
+  return cell.toString().trim();
 }
 
 // 辅助函数：验证数值是否为正数且最多N位小数
@@ -432,6 +459,50 @@ const fmaHeaders = [
   'notes'
 ];
 
+// 清理表头字符：去除 BOM、空格、星号并转小写
+String _cleanHeader(String header) {
+  String clean = header.trim();
+  // 去除 UTF-8 BOM (\uFEFF)
+  if (clean.startsWith('\uFEFF')) {
+    clean = clean.substring(1);
+  }
+  // 去除可能的 misinterpreted BOM (ï»¿)
+  if (clean.startsWith('ï»¿')) {
+    clean = clean.substring(3);
+  }
+  return clean.replaceAll(" ", "").replaceAll("*", "").toLowerCase();
+}
+
+// 获取配方导入表头与本地化的映射
+Map<String, String> _getFormulaHeaderMap() {
+  return {
+    'formulaid': localizedStrings.fFmaIdLabel,
+    'formulaname': localizedStrings.fFmaNameLabel,
+    'barcode': localizedStrings.fFmaBarcode,
+    'mode': localizedStrings.fFmaModeCol,
+    'weightunit': localizedStrings.gTipWeightUnit,
+    'category': localizedStrings.fFmaCategoryCol,
+    'confidential': localizedStrings.fConfidential,
+    'needcontainer': localizedStrings.fFmaContainer,
+    'ingredientid': localizedStrings.fMaterialIdCol,
+    'ingredientweight/percentage': localizedStrings.fMaterialSingleWeight,
+    'allowableerror': localizedStrings.fAllowableError,
+    'notes': localizedStrings.fFmaRemark,
+  };
+}
+
+// 获取原料导入表头与本地化的映射
+Map<String, String> _getRawHeaderMap() {
+  return {
+    'ingredientid': localizedStrings.fMaterialIdCol,
+    'ingredientname': localizedStrings.fMaterialNameCol,
+    'verificationcode': localizedStrings.fMaterialCodeCol,
+    'category': localizedStrings.fFmaCategoryCol,
+    'ingredientnotes': localizedStrings.fIngredientRemark,
+    'devicename': localizedStrings.gDeviceName,
+  };
+}
+
 //导入Raw数据
 int checkScaleName(String scaleName) {
   for (var scale in myAllScalesList) {
@@ -443,11 +514,10 @@ int checkScaleName(String scaleName) {
 }
 
 // 判断一行是否为空的辅助函数
-bool _isRowEmpty(List<Data?> row) {
+bool _isRowEmpty(List<dynamic> row) {
   return row.every((cell) =>
       cell == null ||
-      cell.value == null ||
-      cell.value.toString().trim().isEmpty);
+      cell.toString().trim().isEmpty);
 }
 
 const Map<String, String> importRawHeaders = {
@@ -495,6 +565,7 @@ Future<ImportRawResult> importRawFromExcel(File file) async {
       'importRawHeaders': importRawHeaders,
       'rowIdList': rawIdList,
       'scaleNameList': scaleNameList,
+      'localizedRawHeaders': _getRawHeaderMap(), // 传入当前语言的表头
       'messages': {
         'noDataImport': localizedStrings.noDataImport,
         'max5000Rows': localizedStrings.max5000Rows,
@@ -506,6 +577,7 @@ Future<ImportRawResult> importRawFromExcel(File file) async {
         'fRawIdDuplicate': localizedStrings.fRawIdDuplicate,
         'duplicateHeaders': localizedStrings.duplicateHeaders,
         'tipImporting': localizedStrings.tipImporting,
+        'useUtf8': localizedStrings.gMsgUseUtf8,
       }
     });
   } catch (e) {
@@ -549,18 +621,32 @@ ImportRawResult _parseExcelInBackground(params) {
 
   final file = File(filePath);
   final bytes = file.readAsBytesSync();
-  final excelData = Excel.decodeBytes(bytes);
+  final localizedRawHeaders = params['localizedRawHeaders'] as Map<String, dynamic>;
+  final Map<String, String> localizedHeadersMap = localizedRawHeaders.map((key, value) => MapEntry(key.toString(), value.toString()));
+  final List<String> importHeaders = (params['rawHeaders'] as List<dynamic>).map((e) => e.toString()).toList();
+  
+  final decodeResult = _decodeCsvBytes(bytes, localizedHeadersMap, importHeaders);
+  String csvString = decodeResult.content;
 
-  if (excelData.tables.isEmpty) {
-    return ImportRawResult(
-      isSuccess: false,
-      errorMessage: messages['noDataImport']!,
-      importRawList: [],
-    );
+  if (decodeResult.matchCount == 0) {
+    try {
+      csvString = gbk.decode(bytes);
+    } catch (e) {
+      return ImportRawResult(
+        isSuccess: false,
+        errorMessage: messages['useUtf8']!,
+        importRawList: [],
+      );
+    }
   }
 
-  final sheet = excelData.tables.values.first;
-  if (sheet.rows.isEmpty) {
+  // 增加一步：处理首行可能残留的 BOM 字符
+  if (csvString.startsWith('\uFEFF')) {
+    csvString = csvString.substring(1);
+  }
+  List<List<dynamic>> sheetRows = const CsvToListConverter().convert(csvString);
+
+  if (sheetRows.isEmpty) {
     return ImportRawResult(
       isSuccess: false,
       errorMessage: messages['noDataImport']!,
@@ -569,7 +655,7 @@ ImportRawResult _parseExcelInBackground(params) {
   }
 
   // 行数检查
-  if (sheet.rows.length > 5001) {
+  if (sheetRows.length > 5001) {
     return ImportRawResult(
       isSuccess: false,
       errorMessage: messages['max5000Rows']!,
@@ -580,21 +666,35 @@ ImportRawResult _parseExcelInBackground(params) {
   // 解析表头
   List<String> headers = [];
   List<int> headerIndexList = [];
-  for (int i = 0; i < sheet.rows[0].length; i++) {
-    Data? cell = sheet.rows[0][i];
-    if (cell != null && cell.value != null) {
-      String headStr = cell.value.toString();
-      String head =
-          headStr.replaceAll(" ", "").replaceAll("*", "").toLowerCase();
+
+  for (var i = 0; i < sheetRows.first.length; i++) {
+    dynamic cell = sheetRows[0][i];
+    if (cell != null && cell.toString().isNotEmpty) {
+      String headStr = cell.toString().trim();
+      String head = _cleanHeader(headStr);
+      
+      String? internalKey;
       if (rawHeaders.contains(head)) {
-        if (headers.contains(head)) {
+        internalKey = head;
+      } else {
+        // 查找匹配的本地化名称
+        for (var entry in localizedRawHeaders.entries) {
+          if (_cleanHeader(entry.value.toString()) == head) {
+            internalKey = entry.key;
+            break;
+          }
+        }
+      }
+
+      if (internalKey != null) {
+        if (headers.contains(internalKey)) {
           return ImportRawResult(
             isSuccess: false,
             errorMessage: '${messages['duplicateHeaders']!}：$headStr',
             importRawList: [],
           );
         }
-        headers.add(head);
+        headers.add(internalKey);
         headerIndexList.add(i);
       }
     }
@@ -618,8 +718,8 @@ ImportRawResult _parseExcelInBackground(params) {
   List<String> notesList = [];
   List<String> codeList = [];
 
-  for (int rowIndex = 1; rowIndex < sheet.maxRows; rowIndex++) {
-    var rowData = sheet.rows[rowIndex];
+  for (int rowIndex = 1; rowIndex < sheetRows.length; rowIndex++) {
+    var rowData = sheetRows[rowIndex];
 
     // 跳过空行
     if (_isRowEmptyStatic(rowData)) continue;
@@ -627,8 +727,8 @@ ImportRawResult _parseExcelInBackground(params) {
     String? id, name, type, notes, code;
     int scaleId = 0;
 
-    for (int col = 0; col < sheet.maxColumns; col++) {
-      final cellValue = rowData[col]?.value;
+    for (int col = 0; col < rowData.length; col++) {
+      final cellValue = rowData[col];
       final value = cellValue?.toString().trim() ?? '';
       int headerIndex = 0;
 
@@ -720,11 +820,10 @@ ImportRawResult _parseExcelInBackground(params) {
 }
 
 // 静态辅助函数（可在isolate中使用）
-bool _isRowEmptyStatic(List<Data?> row) {
+bool _isRowEmptyStatic(List<dynamic> row) {
   return row.every((cell) =>
       cell == null ||
-      cell.value == null ||
-      cell.value.toString().trim().isEmpty);
+      cell.toString().trim().isEmpty);
 }
 
 String _validateRawHeadersStatic(
@@ -750,3 +849,98 @@ int _checkScaleNameStatic(Map<String, String> scaleNameList, String scaleName) {
 bool checkRawExist(List<String> rawIdList, String materialId) {
   return rawIdList.any((element) => element == materialId);
 }
+
+// 智能解码CSV字节的结果
+class _CsvDecodeResult {
+  final String content;
+  final int matchCount;
+  _CsvDecodeResult(this.content, this.matchCount);
+}
+
+// 智能解码CSV字节：尝试UTF-8和GBK，并通过匹配表头数量来决定最佳编码
+_CsvDecodeResult _decodeCsvBytes(List<int> bytes, Map<String, String> localizedHeaders, List<String> internalHeaders) {
+  String tryDecodeUtf8() {
+    try {
+      if (bytes.length >= 3 && bytes[0] == 0xef && bytes[1] == 0xbb && bytes[2] == 0xbf) {
+        return utf8.decode(bytes.sublist(3), allowMalformed: true);
+      } else {
+        return utf8.decode(bytes, allowMalformed: true);
+      }
+    } catch (e) {
+      return '';
+    }
+  }
+
+  String tryDecodeGbk() {
+    try {
+      return gbk.decode(bytes);
+    } catch (e) {
+      // 容错GBK/GB2312解码：过滤掉无法严格解析的乱码尾部字节
+      List<int> validBytes = [];
+      for (int i = 0; i < bytes.length; i++) {
+        if (bytes[i] <= 0x7F) {
+          validBytes.add(bytes[i]); // ASCII
+        } else if (i + 1 < bytes.length) {
+          if (bytes[i] >= 0x81 && bytes[i] <= 0xFE && bytes[i+1] >= 0x40 && bytes[i+1] <= 0xFE) {
+            validBytes.add(bytes[i]);
+            validBytes.add(bytes[i+1]);
+            i++;
+          }
+        }
+      }
+      try {
+        return gbk.decode(validBytes);
+      } catch (_) {
+        return '';
+      }
+    }
+  }
+
+  int countMatches(String csvString) {
+    if (csvString.isEmpty) return -1;
+    if (csvString.startsWith('\uFEFF')) {
+      csvString = csvString.substring(1);
+    }
+    try {
+      List<List<dynamic>> sheetRows = const CsvToListConverter().convert(csvString);
+      if (sheetRows.isEmpty) return 0;
+      int matchCount = 0;
+      for (var cell in sheetRows.first) {
+        if (cell != null && cell.toString().isNotEmpty) {
+          String head = _cleanHeader(cell.toString().trim());
+          if (internalHeaders.contains(head)) {
+            matchCount++;
+          } else {
+            bool found = false;
+            for (var entry in localizedHeaders.entries) {
+              if (_cleanHeader(entry.value) == head) {
+                found = true;
+                break;
+              }
+            }
+            if (found) matchCount++;
+          }
+        }
+      }
+      return matchCount;
+    } catch (e) {
+      return -1;
+    }
+  }
+
+  String utf8Str = tryDecodeUtf8();
+  int utf8Matches = countMatches(utf8Str);
+
+  String gbkStr = tryDecodeGbk();
+  int gbkMatches = countMatches(gbkStr);
+
+  // 如果GBK匹配表头多，或者UTF-8解码出乱码替换符(\uFFFD)但GBK至少有匹配，则使用GBK
+  if ((gbkMatches > utf8Matches && gbkMatches > 0) || (utf8Str.contains('\uFFFD') && gbkMatches > 0)) {
+    return _CsvDecodeResult(gbkStr, gbkMatches);
+  } else {
+    String bestContent = utf8Str.isNotEmpty ? utf8Str : gbkStr;
+    int bestMatches = utf8Str.isNotEmpty ? utf8Matches : gbkMatches;
+    return _CsvDecodeResult(bestContent, bestMatches < 0 ? 0 : bestMatches);
+  }
+}
+

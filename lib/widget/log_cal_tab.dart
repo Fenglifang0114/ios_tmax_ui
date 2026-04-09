@@ -829,6 +829,23 @@ class _ScaleCalLogTabPageState extends State<ScaleCalLogTabPage> {
                             dateEndCtl.text.isNotEmpty ? dateEndCtl.text : null,
                       ),
                       translation: CalLogTranslator.getLanguageMap(),
+                      headers: [
+                        'ID',
+                        localizedStrings.operator,
+                        localizedStrings.userRole,
+                        localizedStrings.calibrationType,
+                        localizedStrings.calibrationMode,
+                        localizedStrings.gTipWeightUnit,
+                        localizedStrings.calibrationValue,
+                        localizedStrings.weightBeforeCalibration,
+                        localizedStrings.weightAfterCalibration,
+                        localizedStrings.calibrationError,
+                        localizedStrings.gTipResult,
+                        localizedStrings.gDeviceName,
+                        localizedStrings.gModelName,
+                        localizedStrings.gScaleSn,
+                        localizedStrings.fCreatedAtCol,
+                      ],
                     );
                     String jsonStr = json.encode(exportLog.toJson());
 

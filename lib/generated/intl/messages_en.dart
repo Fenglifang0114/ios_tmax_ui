@@ -38,6 +38,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "admin": MessageLookupByLibrary.simpleMessage("Admin"),
     "advanced_setting_title": MessageLookupByLibrary.simpleMessage("Advanced"),
+    "aiDesignHintText": MessageLookupByLibrary.simpleMessage(
+      "Example: 55x50mm label, EPM205 printer. The first line shows net weight and unit, the second line shows a dividing line, and the bottom shows a barcode.",
+    ),
     "allowErrorEmpty": MessageLookupByLibrary.simpleMessage(
       "Allow Error is empty",
     ),
@@ -158,6 +161,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "clearUnusedIngredientCategory": MessageLookupByLibrary.simpleMessage(
       "Clear Unused Ingredient Category",
     ),
+    "commonApp": MessageLookupByLibrary.simpleMessage("Common"),
     "contactSupplierForRemovalCode": MessageLookupByLibrary.simpleMessage(
       "Contact your supplier for a removal code",
     ),
@@ -704,6 +708,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "gMsgRefresh": MessageLookupByLibrary.simpleMessage("Refresh"),
     "gMsgSerialError": MessageLookupByLibrary.simpleMessage(
       "Serial port has been disconnected. Please check the settings.",
+    ),
+    "gMsgUseUtf8": MessageLookupByLibrary.simpleMessage(
+      "Please use UTF-8 encoding",
     ),
     "gNetmask": MessageLookupByLibrary.simpleMessage("Netmask"),
     "gNetwork": MessageLookupByLibrary.simpleMessage("Network"),
@@ -1415,7 +1422,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "menuWifiSetting": MessageLookupByLibrary.simpleMessage("Wi-Fi Setting"),
     "menuWiredSetting": MessageLookupByLibrary.simpleMessage(
-      "Wired Network Setting",
+      "Ethernet Setting",
     ),
     "missingHeaders": MessageLookupByLibrary.simpleMessage("Missing fields"),
     "modeEmpty": MessageLookupByLibrary.simpleMessage("Mode is empty"),
@@ -1664,7 +1671,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "removeSoftwareSeal": MessageLookupByLibrary.simpleMessage(
       "Disable Software Calibration Lock",
     ),
-    "removeWithCode": MessageLookupByLibrary.simpleMessage("Remove with Code"),
+    "removeWithCode": MessageLookupByLibrary.simpleMessage(
+      "Disable with Unlock Code",
+    ),
     "report_hide_btn": MessageLookupByLibrary.simpleMessage("Hide Report"),
     "report_show_btn": MessageLookupByLibrary.simpleMessage("Show Reports"),
     "save_as": MessageLookupByLibrary.simpleMessage("Save as"),
@@ -1732,6 +1741,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "skipThisIngredient": MessageLookupByLibrary.simpleMessage(
       "Skip Ingredient",
     ),
+    "softwareLocked": MessageLookupByLibrary.simpleMessage("Locked"),
     "softwareSeal": MessageLookupByLibrary.simpleMessage(
       "Software Calibration Lock",
     ),
@@ -1742,11 +1752,12 @@ class MessageLookup extends MessageLookupByLibrary {
       "Software Calibration Lock Enabled Successfully",
     ),
     "softwareSealRemovalFailed": MessageLookupByLibrary.simpleMessage(
-      "Software Calibration Lock Disable Failed. \r\nPlease retry. If the issue persists, contact your supplier for a removal code.",
+      "Software Calibration Lock Disable Failed. \r\nPlease retry. If the issue persists, contact your supplier for an unlock code.",
     ),
     "softwareSealRemovedSuccessfully": MessageLookupByLibrary.simpleMessage(
       "Software Calibration Lock Disabled Successfully",
     ),
+    "softwareUnlocked": MessageLookupByLibrary.simpleMessage("Unlocked"),
     "stable_time_error_tip": MessageLookupByLibrary.simpleMessage(
       "The value must be under 20 seconds.",
     ),

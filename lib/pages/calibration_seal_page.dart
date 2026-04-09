@@ -489,11 +489,11 @@ class CalibrationSealPageState extends State<CalibrationSealPage> {
                                                   Text(
                                                     softSealStatus == "true"
                                                         ? localizedStrings
-                                                            .sealed
+                                                            .softwareLocked
                                                         : softSealStatus ==
                                                                 "false"
                                                             ? localizedStrings
-                                                                .notSealed
+                                                                .softwareUnlocked
                                                             : localizedStrings
                                                                 .toBeVerified,
                                                     style: Theme.of(context)

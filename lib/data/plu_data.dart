@@ -433,34 +433,7 @@ String exportTemplateToCSV(Map<String, bool> columnVisibility) {
   // 写入表头
   final header = selectedColumns
       .map((col) {
-        switch (col) {
-          case 'plu':
-            return 'PLU';
-          case 'productCode':
-            return 'ProductCode';
-          case 'itemCode':
-            return 'ItemCode';
-          case 'productName':
-            return 'ProductName';
-          case 'generalUnit':
-            return 'GeneralUnit';
-          case 'taxType':
-            return 'TaxType';
-          case 'price':
-            return 'Price';
-          case 'unitWeight':
-            return 'UnitWeight';
-          case 'pretare':
-            return 'PreTare';
-          case 'limitHigh':
-            return 'LimitHigh';
-          case 'limitLow':
-            return 'LimitLow';
-          case 'category':
-            return 'Category';
-          default:
-            return col;
-        }
+        return getColumnName(col);
       })
       .map(_csvEscape)
       .join(',');

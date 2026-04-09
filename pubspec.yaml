@@ -77,7 +77,6 @@ dependencies:
   barcode_widget: ^2.0.3
   csv: ^6.0.0
   fluent_ui: ^4.5.0
-  gbk_codec: ^0.4.0
   encrypt: ^5.0.3
   flutter_time_picker_spinner: ^2.0.0
   crypto: ^3.0.3
@@ -99,6 +98,7 @@ dependencies:
   printing: ^5.14.2
   gif: ^2.3.0
   image: ^4.3.0
+  fast_gbk: ^1.0.0
 
 dev_dependencies:
   flutter_test:

@@ -582,7 +582,7 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
               }
             });
           }),
-          showItemNameWithStar(context, "DC500", false),
+          showItemNameWithStar(context, localizedStrings.commonApp, false),
           Container(
             width: inputWidth,
             alignment: Alignment.centerLeft,

@@ -381,6 +381,14 @@ class AddFormulaPageState extends State<AddFormulaPage> {
 
   //选择类型下拉列表框
   showTypeDropDownButton(String hintText, TextEditingController valueCtl) {
+    // 确保当前值在列表中，否则设为 null
+    String? currentValue = formulaTypeCtl.text == "" ? null : formulaTypeCtl.text;
+    if (formulaTypeList.isNotEmpty &&
+        currentValue != null &&
+        !formulaTypeList.any((item) => item.categoryName == currentValue)) {
+      currentValue = null;
+    }
+
     return Container(
         height: 48,
         padding: const EdgeInsets.only(left: 16, right: 20),
@@ -388,13 +396,13 @@ class AddFormulaPageState extends State<AddFormulaPage> {
           border: Border.all(color: colorScheme.outlineVariant), // 设置边框颜色
           borderRadius: BorderRadius.circular(0), // 设置圆角
         ),
-        child: DropdownButton(
+        child: DropdownButton<String?>(
             underline: SizedBox(),
             isExpanded: true,
-            value: formulaTypeCtl.text == "" ? null : formulaTypeCtl.text,
+            value: currentValue,
             items: formulaTypeList.isEmpty
                 ? [
-                    DropdownMenuItem<String>(
+                    DropdownMenuItem<String?>(
                       value: null,
                       child: Text(
                         localizedStrings.fPleaseSelectCategory,
@@ -405,7 +413,7 @@ class AddFormulaPageState extends State<AddFormulaPage> {
                     )
                   ]
                 : [
-                    DropdownMenuItem<String>(
+                    DropdownMenuItem<String?>(
                       value: null,
                       child: Text(localizedStrings.fPleaseSelectCategory,
                           style: getTextStyle(
@@ -413,7 +421,7 @@ class AddFormulaPageState extends State<AddFormulaPage> {
                           )),
                     ),
                     ...formulaTypeList.map((CategoryTypeList item) {
-                      return DropdownMenuItem<String>(
+                      return DropdownMenuItem<String?>(
                         value: item.categoryName,
                         child: Text(
                           item.categoryName,
@@ -425,13 +433,8 @@ class AddFormulaPageState extends State<AddFormulaPage> {
                     })
                   ],
             onChanged: (value) {
-              if (value == null) {
-                setState(() {
-                  formulaTypeCtl.text = "";
-                });
-              }
               setState(() {
-                formulaTypeCtl.text = value.toString();
+                formulaTypeCtl.text = value ?? "";
               });
             },
             style: getTextStyle()));
@@ -439,6 +442,15 @@ class AddFormulaPageState extends State<AddFormulaPage> {
 
   //选择原料下拉列表框
   showRawDropDownBtn(String hintText) {
+    // 确保当前值在列表中，否则设为 null
+    String? currentValue = rawMaterialCtl.text == "" ? null : rawMaterialCtl.text;
+    if (rawDataList.isNotEmpty &&
+        currentValue != null &&
+        !rawDataList.any((item) =>
+            '${item.materialId} ${item.materialName}' == currentValue)) {
+      currentValue = null;
+    }
+
     return Container(
         height: 48,
         padding: const EdgeInsets.only(left: 16, right: 20),
@@ -446,14 +458,14 @@ class AddFormulaPageState extends State<AddFormulaPage> {
           border: Border.all(color: colorScheme.outlineVariant), // 设置边框颜色
           borderRadius: BorderRadius.circular(0), // 设置圆角
         ),
-        child: DropdownButton(
+        child: DropdownButton<String?>(
             underline: SizedBox(),
             isExpanded: true,
             // 更新判断值
-            value: rawMaterialCtl.text == "" ? null : rawMaterialCtl.text,
+            value: currentValue,
             items: rawDataList.isEmpty
                 ? [
-                    DropdownMenuItem<String>(
+                    DropdownMenuItem<String?>(
                       value: null,
                       child: Text(localizedStrings.fSelectRawMaterialHint,
                           style: getTextStyle(
@@ -462,7 +474,7 @@ class AddFormulaPageState extends State<AddFormulaPage> {
                     )
                   ]
                 : [
-                    DropdownMenuItem<String>(
+                    DropdownMenuItem<String?>(
                       value: null,
                       child: Text(localizedStrings.fSelectRawMaterialHint,
                           style: getTextStyle(
@@ -473,7 +485,7 @@ class AddFormulaPageState extends State<AddFormulaPage> {
                       // 拼接 materialId 和 materialName
                       String displayText =
                           '${item.materialId} ${item.materialName}';
-                      return DropdownMenuItem<String>(
+                      return DropdownMenuItem<String?>(
                         // 使用拼接后的文本作为 value
                         value: displayText,
                         child: Text(
@@ -484,9 +496,14 @@ class AddFormulaPageState extends State<AddFormulaPage> {
                     })
                   ],
             onChanged: (value) {
-              if (value == null) return;
+              if (value == null) {
+                setState(() {
+                  rawMaterialCtl.text = "";
+                });
+                return;
+              }
               setState(() {
-                rawMaterialCtl.text = value.toString();
+                rawMaterialCtl.text = value;
                 selectedRawDataInfo = rawDataList.firstWhere(
                   (item) => '${item.materialId} ${item.materialName}' == value,
                   orElse: () {

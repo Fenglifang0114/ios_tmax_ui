@@ -806,6 +806,17 @@ class _SysLogTabPageState extends State<SysLogTabPage> {
               endTime: dateEndCtl.text.isNotEmpty ? dateEndCtl.text : null,
             ),
             translation: SysLogTranslator.getLanguageMap(),
+            headers: [
+              'ID',
+              localizedStrings.operator,
+              localizedStrings.userRole,
+              localizedStrings.module,
+              localizedStrings.funcName,
+              localizedStrings.operationType,
+              localizedStrings.operation,
+              localizedStrings.operationResult,
+              localizedStrings.fCreatedAtCol,
+            ],
           );
           String jsonStr = json.encode(exportLog.toJson());
 

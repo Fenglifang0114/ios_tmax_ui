@@ -34,6 +34,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "admin": MessageLookupByLibrary.simpleMessage("管理员"),
     "advanced_setting_title": MessageLookupByLibrary.simpleMessage("高级"),
+    "aiDesignHintText": MessageLookupByLibrary.simpleMessage(
+      "示例：55x50mm标签，机型EPM205。第一行显示净重和单位，第二行显示一条分割线，底部显示一个条码。",
+    ),
     "allowErrorEmpty": MessageLookupByLibrary.simpleMessage("Allow Error 不能为空"),
     "allowErrorInvalid": MessageLookupByLibrary.simpleMessage(
       "Allow Error 必须 > 0 且最多保留 3 位小数",
@@ -108,6 +111,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "clearUnusedIngredientCategory": MessageLookupByLibrary.simpleMessage(
       "清除未使用原料类别",
     ),
+    "commonApp": MessageLookupByLibrary.simpleMessage("普通应用"),
     "contactSupplierForRemovalCode": MessageLookupByLibrary.simpleMessage(
       "请联系供应商获取解除码",
     ),
@@ -481,6 +485,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "gMsgNoElement": MessageLookupByLibrary.simpleMessage("没有选择元素."),
     "gMsgRefresh": MessageLookupByLibrary.simpleMessage("刷新"),
     "gMsgSerialError": MessageLookupByLibrary.simpleMessage("串口连接已断开，请检查设置."),
+    "gMsgUseUtf8": MessageLookupByLibrary.simpleMessage("请使用UTF-8 编码"),
     "gNetmask": MessageLookupByLibrary.simpleMessage("子网掩码"),
     "gNetwork": MessageLookupByLibrary.simpleMessage("网络"),
     "gOpenJson": MessageLookupByLibrary.simpleMessage("打开 Json"),
@@ -982,7 +987,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "menuWeighingSetting": MessageLookupByLibrary.simpleMessage("称重设置"),
     "menuWifiSetting": MessageLookupByLibrary.simpleMessage("Wi-Fi设置"),
-    "menuWiredSetting": MessageLookupByLibrary.simpleMessage("有线网络设置"),
+    "menuWiredSetting": MessageLookupByLibrary.simpleMessage("有线网设置"),
     "missingHeaders": MessageLookupByLibrary.simpleMessage("缺少必填字段"),
     "modeEmpty": MessageLookupByLibrary.simpleMessage("Mode 不能为空"),
     "modeInvalid": MessageLookupByLibrary.simpleMessage(
@@ -1156,7 +1161,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "reAcquireAuthCode": MessageLookupByLibrary.simpleMessage("请重新获取高级配置授权码。"),
     "removeSealFailed": MessageLookupByLibrary.simpleMessage("软件校正锁关闭失败"),
     "removeSoftwareSeal": MessageLookupByLibrary.simpleMessage("关闭软件校正锁"),
-    "removeWithCode": MessageLookupByLibrary.simpleMessage("解锁码解锁软铅封"),
+    "removeWithCode": MessageLookupByLibrary.simpleMessage("解锁码关闭软件矫正锁"),
     "report_hide_btn": MessageLookupByLibrary.simpleMessage("隐藏报表"),
     "report_show_btn": MessageLookupByLibrary.simpleMessage("显示报表"),
     "save_as": MessageLookupByLibrary.simpleMessage("另存为"),
@@ -1202,6 +1207,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "show_reduced_weight": MessageLookupByLibrary.simpleMessage("减少量:"),
     "singlePoint": MessageLookupByLibrary.simpleMessage("单点标定"),
     "skipThisIngredient": MessageLookupByLibrary.simpleMessage("跳过此原料"),
+    "softwareLocked": MessageLookupByLibrary.simpleMessage("已锁定"),
     "softwareSeal": MessageLookupByLibrary.simpleMessage("软件校正锁"),
     "softwareSealAppliedFailed": MessageLookupByLibrary.simpleMessage(
       "软件校正锁打开失败",
@@ -1210,11 +1216,12 @@ class MessageLookup extends MessageLookupByLibrary {
       "软件校正锁打开成功",
     ),
     "softwareSealRemovalFailed": MessageLookupByLibrary.simpleMessage(
-      "软件校正锁关闭失败，请尝试重新操作。若仍然失败，请联系供应商获取卸载码",
+      "软件校正锁关闭失败，请尝试重新操作。若仍然失败，请联系供应商获取解锁码",
     ),
     "softwareSealRemovedSuccessfully": MessageLookupByLibrary.simpleMessage(
       "软件校正锁关闭成功",
     ),
+    "softwareUnlocked": MessageLookupByLibrary.simpleMessage("未锁定"),
     "stable_time_error_tip": MessageLookupByLibrary.simpleMessage("20秒以内."),
     "startSearchBluetoothDevices": MessageLookupByLibrary.simpleMessage("开始搜索"),
     "subTitleBasicDataCollection": MessageLookupByLibrary.simpleMessage(

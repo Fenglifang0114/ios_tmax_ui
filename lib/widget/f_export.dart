@@ -1,9 +1,9 @@
 //配方，原料等导出操作
 
+import 'dart:convert';
 import 'dart:io';
 
-import 'package:excel/excel.dart' as excel;
-import 'package:flutter/services.dart';
+import 'package:csv/csv.dart';
 import 'package:intl/intl.dart';
 import 'package:t_max/data/formula_common.dart';
 import 'package:t_max/data/formula_from_db_data.dart';
@@ -11,28 +11,37 @@ import 'package:t_max/data/formula_scale_data.dart';
 import 'package:t_max/data/language.dart';
 import 'package:t_max/data/scale_info_from_db.dart';
 
-//原料导出
+// 辅助方法：生成 CSV
+Future<void> _writeCsv(String filePath, List<List<dynamic>> rows) async {
+  final file = File(filePath);
+  String csvData = const ListToCsvConverter().convert(rows);
+  // 确保字符串开头没有 BOM 字符，防止重复添加或误写
+  if (csvData.startsWith('\uFEFF')) {
+    csvData = csvData.replaceFirst('\uFEFF', '');
+  }
+  final bytes = utf8.encode(csvData);
+  await file.writeAsBytes(bytes);
+}
 
-Future<ExportResult> exportRawListToExcel(
+//原料导出
+Future<ExportResult> exportRawListToCsv(
     List<RawDataInfo> rawList, String filePath) async {
   try {
-    final exportExcel = excel.Excel.createExcel();
-    final sheet = exportExcel['Sheet1'];
+    List<List<dynamic>> rows = [];
 
     // 写入表头
-    sheet.appendRow([
-      excel.TextCellValue('Ingredient ID'),
-      excel.TextCellValue('Ingredient Name'),
-      excel.TextCellValue('Verification Code'),
-      excel.TextCellValue('Device Name'),
-      excel.TextCellValue('Category'),
-      excel.TextCellValue('Ingredient Notes'),
-      excel.TextCellValue('Create Time'),
-      excel.TextCellValue('Update Time'),
+    rows.add([
+      localizedStrings.fMaterialIdCol,
+      localizedStrings.fMaterialNameCol,
+      localizedStrings.fMaterialCodeCol,
+      localizedStrings.gDeviceName,
+      localizedStrings.fFmaCategoryCol,
+      localizedStrings.fIngredientRemark,
+      localizedStrings.fCreatedAtCol,
+      localizedStrings.fUpdatedAtCol,
     ]);
 
     // 写入数据行
-
     for (var rowIndex = 0; rowIndex < rawList.length; rowIndex++) {
       final raw = rawList[rowIndex];
       String scaleName = '';
@@ -44,23 +53,25 @@ Future<ExportResult> exportRawListToExcel(
           break;
         }
       }
-      String type = getRawTypeName(raw.categoryId!);
+      String type = getRawTypeName(raw.categoryId ?? 0);
 
-      sheet.appendRow([
-        excel.TextCellValue(rawList[rowIndex].materialId ?? ""),
-        excel.TextCellValue(rawList[rowIndex].materialName ?? ""),
-        excel.TextCellValue(rawList[rowIndex].checkCode ?? ""),
-        excel.TextCellValue(scaleName),
-        excel.TextCellValue(type == "-" ? "" : type),
-        excel.TextCellValue(rawList[rowIndex].ingredient ?? ""),
-        excel.TextCellValue(DateFormat('yyyy-MM-dd HH:mm:ss')
-            .format(rawList[rowIndex].createdAt!)),
-        excel.TextCellValue(DateFormat('yyyy-MM-dd HH:mm:ss')
-            .format(rawList[rowIndex].updatedAt!)),
+      rows.add([
+        rawList[rowIndex].materialId ?? "",
+        rawList[rowIndex].materialName ?? "",
+        rawList[rowIndex].checkCode ?? "",
+        scaleName,
+        type == "-" ? "" : type,
+        rawList[rowIndex].ingredient ?? "",
+        rawList[rowIndex].createdAt != null
+            ? DateFormat('yyyy-MM-dd HH:mm:ss').format(rawList[rowIndex].createdAt!)
+            : "",
+        rawList[rowIndex].updatedAt != null
+            ? DateFormat('yyyy-MM-dd HH:mm:ss').format(rawList[rowIndex].updatedAt!)
+            : "",
       ]);
     }
-    final file = File(filePath);
-    await file.writeAsBytes(exportExcel.save()!);
+
+    await _writeCsv(filePath, rows);
 
     return ExportResult(isSuccess: true);
   } catch (e) {
@@ -78,15 +89,26 @@ Future<ExportResult> exportRawListToExcel(
 //配方模版导出
 Future<ExportResult> exportFmaTemplate(String filePath) async {
   try {
-    File output = File(filePath); // 将文件路径转换为File对象
+    List<List<dynamic>> rows = [];
+    rows.add([
+      localizedStrings.fFmaIdLabel,
+      localizedStrings.fFmaNameLabel,
+      localizedStrings.fFmaBarcode,
+      localizedStrings.fFmaModeCol,
+      localizedStrings.gTipWeightUnit,
+      localizedStrings.fFmaCategoryCol,
+      localizedStrings.fConfidential, 
+      localizedStrings.fFmaContainer,
+      localizedStrings.fFmaRemark,
+      localizedStrings.fIngredientOrder,
+      localizedStrings.fMaterialIdCol,
+      localizedStrings.fMaterialNameCol,
+      localizedStrings.fMaterialSingleWeight,
+      localizedStrings.fAllowableError,
+    ]);
 
-    // 读取预置的模板文件
-    final ByteData bytes =
-        await rootBundle.load('assets/template/formula_template.xlsx');
-    final buffer = bytes.buffer;
-    // 将模板文件保存到指定路径
-    await output.writeAsBytes(
-        buffer.asUint8List(bytes.offsetInBytes, bytes.lengthInBytes));
+    await _writeCsv(filePath, rows);
+
     return ExportResult(isSuccess: true);
   } catch (e) {
     String errorMessage = localizedStrings.gTipExportError;
@@ -100,20 +122,19 @@ Future<ExportResult> exportFmaTemplate(String filePath) async {
 }
 
 //原料模版导出
-
 Future<ExportResult> exportRawTemplate(String filePath) async {
   try {
-    File output = File(filePath); // 将文件路径转换为File对象
+    List<List<dynamic>> rows = [];
+    rows.add([
+      localizedStrings.fMaterialIdCol,
+      localizedStrings.fMaterialNameCol,
+      localizedStrings.fMaterialCodeCol,
+      localizedStrings.gDeviceName,
+      localizedStrings.fFmaCategoryCol,
+      localizedStrings.fIngredientRemark,
+    ]);
 
-    // 读取预置的模板文件
-    final ByteData bytes =
-        await rootBundle.load('assets/template/ingredient_template.xlsx');
-    final buffer = bytes.buffer;
-
-    // 将模板文件保存到指定路径
-
-    await output.writeAsBytes(
-        buffer.asUint8List(bytes.offsetInBytes, bytes.lengthInBytes));
+    await _writeCsv(filePath, rows);
 
     return ExportResult(isSuccess: true);
   } catch (e) {
@@ -127,71 +148,73 @@ Future<ExportResult> exportRawTemplate(String filePath) async {
   }
 }
 
-RawDataInfo getRawData(String rawId) {
+RawDataInfo? getRawData(String rawId) {
+  if (rawDataList.isEmpty) return null;
   for (var item in rawDataList) {
     if (item.materialId == rawId) {
       return item;
     }
   }
-  return rawDataList.first;
+  return null;
 }
 
 //配方导出
-
-Future<ExportResult> exportFormulaListToExcel(
+Future<ExportResult> exportFormulaListToCsv(
     List<FormulaInfoDb> formulaList, String filePath) async {
   try {
-    final exportExcel = excel.Excel.createExcel();
-    final sheet = exportExcel['Sheet1'];
+    List<List<dynamic>> rows = [];
 
     // 写入表头
-    sheet.appendRow([
-      excel.TextCellValue('Formula Id'),
-      excel.TextCellValue('Formula Name'),
-      excel.TextCellValue('Barcode'),
-      excel.TextCellValue('Mode'),
-      excel.TextCellValue('Weight Unit'),
-      excel.TextCellValue('Category'),
-      excel.TextCellValue('Confidential'),
-      excel.TextCellValue('Need Container'),
-      excel.TextCellValue('Notes'),
-      excel.TextCellValue('Ingredient No.'),
-      excel.TextCellValue('Ingredient Id'),
-      excel.TextCellValue('Ingredient Name'),
-      excel.TextCellValue('Ingredient Weight/Percentage'),
-      excel.TextCellValue('Allowable Error'),
+    rows.add([
+      localizedStrings.fFmaIdLabel,
+      localizedStrings.fFmaNameLabel,
+      localizedStrings.fFmaBarcode,
+      localizedStrings.fFmaModeCol,
+      localizedStrings.gTipWeightUnit,
+      localizedStrings.fFmaCategoryCol,
+      localizedStrings.fConfidential,
+      localizedStrings.fFmaContainer,
+      localizedStrings.fFmaRemark,
+      localizedStrings.fIngredientOrder,
+      localizedStrings.fMaterialIdCol,
+      localizedStrings.fMaterialNameCol,
+      localizedStrings.fMaterialSingleWeight,
+      localizedStrings.fAllowableError,
     ]);
 
     // 写入数据行
-
     for (var rowIndex = 0; rowIndex < formulaList.length; rowIndex++) {
-      FormulaInfoDb? fma = formulaList[rowIndex];
+      FormulaInfoDb fma = formulaList[rowIndex];
+      if (fma.header == null) continue;
+      
       List<Detail>? rawList = fma.details;
-      String fmaTypeName = getFmaTypeName(fma.header!.categoryId!);
-      for (var i = 0; i < rawList!.length; i++) {
-        Detail? raw = rawList[i];
-        RawDataInfo rawDataInfo = getRawData(raw.materialId!);
-        sheet.appendRow([
-          excel.TextCellValue(fma.header!.formulaId ?? ""),
-          excel.TextCellValue(fma.header!.formulaName ?? ""),
-          excel.TextCellValue(fma.header!.formulaBarcode ?? ""),
-          excel.TextCellValue(
-              fma.header!.formulaMode == "wgt" ? "weight" : "percent"),
-          excel.TextCellValue(fma.header!.formulaUnit ?? ""),
-          excel.TextCellValue(fmaTypeName == "-" ? "" : fmaTypeName),
-          excel.TextCellValue(fma.header!.isEncrypted! ? "yes" : "no"),
-          excel.TextCellValue(fma.header!.needContainer! ? "yes" : "no"),
-          excel.TextCellValue(fma.header!.remark ?? ""),
-          excel.TextCellValue((raw.sequence!).toString()),
-          excel.TextCellValue(raw.materialId ?? ""),
-          excel.TextCellValue(rawDataInfo.materialName ?? ""),
-          excel.TextCellValue(raw.materialWeight.toString()),
-          excel.TextCellValue(raw.allowableError.toString()),
+      if (rawList == null) continue;
+      
+      String fmaTypeName = getFmaTypeName(fma.header!.categoryId ?? 0);
+      for (var i = 0; i < rawList.length; i++) {
+        Detail raw = rawList[i];
+        
+        RawDataInfo? rawDataInfo = getRawData(raw.materialId ?? "");
+        rows.add([
+          fma.header!.formulaId ?? "",
+          fma.header!.formulaName ?? "",
+          fma.header!.formulaBarcode ?? "",
+          fma.header!.formulaMode == "wgt" ? "weight" : "percent",
+          fma.header!.formulaUnit ?? "",
+          fmaTypeName == "-" ? "" : fmaTypeName,
+          (fma.header!.isEncrypted ?? false) ? "yes" : "no",
+          (fma.header!.needContainer ?? false) ? "yes" : "no",
+          fma.header!.remark ?? "",
+          (raw.sequence ?? 0).toString(),
+          raw.materialId ?? "",
+          rawDataInfo?.materialName ?? "",
+          raw.materialWeight?.toString() ?? "0",
+          raw.allowableError?.toString() ?? "0",
         ]);
       }
     }
-    final file = File(filePath);
-    await file.writeAsBytes(exportExcel.save()!);
+
+    await _writeCsv(filePath, rows);
 
     return ExportResult(isSuccess: true);
   } catch (e) {

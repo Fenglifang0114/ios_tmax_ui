@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:fast_gbk/fast_gbk.dart';
 import 'dart:io';
 import 'package:excel/excel.dart';
 import 'package:file_picker/file_picker.dart';
@@ -607,7 +608,11 @@ class _PluEidtPageState extends State<PluEidtPage> {
 
   Future<String> handleImportCsv(String filePath) async {
     importPlu.clear();
-    await importDataFromCSV(filePath);
+    String? error = await importDataFromCSV(filePath);
+
+    if (error != null) {
+      return error;
+    }
 
     if (importPlu.isEmpty) {
       return localizedStrings.gTipNoData;
@@ -641,60 +646,155 @@ class _PluEidtPageState extends State<PluEidtPage> {
   /// 从 CSV 文件导入数据
   /// [filePath] CSV 文件路径
   /// [nowPluList] 当前已存在的 PLU 列表，用于去重
-  Future<void> importDataFromCSV(String filePath) async {
-    // 1. 按行读取文件（自动处理 \n 或 \r\n）
-    List<String> lines = await File(filePath).readAsLines(encoding: utf8);
-    if (lines.isEmpty) return; // 空文件，应有弹框提示
+  Future<String?> importDataFromCSV(String filePath) async {
+    List<int> bytes = await File(filePath).readAsBytes();
+    if (bytes.isEmpty) return localizedStrings.gTipNoData;
 
-    // 2. 移除第一行可能存在的 BOM 字符
-    lines[0] = lines[0].replaceFirst(RegExp(r'^\uFEFF'), '');
+    Map<String, String> translationMap = getTranslationMap();
+    String? currentDelimiter;
 
-    // 3. 解析标题行（使用自定义解析器，支持引号）
-    List<String> headerTitles =
-        parseCsvLine(lines[0]).map((e) => e.trim()).toList();
+    // 内部帮助函数：验证解码后的内容是否包含识别的 PLU 标题
+    // 同时探测最合适的分隔符
+    String? detectAndVerify(String decodedContent) {
+      decodedContent = decodedContent.replaceFirst('\uFEFF', '');
+      List<String> lines = LineSplitter.split(decodedContent).toList();
+      if (lines.isEmpty) return null;
 
-    //适配大小写 空格
-    for (int i = 0; i < headerTitles.length; i++) {
-      headerTitles[i] = headerTitles[i].trim().toLowerCase();
+      String firstLine = lines[0];
+      // 候选分隔符：逗号、分号、制表符
+      List<String> candidates = [',', ';', '\t'];
+
+      for (var delim in candidates) {
+        List<String> headers = parseCsvLine(firstLine, delimiter: delim)
+            .map((e) => e.trim().toLowerCase())
+            .toList();
+
+        for (var h in headers) {
+          if (translationMap.values.any((v) => v.toLowerCase() == h) ||
+              translationMap.keys.any((k) => k.toLowerCase() == h) ||
+              h == 'plu' ||
+              h == 'productnumber') {
+            return delim; // 找到了有效标题，返回该分隔符
+          }
+        }
+      }
+      return null;
     }
 
-    // print(headerTitles); // 输出: [hello, world, dart]
+    String? content;
+
+    // 1. 尝试以 UTF-8 解码并验证
+    try {
+      String utf8Content = utf8.decode(bytes);
+      currentDelimiter = detectAndVerify(utf8Content);
+      if (currentDelimiter != null) {
+        content = utf8Content;
+      }
+    } catch (e) {
+      // UTF-8 解码直接失败，继续尝试 GBK
+    }
+
+    // 2. 如果 UTF-8 失败或检测不到有效列，尝试以 GBK 解码并验证
+    if (content == null) {
+      try {
+        print(bytes);
+        String gbkContent = gbk.decode(bytes);
+        currentDelimiter = detectAndVerify(gbkContent);
+        if (currentDelimiter != null) {
+          content = gbkContent;
+        }
+      } catch (e) {
+        // GBK 也失败
+      }
+    }
+
+    // 3. 如果两者都失败，提示用户使用 UTF-8
+    if (content == null) {
+      return localizedStrings.gMsgUseUtf8;
+    }
+
+    // 4. 移除 BOM 并按行分割
+    content = content.replaceFirst('\uFEFF', '');
+    List<String> lines = LineSplitter.split(content).toList();
+    if (lines.isEmpty) return localizedStrings.gTipNoData;
+
+    // 5. 解析标题行并准备映射 (使用检测到的分隔符)
+    List<String> rawHeaders =
+        parseCsvLine(lines[0], delimiter: currentDelimiter!)
+            .map((e) => e.trim())
+            .toList();
+
+    Map<int, String> colIndexToKeyMap = {};
+    for (int i = 0; i < rawHeaders.length; i++) {
+      String header = rawHeaders[i].toLowerCase();
+      bool found = false;
+      for (var entry in translationMap.entries) {
+        // 匹配翻译后的名称或原始键名（不区分大小写）
+        if (entry.value.toLowerCase() == header ||
+            entry.key.toLowerCase() == header) {
+          colIndexToKeyMap[i] = entry.key;
+          found = true;
+          break;
+        }
+      }
+
+      // 处理一些常见的别名或未在 translationMap 中的字段
+      if (!found) {
+        if (header == 'productnumber') {
+          colIndexToKeyMap[i] = 'plu';
+        } else if (header == 'unit' || header == 'generalunit') {
+          colIndexToKeyMap[i] = 'generalUnit';
+        } else if (header == 'taxtype') {
+          colIndexToKeyMap[i] = 'taxType';
+        } else if (header == 'productname') {
+          colIndexToKeyMap[i] = 'productName';
+        } else if (header == 'unitweight') {
+          colIndexToKeyMap[i] = 'unitWeight';
+        } else if (header == 'limithigh') {
+          colIndexToKeyMap[i] = 'limitHigh';
+        } else if (header == 'limitlow') {
+          colIndexToKeyMap[i] = 'limitLow';
+        } else if (header == 'productcode') {
+          colIndexToKeyMap[i] = 'productCode';
+        } else if (header == 'itemcode') {
+          colIndexToKeyMap[i] = 'itemCode';
+        } else {
+          // 保持原样用于如 recId, ebabled 等字段
+          colIndexToKeyMap[i] = rawHeaders[i];
+        }
+      }
+    }
 
     // 4. 遍历数据行（从第二行开始）
     for (int i = 1; i < lines.length; i++) {
-      String line = lines[i].trim();
-      if (line.isEmpty) continue; // 跳过空行
+      if (lines[i].trim().isEmpty) continue;
 
-      // 解析当前行
-      List<String> values = parseCsvLine(line).map((e) => e.trim()).toList();
+      List<String> values = parseCsvLine(lines[i], delimiter: currentDelimiter!)
+          .map((e) => e.trim())
+          .toList();
 
-      // 如果列数不足，用空字符串补齐
-      if (values.length < headerTitles.length) {
-        values.addAll(List.filled(headerTitles.length - values.length, ''));
-      }
-
-      // 构建行数据映射（标题 -> 值）
+      // 构建行数据映射 (内部字段名 -> 值)
       Map<String, String> rowData = {};
-      for (int j = 0; j < headerTitles.length; j++) {
-        rowData[headerTitles[j]] = values[j];
+      for (int j = 0; j < values.length; j++) {
+        if (colIndexToKeyMap.containsKey(j)) {
+          rowData[colIndexToKeyMap[j]!] = values[j];
+        }
       }
 
-      // 5. 核心数据提取（与 Excel 版本逻辑一致，但键名需匹配实际标题）
-      // 检查必须字段：PLU 或 ProductNumber
-      String? pluStr = rowData['plu']?.isNotEmpty == true
-          ? rowData['plu']
-          : rowData['productnumber'];
+      // 5. 核心数据提取
+      // 检查必须字段：PLU
+      String? pluStr = rowData['plu'];
       if (pluStr == null || pluStr.isEmpty) continue; // 缺少 PLU 则跳过该行
 
       // 处理价格
       double priceValue = 0.0;
       if (rowData.containsKey('price')) {
         double value = double.tryParse(rowData['price']!) ?? 0.0;
-        priceValue = roundToTwoDecimalPlaces(value); // 假设此函数已定义
+        priceValue = roundToTwoDecimalPlaces(value);
       }
 
-      // 单位映射（标题为 "Unit"）
-      String unit = rowData['unit'] ?? rowData['generalunit'] ?? '';
+      // 单位映射
+      String unit = rowData['generalUnit'] ?? '';
       unit = unit.replaceAll(' ', '').toLowerCase();
       int unitInt = 0;
       for (var entry in pluUnit.entries) {
@@ -704,8 +804,8 @@ class _PluEidtPageState extends State<PluEidtPage> {
         }
       }
 
-      // 税类型映射（标题为 "Tax Type"）
-      String taxStr = rowData['taxtype'] ?? '';
+      // 税类型映射
+      String taxStr = rowData['taxType'] ?? '';
       int taxInt = 0;
       for (var entry in pluTax.entries) {
         if (entry.value == taxStr) {
@@ -716,18 +816,18 @@ class _PluEidtPageState extends State<PluEidtPage> {
 
       // 构建 PluData 对象
       PluData dessert = PluData(
-        // recId（通常 CSV 中没有，默认 0）
+        // recId
         int.tryParse(rowData['recId'] ?? '0') ?? 0,
         // plu
         int.tryParse(pluStr) ?? 0,
         // productCode
-        int.tryParse(rowData['productcode'] ?? '0') ?? 0,
+        int.tryParse(rowData['productCode'] ?? '0') ?? 0,
         // itemCode
-        int.tryParse(rowData['itemcode'] ?? '0') ?? 0,
+        int.tryParse(rowData['itemCode'] ?? '0') ?? 0,
         // category
         rowData['category'] ?? '-',
         // productName
-        rowData['productname'] ?? '-',
+        rowData['productName'] ?? '-',
         // generalUnit（已转换）
         unitInt,
         // taxType（已转换）
@@ -735,18 +835,19 @@ class _PluEidtPageState extends State<PluEidtPage> {
         // price
         priceValue,
         // unitWeight
-        double.tryParse(rowData['unitweight'] ?? '0') ?? 0.0,
-        // pretare（注意 CSV 中是 "Pretare"）
+        double.tryParse(rowData['unitWeight'] ?? '0') ?? 0.0,
+        // pretare
         double.tryParse(rowData['pretare'] ?? '0') ?? 0.0,
         // limitHigh
-        double.tryParse(rowData['limithigh'] ?? '0') ?? 0.0,
+        double.tryParse(rowData['limitHigh'] ?? '0') ?? 0.0,
         // limitLow
-        double.tryParse(rowData['limitlow'] ?? '0') ?? 0.0,
+        double.tryParse(rowData['limitLow'] ?? '0') ?? 0.0,
         // 以下字段 CSV 中没有，使用默认值
         '',
         // ebabled（默认 true）
         rowData['ebabled']?.toLowerCase() == '1' ||
-            rowData['ebabled']?.toLowerCase() == 'true',
+            rowData['ebabled']?.toLowerCase() == 'true' ||
+            !rowData.containsKey('ebabled'),
         '',
         0,
         0,
@@ -756,18 +857,18 @@ class _PluEidtPageState extends State<PluEidtPage> {
 
       PluDataModel pluDataModel = PluDataModel(pluData: dessert);
 
-      // 检查 PLU 是否已存在（假设 checkImportPLu 函数存在）
+      // 检查 PLU 是否已存在
       if (checkImportPLu(dessert.plu ?? 0, importPlu)) {
-        importPlu.add(pluDataModel); // 假设 importPlu 列表在外部定义
+        importPlu.add(pluDataModel);
       }
     }
 
-    return;
+    return null;
   }
 
-  /// 解析一行 CSV，处理引号内的逗号、换行及双引号转义
-  /// 返回字段列表
-  List<String> parseCsvLine(String line) {
+  /// 解析一行 CSV，处理引号内的分隔符、换行及双引号转义
+  /// [delimiter] 分隔符，默认为逗号
+  List<String> parseCsvLine(String line, {String delimiter = ','}) {
     final List<String> result = [];
     bool inQuotes = false;
     final StringBuffer field = StringBuffer();
@@ -783,8 +884,8 @@ class _PluEidtPageState extends State<PluEidtPage> {
           // 切换引号状态
           inQuotes = !inQuotes;
         }
-      } else if (char == ',' && !inQuotes) {
-        // 逗号分隔符（不在引号内）
+      } else if (char == delimiter && !inQuotes) {
+        // 分隔符（不在引号内）
         result.add(field.toString());
         field.clear();
       } else {

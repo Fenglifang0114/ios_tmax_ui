@@ -2456,7 +2456,7 @@
     "@menuBasicDataCollection": {
         "description": "Menu item for basic data collection"
     },
-    "menuWiredSetting": "Wired Network Setting",
+    "menuWiredSetting": "Ethernet Setting",
     "@menuWiredSetting": {
         "description": "Menu item for wired setting"
     },
@@ -4040,6 +4040,22 @@
     "@notSealed": {
         "description": "Status indicating the device is not sealed"
     },
+    "softwareLocked": "Locked",
+    "@softwareLocked": {
+        "description": "Status indicating the software lock is applied"
+    },
+    "softwareUnlocked": "Unlocked",
+    "@softwareUnlocked": {
+        "description": "Status indicating the software lock is removed"
+    },
+    "commonApp": "Common",
+    "@commonApp": {
+        "description": "Common Application"
+    },
+    "aiDesignHintText": "Example: 55x50mm label, EPM205 printer. The first line shows net weight and unit, the second line shows a dividing line, and the bottom shows a barcode.",
+    "@aiDesignHintText": {
+        "description": "Hint text for AI design prompt input"
+    },
     "applySoftwareSeal": "Enable Software Calibration Lock",
     "@applySoftwareSeal": {
         "description": "Action to apply a software seal to the device"
@@ -4064,11 +4080,11 @@
     "@softwareSealRemovedSuccessfully": {
         "description": "Success message when a software seal is successfully removed"
     },
-    "softwareSealRemovalFailed": "Software Calibration Lock Disable Failed. \r\nPlease retry. If the issue persists, contact your supplier for a removal code.",
+    "softwareSealRemovalFailed": "Software Calibration Lock Disable Failed. \r\nPlease retry. If the issue persists, contact your supplier for an unlock code.",
     "@softwareSealRemovalFailed": {
         "description": "Error message when software seal removal fails, prompting for a retry or removal code"
     },
-    "removeWithCode": "Remove with Code",
+    "removeWithCode": "Disable with Unlock Code",
     "@removeWithCode": {
         "description": "Option or button to remove a seal using a special code"
     },
@@ -4183,5 +4199,9 @@
     "inputPort": "Input",
     "@inputPort": {
         "description": "Input"
+    },
+    "gMsgUseUtf8": "Please use UTF-8 encoding",
+    "@gMsgUseUtf8": {
+        "description": "Error message when CSV encoding is unrecognized"
     }
 }

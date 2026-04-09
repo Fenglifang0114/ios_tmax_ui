@@ -5876,10 +5876,10 @@ class S {
     );
   }
 
-  /// `Wired Network Setting`
+  /// `Ethernet Setting`
   String get menuWiredSetting {
     return Intl.message(
-      'Wired Network Setting',
+      'Ethernet Setting',
       name: 'menuWiredSetting',
       desc: 'Menu item for wired setting',
       args: [],
@@ -9788,6 +9788,46 @@ class S {
     );
   }
 
+  /// `Locked`
+  String get softwareLocked {
+    return Intl.message(
+      'Locked',
+      name: 'softwareLocked',
+      desc: 'Status indicating the software lock is applied',
+      args: [],
+    );
+  }
+
+  /// `Unlocked`
+  String get softwareUnlocked {
+    return Intl.message(
+      'Unlocked',
+      name: 'softwareUnlocked',
+      desc: 'Status indicating the software lock is removed',
+      args: [],
+    );
+  }
+
+  /// `Common`
+  String get commonApp {
+    return Intl.message(
+      'Common',
+      name: 'commonApp',
+      desc: 'Common Application',
+      args: [],
+    );
+  }
+
+  /// `Example: 55x50mm label, EPM205 printer. The first line shows net weight and unit, the second line shows a dividing line, and the bottom shows a barcode.`
+  String get aiDesignHintText {
+    return Intl.message(
+      'Example: 55x50mm label, EPM205 printer. The first line shows net weight and unit, the second line shows a dividing line, and the bottom shows a barcode.',
+      name: 'aiDesignHintText',
+      desc: 'Hint text for AI design prompt input',
+      args: [],
+    );
+  }
+
   /// `Enable Software Calibration Lock`
   String get applySoftwareSeal {
     return Intl.message(
@@ -9848,10 +9888,10 @@ class S {
     );
   }
 
-  /// `Software Calibration Lock Disable Failed. \r\nPlease retry. If the issue persists, contact your supplier for a removal code.`
+  /// `Software Calibration Lock Disable Failed. \r\nPlease retry. If the issue persists, contact your supplier for an unlock code.`
   String get softwareSealRemovalFailed {
     return Intl.message(
-      'Software Calibration Lock Disable Failed. \r\nPlease retry. If the issue persists, contact your supplier for a removal code.',
+      'Software Calibration Lock Disable Failed. \r\nPlease retry. If the issue persists, contact your supplier for an unlock code.',
       name: 'softwareSealRemovalFailed',
       desc:
           'Error message when software seal removal fails, prompting for a retry or removal code',
@@ -9859,10 +9899,10 @@ class S {
     );
   }
 
-  /// `Remove with Code`
+  /// `Disable with Unlock Code`
   String get removeWithCode {
     return Intl.message(
-      'Remove with Code',
+      'Disable with Unlock Code',
       name: 'removeWithCode',
       desc: 'Option or button to remove a seal using a special code',
       args: [],
@@ -10140,6 +10180,16 @@ class S {
   /// `Input`
   String get inputPort {
     return Intl.message('Input', name: 'inputPort', desc: 'Input', args: []);
+  }
+
+  /// `Please use UTF-8 encoding`
+  String get gMsgUseUtf8 {
+    return Intl.message(
+      'Please use UTF-8 encoding',
+      name: 'gMsgUseUtf8',
+      desc: 'Error message when CSV encoding is unrecognized',
+      args: [],
+    );
   }
 }
 

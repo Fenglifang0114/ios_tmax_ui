@@ -457,6 +457,7 @@ class ReqExportLog {
   final String direction;
   final Search search;
   final Map<String, String> translation; // 使用 dynamic 类型
+  final List<String>? headers;
 
   ReqExportLog({
     required this.filePath,
@@ -464,6 +465,7 @@ class ReqExportLog {
     this.direction = '',
     required this.search,
     this.translation = const {},
+    this.headers,
   });
 
   Map<String, dynamic> toJson() {
@@ -473,6 +475,7 @@ class ReqExportLog {
       'Direction': direction,
       'Search': search.toJson(),
       'Translation': translation, // 直接使用，不需要转换
+      if (headers != null) 'Headers': headers,
     };
   }
 }
