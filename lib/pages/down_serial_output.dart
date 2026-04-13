@@ -82,6 +82,9 @@ class _DownReciptPageState extends State<DownSerialOutputPage> {
     _eventbus2.cancel;
     folderCtl.dispose();
     _stopTimer();
+    _downloadTimer?.cancel();
+    _eventbus1?.cancel();
+    _eventbus2?.cancel();
     super.dispose();
   }
 

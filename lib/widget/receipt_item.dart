@@ -10,6 +10,7 @@ import 'rectangle_painter.dart';
 
 const textHeight = 28.0;
 
+// ignore: must_be_immutable
 class ReceiptItem extends StatefulWidget {
   // ignore: prefer_const_constructors_in_immutables
 

@@ -304,6 +304,7 @@ class TakeInPageState extends State<TakeInPage> {
 
     _scaleCheckTimer?.cancel();
 
+    totalWgtUnitCtl.dispose();
     super.dispose();
   }
 

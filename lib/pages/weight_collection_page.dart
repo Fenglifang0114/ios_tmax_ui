@@ -310,6 +310,7 @@ class WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
 
     _tableState.dispose();
 
+    totalWgtUnitCtl.dispose();
     super.dispose();
   }
 

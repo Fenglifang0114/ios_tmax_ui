@@ -14,6 +14,7 @@ import 'package:t_max/dialog/exit_app_dialog.dart';
 import 'package:t_max/eventbus/eventbus.dart';
 import 'package:t_max/functions/methods.dart';
 import 'package:t_max/generated/l10n.dart';
+import 'package:t_max/common/window_lifecycle_mixin.dart';
 
 import 'package:tray_manager/tray_manager.dart';
 import 'package:window_manager/window_manager.dart';
@@ -25,10 +26,7 @@ class LoginPage extends StatefulWidget {
   LoginPageState createState() => LoginPageState();
 }
 
-class LoginPageState extends State<LoginPage>
-    with TrayListener, WindowListener {
-  bool isResize = false;
-
+class LoginPageState extends State<LoginPage> with WindowLifecycleMixin {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _rememberController =
@@ -80,59 +78,8 @@ class LoginPageState extends State<LoginPage>
   }
 
   @override
-  void onWindowResize() {
-    isResize = true;
-  }
-
-  @override
-  void onWindowClose() async {
-    bool isPreventClose = await windowManager.isPreventClose();
-    if (isPreventClose) {
-      if (mounted) {
-        showDialog(
-          context: context,
-          barrierDismissible: false, // 允许点击空白处关闭对话框
-          builder: (context) {
-            return CustomAlertDialog(
-              titleText: localizedStrings.gTipExitApp,
-              onNoPressed: () {
-                Navigator.of(context).pop();
-              },
-              onYesPressed: () async {
-                Navigator.of(context).pop();
-                dispose();
-                await trayManager.destroy(); //退出系统托盘
-                await windowManager.destroy();
-                exit(0);
-              },
-            );
-          },
-        );
-      }
-    }
-  }
-
-  @override
-  void onWindowMaximize() {
-    isResize = true;
-  }
-
-  @override
-  void onWindowUnmaximize() {
-    isResize = true;
-  }
-
-  @override
-  void onWindowMinimize() {
-    isResize = true;
-  }
-
-  @override
   void initState() {
-    trayManager.addListener(this);
-    windowManager.addListener(this);
-
-    windowManager.setMinimumSize(Size(1320, 720));
+    initWindowLifecycle();
     super.initState();
     _checkingUsers = checkingUsers;
 
@@ -226,10 +173,8 @@ class LoginPageState extends State<LoginPage>
     _rememberController.dispose();
     _formKey.currentState?.dispose();
     _isLoading = false;
-    isResize = false;
 
-    trayManager.removeListener(this);
-    windowManager.removeListener(this);
+    disposeWindowLifecycle();
 
     super.dispose();
   }

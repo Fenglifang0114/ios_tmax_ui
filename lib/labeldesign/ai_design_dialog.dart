@@ -58,6 +58,7 @@ class _AIDesignDialogState extends State<AIDesignDialog> {
       if (errorMsg.contains("402")) {
         errorMsg = "DeepSeek 账户余额不足，请登录平台充值或检查免费额度。";
       }
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
             content: Text("Error: $errorMsg"), backgroundColor: Colors.red),
@@ -133,7 +134,7 @@ class _AIDesignDialogState extends State<AIDesignDialog> {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
       child: Container(
         padding: const EdgeInsets.all(24),
         width: 600,
@@ -145,9 +146,9 @@ class _AIDesignDialogState extends State<AIDesignDialog> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
+                  Text(
                     "AI Label Designer",
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                    style: Theme.of(context).textTheme.titleLarge,
                   ),
                   IconButton(
                     onPressed: () => Navigator.of(context).pop(),
@@ -165,7 +166,7 @@ class _AIDesignDialogState extends State<AIDesignDialog> {
                 decoration: InputDecoration(
                   hintText: localizedStrings.aiDesignHintText,
                   border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8)),
+                      borderRadius: BorderRadius.circular(0)),
                 ),
               ),
               const SizedBox(height: 16),
@@ -173,13 +174,18 @@ class _AIDesignDialogState extends State<AIDesignDialog> {
                 onPressed: _isLoading ? null : _generate,
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(0)),
                 ),
                 child: _isLoading
                     ? const SizedBox(
                         width: 24,
                         height: 24,
                         child: CircularProgressIndicator(strokeWidth: 2))
-                    : const Text("Generate Design"),
+                    : Text(
+                        "Generate Design",
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
               ),
               if (_generatedData.isNotEmpty) ...[
                 const SizedBox(height: 24),
@@ -224,7 +230,8 @@ class _AIDesignDialogState extends State<AIDesignDialog> {
                                 padding: const EdgeInsets.all(2),
                                 decoration: BoxDecoration(
                                   border: Border.all(
-                                      color: Colors.blue.withOpacity(0.5)),
+                                      color:
+                                          Colors.blue.withValues(alpha: 0.5)),
                                 ),
                                 child: Text(
                                   item.type == 'barcode'
@@ -248,7 +255,12 @@ class _AIDesignDialogState extends State<AIDesignDialog> {
                   children: [
                     ElevatedButton(
                       onPressed: _apply,
-                      child: const Text("Show In APP"),
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(0)),
+                      ),
+                      child: Text("Show In APP"),
                     ),
                   ],
                 ),
@@ -258,5 +270,11 @@ class _AIDesignDialogState extends State<AIDesignDialog> {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _promptController.dispose();
+    super.dispose();
   }
 }

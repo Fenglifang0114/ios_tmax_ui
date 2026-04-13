@@ -35,6 +35,9 @@ class CheckValueSetDialogState extends State<CheckValueSetDialog> {
 
   @override
   void dispose() {
+    maxValueCtl.dispose();
+    minValueCtl.dispose();
+    errorText.dispose();
     super.dispose();
   }
 

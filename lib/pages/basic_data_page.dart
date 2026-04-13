@@ -88,6 +88,7 @@ class BasicDataPageState extends State<BasicDataPage> {
     eventBus1.cancel();
     eventBus2.cancel();
 
+    olCntCtl.dispose();
     super.dispose();
   }
 

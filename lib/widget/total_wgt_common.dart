@@ -290,91 +290,91 @@ class _WgtDataTableState extends State<WgtDataTable> {
   List<DataColumn> _buildDataColumns(
       BuildContext context, TableState tableState) {
     return [
-      if (tableState.visibleColumns['Id']!.isSelect)
+      if (tableState.visibleColumns['Id']?.isSelect == true)
         _getDataColumnWithoutSort(
           context,
-          tableState.visibleColumns['Id']!.showName,
+          tableState.visibleColumns['Id']?.showName ?? '',
           width: 60,
         ),
-      if (tableState.visibleColumns['Date Time']!.isSelect)
+      if (tableState.visibleColumns['Date Time']?.isSelect == true)
         _getDataColumnWithoutSort(
           context,
-          tableState.visibleColumns['Date Time']!.showName,
+          tableState.visibleColumns['Date Time']?.showName ?? '',
         ),
-      if (tableState.visibleColumns['PLU']!.isSelect)
+      if (tableState.visibleColumns['PLU']?.isSelect == true)
         _getDataColumnWithoutSort(
           context,
-          tableState.visibleColumns['PLU']!.showName,
+          tableState.visibleColumns['PLU']?.showName ?? '',
         ),
-      if (tableState.visibleColumns['Product Code']!.isSelect)
+      if (tableState.visibleColumns['Product Code']?.isSelect == true)
         _getDataColumnWithoutSort(
           context,
-          tableState.visibleColumns['Product Code']!.showName,
+          tableState.visibleColumns['Product Code']?.showName ?? '',
         ),
-      if (tableState.visibleColumns['Item Code']!.isSelect)
+      if (tableState.visibleColumns['Item Code']?.isSelect == true)
         _getDataColumnWithoutSort(
           context,
-          tableState.visibleColumns['Item Code']!.showName,
+          tableState.visibleColumns['Item Code']?.showName ?? '',
         ),
-      if (tableState.visibleColumns['PLU Name']!.isSelect)
+      if (tableState.visibleColumns['PLU Name']?.isSelect == true)
         _getDataColumnWithoutSort(
           context,
-          tableState.visibleColumns['PLU Name']!.showName,
+          tableState.visibleColumns['PLU Name']?.showName ?? '',
         ),
-      if (tableState.visibleColumns['Price']!.isSelect)
+      if (tableState.visibleColumns['Price']?.isSelect == true)
         _getDataColumnWithoutSort(
           context,
-          tableState.visibleColumns['Price']!.showName,
+          tableState.visibleColumns['Price']?.showName ?? '',
         ),
-      if (tableState.visibleColumns['GeneralUnit']!.isSelect)
+      if (tableState.visibleColumns['GeneralUnit']?.isSelect == true)
         _getDataColumnWithoutSort(
           context,
-          tableState.visibleColumns['GeneralUnit']!.showName,
+          tableState.visibleColumns['GeneralUnit']?.showName ?? '',
         ),
-      if (tableState.visibleColumns['TaxType']!.isSelect)
+      if (tableState.visibleColumns['TaxType']?.isSelect == true)
         _getDataColumnWithoutSort(
           context,
-          tableState.visibleColumns['TaxType']!.showName,
+          tableState.visibleColumns['TaxType']?.showName ?? '',
         ),
-      if (tableState.visibleColumns['UnitWeight']!.isSelect)
+      if (tableState.visibleColumns['UnitWeight']?.isSelect == true)
         _getDataColumnWithoutSort(
           context,
-          tableState.visibleColumns['UnitWeight']!.showName,
+          tableState.visibleColumns['UnitWeight']?.showName ?? '',
         ),
-      if (tableState.visibleColumns['LimitHigh']!.isSelect)
+      if (tableState.visibleColumns['LimitHigh']?.isSelect == true)
         _getDataColumnWithoutSort(
           context,
-          tableState.visibleColumns['LimitHigh']!.showName,
+          tableState.visibleColumns['LimitHigh']?.showName ?? '',
         ),
-      if (tableState.visibleColumns['LimitLow']!.isSelect)
+      if (tableState.visibleColumns['LimitLow']?.isSelect == true)
         _getDataColumnWithoutSort(
           context,
-          tableState.visibleColumns['LimitLow']!.showName,
+          tableState.visibleColumns['LimitLow']?.showName ?? '',
         ),
-      if (tableState.visibleColumns['Weight']!.isSelect)
+      if (tableState.visibleColumns['Weight']?.isSelect == true)
         _getDataColumnWithoutSort(
           context,
-          tableState.visibleColumns['Weight']!.showName,
+          tableState.visibleColumns['Weight']?.showName ?? '',
         ),
-      if (tableState.visibleColumns['Weight Unit']!.isSelect)
+      if (tableState.visibleColumns['Weight Unit']?.isSelect == true)
         _getDataColumnWithoutSort(
           context,
-          tableState.visibleColumns['Weight Unit']!.showName,
+          tableState.visibleColumns['Weight Unit']?.showName ?? '',
         ),
-      if (tableState.visibleColumns['Pretare']!.isSelect)
+      if (tableState.visibleColumns['Pretare']?.isSelect == true)
         _getDataColumnWithoutSort(
           context,
-          tableState.visibleColumns['Pretare']!.showName,
+          tableState.visibleColumns['Pretare']?.showName ?? '',
         ),
-      if (tableState.visibleColumns['User Name']!.isSelect)
+      if (tableState.visibleColumns['User Name']?.isSelect == true)
         _getDataColumnWithoutSort(
           context,
-          tableState.visibleColumns['User Name']!.showName,
+          tableState.visibleColumns['User Name']?.showName ?? '',
         ),
-      if (tableState.visibleColumns['Scale Name']!.isSelect)
+      if (tableState.visibleColumns['Scale Name']?.isSelect == true)
         _getDataColumnWithoutSort(
           context,
-          tableState.visibleColumns['Scale Name']!.showName,
+          tableState.visibleColumns['Scale Name']?.showName ?? '',
         ),
       DataColumn(label: Container(width: 90)),
     ];
@@ -404,139 +404,139 @@ class _WgtDataTableState extends State<WgtDataTable> {
   List<DataColumn> _buildColumns(BuildContext context, TableState tableState,
       {bool? isShowSort = true}) {
     return [
-      if (tableState.visibleColumns['Id']!.isSelect)
+      if (tableState.visibleColumns['Id']?.isSelect == true)
         getDataColumn(
           context,
-          tableState.visibleColumns['Id']!.showName,
+          tableState.visibleColumns['Id']?.showName ?? '',
           width: 60,
           columnKey: 'Id',
           tableState: tableState,
           isShowSort: isShowSort,
         ),
-      if (tableState.visibleColumns['Date Time']!.isSelect)
+      if (tableState.visibleColumns['Date Time']?.isSelect == true)
         getDataColumn(
           context,
-          tableState.visibleColumns['Date Time']!.showName,
+          tableState.visibleColumns['Date Time']?.showName ?? '',
           columnKey: 'Date Time',
           tableState: tableState,
           isShowSort: isShowSort,
         ),
-      if (tableState.visibleColumns['PLU']!.isSelect)
+      if (tableState.visibleColumns['PLU']?.isSelect == true)
         getDataColumn(
           context,
-          tableState.visibleColumns['PLU']!.showName,
+          tableState.visibleColumns['PLU']?.showName ?? '',
           columnKey: 'PLU',
           tableState: tableState,
           isShowSort: isShowSort,
         ),
-      if (tableState.visibleColumns['Product Code']!.isSelect)
+      if (tableState.visibleColumns['Product Code']?.isSelect == true)
         getDataColumn(
           context,
-          tableState.visibleColumns['Product Code']!.showName,
+          tableState.visibleColumns['Product Code']?.showName ?? '',
           columnKey: 'Product Code',
           tableState: tableState,
           isShowSort: isShowSort,
         ),
-      if (tableState.visibleColumns['Item Code']!.isSelect)
+      if (tableState.visibleColumns['Item Code']?.isSelect == true)
         getDataColumn(
           context,
-          tableState.visibleColumns['Item Code']!.showName,
+          tableState.visibleColumns['Item Code']?.showName ?? '',
           columnKey: 'Item Code',
           tableState: tableState,
           isShowSort: isShowSort,
         ),
-      if (tableState.visibleColumns['PLU Name']!.isSelect)
+      if (tableState.visibleColumns['PLU Name']?.isSelect == true)
         getDataColumn(
           context,
-          tableState.visibleColumns['PLU Name']!.showName,
+          tableState.visibleColumns['PLU Name']?.showName ?? '',
           columnKey: 'PLU Name',
           tableState: tableState,
           isShowSort: isShowSort,
         ),
-      if (tableState.visibleColumns['Price']!.isSelect)
+      if (tableState.visibleColumns['Price']?.isSelect == true)
         getDataColumn(
           context,
-          tableState.visibleColumns['Price']!.showName,
+          tableState.visibleColumns['Price']?.showName ?? '',
           columnKey: 'Price',
           tableState: tableState,
           isShowSort: isShowSort,
         ),
-      if (tableState.visibleColumns['GeneralUnit']!.isSelect)
+      if (tableState.visibleColumns['GeneralUnit']?.isSelect == true)
         getDataColumn(
           context,
-          tableState.visibleColumns['GeneralUnit']!.showName,
+          tableState.visibleColumns['GeneralUnit']?.showName ?? '',
           columnKey: 'GeneralUnit',
           tableState: tableState,
           isShowSort: isShowSort,
         ),
-      if (tableState.visibleColumns['TaxType']!.isSelect)
+      if (tableState.visibleColumns['TaxType']?.isSelect == true)
         getDataColumn(
           context,
-          tableState.visibleColumns['TaxType']!.showName,
+          tableState.visibleColumns['TaxType']?.showName ?? '',
           columnKey: 'TaxType',
           tableState: tableState,
           isShowSort: isShowSort,
         ),
-      if (tableState.visibleColumns['UnitWeight']!.isSelect)
+      if (tableState.visibleColumns['UnitWeight']?.isSelect == true)
         getDataColumn(
           context,
-          tableState.visibleColumns['UnitWeight']!.showName,
+          tableState.visibleColumns['UnitWeight']?.showName ?? '',
           columnKey: 'UnitWeight',
           tableState: tableState,
           isShowSort: isShowSort,
         ),
-      if (tableState.visibleColumns['LimitHigh']!.isSelect)
+      if (tableState.visibleColumns['LimitHigh']?.isSelect == true)
         getDataColumn(
           context,
-          tableState.visibleColumns['LimitHigh']!.showName,
+          tableState.visibleColumns['LimitHigh']?.showName ?? '',
           columnKey: 'LimitHigh',
           tableState: tableState,
           isShowSort: isShowSort,
         ),
-      if (tableState.visibleColumns['LimitLow']!.isSelect)
+      if (tableState.visibleColumns['LimitLow']?.isSelect == true)
         getDataColumn(
           context,
-          tableState.visibleColumns['LimitLow']!.showName,
+          tableState.visibleColumns['LimitLow']?.showName ?? '',
           columnKey: 'LimitLow',
           tableState: tableState,
           isShowSort: isShowSort,
         ),
-      if (tableState.visibleColumns['Weight']!.isSelect)
+      if (tableState.visibleColumns['Weight']?.isSelect == true)
         getDataColumn(
           context,
-          tableState.visibleColumns['Weight']!.showName,
+          tableState.visibleColumns['Weight']?.showName ?? '',
           columnKey: 'Weight',
           tableState: tableState,
           isShowSort: isShowSort,
         ),
-      if (tableState.visibleColumns['Weight Unit']!.isSelect)
+      if (tableState.visibleColumns['Weight Unit']?.isSelect == true)
         getDataColumn(
           context,
-          tableState.visibleColumns['Weight Unit']!.showName,
+          tableState.visibleColumns['Weight Unit']?.showName ?? '',
           columnKey: 'Weight Unit',
           tableState: tableState,
           isShowSort: isShowSort,
         ),
-      if (tableState.visibleColumns['Pretare']!.isSelect)
+      if (tableState.visibleColumns['Pretare']?.isSelect == true)
         getDataColumn(
           context,
-          tableState.visibleColumns['Pretare']!.showName,
+          tableState.visibleColumns['Pretare']?.showName ?? '',
           columnKey: 'Pretare',
           tableState: tableState,
           isShowSort: isShowSort,
         ),
-      if (tableState.visibleColumns['User Name']!.isSelect)
+      if (tableState.visibleColumns['User Name']?.isSelect == true)
         getDataColumn(
           context,
-          tableState.visibleColumns['User Name']!.showName,
+          tableState.visibleColumns['User Name']?.showName ?? '',
           columnKey: 'User Name',
           tableState: tableState,
           isShowSort: isShowSort,
         ),
-      if (tableState.visibleColumns['Scale Name']!.isSelect)
+      if (tableState.visibleColumns['Scale Name']?.isSelect == true)
         getDataColumn(
           context,
-          tableState.visibleColumns['Scale Name']!.showName,
+          tableState.visibleColumns['Scale Name']?.showName ?? '',
           columnKey: 'Scale Name',
           tableState: tableState,
           isShowSort: isShowSort,
@@ -602,129 +602,129 @@ class _WgtDataTableState extends State<WgtDataTable> {
       BuildContext context, TableState tableState, DataItem item) {
     final cells = <DataCell>[];
 
-    if (tableState.visibleColumns['Id']!.isSelect) {
+    if (tableState.visibleColumns['Id']?.isSelect == true) {
       cells.add(getDataCell(
         context,
-        item.scaleRec.header!.recId.toString(),
+        item.scaleRec.header?.recId?.toString() ?? '',
         width: 60,
       ));
     }
-    if (tableState.visibleColumns['Date Time']!.isSelect) {
+    if (tableState.visibleColumns['Date Time']?.isSelect == true) {
       cells.add(getDataCell(
         context,
         convertDateTimeFormDb(
-            item.scaleRec.header!.createdAt!.toIso8601String(),
+            item.scaleRec.header?.createdAt?.toIso8601String() ?? '',
             mySettingParam.dateSeparator,
             int.parse(mySettingParam.dateFormat == ""
                 ? "1"
                 : mySettingParam.dateFormat)),
       ));
     }
-    if (tableState.visibleColumns['PLU']!.isSelect) {
+    if (tableState.visibleColumns['PLU']?.isSelect == true) {
       cells.add(getDataCell(
         context,
-        item.scaleRec.header!.plu.toString(),
+        item.scaleRec.header?.plu?.toString() ?? '',
       ));
     }
-    if (tableState.visibleColumns['Product Code']!.isSelect) {
+    if (tableState.visibleColumns['Product Code']?.isSelect == true) {
       cells.add(getDataCell(
         context,
-        item.scaleRec.header!.productCode.toString(),
+        item.scaleRec.header?.productCode?.toString() ?? '',
       ));
     }
-    if (tableState.visibleColumns['Item Code']!.isSelect) {
+    if (tableState.visibleColumns['Item Code']?.isSelect == true) {
       cells.add(getDataCell(
         context,
-        item.scaleRec.header!.itemCode.toString(),
+        item.scaleRec.header?.itemCode?.toString() ?? '',
       ));
     }
-    if (tableState.visibleColumns['PLU Name']!.isSelect) {
+    if (tableState.visibleColumns['PLU Name']?.isSelect == true) {
       cells.add(getDataCell(
         context,
-        item.scaleRec.header!.productName.toString(),
+        item.scaleRec.header?.productName?.toString() ?? '',
       ));
     }
-    if (tableState.visibleColumns['Price']!.isSelect) {
+    if (tableState.visibleColumns['Price']?.isSelect == true) {
       cells.add(getDataCell(
         context,
-        item.scaleRec.header!.price.toString(),
+        item.scaleRec.header?.price?.toString() ?? '',
       ));
     }
-    if (tableState.visibleColumns['GeneralUnit']!.isSelect) {
+    if (tableState.visibleColumns['GeneralUnit']?.isSelect == true) {
       if (pluUnitSwitch
-          .containsKey(item.scaleRec.header!.generalUnit.toString())) {
+          .containsKey(item.scaleRec.header?.generalUnit?.toString() ?? '')) {
         cells.add(getDataCell(
           context,
-          pluUnitSwitch[item.scaleRec.header!.generalUnit.toString()]
+          pluUnitSwitch[item.scaleRec.header?.generalUnit?.toString() ?? '']
               .toString(),
         ));
       } else {
         cells.add(getDataCell(
           context,
-          item.scaleRec.header!.generalUnit.toString(),
+          item.scaleRec.header?.generalUnit?.toString() ?? '',
         ));
       }
     }
 
-    if (tableState.visibleColumns['TaxType']!.isSelect) {
-      if (pluTaxSwitch.containsKey(item.scaleRec.header!.taxType.toString())) {
+    if (tableState.visibleColumns['TaxType']?.isSelect == true) {
+      if (pluTaxSwitch.containsKey(item.scaleRec.header?.taxType?.toString() ?? '')) {
         cells.add(getDataCell(
           context,
-          pluTaxSwitch[item.scaleRec.header!.taxType.toString()].toString(),
+          pluTaxSwitch[item.scaleRec.header?.taxType?.toString() ?? ''].toString(),
         ));
       } else {
         cells.add(getDataCell(
           context,
-          item.scaleRec.header!.taxType.toString(),
+          item.scaleRec.header?.taxType?.toString() ?? '',
         ));
       }
     }
-    if (tableState.visibleColumns['UnitWeight']!.isSelect) {
+    if (tableState.visibleColumns['UnitWeight']?.isSelect == true) {
       cells.add(getDataCell(
         context,
-        item.scaleRec.header!.unitWeight.toString(),
+        item.scaleRec.header?.unitWeight?.toString() ?? '',
       ));
     }
-    if (tableState.visibleColumns['LimitHigh']!.isSelect) {
+    if (tableState.visibleColumns['LimitHigh']?.isSelect == true) {
       cells.add(getDataCell(
         context,
-        item.scaleRec.header!.limitHigh.toString(),
+        item.scaleRec.header?.limitHigh?.toString() ?? '',
       ));
     }
-    if (tableState.visibleColumns['LimitLow']!.isSelect) {
+    if (tableState.visibleColumns['LimitLow']?.isSelect == true) {
       cells.add(getDataCell(
         context,
-        item.scaleRec.header!.limitLow.toString(),
+        item.scaleRec.header?.limitLow?.toString() ?? '',
       ));
     }
-    if (tableState.visibleColumns['Weight']!.isSelect) {
+    if (tableState.visibleColumns['Weight']?.isSelect == true) {
       cells.add(getDataCell(
         context,
-        item.scaleRec.header!.weight.toString(),
+        item.scaleRec.header?.weight?.toString() ?? '',
       ));
     }
-    if (tableState.visibleColumns['Weight Unit']!.isSelect) {
+    if (tableState.visibleColumns['Weight Unit']?.isSelect == true) {
       cells.add(getDataCell(
         context,
-        item.scaleRec.header!.weightUnit.toString(),
+        item.scaleRec.header?.weightUnit?.toString() ?? '',
       ));
     }
-    if (tableState.visibleColumns['Pretare']!.isSelect) {
+    if (tableState.visibleColumns['Pretare']?.isSelect == true) {
       cells.add(getDataCell(
         context,
-        item.scaleRec.header!.pretare.toString(),
+        item.scaleRec.header?.pretare?.toString() ?? '',
       ));
     }
-    if (tableState.visibleColumns['User Name']!.isSelect) {
+    if (tableState.visibleColumns['User Name']?.isSelect == true) {
       cells.add(getDataCell(
         context,
-        item.scaleRec.header!.userName.toString(),
+        item.scaleRec.header?.userName?.toString() ?? '',
       ));
     }
-    if (tableState.visibleColumns['Scale Name']!.isSelect) {
+    if (tableState.visibleColumns['Scale Name']?.isSelect == true) {
       cells.add(getDataCell(
         context,
-        item.scaleRec.header!.scaleName.toString(),
+        item.scaleRec.header?.scaleName?.toString() ?? '',
       ));
     }
     cells.add(
@@ -776,101 +776,101 @@ class _WgtDataTableState extends State<WgtDataTable> {
   ) {
     final cells = <DataCell>[];
 
-    if (tableState.visibleColumns['Id']!.isSelect) {
+    if (tableState.visibleColumns['Id']?.isSelect == true) {
       cells.add(getDataCellDetail(context, '', width: 60));
     }
-    if (tableState.visibleColumns['Date Time']!.isSelect) {
+    if (tableState.visibleColumns['Date Time']?.isSelect == true) {
       cells.add(getDataCellDetail(
         context,
         '',
       ));
     }
-    if (tableState.visibleColumns['PLU']!.isSelect) {
+    if (tableState.visibleColumns['PLU']?.isSelect == true) {
       cells.add(getDataCellDetail(
         context,
         '',
       ));
     }
-    if (tableState.visibleColumns['Product Code']!.isSelect) {
+    if (tableState.visibleColumns['Product Code']?.isSelect == true) {
       cells.add(getDataCellDetail(
         context,
         '',
       ));
     }
-    if (tableState.visibleColumns['Item Code']!.isSelect) {
+    if (tableState.visibleColumns['Item Code']?.isSelect == true) {
       cells.add(getDataCellDetail(
         context,
         '',
       ));
     }
-    if (tableState.visibleColumns['PLU Name']!.isSelect) {
+    if (tableState.visibleColumns['PLU Name']?.isSelect == true) {
       cells.add(getDataCellDetail(
         context,
         '',
       ));
     }
-    if (tableState.visibleColumns['Price']!.isSelect) {
+    if (tableState.visibleColumns['Price']?.isSelect == true) {
       cells.add(getDataCellDetail(
         context,
         '',
       ));
     }
-    if (tableState.visibleColumns['GeneralUnit']!.isSelect) {
+    if (tableState.visibleColumns['GeneralUnit']?.isSelect == true) {
       cells.add(getDataCellDetail(
         context,
         '',
       ));
     }
-    if (tableState.visibleColumns['TaxType']!.isSelect) {
+    if (tableState.visibleColumns['TaxType']?.isSelect == true) {
       cells.add(getDataCellDetail(
         context,
         '',
       ));
     }
-    if (tableState.visibleColumns['UnitWeight']!.isSelect) {
+    if (tableState.visibleColumns['UnitWeight']?.isSelect == true) {
       cells.add(getDataCellDetail(
         context,
         '',
       ));
     }
-    if (tableState.visibleColumns['LimitHigh']!.isSelect) {
+    if (tableState.visibleColumns['LimitHigh']?.isSelect == true) {
       cells.add(getDataCellDetail(
         context,
         '',
       ));
     }
-    if (tableState.visibleColumns['LimitLow']!.isSelect) {
+    if (tableState.visibleColumns['LimitLow']?.isSelect == true) {
       cells.add(getDataCellDetail(
         context,
         '',
       ));
     }
-    if (tableState.visibleColumns['Weight']!.isSelect) {
+    if (tableState.visibleColumns['Weight']?.isSelect == true) {
       cells.add(getDataCellDetail(
         context,
         detail.weight.toString(),
       ));
     }
-    if (tableState.visibleColumns['Weight Unit']!.isSelect) {
+    if (tableState.visibleColumns['Weight Unit']?.isSelect == true) {
       cells.add(getDataCellDetail(
         context,
         detail.weightUnit.toString(),
       ));
     }
-    if (tableState.visibleColumns['Pretare']!.isSelect) {
+    if (tableState.visibleColumns['Pretare']?.isSelect == true) {
       cells.add(getDataCellDetail(
         context,
         '',
       ));
     }
-    if (tableState.visibleColumns['User Name']!.isSelect) {
+    if (tableState.visibleColumns['User Name']?.isSelect == true) {
       cells.add(getDataCell(
         context,
         "",
       ));
     }
 
-    if (tableState.visibleColumns['Scale Name']!.isSelect) {
+    if (tableState.visibleColumns['Scale Name']?.isSelect == true) {
       cells.add(getDataCellDetail(
         context,
         detail.scaleName!,
@@ -965,7 +965,7 @@ class TableState with ChangeNotifier {
   void addData(List<ScaleRecInfo> newData) {
     _allData.clear();
     for (var item in newData) {
-      _allData.add(DataItem(id: item.header!.recId!, scaleRec: item));
+      _allData.add(DataItem(id: item.header?.recId ?? 0, scaleRec: item));
     }
     notifyListeners();
   }

@@ -1563,7 +1563,7 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
     return widgets;
   }
 
-  /// 生成 ExpansionTile 组件 , children 是 List<Widget> 组件
+  /// 生成 ExpansionTile 组件 , children 是 [Widget] 组件
   Widget _generateExpansionTileWidget(tittle, List<String>? names) {
     return ExpansionTile(
       title: Text(tittle,

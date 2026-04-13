@@ -54,6 +54,10 @@ class _ScaleWgtLogTabPageState extends State<ScaleWgtLogTabPage> {
 
   @override
   dispose() {
+    roleIdCtl.dispose();
+    dateStartCtl.dispose();
+    dateEndCtl.dispose();
+    dateCtl.dispose();
     super.dispose();
     _eventbus1.cancel();
     _eventbus2.cancel();

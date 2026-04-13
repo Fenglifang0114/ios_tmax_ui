@@ -303,6 +303,7 @@ class TakeOutPageState extends State<TakeOutPage> {
 
     _scaleCheckTimer?.cancel();
 
+    totalWgtUnitCtl.dispose();
     super.dispose();
   }
 

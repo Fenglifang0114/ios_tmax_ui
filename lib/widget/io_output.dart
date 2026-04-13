@@ -145,6 +145,10 @@ class _SetOutputPortDialogState extends State<SetOutputPortDialog> {
 
   @override
   void dispose() {
+    btnTypeCtl0.dispose();
+    btnTypeCtl1.dispose();
+    btnTypeCtl2.dispose();
+    btnTypeCtl3.dispose();
     super.dispose();
 
     // 释放所有控制器

@@ -272,4 +272,11 @@ class AddFormulaWgtDialogState extends State<AddFormulaWgtDialog> {
       ),
     );
   }
+
+  @override
+  void dispose() {
+    formulaWgtCtl.dispose();
+    formulaUnitCtl.dispose();
+    super.dispose();
+  }
 }

@@ -150,6 +150,8 @@ class SetParameterPageState extends State<SetParameterPage> {
     eventBus3.cancel();
 
     cntScaleTimerMgr.stopCntScaleTimer();
+    manualTimeCtl.dispose();
+    eventBus4?.cancel();
     super.dispose();
   }
 

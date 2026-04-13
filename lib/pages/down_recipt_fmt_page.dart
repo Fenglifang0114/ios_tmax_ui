@@ -59,6 +59,13 @@ class _DownReciptPageState extends State<DownReciptPage> {
     _fileScrollerController.dispose();
 
     _stopTimer();
+    weightController.dispose();
+    repsController.dispose();
+    weightModeController.dispose();
+    accModeController.dispose();
+    pcsModeController.dispose();
+    pctModeController.dispose();
+    _downloadTimer?.cancel();
     super.dispose();
   }
 

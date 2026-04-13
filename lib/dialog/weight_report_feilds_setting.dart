@@ -29,6 +29,7 @@ class ReportSettingDialogState extends State<ReportSettingDialog> {
 
   @override
   void dispose() {
+    errorText.dispose();
     super.dispose();
   }
 

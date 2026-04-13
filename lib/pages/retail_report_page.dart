@@ -277,6 +277,8 @@ class RetailReportPageState extends State<RetailReportPage> {
     eventBus5.cancel();
     eventBus6.cancel();
     _statusTimer?.cancel();
+    _scrollController.dispose();
+    _scrollController1.dispose();
     super.dispose();
   }
 

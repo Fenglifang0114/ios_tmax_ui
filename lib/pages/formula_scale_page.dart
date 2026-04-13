@@ -470,11 +470,11 @@ class FormulationScalePageState extends State<FormulationScalePage>
             List<FormulaInfoDb> tempFmaData = formulaInfoDbFromJson(dataStr);
             bool findFma = false;
             for (int i = 0; i < formulaDataList.length; i++) {
-              if (formulaDataList[i].header!.recId ==
-                  tempFmaData.first.header!.recId) {
+              if (formulaDataList[i].header?.recId ==
+                  tempFmaData.first.header?.recId) {
                 formulaDataList[i] = tempFmaData.first;
                 findFma = true;
-                getDarftFmaInfo(tempFmaData.first.header!.recId!);
+                getDarftFmaInfo(tempFmaData.first.header?.recId ?? 0);
                 break;
               }
             }
@@ -830,12 +830,12 @@ class FormulationScalePageState extends State<FormulationScalePage>
 
     setState(() {
       searchFmaList = formulaDataList.where((formula) {
-        final formulaId = formula.header!.formulaId!;
-        final formulaName = formula.header!.formulaName!;
+        final formulaId = (formula.header?.formulaId ?? '');
+        final formulaName = (formula.header?.formulaName ?? '');
         return formulaId.contains(keyword) || formulaName.contains(keyword);
       }).where((element) {
-        final formulaType = getFmaTypeName(element.header!.categoryId!);
-        final formulaEncrypted = element.header!.isEncrypted!;
+        final formulaType = getFmaTypeName((element.header?.categoryId ?? 0));
+        final formulaEncrypted = (element.header?.isEncrypted ?? false);
 
         // 处理配方类别筛选
         bool typeMatch = formulaTypeFilter.isEmpty ||
@@ -975,14 +975,14 @@ class FormulationScalePageState extends State<FormulationScalePage>
     return Expanded(
       child: ListView.separated(
         // 修改 itemCount
-        itemCount: selectedDarfFma?.fmaInfo!.details!.length ?? 0,
+        itemCount: selectedDarfFma?.fmaInfo?.details?.length ?? 0,
         separatorBuilder: (context, index) => SizedBox(height: 10),
         itemBuilder: (context, index) {
           return InkWell(
             onTap: () {
               setState(() {
                 _selectedRawIndex = index; // 更新选中的 index
-                selectedDetail = selectedDarfFma!.fmaInfo!.details![index];
+                selectedDetail = (selectedDarfFma?.fmaInfo?.details?[index] ?? Detail());
               });
               // 这里添加点击事件的处理逻辑
               // print('点击了第 $index 项');
@@ -1039,7 +1039,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
                     ),
                   ),
                   // 修改显示内容
-                  selectedDarfFma?.fmaInfo!.header!.isEncrypted == true
+                  selectedDarfFma?.fmaInfo?.header?.isEncrypted == true
                       ? SizedBox()
                       : showDarftRawWgtAndUnit(index, textColor),
                   SizedBox(
@@ -1058,14 +1058,14 @@ class FormulationScalePageState extends State<FormulationScalePage>
     return Expanded(
       child: ListView.separated(
         // 修改 itemCount
-        itemCount: selectedFormula?.details!.length ?? 0,
+        itemCount: selectedFormula?.details?.length ?? 0,
         separatorBuilder: (context, index) => SizedBox(height: 10),
         itemBuilder: (context, index) {
           return InkWell(
             onTap: () {
               setState(() {
                 _selectedRawIndex = index; // 更新选中的 index
-                selectedDetail = selectedFormula!.details![index];
+                selectedDetail = (selectedFormula?.details?[index] ?? Detail());
               });
               // 这里添加点击事件的处理逻辑
               // print('点击了第 $index 项');
@@ -1120,7 +1120,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
                     ),
                   ),
                   // 修改显示内容
-                  selectedFormula?.header!.isEncrypted == true
+                  selectedFormula?.header?.isEncrypted == true
                       ? SizedBox()
                       : showRawWgtAndUnit(index, textColor),
                   SizedBox(
@@ -1140,20 +1140,20 @@ class FormulationScalePageState extends State<FormulationScalePage>
       return false;
     }
     if (selScaleId == -1 &&
-        (selectedFormula.header!.isEncrypted! ||
-            selectedFormula.header!.needContainer!)) {
+        ((selectedFormula.header?.isEncrypted ?? false) ||
+            (selectedFormula.header?.needContainer ?? false))) {
       showTipInfo(localizedStrings.gTipSelectDeviceFirst, context);
       return false;
     }
 
-    if (selectedFormula.header!.isEncrypted! ||
-        selectedFormula.header!.needContainer!) {
+    if ((selectedFormula.header?.isEncrypted ?? false) ||
+        (selectedFormula.header?.needContainer ?? false)) {
       if (!checkOnline(selScaleId)) {
         return false;
       }
     }
 
-    if (selectedFormula.header!.isEncrypted!) {
+    if ((selectedFormula.header?.isEncrypted ?? false)) {
       return true;
     }
 
@@ -1196,20 +1196,20 @@ class FormulationScalePageState extends State<FormulationScalePage>
       return false;
     }
     if (selScaleId == -1 &&
-        (darftFma.fmaInfo!.header!.isEncrypted! ||
-            darftFma.fmaInfo!.header!.needContainer!)) {
+        ((darftFma.fmaInfo?.header?.isEncrypted ?? false) ||
+            (darftFma.fmaInfo?.header?.needContainer ?? false))) {
       showTipInfo(localizedStrings.gTipSelectDeviceFirst, context);
       return false;
     }
 
-    if (darftFma.fmaInfo!.header!.isEncrypted! ||
-        darftFma.fmaInfo!.header!.needContainer!) {
+    if ((darftFma.fmaInfo?.header?.isEncrypted ?? false) ||
+        (darftFma.fmaInfo?.header?.needContainer ?? false)) {
       if (!checkOnline(selScaleId)) {
         return false;
       }
     }
 
-    if (darftFma.fmaInfo!.header!.isEncrypted!) {
+    if ((darftFma.fmaInfo?.header?.isEncrypted ?? false)) {
       return true;
     }
 
@@ -1662,7 +1662,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
                                     null &&
                                 selectedDarfFma?.fmaInfo!.header!.formulaUnit !=
                                     null
-                            ? " ${selectedDarfFma!.fmaInfo!.header!.totalWeight} ${selectedDarfFma!.fmaInfo!.header!.formulaUnit}"
+                            ? " ${(selectedDarfFma?.fmaInfo ?? FormulaInfoDb()).header!.totalWeight} ${(selectedDarfFma?.fmaInfo ?? FormulaInfoDb()).header!.formulaUnit}"
                             : " ",
                     style: textTheme.bodySmall!.copyWith(
                       color: colorScheme.onSurface,
@@ -1820,8 +1820,8 @@ class FormulationScalePageState extends State<FormulationScalePage>
             builder: (context) => FormulaPctWeighingPage(
               selectFormula: selectedFormula!,
               selScaleId: selScaleId,
-              totalFmaWgt: selectedFormula!.header!.totalWeight!,
-              fmaUnit: selectedFormula!.header!.formulaUnit!,
+              totalFmaWgt: (selectedFormula?.header?.totalWeight ?? 0.0),
+              fmaUnit: (selectedFormula?.header?.formulaUnit ?? ''),
               fromDarft: false,
             ),
           ),
@@ -1877,8 +1877,8 @@ class FormulationScalePageState extends State<FormulationScalePage>
             builder: (context) => FormulaSecretWeighingPage(
                 selectFormula: selectedFormula!,
                 selScaleId: selScaleId,
-                totalFmaWgt: selectedFormula!.header!.totalWeight!,
-                fmaUnit: selectedFormula!.header!.formulaUnit!,
+                totalFmaWgt: (selectedFormula?.header?.totalWeight ?? 0.0),
+                fmaUnit: (selectedFormula?.header?.formulaUnit ?? ''),
                 fromDraft: false,
                 selectDarftInfo: null // 这里传入null，因为不是草稿配方称重，所以不需要草稿信息
                 ),
@@ -1921,12 +1921,12 @@ class FormulationScalePageState extends State<FormulationScalePage>
                 context,
                 MaterialPageRoute(
                   builder: (context) => DarftFmaPctWgtPage(
-                    selectFormula: selectedDarfFma!.fmaInfo!,
+                    selectFormula: (selectedDarfFma?.fmaInfo ?? FormulaInfoDb()),
                     selScaleId: selScaleId,
                     totalFmaWgt: totalWgt,
                     fmaUnit: fmaUnit,
                     fromDarft: false,
-                    selectDarftInfo: selectedDarfFma!.fmaRec,
+                    selectDarftInfo: (selectedDarfFma?.fmaRec ?? DarfFmaInfoListFromDb()),
                   ),
                 ),
               );
@@ -1938,12 +1938,12 @@ class FormulationScalePageState extends State<FormulationScalePage>
           context,
           MaterialPageRoute(
             builder: (context) => DarftFmaPctWgtPage(
-              selectFormula: selectedDarfFma!.fmaInfo!,
+              selectFormula: (selectedDarfFma?.fmaInfo ?? FormulaInfoDb()),
               selScaleId: selScaleId,
-              totalFmaWgt: selectedDarfFma!.fmaInfo!.header!.totalWeight!,
-              fmaUnit: selectedDarfFma!.fmaInfo!.header!.formulaUnit!,
+              totalFmaWgt: (selectedDarfFma?.fmaInfo ?? FormulaInfoDb()).header!.totalWeight!,
+              fmaUnit: (selectedDarfFma?.fmaInfo ?? FormulaInfoDb()).header!.formulaUnit!,
               fromDarft: false,
-              selectDarftInfo: selectedDarfFma!.fmaRec,
+              selectDarftInfo: (selectedDarfFma?.fmaRec ?? DarfFmaInfoListFromDb()),
             ),
           ),
         );
@@ -1974,12 +1974,12 @@ class FormulationScalePageState extends State<FormulationScalePage>
                 context,
                 MaterialPageRoute(
                   builder: (context) => FormulaSecretWeighingPage(
-                    selectFormula: selectedDarfFma!.fmaInfo!,
+                    selectFormula: (selectedDarfFma?.fmaInfo ?? FormulaInfoDb()),
                     selScaleId: selScaleId,
                     totalFmaWgt: totalWgt,
                     fmaUnit: fmaUnit,
                     fromDraft: true,
-                    selectDarftInfo: selectedDarfFma!.fmaRec,
+                    selectDarftInfo: (selectedDarfFma?.fmaRec ?? DarfFmaInfoListFromDb()),
                   ),
                 ),
               );
@@ -1991,12 +1991,12 @@ class FormulationScalePageState extends State<FormulationScalePage>
           context,
           MaterialPageRoute(
             builder: (context) => FormulaSecretWeighingPage(
-              selectFormula: selectedDarfFma!.fmaInfo!,
+              selectFormula: (selectedDarfFma?.fmaInfo ?? FormulaInfoDb()),
               selScaleId: selScaleId,
-              totalFmaWgt: selectedDarfFma!.fmaInfo!.header!.totalWeight!,
-              fmaUnit: selectedDarfFma!.fmaInfo!.header!.formulaUnit!,
+              totalFmaWgt: (selectedDarfFma?.fmaInfo ?? FormulaInfoDb()).header!.totalWeight!,
+              fmaUnit: (selectedDarfFma?.fmaInfo ?? FormulaInfoDb()).header!.formulaUnit!,
               fromDraft: true,
-              selectDarftInfo: selectedDarfFma!.fmaRec,
+              selectDarftInfo: (selectedDarfFma?.fmaRec ?? DarfFmaInfoListFromDb()),
             ),
           ),
         );
@@ -3078,7 +3078,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
       if (value == true) {
         List<int> recIds = [];
         for (var fma in selFormulas) {
-          recIds.add(fma.header!.recId!);
+          recIds.add(fma.header?.recId ?? 0);
         }
         //去掉重复值
         recIds = recIds.toSet().toList();
@@ -3202,8 +3202,8 @@ class FormulationScalePageState extends State<FormulationScalePage>
 
     setState(() {
       searchDarfFmaInfoList = darfFmaInfoList.where((item) {
-        final formulaId = item.fmaInfo!.header!.formulaId!;
-        final formulaName = item.fmaInfo!.header!.formulaName!;
+        final formulaId = item.fmaInfo?.header?.formulaId ?? '';
+        final formulaName = item.fmaInfo?.header?.formulaName ?? '';
 
         return formulaId.contains(keyword) || formulaName.contains(keyword);
       }).toList();

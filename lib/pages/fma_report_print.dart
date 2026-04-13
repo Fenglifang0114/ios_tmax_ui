@@ -389,7 +389,7 @@ class _FormulaReportPrintState extends State<FormulaReportPrint> {
               );
             }).toList(),
           );
-        }).toList(),
+        }),
       ],
     );
   }

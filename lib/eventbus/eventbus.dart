@@ -1,5 +1,7 @@
 import 'package:event_bus/event_bus.dart';
 
+/// 全局唯一的 [EventBus] 消息总线单例。
+/// 用于跨 Widget 和跨业务层之间的无状态异步消息传递。
 EventBus eventBus = EventBus();
 
 class EventSignal {
@@ -772,6 +774,7 @@ class EventRespAddFormula {
   EventRespAddFormula(this.obj);
 }
 
+/// 修改配方参数指令触发完毕后的回调事件 (Edit Formula Response)。
 class EventRespEditFormula {
   dynamic obj;
   EventRespEditFormula(this.obj);
@@ -792,6 +795,7 @@ class EventRespOneFmaRecList {
   EventRespOneFmaRecList(this.obj);
 }
 
+/// 配方记录写入成功后触发的回调事件通知。
 class EventRespFormulaRecAdd {
   dynamic obj;
   EventRespFormulaRecAdd(this.obj);

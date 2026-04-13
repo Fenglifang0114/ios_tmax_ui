@@ -64,6 +64,8 @@ class _DefaultPrnFmtPageState extends State<DefaultPrnFmtPage> {
     _fileScrollerController.dispose();
 
     _stopTimer();
+    repsController.dispose();
+    _downloadTimer?.cancel();
     super.dispose();
   }
 

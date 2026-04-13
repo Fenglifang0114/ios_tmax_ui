@@ -10,6 +10,9 @@ import 'package:t_max/eventbus/eventbus.dart';
 import 'package:t_max/functions/methods.dart';
 import 'package:web_socket_channel/io.dart';
 
+/// 全局的 [WebSocket] 通信管理器。
+/// 采用单例模式 (Singleton) 维持与后端网关的长连接，统一分发 JSON 消息到底层网关的监听器，
+/// 并且内置了断线重拨机制 (Reconnect) 与心跳监控 (Heartbeat)。
 class WebSocketManager {
   static final WebSocketManager _instance = WebSocketManager._internal();
   factory WebSocketManager() => _instance;
@@ -17,14 +20,23 @@ class WebSocketManager {
 
   static final String _url = 'ws://127.0.0.1:$webPort/tmax?scaleid=0';
   IOWebSocketChannel? _channel;
+  StreamSubscription? _channelSubscription;
   bool _isConnected = false;
   bool _isConnecting = false;
   Timer? _reconnectTimer;
   Timer? _heartbeatTimer;
   int _reconnectAttempts = 0;
-  final int _maxReconnectAttempts = 5;
-  final Duration _reconnectInterval = Duration(seconds: 5);
-  final Duration _heartbeatInterval = Duration(seconds: 30);
+  final int _maxReconnectAttempts = 10;
+  final Duration _heartbeatInterval = const Duration(seconds: 30);
+
+  /// 内部统一的日志追踪控制器。
+  /// 捕获底层通信的状态转折并写入本机存储日志。
+  void _log(String message) {
+    writelog(message);
+    if (kDebugMode) {
+      print(message);
+    }
+  }
 
   // 连接状态流控制器
   final _connectionController = StreamController<bool>.broadcast();
@@ -34,11 +46,11 @@ class WebSocketManager {
   bool get isConnected => _isConnected;
   bool get isConnecting => _isConnecting;
 
-  // 单例连接方法
+  /// 发起长连接通信 (WebSocket Connection)。
+  /// 当与主机通信失败或抛出异常时会触发断网事件 [EventServiceOff]，并立即启动自动重连检测。
   Future<void> connect() async {
     if (_isConnecting || _isConnected) {
-      writelog('connect is connecting or connected, skip reconnect.');
-      debugPrint('连接已存在或正在连接中，跳过重复连接');
+      _log('connect is connecting or connected, skip reconnect.');
       return;
     }
 
@@ -46,43 +58,30 @@ class WebSocketManager {
     _connectionController.add(false);
 
     try {
-      // 先检查服务器是否可用
-      bool serverExists = await _checkServerExists();
-      if (!serverExists) {
-        writelog('server not exists, trigger service off event.');
-        debugPrint('服务器不可用，触发服务离线事件');
-        eventBus.fire(EventServiceOff(''));
-        _scheduleReconnect();
-        return;
-      }
-
-      writelog('start connecting to server...');
-      debugPrint('开始建立WebSocket连接...');
+      _log('start connecting to server...');
 
       // 关闭现有连接（如果有）
       await disconnect();
 
-      // 建立新连接
-      _channel = IOWebSocketChannel.connect(_url);
+      // 建立新连接并等待建立完成
+      final ws =
+          await WebSocket.connect(_url).timeout(const Duration(seconds: 5));
+      _channel = IOWebSocketChannel(ws);
 
       // 监听连接
-      _channel!.stream.listen(
+      _channelSubscription = _channel!.stream.listen(
         _onData,
         onError: _onError,
         onDone: _onDone,
         cancelOnError: false,
       );
 
-      // 等待连接建立
-      await Future.delayed(Duration(milliseconds: 500));
-
       _isConnected = true;
       _isConnecting = false;
       _reconnectAttempts = 0;
 
       _connectionController.add(true);
-      writelog('connect to server success.');
-      debugPrint('WebSocket连接建立成功');
+      _log('connect to server success.');
 
       // 启动心跳检测
       _startHeartbeat();
@@ -90,10 +89,14 @@ class WebSocketManager {
       // 连接成功后获取必要数据
       _onConnected();
     } catch (e) {
-      writelog('connect to server failed: $e');
-      debugPrint('连接建立失败: $e');
+      _log('connect to server failed: $e');
       _isConnecting = false;
       _connectionController.add(false);
+
+      // 连接失败时立即触发服务离线事件
+      _log('Triggering service off event due to connection failure.');
+      eventBus.fire(EventServiceOff(''));
+
       _scheduleReconnect();
     }
   }
@@ -107,13 +110,13 @@ class WebSocketManager {
     _isConnecting = false;
 
     try {
+      await _channelSubscription?.cancel();
+      _channelSubscription = null;
       await _channel?.sink.close();
       _channel = null;
-      writelog('disconnect to server success.');
-      debugPrint('WebSocket连接已断开');
+      _log('WebSocket connection disconnected properly.');
     } catch (e) {
-      writelog('disconnect to server failed: $e');
-      debugPrint('断开连接时出错: $e');
+      _log('disconnect to server failed: $e');
     }
 
     _connectionController.add(false);
@@ -122,77 +125,69 @@ class WebSocketManager {
   // 发送消息
   void sendMessage(String message) {
     if (!_isConnected || _channel == null) {
-      writelog('connect not connected, can not send message: $message');
-      debugPrint('连接未就绪，无法发送消息: $message');
+      _log('connect not connected, can not send message: $message');
       return;
     }
 
     try {
       _channel!.sink.add(message);
     } catch (e) {
-      writelog('send message failed: $e');
-      debugPrint('消息发送失败: $e');
+      _log('send message failed: $e');
       _onError(e);
     }
   }
 
-  // 检查服务器是否可用
-  Future<bool> _checkServerExists() async {
-    try {
-      final socket = await Socket.connect('127.0.0.1', webPort,
-          timeout: Duration(seconds: 5));
-      await socket.close();
-      return true;
-    } catch (e) {
-      writelog('check server exists failed: $e');
-      debugPrint('服务器检查失败: $e');
-      return false;
-    }
-  }
-
-  // 数据接收处理
+  /// 底层通信数据流入总闸口。包含数据接收与 JSON 解析。
+  /// 解析底层传入包后，过滤掉心跳包 (`code == 9999`)，
+  /// 并根据 [MsgType] 反射派发至全局业务处理器 [RespSysMsgType.handlers]。
   void _onData(dynamic data) {
-    if (data != null) {
-      if (kDebugMode) {
-        print('0 收到消息:$data');
-      }
-      try {
-        Map<String, dynamic> map = json.decode(data);
+    if (data == null) return;
 
-        // 处理心跳响应
-        if (map['code'] == 9999) {
-          // debugPrint('收到心跳响应');
-          return;
-        }
+    if (kDebugMode) {
+      print('0 收到消息:$data');
+    }
 
-        // 处理业务消息
-        if (RespSysMsgType.handlers.containsKey(map['MsgType'])) {
-          var handler = RespSysMsgType.handlers[map['MsgType']];
-          handler!(map);
-        }
-      } catch (e) {
-        writelog('handle message failed: $e');
-        debugPrint('消息处理错误: $e');
+    try {
+      Map<String, dynamic> map = json.decode(data);
+
+      // 处理心跳响应
+      if (map['code'] == 9999) {
+        return;
       }
+
+      // 处理业务消息
+      var msgType = map['MsgType'];
+      if (msgType != null && RespSysMsgType.handlers.containsKey(msgType)) {
+        var handler = RespSysMsgType.handlers[msgType];
+        handler?.call(map);
+      }
+    } catch (e) {
+      _log('handle message failed: $e\nData: $data');
     }
   }
 
   // 错误处理
   void _onError(error) {
-    writelog('websocket error: $error');
-    debugPrint('websocket 错误: $error');
-    _isConnected = false;
-    _connectionController.add(false);
+    _log('websocket error: $error');
+    _handleDisconnectEvent();
     _scheduleReconnect();
   }
 
   // 连接关闭处理
   void _onDone() {
-    writelog('WebSocket connection closed.');
-    debugPrint('WebSocket连接关闭');
-    _isConnected = false;
-    _connectionController.add(false);
+    _log('WebSocket connection closed.');
+    _handleDisconnectEvent();
     _scheduleReconnect();
+  }
+
+  void _handleDisconnectEvent() {
+    if (_isConnected || _isConnecting) {
+      _log('Triggering service off event from stream disconnect.');
+      eventBus.fire(EventServiceOff(''));
+    }
+    _isConnected = false;
+    _isConnecting = false;
+    _connectionController.add(false);
   }
 
   // 连接成功后的初始化
@@ -234,24 +229,32 @@ class WebSocketManager {
       };
       sendMessage(json.encode(heartbeat));
     } catch (e) {
-      writelog('send heartbeat failed: $e');
-      debugPrint('send heartbeat failed: $e');
+      _log('send heartbeat failed: $e');
     }
   }
 
-  // 安排重连
+  /// 断线后的智能重连策略处理器。
+  /// 采用 Exponential backoff (指数退避) 算法休眠机制，
+  /// 网络丢失后会在逐步延迟增加 (2s, 4s, 8s, 最高不超过 60s) 的时间梯次里发出重新连接申请。
   void _scheduleReconnect() {
-    if (_reconnectTimer != null ||
-        _reconnectAttempts >= _maxReconnectAttempts) {
+    if (_reconnectTimer != null) {
+      return;
+    }
+
+    if (_reconnectAttempts >= _maxReconnectAttempts) {
+      _log('Max reconnect attempts reached. Stop reconnecting.');
       return;
     }
 
     _reconnectAttempts++;
-    writelog(
-        'schedule reconnect, try times: $_reconnectAttempts/$_maxReconnectAttempts');
-    debugPrint('安排重连，尝试次数: $_reconnectAttempts/$_maxReconnectAttempts');
+    // Exponential backoff: 2s, 4s, 8s, 16s, 32s...
+    int delaySeconds = 2 << (_reconnectAttempts - 1);
+    if (delaySeconds > 60) delaySeconds = 60; // Max 60 seconds
 
-    _reconnectTimer = Timer(_reconnectInterval, () {
+    _log(
+        'schedule reconnect, try times: $_reconnectAttempts/$_maxReconnectAttempts, delay: ${delaySeconds}s');
+
+    _reconnectTimer = Timer(Duration(seconds: delaySeconds), () {
       _reconnectTimer = null;
       if (!_isConnected && !_isConnecting) {
         connect();

@@ -289,7 +289,7 @@ class AddRawDialogState extends State<AddRawDialog> {
 
     // 检查当前value是否在过滤后的列表中
     String? currentValue = outputPortCtl.text;
-    if (currentValue != null && !filteredList.contains(currentValue)) {
+    if (!filteredList.contains(currentValue)) {
       // 如果当前值不在过滤后的列表中（比如是"0"），则设置为null
       currentValue = null;
     }
@@ -1091,7 +1091,7 @@ class EditRawDialogState extends State<EditRawDialog> {
 
     // 检查当前value是否在过滤后的列表中
     String? currentValue = outputPortCtl.text;
-    if (currentValue != null && !filteredList.contains(currentValue)) {
+    if (!filteredList.contains(currentValue)) {
       // 如果当前值不在过滤后的列表中（比如是"0"），则设置为null
       currentValue = null;
     }

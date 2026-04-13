@@ -449,6 +449,10 @@ class _PluEidtPageState extends State<PluEidtPage> {
     allSelectedNotifier.dispose();
     gettingDataTimer?.cancel();
     dataModels.clear();
+    pageController.dispose();
+    pluCtl.dispose();
+    pluNameCtl.dispose();
+    categoryCtl.dispose();
     super.dispose();
   }
 
@@ -697,7 +701,6 @@ class _PluEidtPageState extends State<PluEidtPage> {
     // 2. 如果 UTF-8 失败或检测不到有效列，尝试以 GBK 解码并验证
     if (content == null) {
       try {
-        print(bytes);
         String gbkContent = gbk.decode(bytes);
         currentDelimiter = detectAndVerify(gbkContent);
         if (currentDelimiter != null) {
@@ -769,7 +772,7 @@ class _PluEidtPageState extends State<PluEidtPage> {
     for (int i = 1; i < lines.length; i++) {
       if (lines[i].trim().isEmpty) continue;
 
-      List<String> values = parseCsvLine(lines[i], delimiter: currentDelimiter!)
+      List<String> values = parseCsvLine(lines[i], delimiter: currentDelimiter)
           .map((e) => e.trim())
           .toList();
 
@@ -896,126 +899,6 @@ class _PluEidtPageState extends State<PluEidtPage> {
     result.add(field.toString());
     return result;
   }
-
-  // Future<void> importDataFromCSV(String filePath, List<int> nowPluList) async {
-  //   // 读取Excel文件
-  //   Excel? excel = Excel.decodeBytes(await File(filePath).readAsBytes());
-
-  //   if (excel.tables.isEmpty) {
-  //     return; //要弹框提示
-  //   }
-  //   // 数据在第一个工作表
-  //   var firstTable = excel.tables.values.first;
-  //   excel = null;
-  //   Sheet sheet = firstTable;
-
-  //   // 获取首行标题作为字段名列表
-  //   List<String> headerTitles = [];
-  //   for (int col = 0; col < sheet.maxColumns; col++) {
-  //     headerTitles.add(sheet
-  //         .cell(CellIndex.indexByColumnRow(columnIndex: col, rowIndex: 0))
-  //         .value
-  //         .toString());
-  //   }
-
-  //   // 遍历每一行数据（从第二行开始，假设第一行是标题行）
-  //   // 用于存储当前行对应的数据
-  //   for (int row = 1; row < sheet.maxRows; row++) {
-  //     Map<String, dynamic> rowData = {};
-
-  //     // 遍历每一列，将单元格的值与对应的标题关联起来
-  //     for (int col = 0; col < sheet.maxColumns; col++) {
-  //       rowData[headerTitles[col]] = sheet
-  //           .cell(CellIndex.indexByColumnRow(columnIndex: col, rowIndex: row))
-  //           .value;
-  //     }
-  //     if ((rowData.containsKey('PLU') ||
-  //             rowData.containsKey('ProductNumber')) &&
-  //         (rowData['ProductNumber'] != null || rowData['PLU'] != null)) {
-  //       double priceValue = 0.0;
-  //       if (rowData.containsKey('Price')) {
-  //         double value = double.tryParse(rowData['Price'].toString()) ?? 0;
-  //         priceValue = roundToTwoDecimalPlaces(value);
-  //       }
-  //       // 根据标题与字段名的对应关系创建Dessert对象
-  //       String unit = rowData['GeneralUnit'].toString();
-  //       unit = unit.replaceAll(' ', '');
-  //       unit = unit.toLowerCase();
-  //       int unitInt = 0;
-  //       for (var entry in pluUnit.entries) {
-  //         if (entry.value == unit) {
-  //           unitInt = entry.key;
-  //           break;
-  //         }
-  //       }
-
-  //       String taxStr = rowData['TaxType'].toString();
-  //       int taxInt = 0;
-  //       for (var entry in pluTax.entries) {
-  //         if (entry.value == taxStr) {
-  //           taxInt = entry.key;
-  //           break;
-  //         }
-  //       }
-
-  //       PluData dessert = PluData(
-  //         rowData.containsKey('recId')
-  //             ? int.tryParse(rowData['recId'].toString()) ?? 0
-  //             : 0,
-  //         rowData.containsKey('PLU')
-  //             ? int.tryParse(rowData['PLU'].toString()) ?? 0
-  //             : rowData.containsKey('ProductNumber')
-  //                 ? int.tryParse(rowData['ProductNumber'].toString()) ?? 0
-  //                 : 0,
-  //         rowData.containsKey('ProductCode')
-  //             ? int.tryParse(rowData['ProductCode'].toString()) ?? 0
-  //             : 0,
-  //         rowData.containsKey('ItemCode')
-  //             ? int.tryParse(rowData['ItemCode'].toString()) ?? 0
-  //             : 0,
-  //         rowData.containsKey('Category')
-  //             ? rowData['Category'].toString()
-  //             : '-',
-  //         rowData.containsKey('ProductName')
-  //             ? rowData['ProductName'].toString()
-  //             : '-',
-  //         rowData.containsKey('GeneralUnit') ? unitInt : 0,
-  //         rowData.containsKey('TaxType') ? taxInt : 0,
-  //         rowData.containsKey('Price') ? priceValue : 0.0,
-  //         rowData.containsKey('UnitWeight')
-  //             ? double.tryParse(rowData['UnitWeight'].toString()) ?? 0
-  //             : 0.0,
-  //         rowData.containsKey('PreTare')
-  //             ? double.tryParse(rowData['PreTare'].toString()) ?? 0
-  //             : rowData.containsKey('Pretare')
-  //                 ? double.tryParse(rowData['Pretare'].toString()) ?? 0
-  //                 : 0.0,
-  //         rowData.containsKey('LimitHigh')
-  //             ? double.tryParse(rowData['LimitHigh'].toString()) ?? 0
-  //             : 0.0,
-  //         rowData.containsKey('LimitLow')
-  //             ? double.tryParse(rowData['LimitLow'].toString()) ?? 0
-  //             : 0.0,
-  //         '',
-  //         rowData.containsKey('ebabled')
-  //             ? rowData['ebabled'].toString() == '1'
-  //             : true,
-  //         '',
-  //         0,
-  //         0,
-  //         '',
-  //         '',
-  //       );
-  //       PluDataModel pluDataModel = PluDataModel(pluData: dessert);
-
-  //       if (checkImportPLu(dessert.plu ?? 0, nowPluList)) {
-  //         importPlu.add(pluDataModel);
-  //       }
-  //     }
-  //   }
-
-  //   return;
-  // }
 
   double roundToTwoDecimalPlaces(double num) {
     double multiplier = 100;

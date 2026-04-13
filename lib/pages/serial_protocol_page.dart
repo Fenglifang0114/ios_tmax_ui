@@ -311,6 +311,10 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
     if (selScaleId != -1) {
       PublicFunctions.stopWeight(selScaleId);
     }
+    myContentCtl.dispose();
+    myMaxLenCtl.dispose();
+    myBoolTypeTrueCtl.dispose();
+    myBoolTypeFalseCtl.dispose();
     super.dispose();
   }
 

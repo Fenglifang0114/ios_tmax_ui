@@ -581,4 +581,11 @@ class ShowFormulaDetailDialogState extends State<ShowFormulaDetailDialog> {
       ),
     );
   }
+
+  @override
+  void dispose() {
+    formulaWgtCtl.dispose();
+    formulaUnitCtl.dispose();
+    super.dispose();
+  }
 }

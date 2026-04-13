@@ -3,7 +3,6 @@
 //首页   测试首页
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:t_max/data/company_info.dart';
 import 'package:t_max/data/comscaleinfo_data.dart';
@@ -28,8 +27,7 @@ import 'package:t_max/generated/l10n.dart';
 import 'package:t_max/widget/home_widget.dart';
 import 'package:t_max/widget/page_info.dart';
 import 'package:t_max/widget/version.dart';
-import 'package:tray_manager/tray_manager.dart';
-import 'package:window_manager/window_manager.dart';
+import 'package:t_max/common/window_lifecycle_mixin.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
@@ -39,12 +37,12 @@ class MyHomePage extends StatefulWidget {
 }
 
 class MyHomePageState extends State<MyHomePage>
-    with TrayListener, WindowListener {
+    with WindowLifecycleMixin {
   String _selectedNavRoute = '/';
   String lastRouteName = defualtSelectPage; //除了设置外的最后一个路由
 
   bool isLeftBarCollapsed = false;
-  bool isResize = false;
+  // isResize 已经在 WindowLifecycleMixin 中定义
   DateTime dataTimeNow = DateTime.now();
 
   dynamic _eventbus1;
@@ -74,60 +72,11 @@ class MyHomePageState extends State<MyHomePage>
     });
   }
 
-  @override
-  void onWindowResize() {
-    isResize = true;
-  }
 
-  @override
-  void onWindowClose() async {
-    bool isPreventClose = await windowManager.isPreventClose();
-    if (isPreventClose) {
-      if (mounted) {
-        showDialog(
-          context: context,
-          barrierDismissible: false, // 允许点击空白处关闭对话框
-          builder: (context) {
-            return CustomAlertDialog(
-              titleText: localizedStrings.gTipExitApp,
-              onNoPressed: () {
-                Navigator.of(context).pop();
-              },
-              onYesPressed: () async {
-                Navigator.of(context).pop();
-                dispose();
-                await trayManager.destroy(); //退出系统托盘
-                await windowManager.destroy();
-                exit(0);
-              },
-            );
-          },
-        );
-      }
-    }
-  }
-
-  @override
-  void onWindowMaximize() {
-    isResize = true;
-  }
-
-  @override
-  void onWindowUnmaximize() {
-    isResize = true;
-  }
-
-  @override
-  void onWindowMinimize() {
-    isResize = true;
-  }
 
   @override
   void initState() {
-    trayManager.addListener(this);
-    windowManager.addListener(this);
-
-    windowManager.setMinimumSize(Size(1320, 720));
+    initWindowLifecycle();
     super.initState();
 
     _eventbus1 = eventBus.on<EventDialogData>().listen((event) {
@@ -244,9 +193,9 @@ class MyHomePageState extends State<MyHomePage>
     _eventbus8.cancel();
     _eventbus9.cancel();
 
-    trayManager.removeListener(this);
-    windowManager.removeListener(this);
+    disposeWindowLifecycle();
 
+    scrollController.dispose();
     super.dispose();
   }
 

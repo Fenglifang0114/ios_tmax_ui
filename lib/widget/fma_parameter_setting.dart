@@ -55,6 +55,12 @@ class _FmaParameterSettingDialogState extends State<FmaParameterSettingDialog> {
   }
 
   @override
+  void dispose() {
+    stableTimeCtl.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Dialog(
       backgroundColor: Colors.transparent,

@@ -394,6 +394,11 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
     protocolCtl.dispose();
     dataBitCtl.dispose();
     stopBitCtl.dispose();
+    scaleModelCtl.dispose();
+    snCtl.dispose();
+    macCtl.dispose();
+    btNameCtl.dispose();
+    checkIsOnlineTimer?.cancel();
     super.dispose();
   }
 

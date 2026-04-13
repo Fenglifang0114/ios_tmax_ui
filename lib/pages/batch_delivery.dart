@@ -508,6 +508,21 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
     _eventbus9.cancel();
     _eventbus10.cancel();
     _eventbus11.cancel();
+    btNameCtl.dispose();
+    wifiNameCtl.dispose();
+    ipAddrCtl.dispose();
+    firmwarePathCtl.dispose();
+    prnFmt1Ctl.dispose();
+    prnFmt2Ctl.dispose();
+    prnFmt3Ctl.dispose();
+    prnFmt4Ctl.dispose();
+    serialOutput1Ctl.dispose();
+    serialOutput2Ctl.dispose();
+    serialOutput3Ctl.dispose();
+    serialOutput4Ctl.dispose();
+    serialOutput5Ctl.dispose();
+    serialOutput6Ctl.dispose();
+    _ipListCtl.dispose();
     super.dispose();
   }
 

@@ -51,7 +51,9 @@ class LabelDesignPageState extends State<LabelDesignPage> {
   bool isMovingSelected = false;
   final FocusNode _focusNode = FocusNode();
   final TextEditingController _widthController = TextEditingController();
+  final FocusNode _canvasWidthFocusNode = FocusNode();
   final TextEditingController _heightController = TextEditingController();
+  final FocusNode _canvasHeightFocusNode = FocusNode();
   List<AlignmentLine> alignmentLines = [];
   final TextEditingController _textController = TextEditingController();
   final TextEditingController _textWidthController = TextEditingController();
@@ -353,6 +355,7 @@ class LabelDesignPageState extends State<LabelDesignPage> {
   }
 
   void startSelection(Offset position) {
+    _focusNode.requestFocus();
     setState(() {
       isSelecting = true;
       selectionStart = position;
@@ -443,6 +446,80 @@ class LabelDesignPageState extends State<LabelDesignPage> {
     });
   }
 
+  void _calculateAlignmentLines(
+      DraggableElement movingElement, Offset newPosition) {
+    for (DraggableElement otherElement in elements) {
+      if (!selectedElements.contains(otherElement)) {
+        // 顶部对齐
+        if ((newPosition.dy).round() == otherElement.position.dy.round()) {
+          alignmentLines.add(AlignmentLine(
+            start: Offset(0, newPosition.dy),
+            end: Offset(canvasSize.width, newPosition.dy),
+          ));
+        }
+        // 底部对齐
+        if ((newPosition.dy + movingElement.size.height).round() ==
+            (otherElement.position.dy + otherElement.size.height).round()) {
+          alignmentLines.add(AlignmentLine(
+            start: Offset(0, newPosition.dy + movingElement.size.height),
+            end: Offset(
+                canvasSize.width, newPosition.dy + movingElement.size.height),
+          ));
+        }
+        // 左侧对齐
+        if ((newPosition.dx).round() == otherElement.position.dx.round()) {
+          alignmentLines.add(AlignmentLine(
+            start: Offset(newPosition.dx, 0),
+            end: Offset(newPosition.dx, canvasSize.height),
+          ));
+        }
+        // 右侧对齐
+        if ((newPosition.dx + movingElement.size.width).round() ==
+            (otherElement.position.dx + otherElement.size.width).round()) {
+          alignmentLines.add(AlignmentLine(
+            start: Offset(newPosition.dx + movingElement.size.width, 0),
+            end: Offset(
+                newPosition.dx + movingElement.size.width, canvasSize.height),
+          ));
+        }
+        // 移动控件的右侧边框与其他控件的左侧边框对齐
+        if ((newPosition.dx + movingElement.size.width).round() ==
+            otherElement.position.dx.round()) {
+          alignmentLines.add(AlignmentLine(
+            start: Offset(newPosition.dx + movingElement.size.width, 0),
+            end: Offset(
+                newPosition.dx + movingElement.size.width, canvasSize.height),
+          ));
+        }
+        // 移动控件的左侧边框与其他控件的右侧边框对齐
+        if ((newPosition.dx).round() ==
+            (otherElement.position.dx + otherElement.size.width).round()) {
+          alignmentLines.add(AlignmentLine(
+            start: Offset(newPosition.dx, 0),
+            end: Offset(newPosition.dx, canvasSize.height),
+          ));
+        }
+        // 移动控件的上边框与其他控件的下边框对齐
+        if ((newPosition.dy).round() ==
+            (otherElement.position.dy + otherElement.size.height).round()) {
+          alignmentLines.add(AlignmentLine(
+            start: Offset(0, newPosition.dy),
+            end: Offset(canvasSize.width, newPosition.dy),
+          ));
+        }
+        // 移动控件的下边框与其他控件的上边框对齐
+        if ((newPosition.dy + movingElement.size.height).round() ==
+            otherElement.position.dy.round()) {
+          alignmentLines.add(AlignmentLine(
+            start: Offset(0, newPosition.dy + movingElement.size.height),
+            end: Offset(
+                canvasSize.width, newPosition.dy + movingElement.size.height),
+          ));
+        }
+      }
+    }
+  }
+
   void moveSelectedElements(Offset delta) {
     if (selectedElements.length == 1) {
       setState(() {
@@ -461,76 +538,7 @@ class LabelDesignPageState extends State<LabelDesignPage> {
 
         Offset newPosition = Offset(newX, newY);
 
-        for (DraggableElement otherElement in elements) {
-          if (otherElement != movingElement) {
-            // 顶部对齐
-            if ((newPosition.dy).round() == otherElement.position.dy.round()) {
-              alignmentLines.add(AlignmentLine(
-                start: Offset(0, newPosition.dy),
-                end: Offset(canvasSize.width, newPosition.dy),
-              ));
-            }
-            // 底部对齐
-            if ((newPosition.dy + movingElement.size.height).round() ==
-                (otherElement.position.dy + otherElement.size.height).round()) {
-              alignmentLines.add(AlignmentLine(
-                start: Offset(0, newPosition.dy + movingElement.size.height),
-                end: Offset(canvasSize.width,
-                    newPosition.dy + movingElement.size.height),
-              ));
-            }
-            // 左侧对齐
-            if ((newPosition.dx).round() == otherElement.position.dx.round()) {
-              alignmentLines.add(AlignmentLine(
-                start: Offset(newPosition.dx, 0),
-                end: Offset(newPosition.dx, canvasSize.height),
-              ));
-            }
-            // 右侧对齐
-            if ((newPosition.dx + movingElement.size.width).round() ==
-                (otherElement.position.dx + otherElement.size.width).round()) {
-              alignmentLines.add(AlignmentLine(
-                start: Offset(newPosition.dx + movingElement.size.width, 0),
-                end: Offset(newPosition.dx + movingElement.size.width,
-                    canvasSize.height),
-              ));
-            }
-            // 移动控件的右侧边框与其他控件的左侧边框对齐
-            if ((newPosition.dx + movingElement.size.width).round() ==
-                otherElement.position.dx.round()) {
-              alignmentLines.add(AlignmentLine(
-                start: Offset(newPosition.dx + movingElement.size.width, 0),
-                end: Offset(newPosition.dx + movingElement.size.width,
-                    canvasSize.height),
-              ));
-            }
-            // 移动控件的左侧边框与其他控件的右侧边框对齐
-            if ((newPosition.dx).round() ==
-                (otherElement.position.dx + otherElement.size.width).round()) {
-              alignmentLines.add(AlignmentLine(
-                start: Offset(newPosition.dx, 0),
-                end: Offset(newPosition.dx, canvasSize.height),
-              ));
-            }
-            // 移动控件的上边框与其他控件的下边框对齐
-            if ((newPosition.dy).round() ==
-                (otherElement.position.dy + otherElement.size.height).round()) {
-              alignmentLines.add(AlignmentLine(
-                start: Offset(0, newPosition.dy),
-                end: Offset(canvasSize.width, newPosition.dy),
-              ));
-            }
-            // 移动控件的下边框与其他控件的上边框对齐
-            if ((newPosition.dy + movingElement.size.height).round() ==
-                otherElement.position.dy.round()) {
-              alignmentLines.add(AlignmentLine(
-                start: Offset(0, newPosition.dy + movingElement.size.height),
-                end: Offset(canvasSize.width,
-                    newPosition.dy + movingElement.size.height),
-              ));
-            }
-          }
-        }
+        _calculateAlignmentLines(movingElement, newPosition);
 
         movingElement.position = newPosition;
         // 更新控件信息
@@ -560,7 +568,9 @@ class LabelDesignPageState extends State<LabelDesignPage> {
           for (DraggableElement element in selectedElements) {
             double newX = element.position.dx + delta.dx;
             double newY = element.position.dy + delta.dy;
-            element.position = Offset(newX, newY);
+            Offset newPosition = Offset(newX, newY);
+            _calculateAlignmentLines(element, newPosition);
+            element.position = newPosition;
           }
         }
         // 选择多个控件时清空信息
@@ -573,6 +583,7 @@ class LabelDesignPageState extends State<LabelDesignPage> {
   }
 
   void clearSelection() {
+    _focusNode.requestFocus();
     setState(() {
       selectedElements.clear();
       isMovingSelected = false;
@@ -623,8 +634,8 @@ class LabelDesignPageState extends State<LabelDesignPage> {
     });
   }
 
-  void handleKeyEvent(RawKeyEvent event) {
-    if (event is RawKeyDownEvent) {
+  void handleKeyEvent(KeyEvent event) {
+    if (event is KeyDownEvent) {
       if (event.logicalKey == LogicalKeyboardKey.arrowUp) {
         _saveState();
         moveSelectedElements(const Offset(0, -1));
@@ -640,11 +651,11 @@ class LabelDesignPageState extends State<LabelDesignPage> {
       } else if (event.logicalKey == LogicalKeyboardKey.delete) {
         _saveState();
         deleteSelectedElements();
-      } else if (event.isControlPressed &&
-          event.isShiftPressed &&
+      } else if (HardwareKeyboard.instance.isControlPressed &&
+          HardwareKeyboard.instance.isShiftPressed &&
           event.logicalKey == LogicalKeyboardKey.keyZ) {
         _redo();
-      } else if (event.isControlPressed &&
+      } else if (HardwareKeyboard.instance.isControlPressed &&
           event.logicalKey == LogicalKeyboardKey.keyZ) {
         _undo();
       } else {}
@@ -652,6 +663,7 @@ class LabelDesignPageState extends State<LabelDesignPage> {
   }
 
   void selectSingleElement(DraggableElement element) {
+    _focusNode.requestFocus();
     setState(() {
       selectedElements = [element];
       isMovingSelected = false;
@@ -689,6 +701,7 @@ class LabelDesignPageState extends State<LabelDesignPage> {
 
   void updateCanvasSize(BuildContext scaffoldContext) {
     _saveState();
+    //_focusNode.requestFocus(); // FIX: Removed to prevent canvas stealing focus while typing width/height
     double? width = double.tryParse(_widthController.text);
     double? height = double.tryParse(_heightController.text);
 
@@ -713,6 +726,7 @@ class LabelDesignPageState extends State<LabelDesignPage> {
 
   void updateTextContent() {
     _saveState();
+    _focusNode.requestFocus();
     if (selectedElements.length == 1 &&
         selectedElements.first.type == ElementType.text) {
       setState(() {
@@ -723,6 +737,7 @@ class LabelDesignPageState extends State<LabelDesignPage> {
 
   void updateMaxLenth(BuildContext scaffoldContext) {
     _saveState();
+    _focusNode.requestFocus();
     int maxlenthInt = int.tryParse(maxLenthController.text) ?? 0;
     if (maxlenthInt != 0) {
       setState(() {
@@ -740,6 +755,7 @@ class LabelDesignPageState extends State<LabelDesignPage> {
 
   void updateTextSize(BuildContext context) {
     _saveState();
+    _focusNode.requestFocus();
     double? width = double.tryParse(_textWidthController.text);
     double? height = double.tryParse(_textHeightController.text);
 
@@ -775,6 +791,7 @@ class LabelDesignPageState extends State<LabelDesignPage> {
 
   void updateFontSize(String value) {
     _saveState();
+    _focusNode.requestFocus();
     setState(() {
       selectedElements.first.fontSize = value;
       lastFontSize = value;
@@ -783,6 +800,7 @@ class LabelDesignPageState extends State<LabelDesignPage> {
 
   void rotateSelectedElement(String degrees) {
     _saveState();
+    _focusNode.requestFocus();
     int degreeInt = int.tryParse(degrees)!;
 
     if (selectedElements.length == 1) {
@@ -809,6 +827,7 @@ class LabelDesignPageState extends State<LabelDesignPage> {
 
   Future<void> _pickImage() async {
     _saveState();
+    _focusNode.requestFocus();
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
 
@@ -821,6 +840,7 @@ class LabelDesignPageState extends State<LabelDesignPage> {
 
   void fontBoldSelectedElement(String value) {
     _saveState();
+    _focusNode.requestFocus();
     setState(() {
       selectedElements.first.fontBold = value;
       _selectFontBold = value;
@@ -829,6 +849,7 @@ class LabelDesignPageState extends State<LabelDesignPage> {
 
   void fontReverseSelectedElement(String value) {
     _saveState();
+    _focusNode.requestFocus();
     setState(() {
       selectedElements.first.fontReverse = value;
       _selectFontReverse = value;
@@ -837,6 +858,7 @@ class LabelDesignPageState extends State<LabelDesignPage> {
 
   void alignmentSelectedElement(String value) {
     _saveState();
+    _focusNode.requestFocus();
     if (selectedElements.length == 1) {
       setState(() {
         selectedElements.first.alignment = value;
@@ -867,6 +889,7 @@ class LabelDesignPageState extends State<LabelDesignPage> {
   //下拉Barcode
   void _handleBarcodeSelected(String value) {
     _saveState();
+    _focusNode.requestFocus();
     setState(() {
       _selectedBarcode = value;
       DraggableElement element = selectedElements.first;
@@ -919,6 +942,7 @@ class LabelDesignPageState extends State<LabelDesignPage> {
   //下拉qr宽度
   void _handleQrWidthSelected(String value) {
     _saveState();
+    _focusNode.requestFocus();
     _selectedQrWidth = value;
     double width = double.parse(value) * 21;
     if (width > canvasSize.width || width > canvasSize.height) {
@@ -935,6 +959,7 @@ class LabelDesignPageState extends State<LabelDesignPage> {
   //下拉Barcode
   void _handleQrcodeSelected(String value) {
     _saveState();
+    _focusNode.requestFocus();
     _selectedQrcode = value;
     DraggableElement element = selectedElements.first;
     if (_selectedQrcode == '--') {
@@ -980,6 +1005,7 @@ class LabelDesignPageState extends State<LabelDesignPage> {
 
   void hralignmentSelectedElement(String value) {
     _saveState();
+    _focusNode.requestFocus();
     if (selectedElements.length == 1) {
       setState(() {
         selectedElements.first.hralignment = value;
@@ -1881,7 +1907,7 @@ class LabelDesignPageState extends State<LabelDesignPage> {
                                 child: showInputBox(
                                     context, _widthController, '', (value) {
                                   updateCanvasSize(context);
-                                }, true))
+                                }, true, focusNode: _canvasWidthFocusNode))
                           ],
                         ),
                       )
@@ -1904,7 +1930,7 @@ class LabelDesignPageState extends State<LabelDesignPage> {
                                 child: showInputBox(
                                     context, _heightController, '', (value) {
                                   updateCanvasSize(context);
-                                }, true))
+                                }, true, focusNode: _canvasHeightFocusNode))
                           ],
                         ),
                       )
@@ -2875,7 +2901,7 @@ class LabelDesignPageState extends State<LabelDesignPage> {
                         child: elementWidget,
                       ),
                     );
-                  }).toList(),
+                  }),
                   if (isSelecting)
                     Positioned(
                       left: selectionStart!.dx < selectionEnd!.dx
@@ -2905,7 +2931,7 @@ class LabelDesignPageState extends State<LabelDesignPage> {
                         painter: AlignmentLinePainter(line.start, line.end),
                       ),
                     );
-                  }).toList(),
+                  }),
                 ],
               ),
             ),
@@ -2938,9 +2964,9 @@ class LabelDesignPageState extends State<LabelDesignPage> {
 
     final verticalScrollController = ScrollController();
     final horizontalScrollController = ScrollController();
-    return RawKeyboardListener(
+    return KeyboardListener(
         focusNode: _focusNode,
-        onKey: handleKeyEvent,
+        onKeyEvent: handleKeyEvent,
         child: Builder(builder: (scaffoldContext) {
           return Scaffold(
               body: Container(

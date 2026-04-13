@@ -177,7 +177,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
         Timer.periodic(const Duration(milliseconds: 50), (timer) {
       if (myReqWeightCountine.msgBody == null) {
         stableDurationCounter = 0;
-      } else if (!myReqWeightCountine.msgBody!.isStable) {
+      } else if (!(myReqWeightCountine.msgBody?.isStable ?? false)) {
         stableDurationCounter = 0;
       } else if (myReqWeightCountine.msgBody != null &&
           myReqWeightCountine.msgBody!.isStable &&
@@ -206,7 +206,8 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
     stableDurationCounter = 0;
   }
 
-  // nextStep 方法
+  /// 配方单步称算流转核心逻辑。 
+  /// 当前配料（或容器）重量被计算并在设定的误差率容差范围 [errorWgt] 达标后，切换游标推进到对下一步（下一种原料）的处理。
   void nextStep(String isWgtOk) {
     double currentTempWgtValue = currentRawWgt;
     handleOkStatus(isWgtOk, currentTempWgtValue);
@@ -231,7 +232,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
 
   //初始化秤的列表
   void initScaleMap() {
-    if (myFmaInfo.header!.needContainer!) {
+    if ((myFmaInfo.header?.needContainer ?? false)) {
       scaleMap[widget.selScaleId] = false;
     }
     for (var detail in myFmaInfo.details!) {
@@ -269,13 +270,14 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
     return 0;
   }
 
-//百分比模式下初始化重量和单位
+/// 初始化容积及百分比 (Percentage) 计算基准。
+  /// 必须根据实际作业中的总预期生产重量 [initTotalWeight] 来实时推算每一种辅料实际需要分配的靶向重量。
   void initTotalWgtUnit() {
-    if (myFmaInfo.header!.formulaMode == 'pct') {
+    if ((myFmaInfo.header?.formulaMode ?? '') == 'pct') {
       initTotalWeight = widget.totalFmaWgt;
       initTotalWeight = double.parse(initTotalWeight.toStringAsFixed(3));
-      myFmaInfo.header!.formulaUnit = widget.fmaUnit;
-      myFmaInfo.header!.totalWeight = initTotalWeight;
+      myFmaInfo.header?.formulaUnit = widget.fmaUnit;
+      myFmaInfo.header?.totalWeight = initTotalWeight;
       needTotalWgt = initTotalWeight;
     }
   }
@@ -285,10 +287,10 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
     double maxValue = 0.0;
     double errorWgt = 0.0; //误差重量值
     double targetWgt = 0.0; //目标重量值
-    String fmode = myFmaInfo.header!.formulaMode ?? '';
-    needTotalWgt = myFmaInfo.header!.totalWeight!;
+    String fmode = (myFmaInfo.header?.formulaMode ?? '');
+    needTotalWgt = (myFmaInfo.header?.totalWeight ?? 0.0);
     //如果包含容器，第一个写容器  修改了此处
-    if (myFmaInfo.header!.needContainer!) {
+    if ((myFmaInfo.header?.needContainer ?? false)) {
       FormulaWgtProcessData processWgt = FormulaWgtProcessData(
           no: 0,
           rawId: '-',
@@ -381,7 +383,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
     PublicFunctions.getScaleInputSetting();
 
     GetRawOutputByFmaId getRawOutputByFmaId = GetRawOutputByFmaId(
-      formulaId: widget.selectFormula.header!.formulaId,
+      formulaId: (widget.selectFormula.header?.formulaId ?? ''),
     );
     PublicFunctions.getRawOutputByFmaId(jsonEncode(getRawOutputByFmaId));
 
@@ -469,7 +471,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
             List<FormulaInfoDb> tempFmaData = formulaInfoDbFromJson(dataStr);
 
             for (var formula in tempFmaData) {
-              if (formula.header!.formulaId == myFmaInfo.header!.formulaId) {
+              if ((formula.header?.formulaId ?? '') == (myFmaInfo.header?.formulaId ?? '')) {
                 myFmaInfo = formula;
                 //不能清空，要记录下来当前的重量，重新去计算
                 List<FormulaWgtProcessData> oldProcessWgtList =
@@ -696,6 +698,25 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
 
   @override
   void dispose() {
+    _scrollController.dispose();
+    encryptedCtl.dispose();
+    formulaTypeCtl.dispose();
+    rawTypeCtl.dispose();
+    autoNextStepTimer?.cancel();
+    _cntAliveTimer?.cancel();
+    _eventbus1?.cancel();
+    _eventbus2?.cancel();
+    _eventbus3?.cancel();
+    _eventbus4?.cancel();
+    _eventbus5?.cancel();
+    _eventbus6?.cancel();
+    _eventbus7?.cancel();
+    _eventbus8?.cancel();
+    _eventbus9?.cancel();
+    _eventbus10?.cancel();
+    _eventbus11?.cancel();
+    _eventbus12?.cancel();
+    _eventbus13?.cancel();
     super.dispose();
     _disposeEventBusSubscriptions();
     stopCntAliveTimer();
@@ -784,22 +805,22 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
       needTotalWgt = needTotalWgt * ratio; // 更新需要的总重量
       needTotalWgt = double.parse(needTotalWgt.toStringAsFixed(3)); // 保留三位小数
 
-      if (widget.selectFormula.header!.formulaMode == 'pct') {
+      if ((widget.selectFormula.header?.formulaMode ?? '') == 'pct') {
         for (var item in processWgtList) {
           if (item.no == 0) {
             continue;
           }
           item.targetWgt = needTotalWgt * item.targetPct! / 100;
-          item.targetWgt = double.parse(item.targetWgt!.toStringAsFixed(3));
+          item.targetWgt = (double.tryParse(item.targetWgt?.toStringAsFixed(3) ?? '') ?? 0.0);
           item.errorWgt = needTotalWgt * item.errorPct! / 100;
-          item.errorWgt = double.parse(item.errorWgt!.toStringAsFixed(3));
+          item.errorWgt = (double.tryParse(item.errorWgt?.toStringAsFixed(3) ?? '') ?? 0.0);
           item.minWgt = item.targetWgt! - item.errorWgt!;
-          item.minWgt = double.parse(item.minWgt!.toStringAsFixed(3));
+          item.minWgt = (double.tryParse(item.minWgt?.toStringAsFixed(3) ?? '') ?? 0.0);
           item.maxWgt = item.targetWgt! + item.errorWgt!;
-          item.maxWgt = double.parse(item.maxWgt!.toStringAsFixed(3));
+          item.maxWgt = (double.tryParse(item.maxWgt?.toStringAsFixed(3) ?? '') ?? 0.0);
           item.currentErrorWgt = item.currentWgt! - item.targetWgt!;
           item.currentErrorWgt =
-              double.parse(item.currentErrorWgt!.toStringAsFixed(3));
+              (double.tryParse(item.currentErrorWgt?.toStringAsFixed(3) ?? '') ?? 0.0);
           item.isOK = checkIsOk(item.currentWgt!, item.minWgt!, item.maxWgt!);
         }
       } else {
@@ -809,14 +830,14 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
             continue;
           }
           item.targetWgt = needTotalWgt * item.targetWgt! / lastNeedTotalWgt;
-          item.targetWgt = double.parse(item.targetWgt!.toStringAsFixed(3));
+          item.targetWgt = (double.tryParse(item.targetWgt?.toStringAsFixed(3) ?? '') ?? 0.0);
           item.minWgt = item.targetWgt! - item.errorWgt!;
-          item.minWgt = double.parse(item.minWgt!.toStringAsFixed(3));
+          item.minWgt = (double.tryParse(item.minWgt?.toStringAsFixed(3) ?? '') ?? 0.0);
           item.maxWgt = item.targetWgt! + item.errorWgt!;
-          item.maxWgt = double.parse(item.maxWgt!.toStringAsFixed(3));
+          item.maxWgt = (double.tryParse(item.maxWgt?.toStringAsFixed(3) ?? '') ?? 0.0);
           item.currentErrorWgt = item.currentWgt! - item.targetWgt!;
           item.currentErrorWgt =
-              double.parse(item.currentErrorWgt!.toStringAsFixed(3));
+              (double.tryParse(item.currentErrorWgt?.toStringAsFixed(3) ?? '') ?? 0.0);
           item.isOK = checkIsOk(item.currentWgt!, item.minWgt!, item.maxWgt!);
         }
       }
@@ -836,10 +857,10 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
       if (myReqWeightCountine.msgBody != null) {
         try {
           currentWgtStrNotifier.value =
-              myReqWeightCountine.msgBody!.weightVal; // 更新当前重量
-          currentRawWgt = double.parse(myReqWeightCountine.msgBody!.weightVal);
+              (myReqWeightCountine.msgBody?.weightVal ?? ''); // 更新当前重量
+          currentRawWgt = (double.tryParse(myReqWeightCountine.msgBody?.weightVal ?? '') ?? 0.0);
           currentRawWgt = double.parse(currentRawWgt.toStringAsFixed(3));
-          if (!myReqWeightCountine.msgBody!.isStable) {
+          if (!(myReqWeightCountine.msgBody?.isStable ?? false)) {
             stableDurationCounter = 0;
           }
         } catch (e) {
@@ -852,8 +873,8 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
 
   /// 检查单位一致性（不一致则显示提示）
   void _checkUnitConsistency() {
-    if (myReqWeightCountine.msgBody!.weightUnit !=
-            myFmaInfo.header!.formulaUnit &&
+    if ((myReqWeightCountine.msgBody?.weightUnit ?? '') !=
+            (myFmaInfo.header?.formulaUnit ?? '') &&
         isShowTipDialog == false) {
       isShowTipDialog = true;
       _showUnitMismatchTip();
@@ -869,7 +890,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
         return ShowUnitTipDialog(
           title: localizedStrings.fTipTitle,
           msg:
-              '${localizedStrings.fWgtUnit} ${myFmaInfo.header!.formulaUnit!}, ${localizedStrings.fSwitchUnitHint}',
+              '${localizedStrings.fWgtUnit} ${(myFmaInfo.header?.formulaUnit ?? '')}, ${localizedStrings.fSwitchUnitHint}',
         );
       },
     ).then((value) {
@@ -950,14 +971,14 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
     RecHeader recHeader = RecHeader(
       recordId: recRecNumber, //配方订单编号
       recHeaderOperator: mySysUser.nickName!, //操作员
-      formulaId: myFmaInfo.header!.formulaId, //配方ID
-      formulaTypeName: myFmaInfo.header!.formulaName, //配方名称
-      totalWeight: myFmaInfo.header!.totalWeight!, //总重量
+      formulaId: (myFmaInfo.header?.formulaId ?? ''), //配方ID
+      formulaTypeName: (myFmaInfo.header?.formulaName ?? ''), //配方名称
+      totalWeight: (myFmaInfo.header?.totalWeight ?? 0.0), //总重量
       actualFmaTotalWgt: needTotalWgt, //实际配方总重量包括修正的重量
       actualTotalWeight: actualTotalRawWgt, //实际原料总重量
-      totalWeightUnit: myFmaInfo.header!.formulaUnit, //总重量单位
+      totalWeightUnit: (myFmaInfo.header?.formulaUnit ?? ''), //总重量单位
 
-      totalMaterialWeightUnit: myFmaInfo.header!.formulaUnit, //总原料重量单位
+      totalMaterialWeightUnit: (myFmaInfo.header?.formulaUnit ?? ''), //总原料重量单位
       isQualified: isAllOK ? 'yes' : 'no', //是否合格
       scaleId: 0, //秤ID // 明细中包含了秤的信息，表头就不要了
       scaleName: "", //秤名称
@@ -1074,7 +1095,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
       recId: 0,
       orderId: recRecNumber, //配方订单编号
       createdBy: mySysUser.nickName!, //操作员
-      formulaId: myFmaInfo.header!.formulaId, //配方ID
+      formulaId: (myFmaInfo.header?.formulaId ?? ''), //配方ID
 
       status: 0,
       remark: '',
@@ -1421,7 +1442,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
           double maxWidth = constraints.maxWidth;
           // 计算表格的实际宽度，减去左侧和右侧的边距
           int columnCount = 7; // 列数
-          if (myFmaInfo.header!.formulaMode == "pct") {
+          if ((myFmaInfo.header?.formulaMode ?? '') == "pct") {
             columnCount = 8;
           }
           double tableWidth = maxWidth - 45 - 80;
@@ -1547,7 +1568,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
                     return showTableTitle(title.title);
                   },
                 ),
-                if (myFmaInfo.header!.formulaMode == "pct")
+                if ((myFmaInfo.header?.formulaMode ?? '') == "pct")
                   StickyTableColumn(
                     localizedStrings.fPctMode,
                     columnWidth: FixedColumnWidth(columnWidth),
@@ -1754,10 +1775,10 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
 
   showFName() {
     String name = "";
-    if (myFmaInfo.header == null || myFmaInfo.header!.formulaName == null) {
+    if (myFmaInfo.header == null || myFmaInfo.header?.formulaName == null) {
       name = "";
     } else {
-      name = myFmaInfo.header!.formulaName!;
+      name = (myFmaInfo.header?.formulaName ?? '');
     }
     return Expanded(
       child: Text(
@@ -1835,7 +1856,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
                             color: colorScheme.onSurfaceVariant),
                       ),
                       TextSpan(
-                        text: myFmaInfo.header!.formulaId!,
+                        text: (myFmaInfo.header?.formulaId ?? ''),
                         style: getTitleTextStyle(),
                       ),
                       TextSpan(
@@ -1857,7 +1878,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
                             color: colorScheme.onSurfaceVariant),
                       ),
                       TextSpan(
-                        text: myFmaInfo.header!.formulaBarcode!,
+                        text: (myFmaInfo.header?.formulaBarcode ?? ''),
                         style: getTitleTextStyle(),
                       ),
                     ],
@@ -1907,7 +1928,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
             child: SelectableText(
               myFmaInfo.header == null || myFmaInfo.header!.remark == null
                   ? ""
-                  : myFmaInfo.header!.remark!,
+                  : (myFmaInfo.header?.remark ?? ''),
               style: getTextStyle(color: colorScheme.onSurfaceVariant),
             ),
           ),
@@ -1917,7 +1938,8 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
   }
 
   String checkIsOk(double currValue, double minValue, double maxValue) {
-    //判断当前的值是否达标
+    /// 核心误差界定逻辑。 
+  /// 将目前底层上报读数累加上原本的皮重（容器和已装填物），并与 [minWgt] 及 [maxWgt] 比对，从而向 UI 层反馈状态色(`ok`, `low`, `high`)。
     String isWgtOk = '';
     if (currValue >= minValue && currValue <= maxValue) {
       isWgtOk = "ok";
@@ -1930,10 +1952,11 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
   }
 
   String checkValueIsOk() {
-    //判断当前的值是否达标
+    /// 核心误差界定逻辑。 
+  /// 将目前底层上报读数累加上原本的皮重（容器和已装填物），并与 [minWgt] 及 [maxWgt] 比对，从而向 UI 层反馈状态色(`ok`, `low`, `high`)。
     String isWgtOk = '';
-    double minWgt = double.parse(selectedProcessWgt.minWgt!.toStringAsFixed(3));
-    double maxWgt = double.parse(selectedProcessWgt.maxWgt!.toStringAsFixed(3));
+    double minWgt = (double.tryParse(selectedProcessWgt.minWgt?.toStringAsFixed(3) ?? '') ?? 0.0);
+    double maxWgt = (double.tryParse(selectedProcessWgt.maxWgt?.toStringAsFixed(3) ?? '') ?? 0.0);
     if (currentRawWgt + selectedProcessWgt.currentWgt! >= minWgt &&
         currentRawWgt + selectedProcessWgt.currentWgt! <= maxWgt) {
       isWgtOk = "ok";
@@ -2611,7 +2634,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
       return;
     }
     //判断当前是否已经稳定
-    if (myReqWeightCountine.msgBody!.isStable == false) {
+    if ((myReqWeightCountine.msgBody?.isStable ?? false) == false) {
       showTipInfo(localizedStrings.fStableOperationHint, context);
       return;
     }
@@ -2694,7 +2717,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
     processWgtList[clickedRow].currentWgt =
         currentTempWgtValue + processWgtList[clickedRow].currentWgt!;
     processWgtList[clickedRow].currentWgt =
-        double.parse(processWgtList[clickedRow].currentWgt!.toStringAsFixed(3));
+        (double.tryParse(processWgtList[clickedRow].currentWgt?.toStringAsFixed(3) ?? '') ?? 0.0);
     processWgtList[clickedRow].isOK = 'low';
     processWgtList[clickedRow].currentErrorWgt =
         (processWgtList[clickedRow].currentWgt! -
@@ -2751,13 +2774,14 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
     }
   }
 
-  //重新计算需要的重量
+  /// 根据用户实时修正的期望产出重量重算所有配方成分明细。
+  /// 如果业务模式是 'pct'，则每一个成分实际 Target = 新基数 * pct占比，若是绝对质量模式 'wgt' 则保持绝对值。
   recalculateWgtList(double lastNeedTotalWgt) {
     //根据模式计算需要的重量
-    if (myFmaInfo.header == null || myFmaInfo.header!.formulaMode == null) {
+    if (myFmaInfo.header == null || myFmaInfo.header?.formulaMode == null) {
       return;
     }
-    String fmaMode = myFmaInfo.header!.formulaMode!;
+    String fmaMode = (myFmaInfo.header?.formulaMode ?? '');
 
     if (fmaMode == 'wgt') {
       //按重量
@@ -2767,14 +2791,14 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
           continue;
         }
         item.targetWgt = needTotalWgt * item.targetWgt! / lastNeedTotalWgt;
-        item.targetWgt = double.parse(item.targetWgt!.toStringAsFixed(3));
+        item.targetWgt = (double.tryParse(item.targetWgt?.toStringAsFixed(3) ?? '') ?? 0.0);
         item.minWgt = item.targetWgt! - item.errorWgt!;
-        item.minWgt = double.parse(item.minWgt!.toStringAsFixed(3));
+        item.minWgt = (double.tryParse(item.minWgt?.toStringAsFixed(3) ?? '') ?? 0.0);
         item.maxWgt = item.targetWgt! + item.errorWgt!;
-        item.maxWgt = double.parse(item.maxWgt!.toStringAsFixed(3));
+        item.maxWgt = (double.tryParse(item.maxWgt?.toStringAsFixed(3) ?? '') ?? 0.0);
         item.currentErrorWgt = item.currentWgt! - item.targetWgt!;
         item.currentErrorWgt =
-            double.parse(item.currentErrorWgt!.toStringAsFixed(3));
+            (double.tryParse(item.currentErrorWgt?.toStringAsFixed(3) ?? '') ?? 0.0);
         item.isOK = checkIsOk(item.currentWgt!, item.minWgt!, item.maxWgt!);
       }
     } else {
@@ -2784,16 +2808,16 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
           continue;
         }
         item.targetWgt = needTotalWgt * item.targetPct! / 100;
-        item.targetWgt = double.parse(item.targetWgt!.toStringAsFixed(3));
+        item.targetWgt = (double.tryParse(item.targetWgt?.toStringAsFixed(3) ?? '') ?? 0.0);
         item.errorWgt = needTotalWgt * item.errorPct! / 100;
-        item.errorWgt = double.parse(item.errorWgt!.toStringAsFixed(3));
+        item.errorWgt = (double.tryParse(item.errorWgt?.toStringAsFixed(3) ?? '') ?? 0.0);
         item.minWgt = item.targetWgt! - item.errorWgt!;
-        item.minWgt = double.parse(item.minWgt!.toStringAsFixed(3));
+        item.minWgt = (double.tryParse(item.minWgt?.toStringAsFixed(3) ?? '') ?? 0.0);
         item.maxWgt = item.targetWgt! + item.errorWgt!;
-        item.maxWgt = double.parse(item.maxWgt!.toStringAsFixed(3));
+        item.maxWgt = (double.tryParse(item.maxWgt?.toStringAsFixed(3) ?? '') ?? 0.0);
         item.currentErrorWgt = item.currentWgt! - item.targetWgt!;
         item.currentErrorWgt =
-            double.parse(item.currentErrorWgt!.toStringAsFixed(3));
+            (double.tryParse(item.currentErrorWgt?.toStringAsFixed(3) ?? '') ?? 0.0);
         item.isOK = checkIsOk(item.currentWgt!, item.minWgt!, item.maxWgt!);
       }
     }
@@ -2847,7 +2871,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
       selectedProcessWgt = nextItem; // 更新选中的原料重量项
       _switchScaleByRawId(selectedProcessWgt.rawId!);
       //如果有容器
-      if (myFmaInfo.header != null && myFmaInfo.header!.needContainer!) {
+      if (myFmaInfo.header != null && (myFmaInfo.header?.needContainer ?? false)) {
         clickedRow = selectedProcessWgt.no!; // 更新点击的行索引
       } else {
         clickedRow = selectedProcessWgt.no! - 1; // 更新点击的行索引
@@ -2929,7 +2953,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
       selectedProcessWgt = processWgtList[clickedRow]; // 更新选中的原料重量项
       _switchScaleByRawId(selectedProcessWgt.rawId!);
       //如果有容器
-      if (myFmaInfo.header != null && myFmaInfo.header!.needContainer!) {
+      if (myFmaInfo.header != null && (myFmaInfo.header?.needContainer ?? false)) {
         clickedRow = selectedProcessWgt.no!; // 更新点击的行索引
       } else {
         clickedRow = selectedProcessWgt.no! - 1; // 更新点击的行索引
@@ -2962,7 +2986,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
               .firstWhere((item) => item.no == selectedProcessWgt.no);
           targetItem.currentWgt = tmpCurrWgt + targetItem.currentWgt!;
           targetItem.currentWgt =
-              double.parse(targetItem.currentWgt!.toStringAsFixed(3));
+              (double.tryParse(targetItem.currentWgt?.toStringAsFixed(3) ?? '') ?? 0.0);
           if (tmpCurrWgt > 0) {
             targetItem.scaleId = myScale.scaleId;
             targetItem.scaleName = myScale.scaleName;
@@ -2993,20 +3017,20 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
             .firstWhere((item) => item.no == selectedProcessWgt.no);
         targetItem.currentWgt = currentRawWgt + selectedProcessWgt.currentWgt!;
         targetItem.currentWgt =
-            double.parse(targetItem.currentWgt!.toStringAsFixed(3));
+            (double.tryParse(targetItem.currentWgt?.toStringAsFixed(3) ?? '') ?? 0.0);
         targetItem.isOK = isWgtOk;
         targetItem.currentErrorWgt =
             (targetItem.currentWgt! - selectedProcessWgt.targetWgt!);
         targetItem.currentErrorWgt =
-            double.parse(targetItem.currentErrorWgt!.toStringAsFixed(3));
+            (double.tryParse(targetItem.currentErrorWgt?.toStringAsFixed(3) ?? '') ?? 0.0);
         //百分比模式算出百分比
-        if (myFmaInfo.header!.formulaMode! == 'pct') {
+        if ((myFmaInfo.header?.formulaMode ?? '') == 'pct') {
           //计算误差的百分比
           if (needTotalWgt > 0) {
             targetItem.currentErrorPct =
                 (targetItem.currentErrorWgt! / needTotalWgt) * 100;
             targetItem.currentErrorPct =
-                double.parse(targetItem.currentErrorPct!.toStringAsFixed(3));
+                (double.tryParse(targetItem.currentErrorPct?.toStringAsFixed(3) ?? '') ?? 0.0);
           }
         }
         if (currentRawWgt > 0) {
@@ -3051,11 +3075,11 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
       return wgt;
     }
 
-    if (myFmaInfo.header!.formulaUnit == 'g') {
+    if ((myFmaInfo.header?.formulaUnit ?? '') == 'g') {
       return wgt;
-    } else if (myFmaInfo.header!.formulaUnit == 'kg') {
+    } else if ((myFmaInfo.header?.formulaUnit ?? '') == 'kg') {
       wgt = wgt / 1000;
-    } else if (myFmaInfo.header!.formulaUnit == 'lb') {
+    } else if ((myFmaInfo.header?.formulaUnit ?? '') == 'lb') {
       wgt = wgt / 2.20462;
     }
     wgt = double.parse(wgt.toStringAsFixed(3));
@@ -3115,8 +3139,8 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
         selectedProcessWgt.targetWgt!) {
       return;
     }
-    if (myReqWeightCountine.msgBody!.weightUnit !=
-        myFmaInfo.header!.formulaUnit) {
+    if ((myReqWeightCountine.msgBody?.weightUnit ?? '') !=
+        (myFmaInfo.header?.formulaUnit ?? '')) {
       return;
     }
 
@@ -3171,8 +3195,8 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
         currentRawWgt < selectedProcessWgt.targetWgt! &&
         currentRawWgt + selectedProcessWgt.currentWgt! <
             selectedProcessWgt.targetWgt! &&
-        myReqWeightCountine.msgBody!.weightUnit ==
-            myFmaInfo.header!.formulaUnit &&
+        (myReqWeightCountine.msgBody?.weightUnit ?? '') ==
+            (myFmaInfo.header?.formulaUnit ?? '') &&
         currentPortSetting.isEnable &&
         currentPortSetting.portNo != 0);
   }

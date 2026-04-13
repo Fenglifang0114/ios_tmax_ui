@@ -21,6 +21,9 @@ import 'package:win32/win32.dart';
 const String serviceName = "TmaxService";
 const bool isServiceVersion = true; //是否是服务版本
 
+/// 应用程序全局入口点。
+/// 负责检查 Windows 服务状态、初始化 [WidgetsFlutterBinding]、
+/// 限制应用程序单例运行 (通过检测端口绑定) 并启动主界面的 Route 容器。
 Future<void> main() async {
   if (isServiceVersion) {
     //如果是服务的话，先检测服务是否开启
@@ -35,18 +38,15 @@ Future<void> main() async {
           TEXT("Error"),
           MB_ICONERROR | MB_OK,
         );
-        return;
+        exit(0);
       }
 
       // 检查服务是否正在运行
       bool isRunning = await checkServiceRunning(serviceName);
-      if (isRunning) {
-        // debugPrint("service $serviceName is running");
-      } else {
+      if (!isRunning) {
         bool startSuccess = await startServiceWithAdmin(serviceName);
 
         if (startSuccess) {
-          // debugPrint("service $serviceName start success");
           sleep(Duration(seconds: 2));
         } else {
           MessageBox(
@@ -55,7 +55,7 @@ Future<void> main() async {
             TEXT("Error"),
             MB_ICONERROR | MB_OK,
           );
-          return;
+          exit(0);
         }
       }
     } catch (e) {
@@ -65,7 +65,7 @@ Future<void> main() async {
         TEXT("Error"),
         MB_ICONERROR | MB_OK,
       );
-      return;
+      exit(0);
     }
   }
   WidgetsFlutterBinding.ensureInitialized();
@@ -90,7 +90,8 @@ Future<void> main() async {
   }
 }
 
-//初始化
+/// 读取系统页面 ID 配置并初始化。
+/// 将配置好的菜单 ID 与应用白名单加载到全局的 [selectedConfigPaidMenuIds] 和 [selectedAppsPaidMenuIds] 集合中进行校验。
 Future<void> initPageId() async {
   Map<String, dynamic> pageIds = await readPageIdsFromJsonReversed();
   if (pageIds.isNotEmpty) {
@@ -111,6 +112,8 @@ Future<void> initPageId() async {
   }
 }
 
+/// 检测并抢占单一进程专属端口号 (例如 58581)。
+/// 用于判断是否已有同名程序正在运行，以此实现应用程序在桌面端的单例启动 (Single Instance)。
 Future<bool> checkAndBindPort() async {
   ServerSocket? serverSocket;
   try {
@@ -123,13 +126,15 @@ Future<bool> checkAndBindPort() async {
   }
 }
 
-//初始化
+/// 异步初始化系统关键依赖。
+/// 加载本地动态色板（JSON 格式）绑定给全局 [colorTheme]，并准备系统标题栏参数。
 Future<void> ensureInitialized() async {
   colorTheme = await loadColorsFromJson();
   await mySystemVersionInfo.getTitle();
 }
 
-// 设置窗口选项
+/// 设定桌面客户端 (Windows, macOS, Linux) 的窗口初始参数。
+/// 包括设定初始宽高[Size]、隐藏原生的操作条 (TitleBarStyle) 等深度个性化设定。
 Future<void> setWindowOptions() async {
   if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
     setWindowMinSize(const Size(1320, 720));
@@ -154,6 +159,8 @@ Future<void> setWindowOptions() async {
   });
 }
 
+/// 读取配置文件中设置的 IP 地址。
+/// 作为后期底层 [WebSocket] 与服务网关进行绑定的目标地。
 Future<String> readIpAddr() async {
   String contentStr = '';
   String logFilePath = await getAppFilePath(myIpConfig);
@@ -167,6 +174,9 @@ Future<String> readIpAddr() async {
   return fileContent;
 }
 
+/// Flutter 框架的最核心根 Widget。
+/// 它负责在 Build 阶段前拉起后端的 [WebSocketManager] 进行实时通讯连接。
+/// 同时管理全局 [ThemeData] 的下发与多语言国际化 [localizationsDelegates] 的挂载支持。
 class MyApp extends StatelessWidget {
   const MyApp(this.savedLanguage, this.ipAddr, this.savedDarkMode, {super.key});
   final String savedLanguage;

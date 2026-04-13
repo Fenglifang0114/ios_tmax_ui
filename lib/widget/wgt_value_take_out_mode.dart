@@ -25,6 +25,8 @@ import 'package:t_max/eventbus/eventbus.dart';
 import 'package:t_max/functions/methods.dart';
 import 'package:t_max/widget/plu_select.dart';
 
+/// 出库/发料模式核心面板视图 (Take-Out Weighing View)。
+/// 用于计算物料提货和搬运出库时的动态重量获取。
 class ScaleWgtTakeOutWidget extends StatefulWidget {
   final int scaleId;
   final String scaleName;
@@ -138,12 +140,12 @@ class _ScaleWgtTakeOutWidgetState extends State<ScaleWgtTakeOutWidget> {
         : (mySettingParam.recMode == msgAuto)
             ? cstStableSave
             : cstManualSave;
-    dateformat = int.parse(mySettingParam.dateFormat);
-    zeroRange = double.tryParse(mySettingParam.zeroRange)!;
+    dateformat = int.tryParse(mySettingParam.dateFormat) ?? 0;
+    zeroRange = double.tryParse(mySettingParam.zeroRange) ?? 0.0;
     String timeString = (mySettingParam.stableTime == "")
         ? "0"
         : mySettingParam.stableTime.toString();
-    _stableSaveTime = int.parse(timeString);
+    _stableSaveTime = int.tryParse(timeString) ?? 0;
     if (weightMode == cstStableSave) {
       _isSaveBtnEnable = false;
     } else {
@@ -206,7 +208,7 @@ class _ScaleWgtTakeOutWidgetState extends State<ScaleWgtTakeOutWidget> {
     eventBus2 = eventBus.on<EventSaveTakeInOutWgt>().listen((event) {
       if (mounted) {
         if (isStart && startTakeOut) {
-          lastWgtValue = double.parse(weightInfo!.weightVal!);
+          lastWgtValue = double.tryParse(weightInfo?.weightVal ?? '0') ?? 0.0;
         }
       }
     });
@@ -220,12 +222,12 @@ class _ScaleWgtTakeOutWidgetState extends State<ScaleWgtTakeOutWidget> {
               : (mySettingParam.recMode == msgAuto)
                   ? cstStableSave
                   : cstManualSave;
-          dateformat = int.parse(mySettingParam.dateFormat);
-          zeroRange = double.tryParse(mySettingParam.zeroRange)!;
+          dateformat = int.tryParse(mySettingParam.dateFormat) ?? 0;
+          zeroRange = double.tryParse(mySettingParam.zeroRange) ?? 0.0;
           String timeString = (mySettingParam.stableTime == "")
               ? "0"
               : mySettingParam.stableTime.toString();
-          _stableSaveTime = int.parse(timeString);
+          _stableSaveTime = int.tryParse(timeString) ?? 0;
           if (weightMode == cstStableSave) {
             _isSaveBtnEnable = false;
           } else {
@@ -256,12 +258,12 @@ class _ScaleWgtTakeOutWidgetState extends State<ScaleWgtTakeOutWidget> {
               getWeightReportData();
               if (firstGetRec) {
                 int maxId =
-                    int.parse(currGetScaleRecords.weightRecords![0].id!);
+                    int.tryParse(currGetScaleRecords.weightRecords![0].id!) ?? 0;
                 maxRecId = maxId;
 
                 // 遍历 weightRecords 列表
                 for (var record in currGetScaleRecords.weightRecords!) {
-                  int currentId = int.parse(record.id!);
+                  int currentId = int.tryParse(record.id!) ?? 0;
                   if (currentId > maxId) {
                     maxId = currentId;
                     maxRecId = maxId;
@@ -623,7 +625,7 @@ class _ScaleWgtTakeOutWidgetState extends State<ScaleWgtTakeOutWidget> {
                 localizedStrings.gBtnStart,
                 isStart
                     ? () {
-                        if (double.parse(weightInfo?.weightVal ?? '0.000') <=
+                        if ((double.tryParse(weightInfo?.weightVal ?? '0.000') ?? 0.0) <=
                             0) {
                           showTipInfo(
                               localizedStrings.gTipInvalidWeightData, context);
@@ -632,7 +634,7 @@ class _ScaleWgtTakeOutWidgetState extends State<ScaleWgtTakeOutWidget> {
                         setState(() {
                           startTakeOut = true;
                           lastWgtValue =
-                              double.parse(weightInfo?.weightVal ?? '0.000');
+                              (double.tryParse(weightInfo?.weightVal ?? '0.000') ?? 0.0);
                         });
                       }
                     : null,
@@ -742,7 +744,7 @@ class _ScaleWgtTakeOutWidgetState extends State<ScaleWgtTakeOutWidget> {
       }
       if (!startTakeOut) {
         wgtValue = weightInfo!.weightVal!;
-        double? temp = double.parse(wgtValue);
+        double temp = double.tryParse(wgtValue) ?? 0.0;
         if (temp <= 0) {
           showTipInfo(localizedStrings.gTipInvalidWeightData, context);
           return;
@@ -751,7 +753,7 @@ class _ScaleWgtTakeOutWidgetState extends State<ScaleWgtTakeOutWidget> {
         wgtValue = weightInfo!.weightUnit == 'g'
             ? (takeOutWgtvalue).toStringAsFixed(0)
             : (takeOutWgtvalue).toStringAsFixed(3);
-        lastWgtValue = double.parse(weightInfo!.weightVal!);
+        lastWgtValue = double.tryParse(weightInfo!.weightVal!) ?? 0.0;
       }
 
       _addWeightToReport(wgtValue);

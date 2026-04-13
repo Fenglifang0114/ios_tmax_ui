@@ -36,6 +36,7 @@ class LanguageSettingPageState extends State<LanguageSettingPage> {
     }
   }
 
+
   void saveLanguageSetting(String language) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String savedLanguage = prefs.getString('language') ?? '';
@@ -52,6 +53,7 @@ class LanguageSettingPageState extends State<LanguageSettingPage> {
 
   @override
   void dispose() {
+    languageCtl.dispose();
     super.dispose();
   }
 
@@ -143,6 +145,7 @@ class LanguageSettingPageState extends State<LanguageSettingPage> {
 
               bool isChanged = savedLanguage != language;
 
+              if (!context.mounted) return;
               Navigator.pop(context, isChanged);
             },
                 Theme.of(context).colorScheme.onPrimary,

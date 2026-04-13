@@ -288,6 +288,7 @@ class _ScaleWgtWidgetState extends State<ScaleWgtWidget> {
     innerTimer?.cancel();
     _stableTimer?.cancel();
     stopCntAliveTimer();
+    _cntAliveTimer?.cancel();
     super.dispose();
   }
 

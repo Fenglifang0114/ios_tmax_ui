@@ -65,6 +65,16 @@ class HeaderFooterPageState extends State<HeaderFooterPage> {
 
   @override
   void dispose() {
+    header1Ctl.dispose();
+    header2Ctl.dispose();
+    header3Ctl.dispose();
+    footer1Ctl.dispose();
+    footer2Ctl.dispose();
+    footer3Ctl.dispose();
+    operator1Ctl.dispose();
+    operator2Ctl.dispose();
+    operator3Ctl.dispose();
+    operator4Ctl.dispose();
     super.dispose();
   }
 

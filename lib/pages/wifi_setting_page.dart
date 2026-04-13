@@ -399,6 +399,13 @@ class WifiSettingPageState extends State<WifiSettingPage> {
     myWifiPwdInfoList.clear;
 
     _stopGetIp();
+    ssidController.dispose();
+    passwordController.dispose();
+    netMaskController.dispose();
+    ipController.dispose();
+    gateWayController.dispose();
+    _findWifiText.dispose();
+    controller.dispose();
     super.dispose();
   }
 

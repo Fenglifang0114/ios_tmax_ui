@@ -108,6 +108,7 @@ class _ScaleItemWidgetState extends State<ScaleItemWidget> {
     startTimer?.cancel();
     innerTimer?.cancel();
     stopCntAliveTimer();
+    _cntAliveTimer?.cancel();
     super.dispose();
   }
 

@@ -901,8 +901,7 @@ class EditBarCodeDialogState extends State<EditBarCodeDialog> {
         editRowList.add(BarCodeRowData('TEXT', '', '', 'Left', 7));
       });
     } else {
-      showTipInfo(
-          localizedStrings.invalidName, context);
+      showTipInfo(localizedStrings.invalidName, context);
     }
   }
 
@@ -920,9 +919,7 @@ class EditBarCodeDialogState extends State<EditBarCodeDialog> {
         } else {
           if (editRowList[i].alignment == '--' ||
               editRowList[i].maxlength == 0) {
-            showTipInfo(
-                localizedStrings.variableAlignmentEmpty,
-                context);
+            showTipInfo(localizedStrings.variableAlignmentEmpty, context);
             res = false;
             return res;
           }
@@ -934,16 +931,14 @@ class EditBarCodeDialogState extends State<EditBarCodeDialog> {
           if (myBarCodeListList.barCodeListList[i].barCodeName ==
                   _barCodeNameCtl.text &&
               myBarCodeListList.barCodeListList[i].barCodeType != 'Qrcode') {
-            showTipInfo(
-                localizedStrings.nameAlreadyExists, context);
+            showTipInfo(localizedStrings.nameAlreadyExists, context);
             res = false;
             return res;
           }
         }
       }
     } else {
-      showTipInfo(localizedStrings.nameNotEntered,
-          context);
+      showTipInfo(localizedStrings.nameNotEntered, context);
       res = false;
       return res;
     }
@@ -1000,7 +995,7 @@ class EditBarCodeDialogState extends State<EditBarCodeDialog> {
       _barCodeNameCtl.text,
       'Qrcode',
     ));
-    showTipInfo(localizedStrings.savedSuccessfully+ " ($tempName)", context);
+    showTipInfo(localizedStrings.savedSuccessfully + " ($tempName)", context);
     _saveBarCodeNameToList();
     _saveDataToJson();
   }

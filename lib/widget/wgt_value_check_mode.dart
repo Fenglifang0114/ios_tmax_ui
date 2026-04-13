@@ -293,6 +293,7 @@ class _ScaleWgtCheckModeWidgetState extends State<ScaleWgtCheckModeWidget> {
     innerTimer?.cancel();
     _stableTimer?.cancel();
     stopCntAliveTimer();
+    _cntAliveTimer?.cancel();
     super.dispose();
   }
 

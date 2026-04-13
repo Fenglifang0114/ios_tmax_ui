@@ -274,6 +274,7 @@ class CheckWeighersPageState extends State<CheckWeighersPage> {
     _tableState.dispose();
     _scaleCheckTimer?.cancel();
 
+    totalWgtUnitCtl.dispose();
     super.dispose();
   }
 

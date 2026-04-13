@@ -70,6 +70,12 @@ class ParameterSettingDialogState extends State<ParameterSettingDialog> {
 
   @override
   void dispose() {
+    zeroRange.dispose();
+    stableTime.dispose();
+    errorText.dispose();
+    zeroRange.dispose();
+    stableTime.dispose();
+    errorText.dispose();
     super.dispose();
   }
 

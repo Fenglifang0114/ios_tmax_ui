@@ -1,5 +1,11 @@
 import 'package:flutter/material.dart';
 
+int _safeColorParse(dynamic value, int fallback) {
+  if (value == null) return fallback;
+  if (value is int) return value;
+  return int.tryParse(value.toString()) ?? fallback;
+}
+
 themeColor(Map<String, dynamic> colorTheme, bool isDarkMode) {
   const regular = FontWeight.w500;
   const medium = FontWeight.w600;
@@ -80,15 +86,15 @@ themeColor(Map<String, dynamic> colorTheme, bool isDarkMode) {
   );
 
   ColorScheme lightColorScheme = ColorScheme(
-    primary: Color(int.parse(colorTheme['primary'])),
-    secondary: Color(int.parse(colorTheme['secondary'])),
-    tertiary: Color(int.parse(colorTheme['tertiary'])),
-    surfaceTint: Color(int.parse(colorTheme['background'])), //主要的背景色
-    error: Color(int.parse(colorTheme['error'])),
-    onTertiaryFixedVariant: Color(int.parse(colorTheme['success'])),
+    primary: Color(_safeColorParse(colorTheme['primary'], 0xFF004D8A)),
+    secondary: Color(_safeColorParse(colorTheme['secondary'], 0xFF0A7CFF)),
+    tertiary: Color(_safeColorParse(colorTheme['tertiary'], 0xFF1FA6FF)),
+    surfaceTint: Color(_safeColorParse(colorTheme['background'], 0xFFEFF3F6)), //主要的背景色
+    error: Color(_safeColorParse(colorTheme['error'], 0xFFC70026)),
+    onTertiaryFixedVariant: Color(_safeColorParse(colorTheme['success'], 0xFF1B5E20)),
     outline: const Color.fromARGB(255, 191, 191, 191),
     surfaceBright: const Color.fromARGB(255, 239, 243, 246),
-    surface: Color(int.parse(colorTheme['background'])), //0xFFEFF3F6
+    surface: Color(_safeColorParse(colorTheme['background'], 0xFFEFF3F6)), //0xFFEFF3F6
     surfaceContainerHigh: Colors.white,
     onError: Colors.white,
     onPrimary: Colors.white, //字体颜色
@@ -99,9 +105,9 @@ themeColor(Map<String, dynamic> colorTheme, bool isDarkMode) {
     secondaryFixed: const Color.fromARGB(255, 191, 191, 191), //0xFFBFBFBFF
     onTertiary: Colors.white,
     tertiaryContainer: const Color.fromARGB(255, 251, 253, 248), //0xFFF8F9FD
-    primaryContainer: Color(int.parse(colorTheme['primary'])), //0xFFF8F9FD
+    primaryContainer: Color(_safeColorParse(colorTheme['primary'], 0xFF004D8A)), //0xFFF8F9FD
     scrim: const Color.fromARGB(255, 204, 224, 239), //0xCCE0EF
-    shadow: Color(int.parse(colorTheme['primary'])),
+    shadow: Color(_safeColorParse(colorTheme['primary'], 0xFF004D8A)),
     surfaceDim: Color(0xFFEFEFEF), //画布背景灰色
     outlineVariant: Color(0xFFE6E6E6), //输入框边框
     surfaceContainerLow: Color(0xFFF5F5F5), //选中框
@@ -114,15 +120,15 @@ themeColor(Map<String, dynamic> colorTheme, bool isDarkMode) {
   );
 
   ColorScheme darkColorScheme = ColorScheme(
-    primary: Color(int.parse(colorTheme['primary'])),
-    secondary: Color(int.parse(colorTheme['secondary'])),
-    tertiary: Color(int.parse(colorTheme['tertiary'])),
-    surfaceTint: Color(int.parse(colorTheme['background'])), //主要的背景色
-    error: Color(int.parse(colorTheme['error'])),
-    onTertiaryFixedVariant: Color(int.parse(colorTheme['success'])),
+    primary: Color(_safeColorParse(colorTheme['primary'], 0xFF004D8A)),
+    secondary: Color(_safeColorParse(colorTheme['secondary'], 0xFF0A7CFF)),
+    tertiary: Color(_safeColorParse(colorTheme['tertiary'], 0xFF1FA6FF)),
+    surfaceTint: Color(_safeColorParse(colorTheme['background'], 0xFFEFF3F6)), //主要的背景色
+    error: Color(_safeColorParse(colorTheme['error'], 0xFFC70026)),
+    onTertiaryFixedVariant: Color(_safeColorParse(colorTheme['success'], 0xFF1B5E20)),
     outline: const Color.fromARGB(255, 191, 191, 191),
     surfaceBright: const Color.fromARGB(255, 239, 243, 246),
-    surface: Color(int.parse(colorTheme['background'])), //0xFFEFF3F6
+    surface: Color(_safeColorParse(colorTheme['background'], 0xFFEFF3F6)), //0xFFEFF3F6
     surfaceContainerHigh: Colors.white,
     onError: Colors.white,
     onPrimary: Colors.white, //字体颜色
@@ -133,9 +139,9 @@ themeColor(Map<String, dynamic> colorTheme, bool isDarkMode) {
     secondaryFixed: const Color.fromARGB(255, 191, 191, 191), //0xFFBFBFBFF
     onTertiary: Colors.white,
     tertiaryContainer: const Color.fromARGB(255, 251, 253, 248), //0xFFF8F9FD
-    primaryContainer: Color(int.parse(colorTheme['primary'])), //0xFFF8F9FD
+    primaryContainer: Color(_safeColorParse(colorTheme['primary'], 0xFF004D8A)), //0xFFF8F9FD
     scrim: const Color.fromARGB(255, 204, 224, 239), //0xCCE0EF
-    shadow: Color(int.parse(colorTheme['primary'])),
+    shadow: Color(_safeColorParse(colorTheme['primary'], 0xFF004D8A)),
     surfaceDim: Color(0xFFEFEFEF), //画布背景灰色
     outlineVariant: Color(0xFFE6E6E6), //输入框边框
     surfaceContainerLow: Color(0xFFF5F5F5), //选中框

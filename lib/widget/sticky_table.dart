@@ -336,14 +336,12 @@ class _StickyTableState<T> extends State<StickyTable<T>> {
                       widget.onRowClick!(row); // 调用 onRowClick 回调
                     }
 
-                    // ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                    // ScaffoldMessenger.of(
-                    //   context,
-                    // ).showSnackBar(SnackBar(content: Text("点击了第 $row 行")));
                     if (widget.cellDecoration != null) {
                       setState(() {
                         // 更新点击行状态
-                        (context as Element).markNeedsBuild();
+                        if (context is Element) {
+                          context.markNeedsBuild();
+                        }
                       });
                     }
                     if (column.value.onCellClick != null) {
@@ -605,7 +603,7 @@ class _SyncScrollController extends ScrollController {
 
   @override
   void dispose() {
-    _controllers._allControllers.remove(this);
+    _controllers._allControllers.removeWhere((key, value) => value == this);
     super.dispose();
   }
 

@@ -82,6 +82,7 @@ class BluetoothDialogState extends State<BluetoothDialog> {
     _eventbus1.cancel();
     _eventbus2.cancel();
     _stopTimer();
+    _timer?.cancel();
     super.dispose();
   }
 

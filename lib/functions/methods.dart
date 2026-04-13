@@ -10,37 +10,46 @@ import '../data/download_prt_fmt.dart';
 import '../data/manager_scale_channel.dart';
 import '../data/scalecmd_data.dart';
 
+/// 常规称重模式。
 const String weighingMode = '0';
+/// 检重/误差检测模式。
 const String weighingCheckMode = '1';
+/// 入库/进料模式。
 const String weighingTakeInMode = '2';
+/// 出库/发料模式。
 const String weighingTakeOutMode = '3';
 
+/// 本项目核心的业务网关请求库。
+/// 封装了所有底层向硬件及数据库请求的方法指令（基于 [WebSocket] JSON 通信格式）。
+/// 方法命名主要由动词开头，调用 [sendMsgChan0] 统一打包分发至主通道。
 class PublicFunctions {
   static void function1() {}
 
+  /// 基础消息下发方法。用于向指定的离散辅秤 [scaleId] 通信。
   static void sendMsg(int scaleId, String str) {
     manager.sendMessage(scaleId, str);
   }
 
+  /// 核心系统消息下发方法。调用单例 [WebSocketManager] 往网关管道投递系统请求指令字符串。
   static void sendMsgChan0(String str) {
     WebSocketManager().sendMessage(str);
   }
 
-  //获取系统日志
+  /// 提取系统日志记录。指令：`get_sys_log`。
   static void getSysLog(String jsonStr) {
     myScaleCmd.cmdMode = "get_sys_log";
     myScaleCmd.cmdData = jsonStr;
     sendMsgChan0(jsonEncode(myScaleCmd));
   }
 
-  //获取称重日志列表
+  /// 读取称重过磅的数据库历史记录列表。指令：`get_scale_log`。
   static void getWgtLogList(String jsonStr) {
     myScaleCmd.cmdMode = "get_scale_log";
     myScaleCmd.cmdData = jsonStr;
     sendMsgChan0(jsonEncode(myScaleCmd));
   }
 
-  //获取标定日志列表
+  /// 读取设备及仪表的标定作业日志。指令：`get_cal_log`。
   static void getCalLogList(String jsonStr) {
     myScaleCmd.cmdMode = "get_cal_log";
     myScaleCmd.cmdData = jsonStr;

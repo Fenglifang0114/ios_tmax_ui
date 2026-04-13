@@ -27,6 +27,9 @@ class HighLowSettingDialogState extends State<HighLowSettingDialog> {
 
   @override
   void dispose() {
+    maxValueController.dispose();
+    minValueController.dispose();
+    errorText.dispose();
     super.dispose();
   }
 

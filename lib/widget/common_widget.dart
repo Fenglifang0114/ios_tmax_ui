@@ -37,10 +37,11 @@ showItemNameWithStar(BuildContext context, String itemName, bool showFlag) {
 
 //输入框
 showInputBox(BuildContext context, TextEditingController controller,
-    String hintText, Function(String)? onChanged, bool isEnabled) {
+    String hintText, Function(String)? onChanged, bool isEnabled, {FocusNode? focusNode}) {
   return SizedBox(
     height: inputHeight,
     child: TextField(
+      focusNode: focusNode,
       enabled: isEnabled, // 设置是否可编辑,
       controller: controller,
       decoration: InputDecoration(

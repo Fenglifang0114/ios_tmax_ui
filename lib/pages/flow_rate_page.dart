@@ -387,6 +387,7 @@ class FlowRatePageState extends State<FlowRatePage>
     if (selScaleId != -1) {
       PublicFunctions.stopWeight(selScaleId);
     }
+    weightCollectionTimer?.cancel();
     super.dispose();
   }
 

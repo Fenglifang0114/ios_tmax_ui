@@ -22,11 +22,13 @@ void showTipInfo(String message, BuildContext context) {
     builder: (BuildContext dialogContext) {
       // 记录当前对话框的上下文
       _currentDialogContext = dialogContext;
-      return WillPopScope(
-        onWillPop: () async {
+      return PopScope(
+        canPop: true,
+        onPopInvokedWithResult: (didPop, result) {
           // 当对话框关闭时，清除当前对话框上下文
-          _currentDialogContext = null;
-          return true;
+          if (didPop) {
+            _currentDialogContext = null;
+          }
         },
         child: CustomDialogView(
           message: message,

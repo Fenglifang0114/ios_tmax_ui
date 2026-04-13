@@ -145,6 +145,7 @@ class EditFormulaPageState extends State<EditFormulaPage> {
 
   @override
   void dispose() {
+    formulaBarcodeCtl.dispose();
     super.dispose();
     _eventbus1.cancel();
     _eventbus5.cancel();

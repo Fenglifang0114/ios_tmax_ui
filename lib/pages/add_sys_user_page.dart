@@ -138,6 +138,7 @@ class AddSysUserPageState extends State<AddSysUserPage> {
 
   @override
   void dispose() {
+    nickNameCtl.dispose();
     super.dispose();
     _scrollController.dispose();
     _eventbus2.cancel();

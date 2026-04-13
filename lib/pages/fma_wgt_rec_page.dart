@@ -95,6 +95,7 @@ class OneFmaWgtRecPageState extends State<OneFmaWgtRecPage> {
   void dispose() {
     _eventBus1?.cancel();
 
+    _searchCtl.dispose();
     super.dispose();
   }
 

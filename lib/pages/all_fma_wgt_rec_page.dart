@@ -111,6 +111,7 @@ class _AllFmaWgtRecPageState extends State<AllFmaWgtRecPage> {
   void dispose() {
     _eventBus1?.cancel();
     _eventbus2?.cancel();
+    _searchCtl.dispose();
     super.dispose();
   }
 

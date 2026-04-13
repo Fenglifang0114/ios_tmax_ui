@@ -53,6 +53,8 @@ class _SystemSettingPageState extends State<SystemSettingPage> {
   void dispose() {
     _pageScrollerController.dispose();
     eventBus1.cancel();
+    weightController.dispose();
+    repsController.dispose();
     super.dispose();
   }
 

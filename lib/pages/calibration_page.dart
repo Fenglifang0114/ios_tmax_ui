@@ -529,6 +529,16 @@ class CalibrationPageState extends State<CalibrationPage> {
     scaleUnitCtl.dispose();
     PublicFunctions.stopWeight(selScaleId);
 
+    scaleCap1Ctl.dispose();
+    decimalCtl.dispose();
+    gaduation1Ctl.dispose();
+    initialZeroCtl.dispose();
+    zeroTrackingCtl.dispose();
+    manualZeroCtl.dispose();
+    unitCtl.dispose();
+    gravAccCtl.dispose();
+    _cntAliveTimer?.cancel();
+    innerTimer?.cancel();
     super.dispose();
   }
 

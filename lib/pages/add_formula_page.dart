@@ -215,6 +215,7 @@ class AddFormulaPageState extends State<AddFormulaPage> {
 
   @override
   void dispose() {
+    formulaBarcodeCtl.dispose();
     super.dispose();
     checkWgtStartTimer?.cancel();
     _scrollController1.dispose();

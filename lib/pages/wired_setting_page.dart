@@ -184,6 +184,10 @@ class WiredSettingPageState extends State<WiredSettingPage> {
     myWifiListInfo.wifidatalist!.clear();
     myWifiPwdInfoList.clear;
 
+    netMaskController.dispose();
+    ipController.dispose();
+    gateWayController.dispose();
+    controller.dispose();
     super.dispose();
   }
 

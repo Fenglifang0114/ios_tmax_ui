@@ -52,6 +52,10 @@ class _SysLogTabPageState extends State<SysLogTabPage> {
 
   @override
   dispose() {
+    roleIdCtl.dispose();
+    dateStartCtl.dispose();
+    dateEndCtl.dispose();
+    dateCtl.dispose();
     super.dispose();
     _eventbus1.cancel();
     _eventbus2.cancel();

@@ -60,6 +60,13 @@ class _DownloadPageState extends State<DownloadLabelPage> {
     _fileScrollerController.dispose();
 
     _stopTimer();
+    weightController.dispose();
+    repsController.dispose();
+    weightModeController.dispose();
+    accModeController.dispose();
+    pcsModeController.dispose();
+    pctModeController.dispose();
+    _downloadTimer?.cancel();
     super.dispose();
   }
 

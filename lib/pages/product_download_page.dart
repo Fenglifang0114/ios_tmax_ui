@@ -47,6 +47,9 @@ class _ProductDownloadPageState extends State<ProductDownloadPage> {
   void dispose() {
     _fileScrollerController.dispose();
 
+    repsController.dispose();
+    pluAllCtl.dispose();
+    pluPartCtl.dispose();
     super.dispose();
   }
 

@@ -137,6 +137,8 @@ class SetSystemTimePageState extends State<SetSystemTimePage> {
     eventBus1.cancel();
     eventBus2.cancel();
     _timer?.cancel();
+    manualTimeCtl.dispose();
+    eventbus3?.cancel();
     super.dispose();
   }
 

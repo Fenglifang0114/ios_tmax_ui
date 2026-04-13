@@ -106,6 +106,7 @@ class EditDarftFmaPageState extends State<EditDarftFmaPage> {
 
   @override
   void dispose() {
+    formulaBarcodeCtl.dispose();
     super.dispose();
 
     formulaCodeCtl.dispose();
