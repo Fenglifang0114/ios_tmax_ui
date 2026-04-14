@@ -20,18 +20,6 @@
     "@gBtnSave": {
         "description": "This is a button for saving."
     },
-    "gTitleSerialPortConnection": "串口连接",
-    "@gTitleSerialPortConnection": {
-        "description": "This is the title of the serial port connection."
-    },
-    "gMsgAuthorityPassed": "认证通过.\r\n",
-    "@gMsgAuthorityPassed": {
-        "description": "This is the prompt indicating that the authentication has been passed."
-    },
-    "gMsgAuthorityFail": "没有认证. 请将ID发送给我们.",
-    "@gMsgAuthorityFail": {
-        "description": "This is the prompt indicating that the authentication has failed."
-    },
     "gBtnStart": "开始",
     "@gBtnStart": {
         "description": "This is a button for starting."
@@ -47,10 +35,6 @@
     "gTitleSerialModify": "串口信息修改",
     "@gTitleSerialModify": {
         "description": "This is the title for modifying serial port information."
-    },
-    "gSerialPortStatus": "串口状态:",
-    "@gSerialPortStatus": {
-        "description": "This is the title for serial port status."
     },
     "gMsgRefresh": "刷新",
     "@gMsgRefresh": {
@@ -192,10 +176,6 @@
     "@gBarcodeName": {
         "description": "This is a button about barcode name."
     },
-    "gBarcodeSelect": "输入名字创建或查找",
-    "@gBarcodeSelect": {
-        "description": "This is a prompt regarding the creation or selection of a barcode or qrcode name."
-    },
     "gBarCodeDataType": "数据类型",
     "@gBarCodeDataType": {
         "description": "This is a prompt regarding the data type."
@@ -260,10 +240,6 @@
     "@gPageHeight": {
         "description": "This is a prompt about the page height."
     },
-    "gEditor": "编辑器",
-    "@gEditor": {
-        "description": "This is a prompt about editor."
-    },
     "gTextContent": "文本内容:",
     "@gTextContent": {
         "description": "This is a prompt about text content."
@@ -312,17 +288,9 @@
     "@gMaxLength": {
         "description": "This is a prompt about max length."
     },
-    "gElementType": "类型:",
-    "@gElementType": {
-        "description": "This is a prompt about item type in print format."
-    },
     "gBarcode": "条码:",
     "@gBarcode": {
         "description": "This is a prompt about BarCode."
-    },
-    "gBarcodeHeight": "条码高度:",
-    "@gBarcodeHeight": {
-        "description": "This is a prompt about Barcode height."
     },
     "iBtnZero": "归零",
     "@iBtnZero": {
@@ -356,18 +324,6 @@
     "@gPluName": {
         "description": "This is a prompt about PLU name."
     },
-    "plu_edit": "PLU 编辑",
-    "@plu_edit": {
-        "description": "This is a prompt about PLU edit."
-    },
-    "user_name": "用户名:",
-    "@user_name": {
-        "description": "This is a prompt about user name."
-    },
-    "user_edit": "用户编辑",
-    "@user_edit": {
-        "description": "This is a prompt about user edit."
-    },
     "gParameterSettingsTitle": "参数设置",
     "@gParameterSettingsTitle": {
         "description": "This is a prompt about parameter settings."
@@ -400,68 +356,12 @@
     "@gDateSeparator": {
         "description": "This is a prompt about date separator."
     },
-    "zero_range": "零点范围:",
-    "@zero_range": {
-        "description": ""
-    },
-    "product_information": "产品信息",
-    "@product_information": {
-        "description": ""
-    },
     "pretare": "预扣重:",
     "@pretare": {
         "description": ""
     },
-    "plu_remarks": "PLu 备注:",
-    "@plu_remarks": {
-        "description": ""
-    },
     "gBtnEdit": "编辑",
     "@gBtnEdit": {
-        "description": ""
-    },
-    "plu_error_message": "PLU 预扣重不能为空.",
-    "@plu_error_message": {
-        "description": ""
-    },
-    "plu_error_message1": "PLU ID 或 PLU 名字不能为空.",
-    "@plu_error_message1": {
-        "description": ""
-    },
-    "plu_error_message2": "PLU ID or PLU 名字已经存在.",
-    "@plu_error_message2": {
-        "description": ""
-    },
-    "iUserInfo": "用户信息",
-    "@iUserInfo": {
-        "description": "This is prompt for user info ,in T-Industry."
-    },
-    "user_id": "用户 ID:",
-    "@user_id": {
-        "description": ""
-    },
-    "user_sex": "性别:",
-    "@user_sex": {
-        "description": ""
-    },
-    "user_phone": "电话:",
-    "@user_phone": {
-        "description": ""
-    },
-    "user_remarks": "用户备注:",
-    "@user_remarks": {
-        "description": ""
-    },
-    "user_error_message1": "用户ID和用户名不能为空.",
-    "@user_error_message1": {
-        "description": ""
-    },
-    "user_error_message2": "用户ID或者用户名不能一样!",
-    "@user_error_message2": {
-        "description": ""
-    },
-    "user_error_message3": "用户没有找到!",
-    "@user_error_message3": {
         "description": ""
     },
     "button_back": "返回",
@@ -472,28 +372,12 @@
     "@button_select_format": {
         "description": ""
     },
-    "scale_model": "选择机型:",
-    "@scale_model": {
-        "description": ""
-    },
     "firmware_update": "串口更新软件",
     "@firmware_update": {
         "description": ""
     },
-    "gTipModelNotMatch": "机种名不匹配. 是否强制更新?",
-    "@gTipModelNotMatch": {
-        "description": "This is a prompt for model mismatch during the update process."
-    },
-    "gTipDeviceLost": "是否强制更新?",
-    "@gTipDeviceLost": {
-        "description": "This is a prompt for a forced update."
-    },
     "button_add_license": "添加认证",
     "@button_add_license": {
-        "description": ""
-    },
-    "new_license_text": "新认证:",
-    "@new_license_text": {
         "description": ""
     },
     "gTipResult": "结果",
@@ -540,41 +424,9 @@
     "@serial_page_percent": {
         "description": ""
     },
-    "device_connection_title": "设备信息 & 连接",
-    "@device_connection_title": {
-        "description": ""
-    },
-    "device_setting_title": "基本信息",
-    "@device_setting_title": {
-        "description": ""
-    },
-    "device_configuration_title": "设备配置",
-    "@device_configuration_title": {
-        "description": ""
-    },
     "bt_setting_title": "蓝牙设置",
     "@bt_setting_title": {
         "description": ""
-    },
-    "customization_setting_title": "应用",
-    "@customization_setting_title": {
-        "description": ""
-    },
-    "advanced_setting_title": "高级",
-    "@advanced_setting_title": {
-        "description": ""
-    },
-    "gTitleReceiptDesign": "票据设计",
-    "@gTitleReceiptDesign": {
-        "description": "This is a title about receipt design app."
-    },
-    "gTipReceiptDesign": "此应用是用来设计票据打印格式.",
-    "@gTipReceiptDesign": {
-        "description": "This is a prompt about receipt design app."
-    },
-    "gTipLabelFmtDownload": "此应用时用来下发打印格式.",
-    "@gTipLabelFmtDownload": {
-        "description": "This is a prompt about downloading label printing Formats app."
     },
     "gTitleSerialOutputDownload": "串口输出下发",
     "@gTitleSerialOutputDownload": {
@@ -596,10 +448,6 @@
     "@cBtnOpenPreview": {
         "description": " This is a button about open preview in T-Config."
     },
-    "cBtnClosePreview": "关闭预览",
-    "@cBtnClosePreview": {
-        "description": "This is a button about close preview in T-Config."
-    },
     "gTitlePreview": "预览",
     "@gTitlePreview": {
         "description": "This is a preview of the output of a custom serial port protocol."
@@ -620,26 +468,6 @@
     "@gTitlePluDownload": {
         "description": "This is a title about downloading plu."
     },
-    "gTipPluDownload": "此应用时用于下发产品信息.",
-    "@gTipPluDownload": {
-        "description": "This is a tip about downloading plu."
-    },
-    "iTipWeightCollection": "此应用是用来实时收集重量.",
-    "@iTipWeightCollection": {
-        "description": "This is a prompt about collect weight data,in T-Industry"
-    },
-    "iTipCheckWeigher": "此应用是用来实时记录检重重量.",
-    "@iTipCheckWeigher": {
-        "description": "This is a prompt about check weighing,in T-Industry"
-    },
-    "iTipIncrementWeighting": "此应用是用来实现加法秤.",
-    "@iTipIncrementWeighting": {
-        "description": "This is a prompt about Increment Weighing,in T-Industry"
-    },
-    "gTipTakeOut": "此应用是用来实现减法秤.",
-    "@gTipTakeOut": {
-        "description": "This is a prompt about take out scale,in T-Industry"
-    },
     "gTitleConfirm": "确认",
     "@gTitleConfirm": {
         "description": "This is the title of the confirmation."
@@ -656,44 +484,8 @@
     "@select_firmware_btn": {
         "description": ""
     },
-    "report_show_btn": "显示报表",
-    "@report_show_btn": {
-        "description": ""
-    },
-    "report_hide_btn": "隐藏报表",
-    "@report_hide_btn": {
-        "description": ""
-    },
     "data_delete_confirm": "是否删除所有数据?",
     "@data_delete_confirm": {
-        "description": ""
-    },
-    "show_current_weight": "当前重量:",
-    "@show_current_weight": {
-        "description": ""
-    },
-    "show_increment_weight": "增量:",
-    "@show_increment_weight": {
-        "description": ""
-    },
-    "show_reduced_weight": "减少量:",
-    "@show_reduced_weight": {
-        "description": ""
-    },
-    "general_configuration_title": "General Configuration",
-    "@general_configuration_title": {
-        "description": ""
-    },
-    "application_title": "应用",
-    "@application_title": {
-        "description": ""
-    },
-    "choose_json_file": "选择 json",
-    "@choose_json_file": {
-        "description": ""
-    },
-    "batch_delivery_title": "批量下发",
-    "@batch_delivery_title": {
         "description": ""
     },
     "cTipConfigurationName": "参数名称",
@@ -736,10 +528,6 @@
     "@cTipCheckValue": {
         "description": "This is a tip: Please check"
     },
-    "save_as": "另存为",
-    "@save_as": {
-        "description": ""
-    },
     "gTipConfirmInfo": "请确认信息.",
     "@gTipConfirmInfo": {
         "description": "This is the prompt asking you to confirm the information."
@@ -748,17 +536,9 @@
     "@server_ip": {
         "description": ""
     },
-    "server_port": "Server Port:",
-    "@server_port": {
-        "description": ""
-    },
     "go_home": "确定返回主页?",
     "@go_home": {
         "description": ""
-    },
-    "gTipReceiptDownload": "此应用是用来下发票据打印格式.",
-    "@gTipReceiptDownload": {
-        "description": "This is a prompt about receipt format download."
     },
     "appVersionTitle": "版本",
     "@appVersionTitle": {
@@ -1316,14 +1096,6 @@
     "@l_total_pcs_expl": {
         "description": ""
     },
-    "l_line_width_txt": "Line Width",
-    "@l_line_width_txt": {
-        "description": ""
-    },
-    "l_line_lenth_txt": "Line Length",
-    "@l_line_lenth_txt": {
-        "description": ""
-    },
     "l_open_fmt_err": "请选择正确的打印格式",
     "@l_open_fmt_err": {
         "description": ""
@@ -1338,10 +1110,6 @@
     },
     "gBtnImport": "导入",
     "@gBtnImport": {
-        "description": ""
-    },
-    "gBtnGetDataFormDb": "从本地获取数据",
-    "@gBtnGetDataFormDb": {
         "description": ""
     },
     "batch_down_slt_folder": "选择文件夹",
@@ -1412,14 +1180,6 @@
     "@def_fmt_out_range_tip": {
         "description": ""
     },
-    "scale_mgr_btn_rename": "重命名",
-    "@scale_mgr_btn_rename": {
-        "description": ""
-    },
-    "scale_mgr_btn_def": "设置默认",
-    "@scale_mgr_btn_def": {
-        "description": ""
-    },
     "gStatus": "状态",
     "@gStatus": {
         "description": "This is the prompt for the scale status."
@@ -1428,29 +1188,9 @@
     "@gProgress": {
         "description": "This is the prompt for the download progress."
     },
-    "rTipDetailRpt": "此应用是显示零售详单数据.",
-    "@rTipDetailRpt": {
-        "description": "This is the prompt for the retail detail report in the retail app."
-    },
-    "gTitlePluEdit": "PLU 编辑",
-    "@gTitlePluEdit": {
-        "description": "This is the title of the PLU edit page."
-    },
-    "rShowScaleListBtn": "显示秤",
-    "@rShowScaleListBtn": {
-        "description": "This is the name of the button for displaying the list of scales in the retail app."
-    },
-    "rHideScaleListBtn": "隐藏列表",
-    "@rHideScaleListBtn": {
-        "description": "This is the name of the button for hiding the list of scales in the retail app."
-    },
     "rRefreshListBtn": "刷新列表",
     "@rRefreshListBtn": {
         "description": "This is the name of the button for refreshing the retail list in the retail app."
-    },
-    "rJoinManagementTip": "是否加入管理",
-    "@rJoinManagementTip": {
-        "description": "This is a prompt about whether to join the management in the retail app."
     },
     "gTipFirmwareZipFile": "软件Zip:",
     "@gTipFirmwareZipFile": {
@@ -1464,18 +1204,6 @@
     "@gConfirmFileTip": {
         "description": "This is the prompt to confirm whether the file is correct when downloading."
     },
-    "gBtnViaSerialUpdate": "串口",
-    "@gBtnViaSerialUpdate": {
-        "description": "This is the button for switching to serial port update when updating the firmware."
-    },
-    "gBtnViaNetworkUpdate": "网络",
-    "@gBtnViaNetworkUpdate": {
-        "description": "This is the button for switching to network update when updating the firmware."
-    },
-    "gTipSelectUpdateWay": "请选择更新方式.",
-    "@gTipSelectUpdateWay": {
-        "description": "This is the prompt to select the way when update firmware."
-    },
     "gTipWait": "请稍等...",
     "@gTipWait": {
         "description": "This is the prompt for waiting."
@@ -1483,14 +1211,6 @@
     "gTipRebootForUpdate": "请重启设备后等待更新...",
     "@gTipRebootForUpdate": {
         "description": "This is the prompt restarting the device for the automatic update."
-    },
-    "rTitleSetVariableValues": "变量设置",
-    "@rTitleSetVariableValues": {
-        "description": "This is the title for setting the values of variables, such as the header and footer,in the retail app."
-    },
-    "rTipSetVariableValues": "此应用是用来下发变量数据,例如页眉、页脚等.",
-    "@rTipSetVariableValues": {
-        "description": "This is the explanation for applying the setting of variable values."
     },
     "rTipHeader": "页眉",
     "@rTipHeader": {
@@ -1516,25 +1236,9 @@
     "@gTipItemType": {
         "description": "This is the name of an item type,in the printing format page."
     },
-    "gTipFolderNoSelected": "未选择文件夹",
-    "@gTipFolderNoSelected": {
-        "description": "This is the prompt for saving flie."
-    },
     "gTipSaveFail": "保存失败 !",
     "@gTipSaveFail": {
         "description": "This is the prompt for saving flie failed."
-    },
-    "gTipSaveSuccess": "保存成功. 路径是:",
-    "@gTipSaveSuccess": {
-        "description": "This is the prompt for flie saved ok."
-    },
-    "gBtnSaveExcel": "保存Excel",
-    "@gBtnSaveExcel": {
-        "description": "This is the button to save excel."
-    },
-    "gBtnSaveDataBase": "保存到本地",
-    "@gBtnSaveDataBase": {
-        "description": "This is the button to save database."
     },
     "gPluPlu": "PLU",
     "@gPluPlu": {
@@ -1616,14 +1320,6 @@
     "@gTipPluDuplicated": {
         "description": "This is prompt for plu duplicated."
     },
-    "gTipSaveDbOk": "保存数据OK.",
-    "@gTipSaveDbOk": {
-        "description": "This is prompt for plu saved."
-    },
-    "gTipSavingData": "数据正在保存,请稍等...",
-    "@gTipSavingData": {
-        "description": "This is prompt for saving data."
-    },
     "gTipInstallService": "安装服务",
     "@gTipInstallService": {
         "description": "This is prompt to install service."
@@ -1639,14 +1335,6 @@
     "gTipUninstallService": "卸载服务",
     "@gTipUninstallService": {
         "description": "This is prompt to uninstall service."
-    },
-    "gTipScaleList": "秤列表",
-    "@gTipScaleList": {
-        "description": "This is prompt for scale list."
-    },
-    "gTipService": "服务",
-    "@gTipService": {
-        "description": "This is prompt for app service."
     },
     "gTipServiceStatus": "服务状态:",
     "@gTipServiceStatus": {
@@ -1760,10 +1448,6 @@
     "@gTipPlueditPageHelp": {
         "description": "This is the help info for the plu edit page."
     },
-    "gTipVarSettingPageHelp": "1.编辑页眉、页脚、操作员信息；\n2.点击【下发】按钮下发至秤。\n",
-    "@gTipVarSettingPageHelp": {
-        "description": "This is the help info for the variable value setting page."
-    },
     "gTipRetailDetailPageHelp": "1.此功能界面可以显示每次结账打印后的数据；\n\n注：\n如果未安装服务，您需要点击右侧的【服务】-【安装服务】，当系统提示服务已停止时，点击【开始服务】，系统会提示服务正在运行。最后，点击【确认】完成服务的安装；\n2.结账打印后，每笔订单的数据都将显示在此界面上，点击【刷新列表】可以获取最新的订单记录；\n3.点击【导出】，可以将报表下载至本地。\n\n注：\n此功能可以通过网口/Wi-Fi连接使用，不能通过串口使用。",
     "@gTipRetailDetailPageHelp": {
         "description": "This is the help info for the retail detail report page."
@@ -1787,10 +1471,6 @@
     "gTipBasicDataPageHelp": "1.点击【获取基本数据】；\n2.T-Config会自动收集秤上的基本数据，并在界面上同步显示。\n3.可以点击左上角的菜单栏按钮，选择需要切换的设备。",
     "@gTipBasicDataPageHelp": {
         "description": "This is the help info for the basic data page."
-    },
-    "gTipParameterSettingPageHelp": "1.一共有5个参数设置：称重信息、出厂参数、串口参数、价格参数、其他；\n2.“可编辑”列中显示“是”的参数，可以根据“描述”列中的提示内容在“值”列中进行编辑；\n3.设置完所有参数后，点击右下角的按钮确认提交。",
-    "@gTipParameterSettingPageHelp": {
-        "description": "This is the help info for the parameter setting page."
     },
     "gTipTakeOutPageHelp": "1.点击【开始】以启动减法秤功能，记录卸载过程中称重值的减量（条件是秤上必须有重量）。\n2.点击【显示报表】，会在界面下方显示已保存的记录；\n3.点击【设置】，可以将【保存模式】切换为【自动】；\n4.在【设置】中，您还可以设置数据导出的日期格式和数据分隔符；\n5.在【PLU名字】中输入PLU编号或名称，以调用T-Industry数据库中的PLU（此处的PLU不是秤上的PLU）；\n6.点击【报表设置】，可以选择称重数据显示的信息；（目前暂无功能的变量：Product Code、Item Code、User Name、User NO）\n7.点击标题行中的上下箭头，可以对报表进行升/降的排序；\n8.点击【导出】按钮，以表格形式导出保存的所有数据；\n9.点击【停止】按钮，可以关闭此功能。\n\n注：\n报表中的重量是指减量，而不是秤盘上的所有重量。\n",
     "@gTipTakeOutPageHelp": {
@@ -1912,14 +1592,6 @@
     "@fScaleList": {
         "description": "Title for the scale list panel"
     },
-    "fComScale": "串口秤",
-    "@fComScale": {
-        "description": "Label for serial scale in scale list"
-    },
-    "fNetScale": "网络秤",
-    "@fNetScale": {
-        "description": "Label for network scale in scale list"
-    },
     "fRawMaterialTypeNameCol": "类别",
     "@fRawMaterialTypeNameCol": {
         "description": "Table column title for category name"
@@ -1932,10 +1604,6 @@
     "@fUpdatedAtCol": {
         "description": "Table column title for last update time"
     },
-    "fEditBtn": "编辑",
-    "@fEditBtn": {
-        "description": "Button for editing table row"
-    },
     "fTipOperation": "操作",
     "@fTipOperation": {
         "description": "Table column title for operations"
@@ -1947,10 +1615,6 @@
     "fFmaModeCol": "配方模式",
     "@fFmaModeCol": {
         "description": "Table column title for formula mode (weight/pct)"
-    },
-    "fMaterialCountCol": "原料数量",
-    "@fMaterialCountCol": {
-        "description": "Table column title for number of materials in formula"
     },
     "fCreatedTimeCol": "创建时间",
     "@fCreatedTimeCol": {
@@ -2112,17 +1776,9 @@
     "@fFormulaIdAndBarcodeDuplicate": {
         "description": "Error message for duplicate formula ID and barcode"
     },
-    "fFormulaNameDuplicate": "配方名称重复",
-    "@fFormulaNameDuplicate": {
-        "description": "Error message for duplicate formula name"
-    },
     "fRawIdDuplicate": "原料ID重复",
     "@fRawIdDuplicate": {
         "description": "Error message for duplicate raw ID"
-    },
-    "fRawNameDuplicate": "原料名称重复",
-    "@fRawNameDuplicate": {
-        "description": "Error message for duplicate raw name"
     },
     "fSetRawMaterialBtn": "设置原料",
     "@fSetRawMaterialBtn": {
@@ -2252,10 +1908,6 @@
     "@fFormulaCompletionMsg": {
         "description": "Completion message for formula"
     },
-    "fAddSuccessMsg": "添加成功！",
-    "@fAddSuccessMsg": {
-        "description": "Success message for adding operation"
-    },
     "fTypeExistsMsg": "类型已存在！",
     "@fTypeExistsMsg": {
         "description": "Error message for existing formula type"
@@ -2276,10 +1928,6 @@
     "@fRawCategoryManagement": {
         "description": "Title for category management page"
     },
-    "fDeleteSuccessMsg": "删除成功",
-    "@fDeleteSuccessMsg": {
-        "description": "Success message for delete operation"
-    },
     "fSuccessMsg": "成功",
     "@fSuccessMsg": {
         "description": "General success message"
@@ -2287,10 +1935,6 @@
     "fClearSearchConditionBtn": "清除搜索条件",
     "@fClearSearchConditionBtn": {
         "description": "Text on the button to clear all search conditions"
-    },
-    "fFormulaScaleTitle": "配方秤",
-    "@fFormulaScaleTitle": {
-        "description": "Title for formula weighing scale device or page"
     },
     "fReviseBtn": "修正",
     "@fReviseBtn": {
@@ -2307,14 +1951,6 @@
     "fSwitchModeClearMsg": "切换模式会清空原料列表，请确定？",
     "@fSwitchModeClearMsg": {
         "description": "Confirmation message for mode switch that clears raw material list"
-    },
-    "fSaveAndExitBtn": "保存并退出",
-    "@fSaveAndExitBtn": {
-        "description": "Button to save and exit"
-    },
-    "fSaveAndNewBtn": "保存并新增",
-    "@fSaveAndNewBtn": {
-        "description": "Button to save and add new"
     },
     "fMediumSpeed": "中速",
     "@fMediumSpeed": {
@@ -2403,10 +2039,6 @@
     "fFlowRate": "流速",
     "@fFlowRate": {
         "description": "Label for flow rate, text"
-    },
-    "fFlowRateMeasurement": "流速",
-    "@fFlowRateMeasurement": {
-        "description": "Label or title for flow rate measurement, text"
     },
     "fConfirmDelete": "确定删除？",
     "@fConfirmDelete": {
@@ -2568,14 +2200,6 @@
     "@gTipActivated": {
         "description": "This is a tip for activated status."
     },
-    "gBtnAddApp": "添加应用",
-    "@gBtnAddApp": {
-        "description": "This is a button for adding an application."
-    },
-    "gBtnRemove": "移除",
-    "@gBtnRemove": {
-        "description": "This is a button for removing something."
-    },
     "gBtnActivate": "激活",
     "@gBtnActivate": {
         "description": "This is a button for activating something."
@@ -2584,14 +2208,6 @@
     "@gTitleActivationFeedback": {
         "description": "This is the title for activation feedback."
     },
-    "gBtnAdded": "已添加",
-    "@gBtnAdded": {
-        "description": "This is a button indicating that an item has been added."
-    },
-    "gTitleConfigFunctionCharge": "配置功能收费方式",
-    "@gTitleConfigFunctionCharge": {
-        "description": "This is the title for the configuration function charging method."
-    },
     "gSubtitleConfigFunctionCharge": "按年付费激活全部高级功能，有效期一年。如需购买请点击右上角的（ℹ️）联系软件服务商",
     "@gSubtitleConfigFunctionCharge": {
         "description": "This is the subtitle for the configuration function charging method."
@@ -2599,26 +2215,6 @@
     "gSubtitleAppsCharge": "按功能付费以永久激活。如需购买请点击右上角的（ℹ️）联系软件服务商",
     "@gSubtitleAppsCharge": {
         "description": "This is the subtitle for the apps function charging method."
-    },
-    "gTitleAddedConfigFunction": "已添加配置功能",
-    "@gTitleAddedConfigFunction": {
-        "description": "This is the title for the added configuration functions."
-    },
-    "gSubtitleAddedConfigFunction": "下方应用已添加至导航栏内，点击移除按钮可移除对应功能，移除后可继续添加应用",
-    "@gSubtitleAddedConfigFunction": {
-        "description": "This is the subtitle for the added configuration functions."
-    },
-    "gBtnBackToPrevious": "返回上一级",
-    "@gBtnBackToPrevious": {
-        "description": "This is a button to go back to the previous level."
-    },
-    "gTitleActivationMethod": "激活方式",
-    "@gTitleActivationMethod": {
-        "description": "This is the title for activation method."
-    },
-    "gSubtitleUploadActivationFile": "在下方输入框内上传供应商提供的激活文件",
-    "@gSubtitleUploadActivationFile": {
-        "description": "This is the subtitle for uploading the activation file provided by the supplier in the input box below."
     },
     "gTipSelectActivationFile": "请选择激活文件",
     "@gTipSelectActivationFile": {
@@ -2635,10 +2231,6 @@
     "gTipDateNotUpdated": "日期未更新",
     "@gTipDateNotUpdated": {
         "description": "This is a tip indicating that the date has not been updated."
-    },
-    "gTipFree": "免费",
-    "@gTipFree": {
-        "description": "This is a free tip message."
     },
     "gTitleAppConfig": "应用",
     "@gTitleAppConfig": {
@@ -2732,10 +2324,6 @@
     "@gBtnSyncTime": {
         "description": "This is a button about sync time."
     },
-    "gBtnSelectTime": "选择时间",
-    "@gBtnSelectTime": {
-        "description": "This is a button about select time."
-    },
     "gBtnSelectDate": "选择日期",
     "@gBtnSelectDate": {
         "description": "This is a button about select date."
@@ -2804,21 +2392,9 @@
     "@gTipAlignment": {
         "description": "This is the prompt for alignment."
     },
-    "gTipType": "类型",
-    "@gTipType": {
-        "description": "This is the prompt for type."
-    },
-    "gTipStringProperty": "字符串属性",
-    "@gTipStringProperty": {
-        "description": "This is the title for string property."
-    },
     "gTipHexInput": "十六进制输入，请用空格分隔，例如：31 32 33 34 35 36",
     "@gTipHexInput": {
         "description": "This is the prompt for hexadecimal input, separated by spaces."
-    },
-    "gTipHex": "十六进制",
-    "@gTipHex": {
-        "description": "This is the prompt for hexadecimal."
     },
     "gTipTextHexProperty": "文本十六进制属性",
     "@gTipTextHexProperty": {
@@ -2888,10 +2464,6 @@
     "@gTipCalibrationResult": {
         "description": "This is a tip for the calibration result."
     },
-    "gBtnCalibration": "校准",
-    "@gBtnCalibration": {
-        "description": "This is a button for calibration."
-    },
     "gTipEmptyScalePanThenNext": "请清空秤盘，然后点击下一步",
     "@gTipEmptyScalePanThenNext": {
         "description": "This is a tip to empty the scale pan and click next."
@@ -2936,10 +2508,6 @@
     "@gBtnPrevious": {
         "description": "This is a button to go back to the previous step."
     },
-    "gBtnNext": "下一步",
-    "@gBtnNext": {
-        "description": "This is a button to go to the next step."
-    },
     "gTipCalibrationWeight": "请输入校准重量",
     "@gTipCalibrationWeight": {
         "description": "This is a prompt to ask the user to input the calibration weight."
@@ -2955,10 +2523,6 @@
     "gTipErrorValue": "误差值",
     "@gTipErrorValue": {
         "description": "This is a prompt to tell the user the error value."
-    },
-    "gTxtDecimal": "小数点",
-    "@gTxtDecimal": {
-        "description": "This is the prompt for decimal places."
     },
     "gTipGaduation": "分度值",
     "@gTipGaduation": {
@@ -3015,10 +2579,6 @@
     "gTipSwitchUnit": "切换单位，请同时切换相应的量程",
     "@gTipSwitchUnit": {
         "description": "This is a tip to remind the user to switch the corresponding range when changing the unit."
-    },
-    "gTipResetMaxRange": "失败，请重置最大量程！",
-    "@gTipResetMaxRange": {
-        "description": "This is a tip to reset the maximum range."
     },
     "gTipNoDevice": "没有发现设备，请添加设备",
     "@gTipNoDevice": {
@@ -3100,10 +2660,6 @@
     "@gTipFreeConfiguration": {
         "description": "This is a tip for free configuration."
     },
-    "gTipFailToSelectFile": "选择文件失败",
-    "@gTipFailToSelectFile": {
-        "description": "This is a tip for failing to select a file."
-    },
     "subTitleMultiScaleManagement": "通过串口、Wi-Fi和蓝牙，与多台设备进行连接。",
     "@subTitleMultiScaleManagement": {
         "description": "SubTitle for multi-scale management"
@@ -3171,10 +2727,6 @@
     "subTitleRetailReport": "自动收集和记录零售数据，并形成报表供用户下载。",
     "@subTitleRetailReport": {
         "description": "SubTitle for retail report"
-    },
-    "subTitleVariableValueSetting": "编辑页眉页脚以及操作员的信息",
-    "@subTitleVariableValueSetting": {
-        "description": "SubTitle for variable value setting"
     },
     "subTitleWeighingDataCollection": "在线称重，并生成称重数据报表。",
     "@subTitleWeighingDataCollection": {
@@ -3344,10 +2896,6 @@
     "@userEmail": {
         "description": "Email"
     },
-    "userCreator": "创建人",
-    "@userCreator": {
-        "description": "Creator"
-    },
     "userIsEnabled": "是否启用",
     "@userIsEnabled": {
         "description": "Is enabled"
@@ -3420,10 +2968,6 @@
     "@menuFormat": {
         "description": "Menu format"
     },
-    "gBtnSelect": "选择",
-    "@gBtnSelect": {
-        "description": "Button for select"
-    },
     "gTipConfirmContinue": "请确认是否继续？",
     "@gTipConfirmContinue": {
         "description": "Tip for confirm continue"
@@ -3484,10 +3028,6 @@
     "@gTipExportIOError": {
         "description": "Tip for export io error"
     },
-    "gTipExportPathError": "导出路径错误",
-    "@gTipExportPathError": {
-        "description": "Tip for export path error"
-    },
     "noDataImport": "没有数据可导入",
     "@noDataImport": {
         "description": "Prompt when there is no data to import from Excel file"
@@ -3532,14 +3072,6 @@
     "@weightUnitEmpty": {
         "description": "Prompt when Weight Unit is required for weight mode"
     },
-    "ingredientNoEmpty": "Ingredient No. 不能为空",
-    "@ingredientNoEmpty": {
-        "description": "Prompt when Ingredient Number cell is empty"
-    },
-    "ingredientNoInvalid": "Ingredient No. 必须为正整数",
-    "@ingredientNoInvalid": {
-        "description": "Prompt when Ingredient Number is invalid"
-    },
     "ingredientIdEmpty": "Ingredient Id 不能为空",
     "@ingredientIdEmpty": {
         "description": "Prompt when Ingredient Id cell is empty"
@@ -3571,10 +3103,6 @@
     "formulaBarcodeInconsistent": "验证条码不一致",
     "@formulaBarcodeInconsistent": {
         "description": "Prompt when formula barcodes within the same group are inconsistent"
-    },
-    "sequenceNotContinuous": "原料序列号不连续",
-    "@sequenceNotContinuous": {
-        "description": "Prompt when ingredient sequence numbers are not continuous"
     },
     "percentNot100": "总百分比必须为 100%",
     "@percentNot100": {
@@ -3711,10 +3239,6 @@
     "opEnable": "启用",
     "@opEnable": {
         "description": "Enable Operation"
-    },
-    "opDisable": "禁用",
-    "@opDisable": {
-        "description": "Disable Operation"
     },
     "opQuery": "查询",
     "@opQuery": {
@@ -4064,10 +3588,6 @@
     "@removeSoftwareSeal": {
         "description": "Action to remove a software seal from the device"
     },
-    "operationRecord": "操作记录",
-    "@operationRecord": {
-        "description": "Title for a log of operations performed"
-    },
     "softwareSealAppliedSuccessfully": "软件校正锁打开成功",
     "@softwareSealAppliedSuccessfully": {
         "description": "Success message when a software seal is successfully applied"
@@ -4087,14 +3607,6 @@
     "removeWithCode": "解锁码关闭软件矫正锁",
     "@removeWithCode": {
         "description": "Option or button to remove a seal using a special code"
-    },
-    "pleaseEnterRemovalCode": "请输入解除码",
-    "@pleaseEnterRemovalCode": {
-        "description": "Prompt asking the user to input the removal code"
-    },
-    "sealPresentCalibrationNotPermitted": "设备存在铅封，无法标定",
-    "@sealPresentCalibrationNotPermitted": {
-        "description": "Warning message indicating calibration is prohibited because a seal is present on the device"
     },
     "checkSealFailed": "检查状态失败",
     "@checkSealFailed": {
@@ -4183,10 +3695,6 @@
     "openOutputPortFailed": "打开输出端口失败",
     "@openOutputPortFailed": {
         "description": "Failed to open the output port."
-    },
-    "selectS15Scale": "请选择 S15 标定",
-    "@selectS15Scale": {
-        "description": "Prompt to select S15 scale"
     },
     "inputSetting": "输入口设置",
     "@inputSetting": {

@@ -741,25 +741,31 @@ class _PluEidtPageState extends State<PluEidtPage> {
         }
       }
 
-      // 处理一些常见的别名或未在 translationMap 中的字段
+      // 处理一些常见的别名或未在 translationMap 中的字段，解决跨语言导出的识别问题
       if (!found) {
-        if (header == 'productnumber') {
+        if (header == 'productnumber' || header == 'plu') {
           colIndexToKeyMap[i] = 'plu';
-        } else if (header == 'unit' || header == 'generalunit') {
+        } else if (header == 'category' || header == '类别') {
+          colIndexToKeyMap[i] = 'category';
+        } else if (header == 'price' || header == '单价') {
+          colIndexToKeyMap[i] = 'price';
+        } else if (header == 'unit' || header == 'generalunit' || header == 'general unit' || header == '单位') {
           colIndexToKeyMap[i] = 'generalUnit';
-        } else if (header == 'taxtype') {
+        } else if (header == 'taxtype' || header == 'tax type' || header == '税类型') {
           colIndexToKeyMap[i] = 'taxType';
-        } else if (header == 'productname') {
+        } else if (header == 'productname' || header == 'product name' || header == 'plu名字') {
           colIndexToKeyMap[i] = 'productName';
-        } else if (header == 'unitweight') {
+        } else if (header == 'unitweight' || header == 'unit weight' || header == '单重') {
           colIndexToKeyMap[i] = 'unitWeight';
-        } else if (header == 'limithigh') {
+        } else if (header == 'pretare' || header == '预扣重') {
+          colIndexToKeyMap[i] = 'pretare';
+        } else if (header == 'limithigh' || header == 'limit high' || header == '上限') {
           colIndexToKeyMap[i] = 'limitHigh';
-        } else if (header == 'limitlow') {
+        } else if (header == 'limitlow' || header == 'limit low' || header == '下限') {
           colIndexToKeyMap[i] = 'limitLow';
-        } else if (header == 'productcode') {
+        } else if (header == 'productcode' || header == 'product code' || header == '产品编码') {
           colIndexToKeyMap[i] = 'productCode';
-        } else if (header == 'itemcode') {
+        } else if (header == 'itemcode' || header == 'item code' || header == '条目编码') {
           colIndexToKeyMap[i] = 'itemCode';
         } else {
           // 保持原样用于如 recId, ebabled 等字段

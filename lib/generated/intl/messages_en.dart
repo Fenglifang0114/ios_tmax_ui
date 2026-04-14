@@ -37,7 +37,6 @@ class MessageLookup extends MessageLookupByLibrary {
       "Add Temporary Weighing Record",
     ),
     "admin": MessageLookupByLibrary.simpleMessage("Admin"),
-    "advanced_setting_title": MessageLookupByLibrary.simpleMessage("Advanced"),
     "aiDesignHintText": MessageLookupByLibrary.simpleMessage(
       "Example: 55x50mm label, EPM205 printer. The first line shows net weight and unit, the second line shows a dividing line, and the bottom shows a barcode.",
     ),
@@ -54,7 +53,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "appTelTitle": MessageLookupByLibrary.simpleMessage("Tel"),
     "appVersionTitle": MessageLookupByLibrary.simpleMessage("Version"),
     "appWebTitle": MessageLookupByLibrary.simpleMessage("Website"),
-    "application_title": MessageLookupByLibrary.simpleMessage("Applications"),
     "applySoftwareSeal": MessageLookupByLibrary.simpleMessage(
       "Enable Software Calibration Lock",
     ),
@@ -64,9 +62,6 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "barcodeLengthShouldBe": MessageLookupByLibrary.simpleMessage(
       "The length of the barcode should be",
-    ),
-    "batch_delivery_title": MessageLookupByLibrary.simpleMessage(
-      "Batch Delivery",
     ),
     "batch_down_export": MessageLookupByLibrary.simpleMessage("Export"),
     "batch_down_slt_folder": MessageLookupByLibrary.simpleMessage(
@@ -101,7 +96,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "button_select_format": MessageLookupByLibrary.simpleMessage(
       "Select Format",
     ),
-    "cBtnClosePreview": MessageLookupByLibrary.simpleMessage("Close preview"),
     "cBtnCommit": MessageLookupByLibrary.simpleMessage("Click to submit"),
     "cBtnOpenPreview": MessageLookupByLibrary.simpleMessage("Open preview"),
     "cTipCalCnt": MessageLookupByLibrary.simpleMessage("Calibration Count"),
@@ -154,7 +148,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "checkSealFailed": MessageLookupByLibrary.simpleMessage(
       "Check Status Failed",
     ),
-    "choose_json_file": MessageLookupByLibrary.simpleMessage("Choose json"),
     "clearUnusedFormulaCategory": MessageLookupByLibrary.simpleMessage(
       "Clear Unused Formula Category",
     ),
@@ -168,9 +161,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "contentMissing": MessageLookupByLibrary.simpleMessage("Content missing."),
     "contentNotMeetBarcode": MessageLookupByLibrary.simpleMessage(
       "The content does not meet barcode requirements!",
-    ),
-    "customization_setting_title": MessageLookupByLibrary.simpleMessage(
-      "Applications",
     ),
     "dataExpired": MessageLookupByLibrary.simpleMessage("Data Expired"),
     "data_delete_confirm": MessageLookupByLibrary.simpleMessage(
@@ -220,13 +210,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "deviceNameNotExist": MessageLookupByLibrary.simpleMessage(
       "Device Name does not exist",
     ),
-    "device_configuration_title": MessageLookupByLibrary.simpleMessage(
-      "Device Configuration",
-    ),
-    "device_connection_title": MessageLookupByLibrary.simpleMessage(
-      "Device Info & Connection",
-    ),
-    "device_setting_title": MessageLookupByLibrary.simpleMessage("Basics"),
     "disableIngredientVerification": MessageLookupByLibrary.simpleMessage(
       "Disable Ingredient Verification",
     ),
@@ -267,9 +250,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "fAddRawMaterialTypeBtn": MessageLookupByLibrary.simpleMessage(
       "Add Ingredient Category",
     ),
-    "fAddSuccessMsg": MessageLookupByLibrary.simpleMessage(
-      "Added successfully!",
-    ),
     "fAddTypeBtn": MessageLookupByLibrary.simpleMessage("Add category"),
     "fAllowableError": MessageLookupByLibrary.simpleMessage("Allowable Error"),
     "fAllowableErrorWeightLabel": MessageLookupByLibrary.simpleMessage(
@@ -287,7 +267,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "fClearWeighingDataMsg": MessageLookupByLibrary.simpleMessage(
       "Current weighing data will be cleared. Confirm Continue?",
     ),
-    "fComScale": MessageLookupByLibrary.simpleMessage("Serial Scale"),
     "fCompleteIngredientsBtn": MessageLookupByLibrary.simpleMessage("Complete"),
     "fConfidential": MessageLookupByLibrary.simpleMessage("Confidential"),
     "fConfirmClearAndEnterFreeModeMsg": MessageLookupByLibrary.simpleMessage(
@@ -311,13 +290,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "fDataTooLittle": MessageLookupByLibrary.simpleMessage(
       "The data volume is too small to save",
     ),
-    "fDeleteSuccessMsg": MessageLookupByLibrary.simpleMessage(
-      "Deleted successfully",
-    ),
     "fDeviceDisconnected": MessageLookupByLibrary.simpleMessage(
       "Device disconnected, please check the connection.",
     ),
-    "fEditBtn": MessageLookupByLibrary.simpleMessage("Edit"),
     "fEditFmaBtn": MessageLookupByLibrary.simpleMessage("Edit Formula"),
     "fEditFormulaTypeBtn": MessageLookupByLibrary.simpleMessage(
       "Edit Formula Category",
@@ -328,9 +303,6 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "fExportRecordsBtn": MessageLookupByLibrary.simpleMessage("Export Records"),
     "fFlowRate": MessageLookupByLibrary.simpleMessage("Liquid Filling Speed"),
-    "fFlowRateMeasurement": MessageLookupByLibrary.simpleMessage(
-      "Liquid Filling Speed",
-    ),
     "fFmaBarcode": MessageLookupByLibrary.simpleMessage("Barcode"),
     "fFmaCategoryCol": MessageLookupByLibrary.simpleMessage("Category"),
     "fFmaContainer": MessageLookupByLibrary.simpleMessage("Container"),
@@ -358,13 +330,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "fFormulaInUseDeleteErrorMsg": MessageLookupByLibrary.simpleMessage(
       "Formula is in use and cannot be deleted.",
     ),
-    "fFormulaNameDuplicate": MessageLookupByLibrary.simpleMessage(
-      "Formula name already exists",
-    ),
     "fFormulaProgressLabel": MessageLookupByLibrary.simpleMessage(
       "Formula Progress",
     ),
-    "fFormulaScaleTitle": MessageLookupByLibrary.simpleMessage("Formula Scale"),
     "fFormulaTotalWeight": MessageLookupByLibrary.simpleMessage(
       "Formula Total Weight",
     ),
@@ -438,9 +406,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "fMaterialCodeCol": MessageLookupByLibrary.simpleMessage(
       "Verification Code",
     ),
-    "fMaterialCountCol": MessageLookupByLibrary.simpleMessage(
-      "Ingredient Quantity",
-    ),
     "fMaterialIdCol": MessageLookupByLibrary.simpleMessage("Ingredient ID"),
     "fMaterialNameCol": MessageLookupByLibrary.simpleMessage("Ingredient Name"),
     "fMaterialSingleWeight": MessageLookupByLibrary.simpleMessage(
@@ -450,7 +415,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "fMediumSpeed": MessageLookupByLibrary.simpleMessage("Medium Speed"),
     "fMinSpeed": MessageLookupByLibrary.simpleMessage("Min.Speed"),
     "fNeedContainer": MessageLookupByLibrary.simpleMessage("Need Container"),
-    "fNetScale": MessageLookupByLibrary.simpleMessage("Network Scale"),
     "fNextStepBtn": MessageLookupByLibrary.simpleMessage("Next Step"),
     "fNo": MessageLookupByLibrary.simpleMessage("NO."),
     "fNoFmaFound": MessageLookupByLibrary.simpleMessage("No formula found"),
@@ -479,17 +443,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "fRawMaterialWeightLabel": MessageLookupByLibrary.simpleMessage(
       "Ingredient Weight",
     ),
-    "fRawNameDuplicate": MessageLookupByLibrary.simpleMessage(
-      "Ingredient name already exists",
-    ),
     "fRecordTitle": MessageLookupByLibrary.simpleMessage("Formula Records"),
     "fRemarkCol": MessageLookupByLibrary.simpleMessage("Notes"),
     "fRepeatWeighingBtn": MessageLookupByLibrary.simpleMessage(
       "Repeat Weighing",
     ),
     "fReviseBtn": MessageLookupByLibrary.simpleMessage("Correct"),
-    "fSaveAndExitBtn": MessageLookupByLibrary.simpleMessage("Save and Exit"),
-    "fSaveAndNewBtn": MessageLookupByLibrary.simpleMessage("Save and New"),
     "fSaveSuccess": MessageLookupByLibrary.simpleMessage("Save successful"),
     "fScaleList": MessageLookupByLibrary.simpleMessage("Scale List"),
     "fSearchHint": MessageLookupByLibrary.simpleMessage("ID or Name"),
@@ -580,12 +539,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "gBarCodeMaxLength": MessageLookupByLibrary.simpleMessage("Max Length"),
     "gBarcode": MessageLookupByLibrary.simpleMessage("BarCode:"),
     "gBarcodeEdit": MessageLookupByLibrary.simpleMessage("BarCode Edit"),
-    "gBarcodeHeight": MessageLookupByLibrary.simpleMessage("BarCode Height:"),
     "gBarcodeMgr": MessageLookupByLibrary.simpleMessage("Barcode Management"),
     "gBarcodeName": MessageLookupByLibrary.simpleMessage("BarCode Name"),
-    "gBarcodeSelect": MessageLookupByLibrary.simpleMessage(
-      "Enter name to create/select.",
-    ),
     "gBarcodeType": MessageLookupByLibrary.simpleMessage("BarCode Type"),
     "gBaudRate": MessageLookupByLibrary.simpleMessage("Baud rate"),
     "gBluetoothEmissionPower": MessageLookupByLibrary.simpleMessage(
@@ -593,12 +548,6 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "gBtnActivate": MessageLookupByLibrary.simpleMessage("Activate"),
     "gBtnAdd": MessageLookupByLibrary.simpleMessage("Add"),
-    "gBtnAddApp": MessageLookupByLibrary.simpleMessage("Add App"),
-    "gBtnAdded": MessageLookupByLibrary.simpleMessage("Added"),
-    "gBtnBackToPrevious": MessageLookupByLibrary.simpleMessage(
-      "Back to Previous Level",
-    ),
-    "gBtnCalibration": MessageLookupByLibrary.simpleMessage("Calibrate"),
     "gBtnCancel": MessageLookupByLibrary.simpleMessage("Cancel"),
     "gBtnClear": MessageLookupByLibrary.simpleMessage("Clear"),
     "gBtnCloseSerialPort": MessageLookupByLibrary.simpleMessage("Close Port"),
@@ -621,9 +570,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "gBtnExit": MessageLookupByLibrary.simpleMessage("Exit"),
     "gBtnExport": MessageLookupByLibrary.simpleMessage("Export"),
     "gBtnGetBasicData": MessageLookupByLibrary.simpleMessage("Get Basic Data"),
-    "gBtnGetDataFormDb": MessageLookupByLibrary.simpleMessage(
-      "Get Data From Local",
-    ),
     "gBtnGetIp": MessageLookupByLibrary.simpleMessage("Get Ip"),
     "gBtnGetPluTemplate": MessageLookupByLibrary.simpleMessage(
       "Get PLU Template",
@@ -631,25 +577,19 @@ class MessageLookup extends MessageLookupByLibrary {
     "gBtnImport": MessageLookupByLibrary.simpleMessage("Import"),
     "gBtnModify": MessageLookupByLibrary.simpleMessage("Modify"),
     "gBtnNewFormat": MessageLookupByLibrary.simpleMessage("New Format"),
-    "gBtnNext": MessageLookupByLibrary.simpleMessage("Next Step"),
     "gBtnOpenFile": MessageLookupByLibrary.simpleMessage("Open File"),
     "gBtnOpenFileLocation": MessageLookupByLibrary.simpleMessage(
       "Open File Location",
     ),
     "gBtnOpenSerialPort": MessageLookupByLibrary.simpleMessage("Open Port"),
     "gBtnPrevious": MessageLookupByLibrary.simpleMessage("Previous Step"),
-    "gBtnRemove": MessageLookupByLibrary.simpleMessage("Remove"),
     "gBtnReportSetting": MessageLookupByLibrary.simpleMessage("Report Setting"),
     "gBtnSave": MessageLookupByLibrary.simpleMessage("Save"),
-    "gBtnSaveDataBase": MessageLookupByLibrary.simpleMessage("Save To Local"),
-    "gBtnSaveExcel": MessageLookupByLibrary.simpleMessage("Save To Excel"),
-    "gBtnSelect": MessageLookupByLibrary.simpleMessage("Select"),
     "gBtnSelectDate": MessageLookupByLibrary.simpleMessage("Select Date"),
     "gBtnSelectFile": MessageLookupByLibrary.simpleMessage("Select File"),
     "gBtnSelectPluFile": MessageLookupByLibrary.simpleMessage(
       "Select Product Excel",
     ),
-    "gBtnSelectTime": MessageLookupByLibrary.simpleMessage("Select Time"),
     "gBtnSelectZipFirmware": MessageLookupByLibrary.simpleMessage(
       "Select Firmware Zip",
     ),
@@ -661,8 +601,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "gBtnSyncTime": MessageLookupByLibrary.simpleMessage("Sync Time"),
     "gBtnTare": MessageLookupByLibrary.simpleMessage("Tare"),
     "gBtnTestConnect": MessageLookupByLibrary.simpleMessage("Test Connect"),
-    "gBtnViaNetworkUpdate": MessageLookupByLibrary.simpleMessage("Network"),
-    "gBtnViaSerialUpdate": MessageLookupByLibrary.simpleMessage("Serial Port"),
     "gBuildInfoTip": MessageLookupByLibrary.simpleMessage(
       "This ID is only to be used by device developers.",
     ),
@@ -678,8 +616,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "gEPNormal": MessageLookupByLibrary.simpleMessage("Normal"),
     "gEPStrong": MessageLookupByLibrary.simpleMessage("Strong"),
     "gEPWeak": MessageLookupByLibrary.simpleMessage("Weak"),
-    "gEditor": MessageLookupByLibrary.simpleMessage("Editor"),
-    "gElementType": MessageLookupByLibrary.simpleMessage("Type:"),
     "gExpirationDate": MessageLookupByLibrary.simpleMessage("Expiration date"),
     "gFindSsid": MessageLookupByLibrary.simpleMessage("Discover SSID"),
     "gFontBold": MessageLookupByLibrary.simpleMessage("Bold:"),
@@ -696,12 +632,6 @@ class MessageLookup extends MessageLookupByLibrary {
       "Modify emission power",
     ),
     "gModifyBluetoothName": MessageLookupByLibrary.simpleMessage("Modify name"),
-    "gMsgAuthorityFail": MessageLookupByLibrary.simpleMessage(
-      "Not authenticed. Please send the ID to us.",
-    ),
-    "gMsgAuthorityPassed": MessageLookupByLibrary.simpleMessage(
-      "Authentication passed.\r\n",
-    ),
     "gMsgNoElement": MessageLookupByLibrary.simpleMessage(
       "No element selected.",
     ),
@@ -760,22 +690,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "gSelectAll": MessageLookupByLibrary.simpleMessage("select all"),
     "gSerialParity": MessageLookupByLibrary.simpleMessage("Parity"),
     "gSerialPort": MessageLookupByLibrary.simpleMessage("Serial port"),
-    "gSerialPortStatus": MessageLookupByLibrary.simpleMessage(
-      "Serial Port Status:",
-    ),
     "gStatus": MessageLookupByLibrary.simpleMessage("Status"),
     "gStopBits": MessageLookupByLibrary.simpleMessage("Stop bits"),
-    "gSubtitleAddedConfigFunction": MessageLookupByLibrary.simpleMessage(
-      "The following applications have been added to the navigation bar. Click the remove button to remove the corresponding function. After removal, you can continue to add applications.",
-    ),
     "gSubtitleAppsCharge": MessageLookupByLibrary.simpleMessage(
       "Pay per function to activate permanently. To purchase, please click ( ℹ️ ) in the top-right corner to contact the software provider.",
     ),
     "gSubtitleConfigFunctionCharge": MessageLookupByLibrary.simpleMessage(
       "Pay annually to activate all advanced functions, valid for one year. To purchase, please click ( ℹ️ ) in the top-right corner to contact the software provider.",
-    ),
-    "gSubtitleUploadActivationFile": MessageLookupByLibrary.simpleMessage(
-      "Upload the activation file provided by the supplier in the input box below.",
     ),
     "gSystemId": MessageLookupByLibrary.simpleMessage("System Unique ID"),
     "gSystemSetting": MessageLookupByLibrary.simpleMessage("System Setting"),
@@ -857,7 +778,6 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "gTipDecimal": MessageLookupByLibrary.simpleMessage("Decimal"),
     "gTipDefaultValue": MessageLookupByLibrary.simpleMessage("Default Value"),
-    "gTipDeviceLost": MessageLookupByLibrary.simpleMessage("Force update?"),
     "gTipDeviceNameEmpty": MessageLookupByLibrary.simpleMessage(
       "Device name can not be empty,error.",
     ),
@@ -900,14 +820,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "gTipExportIOError": MessageLookupByLibrary.simpleMessage(
       "Export IO error",
     ),
-    "gTipExportPathError": MessageLookupByLibrary.simpleMessage(
-      "Export path error",
-    ),
     "gTipExportSuccess": MessageLookupByLibrary.simpleMessage(
       "Export successful",
-    ),
-    "gTipFailToSelectFile": MessageLookupByLibrary.simpleMessage(
-      "Fail to select file",
     ),
     "gTipFailedGetTime": MessageLookupByLibrary.simpleMessage(
       "failed to get time",
@@ -923,10 +837,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "gTipFmaPageHelp": MessageLookupByLibrary.simpleMessage(
       "1.In the Ingredients List, click [+] to add a new ingredient. Enter the ID, Name, Category, and Description, then click [Confirm].\n 2.Click on a ingredient to view all Formulas that use it. Further click to see detailed formula information.\n 3.In the Formula List, click [+] to create a new formula and enter its details.\n 4.If the total weight of the formula is fixed, select the \"Weight\" mode, where each ingredient is set with a fixed weight.\n 5.If the total weight is variable, select the \"Percentage\" mode, where each ingredient is set by ratio. The total ratio must add up to 100% before saving the formula.\n 6.In the Formula List, select the desired formula and click [Start Dosing].\n 7.The software will guide you step-by-step, indicating which ingredient to weigh. When the weight falls within the allowed error range, click [Next] until dosing is complete.\n 8.If a ingredient is overweight, the software will prompt you to either discard dosing or adjust the formula.\n 9.Discard dosing: Clears the data and returns to the Formula List.\n 10.Adjust formula: Resets to the first ingredient, allowing you to add the required weight as prompted until all dosing is completed.\n 11.In the Formula List, you can view all dosing records or records for a single formula, with the option to export them.\n \n Note: If a formula is set to \"Confidential\", the operator will only see a progress bar for each ingredient during dosing—not the actual weight. The system will guide dosing speed based on the allowed error range.",
     ),
-    "gTipFolderNoSelected": MessageLookupByLibrary.simpleMessage(
-      "No folder has been selected, so the file cannot be saved.",
-    ),
-    "gTipFree": MessageLookupByLibrary.simpleMessage("Free"),
     "gTipFreeApplications": MessageLookupByLibrary.simpleMessage(
       "Free Applications",
     ),
@@ -963,7 +873,6 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "gTipGrossText": MessageLookupByLibrary.simpleMessage("Gross Text"),
     "gTipHelp": MessageLookupByLibrary.simpleMessage("Help"),
-    "gTipHex": MessageLookupByLibrary.simpleMessage("Hexadecimal"),
     "gTipHexInput": MessageLookupByLibrary.simpleMessage(
       "Hexadecimal input, please separate with a space, for example: 31 32 33 34 35 36",
     ),
@@ -999,9 +908,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "gTipLabelFmtDownPageHelp": MessageLookupByLibrary.simpleMessage(
       "1. Follow the prompts to select the corresponding print format for uploading;\n2. Click [Download] to download the format(.fmt);\n3. If multiple networks are connected, you need to select the corresponding network before downloading.\n",
     ),
-    "gTipLabelFmtDownload": MessageLookupByLibrary.simpleMessage(
-      "This application is used to download print format.",
-    ),
     "gTipLoadWeightThenNext": MessageLookupByLibrary.simpleMessage(
       "Please wait for the green light to turn on and click next",
     ),
@@ -1009,9 +915,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "gTipManualZero": MessageLookupByLibrary.simpleMessage("Manual Zero Reset"),
     "gTipMaxLength": MessageLookupByLibrary.simpleMessage("Max Length"),
     "gTipMaxRange": MessageLookupByLibrary.simpleMessage("Maximum Range"),
-    "gTipModelNotMatch": MessageLookupByLibrary.simpleMessage(
-      "Model name in ZIP doesn\'t match device\'s. Force update?",
-    ),
     "gTipNetText": MessageLookupByLibrary.simpleMessage("Net Text"),
     "gTipNoData": MessageLookupByLibrary.simpleMessage("No data"),
     "gTipNoDataSelected": MessageLookupByLibrary.simpleMessage(
@@ -1025,9 +928,6 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "gTipOffline": MessageLookupByLibrary.simpleMessage("offline"),
     "gTipOnline": MessageLookupByLibrary.simpleMessage("online"),
-    "gTipParameterSettingPageHelp": MessageLookupByLibrary.simpleMessage(
-      "1. There are 5 parameter settings: Weighing, Factory, Serial Port, Price, Other;\n2. The editable parameters can be set in Value column based on the content in Description column;\n3. After setting all parameters, click the button in the bottom right corner to submit.\n",
-    ),
     "gTipPerformingOperation": MessageLookupByLibrary.simpleMessage(
       "Performing operation...",
     ),
@@ -1045,9 +945,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "gTipPleaseStableWeight": MessageLookupByLibrary.simpleMessage(
       "Please first stable the weight.",
     ),
-    "gTipPluDownload": MessageLookupByLibrary.simpleMessage(
-      "This application is used to download product information.",
-    ),
     "gTipPluDuplicated": MessageLookupByLibrary.simpleMessage("Duplicated"),
     "gTipPlueditPageHelp": MessageLookupByLibrary.simpleMessage(
       "1. Create a new PLU: Click [+] to create a default data PLU.\n2. Import PLU: Click [Import] to select the data sheet, and all PLU data in the sheet will be displayed.\n3. Import PLU from the database: Click [Get Data From DB] will display all PLU data in the database.\n\nNote: \nThe PLU in the database is not the PLU on the scale, but the database in the software backend. The software currently does not have the function to read PLU information from the scale.\n4. Click the [Setting button] to select the PLU information that needs to be displayed.\n5. If you need to modify PLU information, you can directly modify it in the corresponding cell. (Hovering over a cell will display the range of parameters that can be entered.)\n6. Select the PLU to be download and click [Download].\n7. Choose to clear all PLUs on the scale before downloading, or update the corresponding PLUs, and then click [Confirm].\n8. Export in sheet format: Select the PLU to export, click [Export] and choose the folder to export.\n9. Save to backend database: Select the PLU that needs to be saved and then click [Save to DB], choose to clear all PLUs in the backend database before saving, or update the corresponding PLUs, click [Confirm].\n10. Get PLU Template: Click [Get PLU Template] and select the download path to obtain a form template that can be filled out with PLU.\n",
@@ -1059,14 +956,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "gTipRebootForUpdate": MessageLookupByLibrary.simpleMessage(
       "Please reboot the device to begin update...",
     ),
-    "gTipReceiptDesign": MessageLookupByLibrary.simpleMessage(
-      "This application is designed for the printing format of the receipt.",
-    ),
     "gTipReceiptDesignPageHelp": MessageLookupByLibrary.simpleMessage(
       "1. Select printer protocol, length and width of the ticket, printing direction and other information;\n2. When editing the print format, there are 4 variables to choose from in the left menu bar;\n Free Text: Text variables that can be freely inputted\n Dividing Line: A horizontal line used for segmentation (after selecting this variable twice, the content in the middle of the variable can appear repeatedly, such as the accumulated content each time)\n Variable: Variables required for weighing scales\n Price Variable: Variables required for the price computing scale\n3. After editing the format, click [Save Format] to save the print format.\n\nNote:\n The weighing scale and pricing scale cannot use the wrong variable, otherwise the printed output will be empty.\n",
-    ),
-    "gTipReceiptDownload": MessageLookupByLibrary.simpleMessage(
-      "This application is used to download the print format of the receipt.",
     ),
     "gTipReceiptFmtDownPageHelp": MessageLookupByLibrary.simpleMessage(
       "1. Follow the prompts to select the corresponding print format for uploading;\n2. Click [Download] to download the format(.fmt);\n3. If multiple networks are connected, you need to select the corresponding network before downloading.\n",
@@ -1075,9 +966,6 @@ class MessageLookup extends MessageLookupByLibrary {
       "Fail,Please redo the last step.",
     ),
     "gTipRefreshPort": MessageLookupByLibrary.simpleMessage("Click to refresh"),
-    "gTipResetMaxRange": MessageLookupByLibrary.simpleMessage(
-      "Fail,Please reset the maximum range.",
-    ),
     "gTipResult": MessageLookupByLibrary.simpleMessage("Result"),
     "gTipRetailApplications": MessageLookupByLibrary.simpleMessage(
       "Retail Applications",
@@ -1086,16 +974,8 @@ class MessageLookup extends MessageLookupByLibrary {
       "1. This function interface can display the data printed after each checkout;\nIf the service is not installed, you need to click [Service] on the right and click [Install Service]; When prompted that the service has stopped, click [Start Service] and it will prompt that it is running. Finally, click [Confirm] to complete the process;\n2. After the balance is printed, the printing content of each order will be displayed on this interface, click [Refresh List] and you can get the latest records;\n3. Click [Export] and you can download the report.\n\nNote: \nThis function can be used via Ethernet / WiFi, and cannot be used via serial port.",
     ),
     "gTipSSID": MessageLookupByLibrary.simpleMessage("SSID:"),
-    "gTipSaveDbOk": MessageLookupByLibrary.simpleMessage("Save Data OK."),
     "gTipSaveFail": MessageLookupByLibrary.simpleMessage("Save data failed !"),
-    "gTipSaveSuccess": MessageLookupByLibrary.simpleMessage(
-      "Save successfully. The path is:",
-    ),
     "gTipSaveType": MessageLookupByLibrary.simpleMessage("Save type"),
-    "gTipSavingData": MessageLookupByLibrary.simpleMessage(
-      "The data is being saved. Please wait a moment.",
-    ),
-    "gTipScaleList": MessageLookupByLibrary.simpleMessage("Scale List"),
     "gTipScaleMgrPageHelp": MessageLookupByLibrary.simpleMessage(
       "Connect via serial port\n1. Connect the scale to the PC device with a serial port cable;\n2. Enter the correct serial port information;\n3. Click [Connect];\n4. If the connection is successful,the left status bar will display Online.\n5. Click [Close Port] to disconnect the serial port connection; Click [Open Port] to open the serial port connection;\n6. If you want to change the scale name, click [Rename] to enter it and click [Confirm].\n\nConnect via Ethernet/Wi-Fi\n1. Click [+] at the top of the left status bar;\n2. Enter the IPv4 (IP Address) and Port (Port Number);\n3. Click [Confirm] to complete the connection.\n\n  (1) Get IP Address\nWi-Fi: Click [Wi-Fi Setting] on the main interface, select the Wi-Fi you want to connect to in the left column, enter the password and click [Connect]. If the connection is successful, the IP Address will be displayed.\nEthernet: After connecting the network cable, enter the scale menu to get the IP Address. (For T-Max, F3-3 COM3 SHOW.)\n  (2) Get Port Number\nWi-Fi: Enter the scale menu to get. (For T-Max, F3-2 COM2 MODE, press the TARE key three times to view the port number.)\nEthernet: Enter the scale menu to get. (For T-Max, F3-3 COM3 PORT, press the TARE key once to view the port number.)\n\nNote:\nTo use Wi-Fi connection, you need to turn on the scale\'s Wi-Fi function and connect the device running the software to the target Wi-Fi as well.\nTo use Ethernet connection, you need to turn on the network port function of the scale and connect the device running the software to the target Wi-Fi as well.\n",
     ),
@@ -1111,16 +991,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "gTipSelectOnePluFile": MessageLookupByLibrary.simpleMessage(
       "Only one PLU file can be selected",
     ),
-    "gTipSelectUpdateWay": MessageLookupByLibrary.simpleMessage(
-      "Please select the way to update the firmware.",
-    ),
     "gTipSerialDesignPageHelp": MessageLookupByLibrary.simpleMessage(
       "1. The top menu bar has modes such as weighing, counting, price computing, etc, which can be edited by selecting different modes based on the connected scale;\n2. The left menu bar is for variables, which can be selected according to your needs;\n3. You can click [Open Review] to preview the output results;\n4. After editing the format, click [Download]. Once successful, use the serial port tool to test it.\n\nNote: \nThis function can only be used in serial port connection mode.\n",
     ),
     "gTipSerialPortDisconnected": MessageLookupByLibrary.simpleMessage(
       "The serial port disconnected",
     ),
-    "gTipService": MessageLookupByLibrary.simpleMessage("Service"),
     "gTipServiceOff": MessageLookupByLibrary.simpleMessage(
       "Connection lost. Restart app/service..",
     ),
@@ -1150,14 +1026,8 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "gTipStartService": MessageLookupByLibrary.simpleMessage("Start Service"),
     "gTipStopService": MessageLookupByLibrary.simpleMessage("Stop Service"),
-    "gTipStringProperty": MessageLookupByLibrary.simpleMessage(
-      "String Property",
-    ),
     "gTipSwitchUnit": MessageLookupByLibrary.simpleMessage(
       "When switching units, please also switch the corresponding range.",
-    ),
-    "gTipTakeOut": MessageLookupByLibrary.simpleMessage(
-      "This app is used to implement the take out scale.",
     ),
     "gTipTakeOutPageHelp": MessageLookupByLibrary.simpleMessage(
       "1. The condition is that there must be weight on the scale. Click [Start] to activate take out scale function. (Only record the decrement of the weighing value during unloading.)\n2. Click [Save] to save the current weighing record;\n3. Click [Show Reports] to display the report;\n4. Click [Setting] to set automatic saving.\n5. In [Setting], you can also set the date format and delimiter for data export;\n6. Enter the PLU number or name in the PLU Name column to call the PLU in the backend database; (The PLU here is not the PLU on the scale)\n7. Click [Report Setting] to select the information displayed for weighing data; (Currently, there are no functional variables available: Product Code, Item Code, User Name, User NO）\n8. Click the arrow in a column of the report title row will sort the report in ascending/descending order.\n9.Click [Export] to export all saved data (xlsx).\n10.Click [End] to stop the function.\n\nNote: \nThe weight in the report refers to the decrement rather than all the weight on the scale.\n",
@@ -1167,7 +1037,6 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "gTipTextProperty": MessageLookupByLibrary.simpleMessage("Text Property"),
     "gTipTimeOut": MessageLookupByLibrary.simpleMessage("Time out!"),
-    "gTipType": MessageLookupByLibrary.simpleMessage("Type"),
     "gTipUnactivated": MessageLookupByLibrary.simpleMessage("Unactivated"),
     "gTipUninstallService": MessageLookupByLibrary.simpleMessage(
       "Uninstall Service",
@@ -1178,9 +1047,6 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "gTipUpdatePlu": MessageLookupByLibrary.simpleMessage("Update Products"),
     "gTipValue": MessageLookupByLibrary.simpleMessage("Value"),
-    "gTipVarSettingPageHelp": MessageLookupByLibrary.simpleMessage(
-      "1. Edit header, footer, and operator information;\n2. Click [Download] to send to the scale.\n",
-    ),
     "gTipWait": MessageLookupByLibrary.simpleMessage("Please wait..."),
     "gTipWeighingPageHelp": MessageLookupByLibrary.simpleMessage(
       "1. Real time display of weighing data on the scale (supporting all units including PCS and PCT);\n2. Click [TARE] and [ZERO] allows for weighing and zeroing operations on the scale;\n3. Click the List button in the upper left corner to view the list of connected devices and make changes.\n\nNote：\n1.This function can be used by connecting to a serial port, Ethernet, or WiFi.\n2.Switching units is done on the scale.\n",
@@ -1199,17 +1065,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "gTitleActivationFeedback": MessageLookupByLibrary.simpleMessage(
       "Activation Feedback",
     ),
-    "gTitleActivationMethod": MessageLookupByLibrary.simpleMessage(
-      "Activation Method",
-    ),
     "gTitleAddDevice": MessageLookupByLibrary.simpleMessage("Add Device"),
-    "gTitleAddedConfigFunction": MessageLookupByLibrary.simpleMessage(
-      "Added Configuration Functions",
-    ),
     "gTitleAppConfig": MessageLookupByLibrary.simpleMessage("Application"),
-    "gTitleConfigFunctionCharge": MessageLookupByLibrary.simpleMessage(
-      "Configuration Function Charging Method",
-    ),
     "gTitleConfirm": MessageLookupByLibrary.simpleMessage("Confirmation"),
     "gTitleDeviceList": MessageLookupByLibrary.simpleMessage("Device List"),
     "gTitleGetBuildInfo": MessageLookupByLibrary.simpleMessage(
@@ -1223,26 +1080,15 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "gTitleLicenseInfo": MessageLookupByLibrary.simpleMessage("License Info"),
     "gTitlePluDownload": MessageLookupByLibrary.simpleMessage("PLU Download"),
-    "gTitlePluEdit": MessageLookupByLibrary.simpleMessage("PLU Edit"),
     "gTitlePreview": MessageLookupByLibrary.simpleMessage("Preview"),
-    "gTitleReceiptDesign": MessageLookupByLibrary.simpleMessage(
-      "Receipt Design",
-    ),
     "gTitleSerialModify": MessageLookupByLibrary.simpleMessage(
       "Serial port information modification",
     ),
     "gTitleSerialOutputDownload": MessageLookupByLibrary.simpleMessage(
       "Serial Output Download",
     ),
-    "gTitleSerialPortConnection": MessageLookupByLibrary.simpleMessage(
-      "Serial Port Connection",
-    ),
     "gTitleSetLanguage": MessageLookupByLibrary.simpleMessage("Set Language"),
     "gTotalFmt": MessageLookupByLibrary.simpleMessage("Total format:"),
-    "gTxtDecimal": MessageLookupByLibrary.simpleMessage("Decimal"),
-    "general_configuration_title": MessageLookupByLibrary.simpleMessage(
-      "General Configuration",
-    ),
     "go_home": MessageLookupByLibrary.simpleMessage(
       "Confirm to return to hompage?",
     ),
@@ -1253,20 +1099,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "iStable": MessageLookupByLibrary.simpleMessage("Stable"),
     "iTextNet": MessageLookupByLibrary.simpleMessage("Net"),
     "iTextZero": MessageLookupByLibrary.simpleMessage("Zero"),
-    "iTipCheckWeigher": MessageLookupByLibrary.simpleMessage(
-      "This application is used to check weighing data in real time",
-    ),
     "iTipHLUnit": MessageLookupByLibrary.simpleMessage(
       "The unit of weight is the same as scale..",
     ),
-    "iTipIncrementWeighting": MessageLookupByLibrary.simpleMessage(
-      "This app is used to implement the increment scale.",
-    ),
-    "iTipWeightCollection": MessageLookupByLibrary.simpleMessage(
-      "This application is used to collect weighing data in real time",
-    ),
     "iTitleHLSetting": MessageLookupByLibrary.simpleMessage("High/Low Setting"),
-    "iUserInfo": MessageLookupByLibrary.simpleMessage("User Info"),
     "ingredientIdEmpty": MessageLookupByLibrary.simpleMessage(
       "Ingredient Id is empty",
     ),
@@ -1278,12 +1114,6 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "ingredientNameEmpty": MessageLookupByLibrary.simpleMessage(
       "Ingredient Name cannot be empty",
-    ),
-    "ingredientNoEmpty": MessageLookupByLibrary.simpleMessage(
-      "Ingredient No. is empty",
-    ),
-    "ingredientNoInvalid": MessageLookupByLibrary.simpleMessage(
-      "Ingredient No. must be a positive integer",
     ),
     "ingredientVerification": MessageLookupByLibrary.simpleMessage(
       "Ingredient Verification",
@@ -1310,9 +1140,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "l_gross_expl": MessageLookupByLibrary.simpleMessage("Gross"),
     "l_gross_var": MessageLookupByLibrary.simpleMessage("Gross"),
     "l_line_expl": MessageLookupByLibrary.simpleMessage("Line"),
-    "l_line_lenth_txt": MessageLookupByLibrary.simpleMessage("Line Length"),
     "l_line_var": MessageLookupByLibrary.simpleMessage("Line"),
-    "l_line_width_txt": MessageLookupByLibrary.simpleMessage("Line Width"),
     "l_net_expl": MessageLookupByLibrary.simpleMessage("Net"),
     "l_net_var": MessageLookupByLibrary.simpleMessage("Net"),
     "l_no_expl": MessageLookupByLibrary.simpleMessage("NO."),
@@ -1450,7 +1278,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "nameNotEntered": MessageLookupByLibrary.simpleMessage(
       "The name not entered or content is empty, please check!",
     ),
-    "new_license_text": MessageLookupByLibrary.simpleMessage("New License:"),
     "noBarCodeDataTip": MessageLookupByLibrary.simpleMessage("No data"),
     "noBluetoothDevicesFound": MessageLookupByLibrary.simpleMessage(
       "No bluetooth devices found",
@@ -1458,7 +1285,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "noDataImport": MessageLookupByLibrary.simpleMessage("No data to import"),
     "noPermission": MessageLookupByLibrary.simpleMessage("No permission"),
     "notSealed": MessageLookupByLibrary.simpleMessage("Off"),
-    "opDisable": MessageLookupByLibrary.simpleMessage("Disable"),
     "opEnable": MessageLookupByLibrary.simpleMessage("Enable"),
     "opExport": MessageLookupByLibrary.simpleMessage("Export"),
     "opImport": MessageLookupByLibrary.simpleMessage("Import"),
@@ -1471,7 +1297,6 @@ class MessageLookup extends MessageLookupByLibrary {
       "Failed to open the output port.",
     ),
     "operation": MessageLookupByLibrary.simpleMessage("Details"),
-    "operationRecord": MessageLookupByLibrary.simpleMessage("Operation Record"),
     "operationResult": MessageLookupByLibrary.simpleMessage("Result"),
     "operationType": MessageLookupByLibrary.simpleMessage("Operation Type"),
     "operator": MessageLookupByLibrary.simpleMessage("Operator"),
@@ -1619,49 +1444,18 @@ class MessageLookup extends MessageLookupByLibrary {
     "percentNot100": MessageLookupByLibrary.simpleMessage(
       "Total percentage is not 100%",
     ),
-    "pleaseEnterRemovalCode": MessageLookupByLibrary.simpleMessage(
-      "Please enter the removal code",
-    ),
     "pleaseSetSuperAdmin": MessageLookupByLibrary.simpleMessage(
       "Set up the Super Admin account before creating new accounts.",
     ),
     "pleaseWait": MessageLookupByLibrary.simpleMessage(
       "Please wait 2 seconds...",
     ),
-    "plu_edit": MessageLookupByLibrary.simpleMessage("PLU Edit"),
-    "plu_error_message": MessageLookupByLibrary.simpleMessage(
-      "PLU pretare cannot be empty.",
-    ),
-    "plu_error_message1": MessageLookupByLibrary.simpleMessage(
-      "PLU ID or PLU name cannot be empty.",
-    ),
-    "plu_error_message2": MessageLookupByLibrary.simpleMessage(
-      "PLU ID or PLU name already exists.",
-    ),
-    "plu_remarks": MessageLookupByLibrary.simpleMessage("PLu Remarks:"),
     "pretare": MessageLookupByLibrary.simpleMessage("Pretare:"),
     "printSettings": MessageLookupByLibrary.simpleMessage("Print Settings"),
-    "product_information": MessageLookupByLibrary.simpleMessage(
-      "Product Information",
-    ),
-    "rHideScaleListBtn": MessageLookupByLibrary.simpleMessage("Hide Scales"),
-    "rJoinManagementTip": MessageLookupByLibrary.simpleMessage(
-      "Whether to join the management",
-    ),
     "rRefreshListBtn": MessageLookupByLibrary.simpleMessage("Refresh List"),
-    "rShowScaleListBtn": MessageLookupByLibrary.simpleMessage("Show Scales"),
-    "rTipDetailRpt": MessageLookupByLibrary.simpleMessage(
-      "This app is used to display sales detail data.",
-    ),
     "rTipFooter": MessageLookupByLibrary.simpleMessage("Footer"),
     "rTipHeader": MessageLookupByLibrary.simpleMessage("Header"),
     "rTipOperator": MessageLookupByLibrary.simpleMessage("Operator"),
-    "rTipSetVariableValues": MessageLookupByLibrary.simpleMessage(
-      "This application is used to distribute various variable information, such as headers and footers.",
-    ),
-    "rTitleSetVariableValues": MessageLookupByLibrary.simpleMessage(
-      "Variable Value Setting",
-    ),
     "reAcquireAuthCode": MessageLookupByLibrary.simpleMessage(
       "Please re-acquire the advanced configuration authorization code.",
     ),
@@ -1674,21 +1468,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "removeWithCode": MessageLookupByLibrary.simpleMessage(
       "Disable with Unlock Code",
     ),
-    "report_hide_btn": MessageLookupByLibrary.simpleMessage("Hide Report"),
-    "report_show_btn": MessageLookupByLibrary.simpleMessage("Show Reports"),
-    "save_as": MessageLookupByLibrary.simpleMessage("Save as"),
     "save_mode": MessageLookupByLibrary.simpleMessage("Save Mode"),
     "savedSuccessfully": MessageLookupByLibrary.simpleMessage(
       "Saved successfully!",
     ),
-    "scale_mgr_btn_def": MessageLookupByLibrary.simpleMessage("Set Default"),
-    "scale_mgr_btn_rename": MessageLookupByLibrary.simpleMessage("Rename"),
-    "scale_model": MessageLookupByLibrary.simpleMessage("Scale Model:"),
     "scanBluetoothDevices": MessageLookupByLibrary.simpleMessage(
       "Scan for Bluetooth devices",
-    ),
-    "sealPresentCalibrationNotPermitted": MessageLookupByLibrary.simpleMessage(
-      "A seal is present on the device. Calibration is not permitted.",
     ),
     "sealed": MessageLookupByLibrary.simpleMessage("On"),
     "search": MessageLookupByLibrary.simpleMessage("Search"),
@@ -1697,16 +1482,10 @@ class MessageLookup extends MessageLookupByLibrary {
       "Searching for nearby Bluetooth devices - this may take up to 20 seconds",
     ),
     "selectDevice": MessageLookupByLibrary.simpleMessage("Select Device"),
-    "selectS15Scale": MessageLookupByLibrary.simpleMessage(
-      "Please select S15 scale",
-    ),
     "select_firmware_btn": MessageLookupByLibrary.simpleMessage(
       "Select Firmware",
     ),
     "selected": MessageLookupByLibrary.simpleMessage("Selected"),
-    "sequenceNotContinuous": MessageLookupByLibrary.simpleMessage(
-      "sequence numbers are not continuous",
-    ),
     "serial_page_ol": MessageLookupByLibrary.simpleMessage("OL mode"),
     "serial_page_pcs": MessageLookupByLibrary.simpleMessage("Counting mode"),
     "serial_page_percent": MessageLookupByLibrary.simpleMessage("Percent mode"),
@@ -1716,7 +1495,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "serial_page_ul": MessageLookupByLibrary.simpleMessage("UL mode"),
     "serial_page_weight": MessageLookupByLibrary.simpleMessage("Weight mode"),
     "server_ip": MessageLookupByLibrary.simpleMessage("Server Ip:"),
-    "server_port": MessageLookupByLibrary.simpleMessage("Server Port:"),
     "setDHCPFailed": MessageLookupByLibrary.simpleMessage("Set DHCP Failed"),
     "setDHCPSuccess": MessageLookupByLibrary.simpleMessage("Set DHCP Success"),
     "setIPFailed": MessageLookupByLibrary.simpleMessage("Set IP Failed"),
@@ -1727,15 +1505,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "setTime": MessageLookupByLibrary.simpleMessage("Set Time"),
     "sharedFolderPath": MessageLookupByLibrary.simpleMessage(
       "Shared Folder Path",
-    ),
-    "show_current_weight": MessageLookupByLibrary.simpleMessage(
-      "Current weight:",
-    ),
-    "show_increment_weight": MessageLookupByLibrary.simpleMessage(
-      "Increment weight:",
-    ),
-    "show_reduced_weight": MessageLookupByLibrary.simpleMessage(
-      "Reduced weight:",
     ),
     "singlePoint": MessageLookupByLibrary.simpleMessage("Single Point"),
     "skipThisIngredient": MessageLookupByLibrary.simpleMessage(
@@ -1823,9 +1592,6 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "subTitleTakeOutScale": MessageLookupByLibrary.simpleMessage(
       "Record weight decrement during unloading  and generate data reports.",
-    ),
-    "subTitleVariableValueSetting": MessageLookupByLibrary.simpleMessage(
-      "Edit headers, footers, and operator information.",
     ),
     "subTitleWeighing": MessageLookupByLibrary.simpleMessage(
       "Display weighing data in real-time, supporting basic operations.",
@@ -1931,7 +1697,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "userConfirmPassword": MessageLookupByLibrary.simpleMessage(
       "Confirm password",
     ),
-    "userCreator": MessageLookupByLibrary.simpleMessage("Creator"),
     "userDefaultApp": MessageLookupByLibrary.simpleMessage(
       "Default initial application",
     ),
@@ -1944,21 +1709,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "userRole": MessageLookupByLibrary.simpleMessage("Role"),
     "userUpdate": MessageLookupByLibrary.simpleMessage("Edit user"),
     "userUsername": MessageLookupByLibrary.simpleMessage("User name"),
-    "user_edit": MessageLookupByLibrary.simpleMessage("User Edit"),
-    "user_error_message1": MessageLookupByLibrary.simpleMessage(
-      "The User Id and Username cannot be empty!",
-    ),
-    "user_error_message2": MessageLookupByLibrary.simpleMessage(
-      "User ID or Username cannot be the same!",
-    ),
-    "user_error_message3": MessageLookupByLibrary.simpleMessage(
-      "The User is not found!",
-    ),
-    "user_id": MessageLookupByLibrary.simpleMessage("User ID:"),
-    "user_name": MessageLookupByLibrary.simpleMessage("User Name:"),
-    "user_phone": MessageLookupByLibrary.simpleMessage("Phone:"),
-    "user_remarks": MessageLookupByLibrary.simpleMessage("User Notes:"),
-    "user_sex": MessageLookupByLibrary.simpleMessage("Gender:"),
     "variableAlignmentEmpty": MessageLookupByLibrary.simpleMessage(
       "Variable alignment cannot be empty or have a length of 0. Please check.",
     ),
@@ -1984,6 +1734,5 @@ class MessageLookup extends MessageLookupByLibrary {
     "weightUnitEmpty": MessageLookupByLibrary.simpleMessage(
       "Weight Unit cannot be empty when Mode is weight",
     ),
-    "zero_range": MessageLookupByLibrary.simpleMessage("Zero Range:"),
   };
 }

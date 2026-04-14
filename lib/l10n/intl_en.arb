@@ -20,18 +20,6 @@
     "@gBtnSave": {
         "description": "This is a button for saving."
     },
-    "gTitleSerialPortConnection": "Serial Port Connection",
-    "@gTitleSerialPortConnection": {
-        "description": "This is the title of the serial port connection."
-    },
-    "gMsgAuthorityPassed": "Authentication passed.\r\n",
-    "@gMsgAuthorityPassed": {
-        "description": "This is the prompt indicating that the authentication has been passed."
-    },
-    "gMsgAuthorityFail": "Not authenticed. Please send the ID to us.",
-    "@gMsgAuthorityFail": {
-        "description": "This is the prompt indicating that the authentication has failed."
-    },
     "gBtnStart": "Start",
     "@gBtnStart": {
         "description": "This is a button for starting."
@@ -47,10 +35,6 @@
     "gTitleSerialModify": "Serial port information modification",
     "@gTitleSerialModify": {
         "description": "This is the title for modifying serial port information."
-    },
-    "gSerialPortStatus": "Serial Port Status:",
-    "@gSerialPortStatus": {
-        "description": "This is the title for serial port status."
     },
     "gMsgRefresh": "Refresh",
     "@gMsgRefresh": {
@@ -192,10 +176,6 @@
     "@gBarcodeName": {
         "description": "This is a button about barcode name."
     },
-    "gBarcodeSelect": "Enter name to create/select.",
-    "@gBarcodeSelect": {
-        "description": "This is a prompt regarding the creation or selection of a barcode or qrcode name."
-    },
     "gBarCodeDataType": "DATA TYPE",
     "@gBarCodeDataType": {
         "description": "This is a prompt regarding the data type."
@@ -260,10 +240,6 @@
     "@gPageHeight": {
         "description": "This is a prompt about the page height."
     },
-    "gEditor": "Editor",
-    "@gEditor": {
-        "description": "This is a prompt about editor."
-    },
     "gTextContent": "Text Content:",
     "@gTextContent": {
         "description": "This is a prompt about text content."
@@ -312,17 +288,9 @@
     "@gMaxLength": {
         "description": "This is a prompt about max length."
     },
-    "gElementType": "Type:",
-    "@gElementType": {
-        "description": "This is a prompt about item type in print format."
-    },
     "gBarcode": "BarCode:",
     "@gBarcode": {
         "description": "This is a prompt about BarCode."
-    },
-    "gBarcodeHeight": "BarCode Height:",
-    "@gBarcodeHeight": {
-        "description": "This is a prompt about Barcode height."
     },
     "iBtnZero": "Zero",
     "@iBtnZero": {
@@ -356,18 +324,6 @@
     "@gPluName": {
         "description": "This is a prompt about PLU name."
     },
-    "plu_edit": "PLU Edit",
-    "@plu_edit": {
-        "description": "This is a prompt about PLU edit."
-    },
-    "user_name": "User Name:",
-    "@user_name": {
-        "description": "This is a prompt about user name."
-    },
-    "user_edit": "User Edit",
-    "@user_edit": {
-        "description": "This is a prompt about user edit."
-    },
     "gParameterSettingsTitle": "Parameter settings",
     "@gParameterSettingsTitle": {
         "description": "This is a prompt about parameter settings."
@@ -400,68 +356,12 @@
     "@gDateSeparator": {
         "description": "This is a prompt about date separator."
     },
-    "zero_range": "Zero Range:",
-    "@zero_range": {
-        "description": ""
-    },
-    "product_information": "Product Information",
-    "@product_information": {
-        "description": ""
-    },
     "pretare": "Pretare:",
     "@pretare": {
         "description": ""
     },
-    "plu_remarks": "PLu Remarks:",
-    "@plu_remarks": {
-        "description": ""
-    },
     "gBtnEdit": "Edit",
     "@gBtnEdit": {
-        "description": ""
-    },
-    "plu_error_message": "PLU pretare cannot be empty.",
-    "@plu_error_message": {
-        "description": ""
-    },
-    "plu_error_message1": "PLU ID or PLU name cannot be empty.",
-    "@plu_error_message1": {
-        "description": ""
-    },
-    "plu_error_message2": "PLU ID or PLU name already exists.",
-    "@plu_error_message2": {
-        "description": ""
-    },
-    "iUserInfo": "User Info",
-    "@iUserInfo": {
-        "description": "This is prompt for user info ,in T-Industry."
-    },
-    "user_id": "User ID:",
-    "@user_id": {
-        "description": ""
-    },
-    "user_sex": "Gender:",
-    "@user_sex": {
-        "description": ""
-    },
-    "user_phone": "Phone:",
-    "@user_phone": {
-        "description": ""
-    },
-    "user_remarks": "User Notes:",
-    "@user_remarks": {
-        "description": ""
-    },
-    "user_error_message1": "The User Id and Username cannot be empty!",
-    "@user_error_message1": {
-        "description": ""
-    },
-    "user_error_message2": "User ID or Username cannot be the same!",
-    "@user_error_message2": {
-        "description": ""
-    },
-    "user_error_message3": "The User is not found!",
-    "@user_error_message3": {
         "description": ""
     },
     "button_back": "Back",
@@ -472,28 +372,12 @@
     "@button_select_format": {
         "description": ""
     },
-    "scale_model": "Scale Model:",
-    "@scale_model": {
-        "description": ""
-    },
     "firmware_update": "Update Firmware Serial",
     "@firmware_update": {
         "description": ""
     },
-    "gTipModelNotMatch": "Model name in ZIP doesn't match device's. Force update?",
-    "@gTipModelNotMatch": {
-        "description": "This is a prompt for model mismatch during the update process."
-    },
-    "gTipDeviceLost": "Force update?",
-    "@gTipDeviceLost": {
-        "description": "This is a prompt for a forced update."
-    },
     "button_add_license": "Add License",
     "@button_add_license": {
-        "description": ""
-    },
-    "new_license_text": "New License:",
-    "@new_license_text": {
         "description": ""
     },
     "gTipResult": "Result",
@@ -540,41 +424,9 @@
     "@serial_page_percent": {
         "description": ""
     },
-    "device_connection_title": "Device Info & Connection",
-    "@device_connection_title": {
-        "description": ""
-    },
-    "device_setting_title": "Basics",
-    "@device_setting_title": {
-        "description": ""
-    },
-    "device_configuration_title": "Device Configuration",
-    "@device_configuration_title": {
-        "description": ""
-    },
     "bt_setting_title": "Bluetooth Setting",
     "@bt_setting_title": {
         "description": ""
-    },
-    "customization_setting_title": "Applications",
-    "@customization_setting_title": {
-        "description": ""
-    },
-    "advanced_setting_title": "Advanced",
-    "@advanced_setting_title": {
-        "description": ""
-    },
-    "gTitleReceiptDesign": "Receipt Design",
-    "@gTitleReceiptDesign": {
-        "description": "This is a title about receipt design app."
-    },
-    "gTipReceiptDesign": "This application is designed for the printing format of the receipt.",
-    "@gTipReceiptDesign": {
-        "description": "This is a prompt about receipt design app."
-    },
-    "gTipLabelFmtDownload": "This application is used to download print format.",
-    "@gTipLabelFmtDownload": {
-        "description": "This is a prompt about downloading label printing Formats app."
     },
     "gTitleSerialOutputDownload": "Serial Output Download",
     "@gTitleSerialOutputDownload": {
@@ -596,10 +448,6 @@
     "@cBtnOpenPreview": {
         "description": " This is a button about open preview in T-Config."
     },
-    "cBtnClosePreview": "Close preview",
-    "@cBtnClosePreview": {
-        "description": "This is a button about close preview in T-Config."
-    },
     "gTitlePreview": "Preview",
     "@gTitlePreview": {
         "description": "This is a preview of the output of a custom serial port protocol."
@@ -620,26 +468,6 @@
     "@gTitlePluDownload": {
         "description": "This is a title about downloading plu."
     },
-    "gTipPluDownload": "This application is used to download product information.",
-    "@gTipPluDownload": {
-        "description": "This is a tip about downloading plu."
-    },
-    "iTipWeightCollection": "This application is used to collect weighing data in real time",
-    "@iTipWeightCollection": {
-        "description": "This is a prompt about collect weight data,in T-Industry"
-    },
-    "iTipCheckWeigher": "This application is used to check weighing data in real time",
-    "@iTipCheckWeigher": {
-        "description": "This is a prompt about check weighing,in T-Industry"
-    },
-    "iTipIncrementWeighting": "This app is used to implement the increment scale.",
-    "@iTipIncrementWeighting": {
-        "description": "This is a prompt about Increment Weighing,in T-Industry"
-    },
-    "gTipTakeOut": "This app is used to implement the take out scale.",
-    "@gTipTakeOut": {
-        "description": "This is a prompt about take out scale,in T-Industry"
-    },
     "gTitleConfirm": "Confirmation",
     "@gTitleConfirm": {
         "description": "This is the title of the confirmation."
@@ -656,44 +484,8 @@
     "@select_firmware_btn": {
         "description": ""
     },
-    "report_show_btn": "Show Reports",
-    "@report_show_btn": {
-        "description": ""
-    },
-    "report_hide_btn": "Hide Report",
-    "@report_hide_btn": {
-        "description": ""
-    },
     "data_delete_confirm": "Whether to delete all data?",
     "@data_delete_confirm": {
-        "description": ""
-    },
-    "show_current_weight": "Current weight:",
-    "@show_current_weight": {
-        "description": ""
-    },
-    "show_increment_weight": "Increment weight:",
-    "@show_increment_weight": {
-        "description": ""
-    },
-    "show_reduced_weight": "Reduced weight:",
-    "@show_reduced_weight": {
-        "description": ""
-    },
-    "general_configuration_title": "General Configuration",
-    "@general_configuration_title": {
-        "description": ""
-    },
-    "application_title": "Applications",
-    "@application_title": {
-        "description": ""
-    },
-    "choose_json_file": "Choose json",
-    "@choose_json_file": {
-        "description": ""
-    },
-    "batch_delivery_title": "Batch Delivery",
-    "@batch_delivery_title": {
         "description": ""
     },
     "cTipConfigurationName": "Configuration name",
@@ -736,10 +528,6 @@
     "@cTipCheckValue": {
         "description": "This is a tip: Please check"
     },
-    "save_as": "Save as",
-    "@save_as": {
-        "description": ""
-    },
     "gTipConfirmInfo": "Please confirm the information.",
     "@gTipConfirmInfo": {
         "description": "This is the prompt asking you to confirm the information."
@@ -748,17 +536,9 @@
     "@server_ip": {
         "description": ""
     },
-    "server_port": "Server Port:",
-    "@server_port": {
-        "description": ""
-    },
     "go_home": "Confirm to return to hompage?",
     "@go_home": {
         "description": ""
-    },
-    "gTipReceiptDownload": "This application is used to download the print format of the receipt.",
-    "@gTipReceiptDownload": {
-        "description": "This is a prompt about receipt format download."
     },
     "appVersionTitle": "Version",
     "@appVersionTitle": {
@@ -1316,14 +1096,6 @@
     "@l_total_pcs_expl": {
         "description": ""
     },
-    "l_line_width_txt": "Line Width",
-    "@l_line_width_txt": {
-        "description": ""
-    },
-    "l_line_lenth_txt": "Line Length",
-    "@l_line_lenth_txt": {
-        "description": ""
-    },
     "l_open_fmt_err": "Please select the correct print format",
     "@l_open_fmt_err": {
         "description": ""
@@ -1338,10 +1110,6 @@
     },
     "gBtnImport": "Import",
     "@gBtnImport": {
-        "description": ""
-    },
-    "gBtnGetDataFormDb": "Get Data From Local",
-    "@gBtnGetDataFormDb": {
         "description": ""
     },
     "batch_down_slt_folder": "Select Folder",
@@ -1412,14 +1180,6 @@
     "@def_fmt_out_range_tip": {
         "description": ""
     },
-    "scale_mgr_btn_rename": "Rename",
-    "@scale_mgr_btn_rename": {
-        "description": ""
-    },
-    "scale_mgr_btn_def": "Set Default",
-    "@scale_mgr_btn_def": {
-        "description": ""
-    },
     "gStatus": "Status",
     "@gStatus": {
         "description": "This is the prompt for the scale status."
@@ -1428,29 +1188,9 @@
     "@gProgress": {
         "description": "This is the prompt for the download progress."
     },
-    "rTipDetailRpt": "This app is used to display sales detail data.",
-    "@rTipDetailRpt": {
-        "description": "This is the prompt for the retail detail report in the retail app."
-    },
-    "gTitlePluEdit": "PLU Edit",
-    "@gTitlePluEdit": {
-        "description": "This is the title of the PLU edit page."
-    },
-    "rShowScaleListBtn": "Show Scales",
-    "@rShowScaleListBtn": {
-        "description": "This is the name of the button for displaying the list of scales in the retail app."
-    },
-    "rHideScaleListBtn": "Hide Scales",
-    "@rHideScaleListBtn": {
-        "description": "This is the name of the button for hiding the list of scales in the retail app."
-    },
     "rRefreshListBtn": "Refresh List",
     "@rRefreshListBtn": {
         "description": "This is the name of the button for refreshing the retail list in the retail app."
-    },
-    "rJoinManagementTip": "Whether to join the management",
-    "@rJoinManagementTip": {
-        "description": "This is a prompt about whether to join the management in the retail app."
     },
     "gTipFirmwareZipFile": "Firmware Zip:",
     "@gTipFirmwareZipFile": {
@@ -1464,18 +1204,6 @@
     "@gConfirmFileTip": {
         "description": "This is the prompt to confirm whether the file is correct when downloading."
     },
-    "gBtnViaSerialUpdate": "Serial Port",
-    "@gBtnViaSerialUpdate": {
-        "description": "This is the button for switching to serial port update when updating the firmware."
-    },
-    "gBtnViaNetworkUpdate": "Network",
-    "@gBtnViaNetworkUpdate": {
-        "description": "This is the button for switching to network update when updating the firmware."
-    },
-    "gTipSelectUpdateWay": "Please select the way to update the firmware.",
-    "@gTipSelectUpdateWay": {
-        "description": "This is the prompt to select the way when update firmware."
-    },
     "gTipWait": "Please wait...",
     "@gTipWait": {
         "description": "This is the prompt for waiting."
@@ -1483,14 +1211,6 @@
     "gTipRebootForUpdate": "Please reboot the device to begin update...",
     "@gTipRebootForUpdate": {
         "description": "This is the prompt restarting the device for the automatic update."
-    },
-    "rTitleSetVariableValues": "Variable Value Setting",
-    "@rTitleSetVariableValues": {
-        "description": "This is the title for setting the values of variables, such as the header and footer,in the retail app."
-    },
-    "rTipSetVariableValues": "This application is used to distribute various variable information, such as headers and footers.",
-    "@rTipSetVariableValues": {
-        "description": "This is the explanation for applying the setting of variable values."
     },
     "rTipHeader": "Header",
     "@rTipHeader": {
@@ -1516,25 +1236,9 @@
     "@gTipItemType": {
         "description": "This is the name of an item type,in the printing format page."
     },
-    "gTipFolderNoSelected": "No folder has been selected, so the file cannot be saved.",
-    "@gTipFolderNoSelected": {
-        "description": "This is the prompt for saving flie."
-    },
     "gTipSaveFail": "Save data failed !",
     "@gTipSaveFail": {
         "description": "This is the prompt for saving flie failed."
-    },
-    "gTipSaveSuccess": "Save successfully. The path is:",
-    "@gTipSaveSuccess": {
-        "description": "This is the prompt for flie saved ok."
-    },
-    "gBtnSaveExcel": "Save To Excel",
-    "@gBtnSaveExcel": {
-        "description": "This is the button to save excel."
-    },
-    "gBtnSaveDataBase": "Save To Local",
-    "@gBtnSaveDataBase": {
-        "description": "This is the button to save database."
     },
     "gPluPlu": "PLU",
     "@gPluPlu": {
@@ -1616,14 +1320,6 @@
     "@gTipPluDuplicated": {
         "description": "This is prompt for plu duplicated."
     },
-    "gTipSaveDbOk": "Save Data OK.",
-    "@gTipSaveDbOk": {
-        "description": "This is prompt for plu saved."
-    },
-    "gTipSavingData": "The data is being saved. Please wait a moment.",
-    "@gTipSavingData": {
-        "description": "This is prompt for saving data."
-    },
     "gTipInstallService": "Install Service",
     "@gTipInstallService": {
         "description": "This is prompt to install service."
@@ -1639,14 +1335,6 @@
     "gTipUninstallService": "Uninstall Service",
     "@gTipUninstallService": {
         "description": "This is prompt to uninstall service."
-    },
-    "gTipScaleList": "Scale List",
-    "@gTipScaleList": {
-        "description": "This is prompt for scale list."
-    },
-    "gTipService": "Service",
-    "@gTipService": {
-        "description": "This is prompt for app service."
     },
     "gTipServiceStatus": "Service Status:",
     "@gTipServiceStatus": {
@@ -1760,10 +1448,6 @@
     "@gTipPlueditPageHelp": {
         "description": "This is the help info for the plu edit page."
     },
-    "gTipVarSettingPageHelp": "1. Edit header, footer, and operator information;\n2. Click [Download] to send to the scale.\n",
-    "@gTipVarSettingPageHelp": {
-        "description": "This is the help info for the variable value setting page."
-    },
     "gTipRetailDetailPageHelp": "1. This function interface can display the data printed after each checkout;\nIf the service is not installed, you need to click [Service] on the right and click [Install Service]; When prompted that the service has stopped, click [Start Service] and it will prompt that it is running. Finally, click [Confirm] to complete the process;\n2. After the balance is printed, the printing content of each order will be displayed on this interface, click [Refresh List] and you can get the latest records;\n3. Click [Export] and you can download the report.\n\nNote: \nThis function can be used via Ethernet / WiFi, and cannot be used via serial port.",
     "@gTipRetailDetailPageHelp": {
         "description": "This is the help info for the retail detail report page."
@@ -1787,10 +1471,6 @@
     "gTipBasicDataPageHelp": "1. Click [Get Basic Data];\n2. T-Config will automatically collect basic data from the scale and display it synchronously on the interface.\n3. You can click the menu bar button in the upper left corner to select the device you want to switch to.",
     "@gTipBasicDataPageHelp": {
         "description": "This is the help info for the basic data page."
-    },
-    "gTipParameterSettingPageHelp": "1. There are 5 parameter settings: Weighing, Factory, Serial Port, Price, Other;\n2. The editable parameters can be set in Value column based on the content in Description column;\n3. After setting all parameters, click the button in the bottom right corner to submit.\n",
-    "@gTipParameterSettingPageHelp": {
-        "description": "This is the help info for the parameter setting page."
     },
     "gTipTakeOutPageHelp": "1. The condition is that there must be weight on the scale. Click [Start] to activate take out scale function. (Only record the decrement of the weighing value during unloading.)\n2. Click [Save] to save the current weighing record;\n3. Click [Show Reports] to display the report;\n4. Click [Setting] to set automatic saving.\n5. In [Setting], you can also set the date format and delimiter for data export;\n6. Enter the PLU number or name in the PLU Name column to call the PLU in the backend database; (The PLU here is not the PLU on the scale)\n7. Click [Report Setting] to select the information displayed for weighing data; (Currently, there are no functional variables available: Product Code, Item Code, User Name, User NO）\n8. Click the arrow in a column of the report title row will sort the report in ascending/descending order.\n9.Click [Export] to export all saved data (xlsx).\n10.Click [End] to stop the function.\n\nNote: \nThe weight in the report refers to the decrement rather than all the weight on the scale.\n",
     "@gTipTakeOutPageHelp": {
@@ -1912,14 +1592,6 @@
     "@fScaleList": {
         "description": "Title for the scale list panel"
     },
-    "fComScale": "Serial Scale",
-    "@fComScale": {
-        "description": "Label for serial scale in scale list"
-    },
-    "fNetScale": "Network Scale",
-    "@fNetScale": {
-        "description": "Label for network scale in scale list"
-    },
     "fRawMaterialTypeNameCol": "Category",
     "@fRawMaterialTypeNameCol": {
         "description": "Table column title for category name"
@@ -1932,10 +1604,6 @@
     "@fUpdatedAtCol": {
         "description": "Table column title for last update time"
     },
-    "fEditBtn": "Edit",
-    "@fEditBtn": {
-        "description": "Button for editing table row"
-    },
     "fTipOperation": "Operation",
     "@fTipOperation": {
         "description": "Table column title for operations"
@@ -1947,10 +1615,6 @@
     "fFmaModeCol": "Mode",
     "@fFmaModeCol": {
         "description": "Table column title for formula mode (weight/pct)"
-    },
-    "fMaterialCountCol": "Ingredient Quantity",
-    "@fMaterialCountCol": {
-        "description": "Table column title for number of materials in formula"
     },
     "fCreatedTimeCol": "Create Time",
     "@fCreatedTimeCol": {
@@ -2112,17 +1776,9 @@
     "@fFormulaIdAndBarcodeDuplicate": {
         "description": "Error message for duplicate formula ID and barcode"
     },
-    "fFormulaNameDuplicate": "Formula name already exists",
-    "@fFormulaNameDuplicate": {
-        "description": "Error message for duplicate formula name"
-    },
     "fRawIdDuplicate": "Ingredient Id already exists",
     "@fRawIdDuplicate": {
         "description": "Error message for duplicate raw ID"
-    },
-    "fRawNameDuplicate": "Ingredient name already exists",
-    "@fRawNameDuplicate": {
-        "description": "Error message for duplicate raw name"
     },
     "fSetRawMaterialBtn": "Set Ingredient",
     "@fSetRawMaterialBtn": {
@@ -2252,10 +1908,6 @@
     "@fFormulaCompletionMsg": {
         "description": "Completion message for formula"
     },
-    "fAddSuccessMsg": "Added successfully!",
-    "@fAddSuccessMsg": {
-        "description": "Success message for adding operation"
-    },
     "fTypeExistsMsg": "Category already exists!",
     "@fTypeExistsMsg": {
         "description": "Error message for existing formula type"
@@ -2276,10 +1928,6 @@
     "@fRawCategoryManagement": {
         "description": "Title for category management page"
     },
-    "fDeleteSuccessMsg": "Deleted successfully",
-    "@fDeleteSuccessMsg": {
-        "description": "Success message for delete operation"
-    },
     "fSuccessMsg": "Success",
     "@fSuccessMsg": {
         "description": "General success message"
@@ -2287,10 +1935,6 @@
     "fClearSearchConditionBtn": "Clear search conditions",
     "@fClearSearchConditionBtn": {
         "description": "Text on the button to clear all search conditions"
-    },
-    "fFormulaScaleTitle": "Formula Scale",
-    "@fFormulaScaleTitle": {
-        "description": "Title for formula weighing scale device or page"
     },
     "fReviseBtn": "Correct",
     "@fReviseBtn": {
@@ -2307,14 +1951,6 @@
     "fSwitchModeClearMsg": "Switching modes will clear the raw material list. Confirm?",
     "@fSwitchModeClearMsg": {
         "description": "Confirmation message for mode switch that clears raw material list"
-    },
-    "fSaveAndExitBtn": "Save and Exit",
-    "@fSaveAndExitBtn": {
-        "description": "Button to save and exit"
-    },
-    "fSaveAndNewBtn": "Save and New",
-    "@fSaveAndNewBtn": {
-        "description": "Button to save and add new"
     },
     "fMediumSpeed": "Medium Speed",
     "@fMediumSpeed": {
@@ -2403,10 +2039,6 @@
     "fFlowRate": "Liquid Filling Speed",
     "@fFlowRate": {
         "description": "Label for flow rate, text"
-    },
-    "fFlowRateMeasurement": "Liquid Filling Speed",
-    "@fFlowRateMeasurement": {
-        "description": "Label or title for flow rate measurement, text"
     },
     "fConfirmDelete": "Confirm delete?",
     "@fConfirmDelete": {
@@ -2568,14 +2200,6 @@
     "@gTipActivated": {
         "description": "This is a tip for activated status."
     },
-    "gBtnAddApp": "Add App",
-    "@gBtnAddApp": {
-        "description": "This is a button for adding an application."
-    },
-    "gBtnRemove": "Remove",
-    "@gBtnRemove": {
-        "description": "This is a button for removing something."
-    },
     "gBtnActivate": "Activate",
     "@gBtnActivate": {
         "description": "This is a button for activating something."
@@ -2584,14 +2208,6 @@
     "@gTitleActivationFeedback": {
         "description": "This is the title for activation feedback."
     },
-    "gBtnAdded": "Added",
-    "@gBtnAdded": {
-        "description": "This is a button indicating that an item has been added."
-    },
-    "gTitleConfigFunctionCharge": "Configuration Function Charging Method",
-    "@gTitleConfigFunctionCharge": {
-        "description": "This is the title for the configuration function charging method."
-    },
     "gSubtitleConfigFunctionCharge": "Pay annually to activate all advanced functions, valid for one year. To purchase, please click ( ℹ️ ) in the top-right corner to contact the software provider.",
     "@gSubtitleConfigFunctionCharge": {
         "description": "This is the subtitle for the configuration function charging method."
@@ -2599,26 +2215,6 @@
     "gSubtitleAppsCharge": "Pay per function to activate permanently. To purchase, please click ( ℹ️ ) in the top-right corner to contact the software provider.",
     "@gSubtitleAppsCharge": {
         "description": "This is the subtitle for the apps function charging method."
-    },
-    "gTitleAddedConfigFunction": "Added Configuration Functions",
-    "@gTitleAddedConfigFunction": {
-        "description": "This is the title for the added configuration functions."
-    },
-    "gSubtitleAddedConfigFunction": "The following applications have been added to the navigation bar. Click the remove button to remove the corresponding function. After removal, you can continue to add applications.",
-    "@gSubtitleAddedConfigFunction": {
-        "description": "This is the subtitle for the added configuration functions."
-    },
-    "gBtnBackToPrevious": "Back to Previous Level",
-    "@gBtnBackToPrevious": {
-        "description": "This is a button to go back to the previous level."
-    },
-    "gTitleActivationMethod": "Activation Method",
-    "@gTitleActivationMethod": {
-        "description": "This is the title for activation method."
-    },
-    "gSubtitleUploadActivationFile": "Upload the activation file provided by the supplier in the input box below.",
-    "@gSubtitleUploadActivationFile": {
-        "description": "This is the subtitle for uploading the activation file provided by the supplier in the input box below."
     },
     "gTipSelectActivationFile": "Please select an activation file",
     "@gTipSelectActivationFile": {
@@ -2635,10 +2231,6 @@
     "gTipDateNotUpdated": "Date not updated",
     "@gTipDateNotUpdated": {
         "description": "This is a tip indicating that the date has not been updated."
-    },
-    "gTipFree": "Free",
-    "@gTipFree": {
-        "description": "This is a free tip message."
     },
     "gTitleAppConfig": "Application",
     "@gTitleAppConfig": {
@@ -2732,10 +2324,6 @@
     "@gBtnSyncTime": {
         "description": "This is a button about sync time."
     },
-    "gBtnSelectTime": "Select Time",
-    "@gBtnSelectTime": {
-        "description": "This is a button about select time."
-    },
     "gBtnSelectDate": "Select Date",
     "@gBtnSelectDate": {
         "description": "This is a button about select date."
@@ -2804,21 +2392,9 @@
     "@gTipAlignment": {
         "description": "This is the prompt for alignment."
     },
-    "gTipType": "Type",
-    "@gTipType": {
-        "description": "This is the prompt for type."
-    },
-    "gTipStringProperty": "String Property",
-    "@gTipStringProperty": {
-        "description": "This is the title for string property."
-    },
     "gTipHexInput": "Hexadecimal input, please separate with a space, for example: 31 32 33 34 35 36",
     "@gTipHexInput": {
         "description": "This is the prompt for hexadecimal input, separated by spaces."
-    },
-    "gTipHex": "Hexadecimal",
-    "@gTipHex": {
-        "description": "This is the prompt for hexadecimal."
     },
     "gTipTextHexProperty": "Text Hexadecimal Property",
     "@gTipTextHexProperty": {
@@ -2888,10 +2464,6 @@
     "@gTipCalibrationResult": {
         "description": "This is a tip for the calibration result."
     },
-    "gBtnCalibration": "Calibrate",
-    "@gBtnCalibration": {
-        "description": "This is a button for calibration."
-    },
     "gTipEmptyScalePanThenNext": "Please empty the scale pan and click next",
     "@gTipEmptyScalePanThenNext": {
         "description": "This is a tip to empty the scale pan and click next."
@@ -2936,10 +2508,6 @@
     "@gBtnPrevious": {
         "description": "This is a button to go back to the previous step."
     },
-    "gBtnNext": "Next Step",
-    "@gBtnNext": {
-        "description": "This is a button to go to the next step."
-    },
     "gTipCalibrationWeight": "Please enter the calibration weight",
     "@gTipCalibrationWeight": {
         "description": "This is a prompt to ask the user to input the calibration weight."
@@ -2955,10 +2523,6 @@
     "gTipErrorValue": "Error Value",
     "@gTipErrorValue": {
         "description": "This is a prompt to tell the user the error value."
-    },
-    "gTxtDecimal": "Decimal",
-    "@gTxtDecimal": {
-        "description": "This is the prompt for decimal places."
     },
     "gTipGaduation": "Gaduation",
     "@gTipGaduation": {
@@ -3015,10 +2579,6 @@
     "gTipSwitchUnit": "When switching units, please also switch the corresponding range.",
     "@gTipSwitchUnit": {
         "description": "This is a tip to remind the user to switch the corresponding range when changing the unit."
-    },
-    "gTipResetMaxRange": "Fail,Please reset the maximum range.",
-    "@gTipResetMaxRange": {
-        "description": "This is a tip to reset the maximum range."
     },
     "gTipNoDevice": "No devices found yet, Please add your device",
     "@gTipNoDevice": {
@@ -3100,10 +2660,6 @@
     "@gTipFreeConfiguration": {
         "description": "This is a tip for free configuration."
     },
-    "gTipFailToSelectFile": "Fail to select file",
-    "@gTipFailToSelectFile": {
-        "description": "This is a tip for failing to select a file."
-    },
     "subTitleMultiScaleManagement": "Connect to multiple devices via serial port, Wi-Fi, and Bluetooth.",
     "@subTitleMultiScaleManagement": {
         "description": "SubTitle for multi-scale management"
@@ -3171,10 +2727,6 @@
     "subTitleRetailReport": "Automatically collect, record, and generate reports for retail data.",
     "@subTitleRetailReport": {
         "description": "SubTitle for retail report"
-    },
-    "subTitleVariableValueSetting": "Edit headers, footers, and operator information.",
-    "@subTitleVariableValueSetting": {
-        "description": "SubTitle for variable value setting"
     },
     "subTitleWeighingDataCollection": "Perform online weighing and generate weight data reports.",
     "@subTitleWeighingDataCollection": {
@@ -3344,10 +2896,6 @@
     "@userEmail": {
         "description": "Email"
     },
-    "userCreator": "Creator",
-    "@userCreator": {
-        "description": "Creator"
-    },
     "userIsEnabled": "Enabled",
     "@userIsEnabled": {
         "description": "Is enabled"
@@ -3420,10 +2968,6 @@
     "@menuFormat": {
         "description": "Menu format"
     },
-    "gBtnSelect": "Select",
-    "@gBtnSelect": {
-        "description": "Button for select"
-    },
     "gTipConfirmContinue": "Please confirm to continue.",
     "@gTipConfirmContinue": {
         "description": "Tip for confirm continue"
@@ -3484,10 +3028,6 @@
     "@gTipExportIOError": {
         "description": "Tip for export IO error"
     },
-    "gTipExportPathError": "Export path error",
-    "@gTipExportPathError": {
-        "description": "Tip for export path error"
-    },
     "noDataImport": "No data to import",
     "@noDataImport": {
         "description": "Prompt when there is no data to import from Excel file"
@@ -3532,14 +3072,6 @@
     "@weightUnitEmpty": {
         "description": "Prompt when Weight Unit is required for weight mode"
     },
-    "ingredientNoEmpty": "Ingredient No. is empty",
-    "@ingredientNoEmpty": {
-        "description": "Prompt when Ingredient Number cell is empty"
-    },
-    "ingredientNoInvalid": "Ingredient No. must be a positive integer",
-    "@ingredientNoInvalid": {
-        "description": "Prompt when Ingredient Number is invalid"
-    },
     "ingredientIdEmpty": "Ingredient Id is empty",
     "@ingredientIdEmpty": {
         "description": "Prompt when Ingredient Id cell is empty"
@@ -3571,10 +3103,6 @@
     "formulaBarcodeInconsistent": "Barcodes are inconsistent",
     "@formulaBarcodeInconsistent": {
         "description": "Prompt when formula barcodes within the same group are inconsistent"
-    },
-    "sequenceNotContinuous": "sequence numbers are not continuous",
-    "@sequenceNotContinuous": {
-        "description": "Prompt when ingredient sequence numbers are not continuous"
     },
     "percentNot100": "Total percentage is not 100%",
     "@percentNot100": {
@@ -3711,10 +3239,6 @@
     "opEnable": "Enable",
     "@opEnable": {
         "description": "Enable Operation"
-    },
-    "opDisable": "Disable",
-    "@opDisable": {
-        "description": "Disable Operation"
     },
     "opQuery": "Query",
     "@opQuery": {
@@ -4064,10 +3588,6 @@
     "@removeSoftwareSeal": {
         "description": "Action to remove a software seal from the device"
     },
-    "operationRecord": "Operation Record",
-    "@operationRecord": {
-        "description": "Title for a log of operations performed"
-    },
     "softwareSealAppliedSuccessfully": "Software Calibration Lock Enabled Successfully",
     "@softwareSealAppliedSuccessfully": {
         "description": "Success message when a software seal is successfully applied"
@@ -4087,14 +3607,6 @@
     "removeWithCode": "Disable with Unlock Code",
     "@removeWithCode": {
         "description": "Option or button to remove a seal using a special code"
-    },
-    "pleaseEnterRemovalCode": "Please enter the removal code",
-    "@pleaseEnterRemovalCode": {
-        "description": "Prompt asking the user to input the removal code"
-    },
-    "sealPresentCalibrationNotPermitted": "A seal is present on the device. Calibration is not permitted.",
-    "@sealPresentCalibrationNotPermitted": {
-        "description": "Warning message indicating calibration is prohibited because a seal is present on the device"
     },
     "checkSealFailed": "Check Status Failed",
     "@checkSealFailed": {
@@ -4183,10 +3695,6 @@
     "openOutputPortFailed": "Failed to open the output port.",
     "@openOutputPortFailed": {
         "description": "Failed to open the output port."
-    },
-    "selectS15Scale": "Please select S15 scale",
-    "@selectS15Scale": {
-        "description": "Prompt to select S15 scale"
     },
     "inputSetting": "Input Setting",
     "@inputSetting": {
