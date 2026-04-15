@@ -726,7 +726,7 @@ class LabelDesignPageState extends State<LabelDesignPage> {
 
   void updateTextContent() {
     _saveState();
-    _focusNode.requestFocus();
+    // _focusNode.requestFocus(); // FIX: Removed to prevent canvas stealing focus while typing text
     if (selectedElements.length == 1 &&
         selectedElements.first.type == ElementType.text) {
       setState(() {
@@ -737,7 +737,7 @@ class LabelDesignPageState extends State<LabelDesignPage> {
 
   void updateMaxLenth(BuildContext scaffoldContext) {
     _saveState();
-    _focusNode.requestFocus();
+    // _focusNode.requestFocus(); // FIX: Removed to prevent canvas stealing focus while typing text
     int maxlenthInt = int.tryParse(maxLenthController.text) ?? 0;
     if (maxlenthInt != 0) {
       setState(() {
