@@ -13,6 +13,8 @@ import 'package:t_max/data/wifi_list_info.dart';
 import 'package:t_max/data/writelog.dart';
 import '../data/ipinfodata.dart';
 import '../data/language.dart';
+import '../functions/adaptive.dart';
+import '../widget/page_head.dart';
 import '../data/timer_manager.dart';
 import '../data/wifi_pwd_info.dart';
 import '../eventbus/eventbus.dart';
@@ -26,6 +28,7 @@ class WiredSettingPage extends StatefulWidget {
 }
 
 class WiredSettingPageState extends State<WiredSettingPage> {
+
   TextEditingController netMaskController = TextEditingController();
   TextEditingController ipController = TextEditingController();
   TextEditingController gateWayController = TextEditingController();
@@ -194,72 +197,95 @@ class WiredSettingPageState extends State<WiredSettingPage> {
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
-    // final _height = MediaQuery.of(context).size.height;
+    final bool isMobile = Adaptive.isMobile(context);
 
     return Scaffold(
-        body: Container(
-            width: width,
-            decoration:
-                BoxDecoration(color: Theme.of(context).colorScheme.surface),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                    child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                      //串口秤的列表
-                      Container(
-                        width: 220,
-                        color: Theme.of(context).colorScheme.surfaceTint,
-                        child: SizedBox(
-                          height: MediaQuery.of(context).size.height,
-                          child: Column(
-                            mainAxisSize: MainAxisSize.max,
-                            children: [
-                              SizedBox(
-                                height: regularPadding,
-                              ),
-                              Expanded(
-                                child: NewComScaleListWidget(
-                                  listWidth: 220, // 列表宽度
-                                  selScaleId: selScaleId,
-                                  clickScale: (scale) {
-                                    if (isSetting) {
-                                      showTipInfo(
-                                          localizedStrings
-                                              .gTipPerformingOperation,
-                                          context);
-                                      return;
-                                    }
-                                    setState(() {
-                                      changeScale(scale.scaleId);
-                                    });
-                                  },
-                                ),
-                              ),
-                            ],
+
+      drawer: isMobile
+          ? Drawer(
+              width: 220,
+              child: NewComScaleListWidget(
+                listWidth: 220,
+                selScaleId: selScaleId,
+                clickScale: (scale) {
+                  if (isSetting) {
+                    showTipInfo(
+                        localizedStrings.gTipPerformingOperation, context);
+                    return;
+                  }
+                  setState(() {
+                    changeScale(scale.scaleId);
+                  });
+                },
+              ),
+            )
+          : null,
+      body: Container(
+        color: Theme.of(context).colorScheme.surface,
+        child: Column(
+          children: [
+            pageHeadInfo(context, width - headWidthPadding,
+                localizedStrings.menuWiredSetting, '', () {
+              Navigator.pop(context);
+            },
+                leading: isMobile
+                    ? Padding(
+                        padding: const EdgeInsets.only(left: regularPadding),
+                        child: Builder(
+                          builder: (context) => IconButton(
+                            icon: Icon(Icons.menu_open,
+                                color: Theme.of(context).colorScheme.primary,
+                                size: 28),
+                            onPressed: () => Scaffold.of(context).openDrawer(),
                           ),
                         ),
-                      ),
-                      Container(
-                        width: 1,
-                        color: Theme.of(context)
-                            .colorScheme
-                            .outlineVariant, //  分隔条颜色
-                      ),
-
-                      Container(
-                        width: 1,
-                        color: Theme.of(context)
-                            .colorScheme
-                            .outlineVariant, //  分隔条颜色
-                      ),
-                      comScalesList.isEmpty ? SizedBox() : showRightWigdet()
-                    ])),
-              ],
-            )));
+                      )
+                    : null),
+            Expanded(
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Row(
+                      children: [
+                        if (!isMobile)
+                          Container(
+                            width: 220,
+                            color: Theme.of(context).colorScheme.surfaceTint,
+                            child: NewComScaleListWidget(
+                              listWidth: 220,
+                              selScaleId: selScaleId,
+                              clickScale: (scale) {
+                                if (isSetting) {
+                                  showTipInfo(localizedStrings.gTipPerformingOperation, context);
+                                  return;
+                                }
+                                setState(() {
+                                  changeScale(scale.scaleId);
+                                });
+                              },
+                            ),
+                          ),
+                        if (!isMobile)
+                          VerticalDivider(
+                            width: 1,
+                            thickness: 1,
+                            color: Theme.of(context).colorScheme.outlineVariant,
+                          ),
+                        Expanded(
+                          child: SingleChildScrollView(
+                            child: comScalesList.isEmpty ? const SizedBox() : showRightWigdet(),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   void changeScale(int scaleId) {
@@ -279,313 +305,211 @@ class WiredSettingPageState extends State<WiredSettingPage> {
   }
 
   Widget showRightWigdet() {
-    return Expanded(
-        child: Column(
-      mainAxisAlignment: MainAxisAlignment.center, // 让子组件垂直居中
-      children: [
-        Expanded(
-          child: ListView(
-            children: [
-              SizedBox(
-                height: 40,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isNarrow = constraints.maxWidth < 670;
+        final itemWidth = isNarrow ? constraints.maxWidth.clamp(0.0, 350.0) : 300.0;
+        
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const SizedBox(height: 40),
+            if (isNarrow)
+              Column(
                 children: [
-                  Center(
-                    child: Container(
-                      width: 300,
-                      // height: 78,
-                      color: Theme.of(context).colorScheme.surface,
-                      child: Column(
-                        children: [
-                          Container(
-                            height: 30,
-                            alignment: Alignment.centerLeft,
-                            child: Text(localizedStrings.gIpAddress),
-                          ),
-                          // 替换为新的输入框
-                          SizedBox(
-                              height: 78,
-                              child: TextField(
-                                readOnly: !_isStatic,
-                                controller: ipController,
-                                keyboardType: TextInputType.number,
-                                maxLines: 1,
-                                decoration: InputDecoration(
-                                  enabledBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                      color: validateIpFlag(ipController.text)
-                                          ? Theme.of(context)
-                                              .colorScheme
-                                              .outlineVariant
-                                          : Theme.of(context).colorScheme.error,
-                                    ),
-                                  ),
-                                  border: OutlineInputBorder(),
-                                  errorText: validateIpFlag(ipController.text)
-                                      ? null
-                                      : localizedStrings.gTipErrorIp,
-                                ),
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodySmall!
-                                    .apply(
-                                        color: !_isStatic
-                                            ? Theme.of(context)
-                                                .colorScheme
-                                                .surfaceContainerHighest
-                                            : Theme.of(context)
-                                                .colorScheme
-                                                .onSurface),
-                                onChanged: (value) {
-                                  setState(() {});
-                                },
-                              ))
-                        ],
-                      ),
-                    ),
+                  _buildWiredField(localizedStrings.gIpAddress, ipController, width: itemWidth),
+                  const SizedBox(height: 20),
+                  _buildWiredField(localizedStrings.gNetmask, netMaskController, width: itemWidth),
+                  const SizedBox(height: 20),
+                  _buildWiredField(localizedStrings.gGateway, gateWayController, width: itemWidth),
+                  const SizedBox(height: 20),
+                  _buildDhcpToggle(width: itemWidth),
+                ],
+              )
+            else
+              Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      _buildWiredField(localizedStrings.gIpAddress, ipController, width: itemWidth),
+                      const SizedBox(width: 70),
+                      _buildWiredField(localizedStrings.gNetmask, netMaskController, width: itemWidth),
+                    ],
                   ),
-                  SizedBox(width: 70),
-                  Center(
-                    child: Container(
-                      width: 300,
-                      color: Theme.of(context).colorScheme.surface,
-                      child: Column(
-                        children: [
-                          Container(
-                            height: 30,
-                            alignment: Alignment.centerLeft,
-                            child: Text(localizedStrings.gNetmask),
-                          ),
-                          SizedBox(
-                              height: 78,
-                              child: TextField(
-                                readOnly: !_isStatic,
-                                controller: netMaskController,
-                                keyboardType: TextInputType.number,
-                                maxLines: 1,
-                                decoration: InputDecoration(
-                                  enabledBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                      color:
-                                          validateIpFlag(netMaskController.text)
-                                              ? Theme.of(context)
-                                                  .colorScheme
-                                                  .outlineVariant
-                                              : Theme.of(context)
-                                                  .colorScheme
-                                                  .error,
-                                    ),
-                                  ),
-                                  border: OutlineInputBorder(),
-                                  errorText:
-                                      validateIpFlag(netMaskController.text)
-                                          ? null
-                                          : localizedStrings.gTipErrorIp,
-                                ),
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodySmall!
-                                    .apply(
-                                        color: !_isStatic
-                                            ? Theme.of(context)
-                                                .colorScheme
-                                                .surfaceContainerHighest
-                                            : Theme.of(context)
-                                                .colorScheme
-                                                .onSurface),
-                                onChanged: (value) {
-                                  setState(() {});
-                                },
-                              ))
-                        ],
-                      ),
-                    ),
+                  const SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      _buildWiredField(localizedStrings.gGateway, gateWayController, width: itemWidth),
+                      const SizedBox(width: 70),
+                      _buildDhcpToggle(width: itemWidth),
+                    ],
                   ),
                 ],
               ),
-              Row(
+            const SizedBox(height: 40),
+            Center(
+              child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Center(
-                    child: Container(
-                      width: 300,
-                      color: Theme.of(context).colorScheme.surface,
-                      child: Column(
-                        children: [
-                          Container(
-                            height: 30,
-                            alignment: Alignment.centerLeft,
-                            child: Text(localizedStrings.gGateway),
-                          ),
-                          SizedBox(
-                              height: 78,
-                              child: TextField(
-                                readOnly: !_isStatic,
-                                controller: gateWayController,
-                                keyboardType: TextInputType.number,
-                                maxLines: 1,
-                                decoration: InputDecoration(
-                                  enabledBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                      color:
-                                          validateIpFlag(gateWayController.text)
-                                              ? Theme.of(context)
-                                                  .colorScheme
-                                                  .outlineVariant
-                                              : Theme.of(context)
-                                                  .colorScheme
-                                                  .error,
-                                    ),
-                                  ),
-                                  border: OutlineInputBorder(),
-                                  errorText:
-                                      validateIpFlag(gateWayController.text)
-                                          ? null
-                                          : localizedStrings.gTipErrorIp,
-                                ),
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodySmall!
-                                    .apply(
-                                        color: !_isStatic
-                                            ? Theme.of(context)
-                                                .colorScheme
-                                                .surfaceContainerHighest
-                                            : Theme.of(context)
-                                                .colorScheme
-                                                .onSurface),
-                                onChanged: (value) {
-                                  setState(() {});
-                                },
-                              ))
-                        ],
+                  if (_isStatic)
+                    Container(
+                      height: 48,
+                      margin: EdgeInsets.symmetric(horizontal: smallPadding),
+                      child: showTextButton(
+                        context,
+                        btnHeight,
+                        localizedStrings.setStaticIP,
+                        (_isStatic && isValidData())
+                            ? () {
+                                if (isBusy) {
+                                  return showTipInfo(localizedStrings.pleaseWait, context);
+                                }
+                                isBusy = true;
+                                PublicFunctions.setWiredDhcp(selScaleId, 'false');
+                                isSetting = true;
+                              }
+                            : null,
+                        Theme.of(context).colorScheme.onPrimary,
+                        Theme.of(context).colorScheme.primary,
+                        Theme.of(context).colorScheme.onPrimary,
                       ),
                     ),
-                  ),
-                  SizedBox(width: 70),
                   Container(
-                    width: 300,
-                    color: Theme.of(context).colorScheme.surface,
-                    alignment: Alignment.centerLeft,
-                    child: Column(
-                      children: [
-                        Container(
-                          height: 30,
-                          alignment: Alignment.centerLeft,
-                          child: Text("DHCP"),
-                        ),
-                        Container(
-                          height: 78,
-                          alignment: Alignment.centerLeft,
-                          child: SizedBox(
-                              child: IconButton(
-                                  iconSize: 40,
-                                  padding: EdgeInsets.zero,
-                                  visualDensity: VisualDensity.compact,
-                                  icon: Icon(
-                                    !_isStatic
-                                        ? Icons.toggle_on_outlined
-                                        : Icons.toggle_off_outlined,
-                                  ),
-                                  color: !_isStatic
-                                      ? Theme.of(context)
-                                          .colorScheme
-                                          .onTertiaryFixedVariant
-                                      : Theme.of(context)
-                                          .colorScheme
-                                          .onSurfaceVariant,
-                                  onPressed: () async {
-                                    if (selScaleId == -1) {
-                                      showTipInfo(
-                                          localizedStrings
-                                              .gTipSelectDeviceFirst,
-                                          context);
-                                      return;
-                                    }
-                                    if (isBusy) {
-                                      return showTipInfo(
-                                          localizedStrings.pleaseWait, context);
-                                    }
-                                    if (_isPressing) {
-                                      showTipInfo(
-                                          localizedStrings.pleaseWait, context);
-                                      return;
-                                    }
-
-                                    setState(() {
-                                      _isStatic = !_isStatic;
-                                      //开DHCP的时候直接下发，关DHCP的时候，需要确定IP地址后才能下发
-                                    });
-                                    if (!_isStatic) {
-                                      isBusy = true;
-                                      PublicFunctions.setWiredDhcp(
-                                          selScaleId, 'true');
-                                    }
-                                    _isPressing = true;
-                                    await Future.delayed(Duration(seconds: 2));
-                                    setState(() {
-                                      _isPressing = false;
-                                    });
-                                  })),
-                        )
-                      ],
+                    height: 48,
+                    margin: EdgeInsets.symmetric(horizontal: smallPadding),
+                    child: showTextButton(
+                      context,
+                      btnHeight,
+                      localizedStrings.gBtnGetIp,
+                      () {
+                        if (selScaleId == -1) {
+                          showTipInfo(localizedStrings.gTipSelectDeviceFirst, context);
+                          return;
+                        }
+                        showTipInfo(localizedStrings.gTipGetIP, context);
+                        PublicFunctions.getWiredDhcp(selScaleId);
+                      },
+                      Theme.of(context).colorScheme.onPrimary,
+                      Theme.of(context).colorScheme.onTertiaryFixedVariant,
+                      Theme.of(context).colorScheme.onPrimary,
                     ),
                   ),
                 ],
               ),
-            ],
-          ),
-        ),
-        Spacer(),
-        Center(
-            child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-          if (_isStatic)
-            Container(
-              height: 48,
-              margin: EdgeInsets.symmetric(horizontal: smallPadding),
-              child: showTextButton(
-                  context,
-                  btnHeight,
-                  localizedStrings.setStaticIP,
-                  (_isStatic && isValidData())
-                      ? () {
-                          if (isBusy) {
-                            return showTipInfo(
-                                localizedStrings.pleaseWait, context);
-                          }
-                          isBusy = true;
-                          PublicFunctions.setWiredDhcp(selScaleId, 'false');
-                          isSetting = true;
-                        }
-                      : null,
-                  Theme.of(context).colorScheme.onPrimary,
-                  Theme.of(context).colorScheme.primary,
-                  Theme.of(context).colorScheme.onPrimary),
             ),
-          Container(
-            height: 48,
-            margin: EdgeInsets.symmetric(horizontal: smallPadding),
-            child: showTextButton(
-                context, btnHeight, localizedStrings.gBtnGetIp, () {
-              if (selScaleId == -1) {
-                showTipInfo(localizedStrings.gTipSelectDeviceFirst, context);
-                return;
-              }
-              showTipInfo(localizedStrings.gTipGetIP, context);
-              PublicFunctions.getWiredDhcp(selScaleId);
-            },
-                Theme.of(context).colorScheme.onPrimary,
-                Theme.of(context).colorScheme.onTertiaryFixedVariant,
-                Theme.of(context).colorScheme.onPrimary),
-          ),
-        ])),
-        SizedBox(
-          height: 58,
+            const SizedBox(height: 58),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildWiredField(String label, TextEditingController controller, {double width = 300.0}) {
+    return Center(
+      child: Container(
+        width: width,
+        color: Theme.of(context).colorScheme.surface,
+        child: Column(
+          children: [
+            Container(
+              height: 30,
+              alignment: Alignment.centerLeft,
+              child: Text(label),
+            ),
+            SizedBox(
+              height: 78,
+              child: TextField(
+                readOnly: !_isStatic,
+                controller: controller,
+                keyboardType: TextInputType.number,
+                maxLines: 1,
+                decoration: InputDecoration(
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: validateIpFlag(controller.text)
+                          ? Theme.of(context).colorScheme.outlineVariant
+                          : Theme.of(context).colorScheme.error,
+                    ),
+                  ),
+                  border: const OutlineInputBorder(),
+                  errorText: validateIpFlag(controller.text) ? null : localizedStrings.gTipErrorIp,
+                ),
+                style: Theme.of(context).textTheme.bodySmall!.apply(
+                      color: !_isStatic
+                          ? Theme.of(context).colorScheme.onSurfaceVariant.withOpacity(0.5)
+                          : Theme.of(context).colorScheme.onSurface,
+                    ),
+                onChanged: (value) {
+                  setState(() {});
+                },
+              ),
+            )
+          ],
         ),
-      ],
-    ));
+      ),
+    );
+  }
+
+  Widget _buildDhcpToggle({double width = 300.0}) {
+    return Container(
+      width: width,
+      color: Theme.of(context).colorScheme.surface,
+      alignment: Alignment.centerLeft,
+      child: Column(
+        children: [
+          Container(
+            height: 30,
+            alignment: Alignment.centerLeft,
+            child: const Text("DHCP"),
+          ),
+          Container(
+            height: 78,
+            alignment: Alignment.centerLeft,
+            child: IconButton(
+              iconSize: 40,
+              padding: EdgeInsets.zero,
+              visualDensity: VisualDensity.compact,
+              icon: Icon(
+                !_isStatic ? Icons.toggle_on_outlined : Icons.toggle_off_outlined,
+              ),
+              color: !_isStatic
+                  ? Theme.of(context).colorScheme.onTertiaryFixedVariant
+                  : Theme.of(context).colorScheme.onSurfaceVariant,
+              onPressed: () async {
+                if (selScaleId == -1) {
+                  showTipInfo(localizedStrings.gTipSelectDeviceFirst, context);
+                  return;
+                }
+                if (isBusy) {
+                  return showTipInfo(localizedStrings.pleaseWait, context);
+                }
+                if (_isPressing) {
+                  showTipInfo(localizedStrings.pleaseWait, context);
+                  return;
+                }
+
+                setState(() {
+                  _isStatic = !_isStatic;
+                });
+                if (!_isStatic) {
+                  isBusy = true;
+                  PublicFunctions.setWiredDhcp(selScaleId, 'true');
+                }
+                _isPressing = true;
+                await Future.delayed(const Duration(seconds: 2));
+                if (mounted) {
+                  setState(() {
+                    _isPressing = false;
+                  });
+                }
+              },
+            ),
+          )
+        ],
+      ),
+    );
   }
 
   bool isValidData() {

@@ -142,6 +142,7 @@ class _ScaleItemWidgetState extends State<ScaleItemWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final bool isMobile = MediaQuery.of(context).size.width < 600;
     return Container(
       height: 160,
       color: Theme.of(context).colorScheme.surface,
@@ -171,9 +172,10 @@ class _ScaleItemWidgetState extends State<ScaleItemWidget> {
                 color: Theme.of(context).colorScheme.surface,
                 child: Row(
                   children: [
+                    // 状态图标区
                     Container(
-                        padding: const EdgeInsets.only(
-                            left: largePadding, right: largePadding),
+                        padding: EdgeInsets.symmetric(
+                            horizontal: isMobile ? 8.0 : largePadding),
                         child: Center(
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -184,18 +186,14 @@ class _ScaleItemWidgetState extends State<ScaleItemWidget> {
                                 weightInfo?.isStable,
                                 1,
                               ),
-                              SizedBox(
-                                width: 24,
-                              ),
+                              SizedBox(width: isMobile ? 8 : 24),
                               _buildIconAndText(
                                 context,
                                 localizedStrings.iTextNet,
                                 weightInfo?.isNet,
                                 2,
                               ),
-                              SizedBox(
-                                width: 24,
-                              ),
+                              SizedBox(width: isMobile ? 8 : 24),
                               _buildIconAndText(
                                 context,
                                 localizedStrings.iTextZero,
@@ -205,6 +203,7 @@ class _ScaleItemWidgetState extends State<ScaleItemWidget> {
                             ],
                           ),
                         )),
+                    // 重量数值区
                     Expanded(
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -213,7 +212,7 @@ class _ScaleItemWidgetState extends State<ScaleItemWidget> {
                               child: Container(
                             alignment: Alignment.centerRight,
                             child: FittedBox(
-                              fit: BoxFit.scaleDown, // 当文字溢出时缩小字体
+                              fit: BoxFit.scaleDown,
                               alignment: Alignment.centerRight,
                               child: Text(weightInfo?.weightVal ?? '---------',
                                   maxLines: 1,
@@ -223,6 +222,7 @@ class _ScaleItemWidgetState extends State<ScaleItemWidget> {
                                       .textTheme
                                       .headlineLarge!
                                       .copyWith(
+                                        fontSize: isMobile ? 32 : null,
                                         color: isStart
                                             ? Theme.of(context)
                                                 .colorScheme
@@ -234,33 +234,37 @@ class _ScaleItemWidgetState extends State<ScaleItemWidget> {
                             ),
                           )),
                           Container(
-                            width: 80,
+                            width: isMobile ? 40 : 80,
                             height: 80,
                             alignment: Alignment.bottomLeft,
-                            child: Text(weightInfo?.weightUnit ?? '----',
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyLarge!
-                                    .apply(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .onSurface,
-                                    )),
+                            child: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Text(weightInfo?.weightUnit ?? '----',
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge!
+                                      .apply(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onSurface,
+                                      )),
+                            ),
                           )
                         ],
                       ),
                     ),
+                    // 按钮操作区
                     Container(
-                      padding: const EdgeInsets.only(
-                          left: largePadding, right: largePadding),
+                      padding: EdgeInsets.symmetric(
+                          horizontal: isMobile ? 8.0 : largePadding),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           showTextButton(
                               context,
-                              36,
+                              isMobile ? 32 : 36,
                               localizedStrings.gBtnTare,
                               isStart
                                   ? () {
@@ -273,7 +277,7 @@ class _ScaleItemWidgetState extends State<ScaleItemWidget> {
                               Theme.of(context).colorScheme.onPrimary),
                           showTextButton(
                               context,
-                              36,
+                              isMobile ? 32 : 36,
                               localizedStrings.iBtnZero,
                               isStart
                                   ? () {

@@ -409,29 +409,7 @@ bool getUserPermission(int id) {
 }
 
 bool getIsAppCertified(int id) {
-  if (id == MenuId.weightDataCollectionPage) {
-    return myWedaLicInfo.isValid;
-  } else if (id == MenuId.checkWeighersPage) {
-    return myChweLicInfo.isValid;
-  } else if (id == MenuId.takeInPage) {
-    return myInWeLicInfo.isValid;
-  } else if (id == MenuId.takeOutPage) {
-    return myTaouLicInfo.isValid;
-  } else if (id == MenuId.formulationScalePage) {
-    return myFoScLicInfo.isValid;
-  } else if (id == MenuId.flowRatePage) {
-    return myFaSpInfo.isValid;
-  } else if (id == MenuId.labelDesignPage) {
-    return myLadeLicInfo.isValid;
-  } else if (id == MenuId.receiptDesignPage) {
-    return myRedeLicInfo.isValid;
-  } else if (id == MenuId.appLabelDesignPage) {
-    return myLadeLicInfo.isValid;
-  } else if (id == MenuId.appRcpDesignPage) {
-    return myRedeLicInfo.isValid;
-  }
-
-  return false;
+  return true;
 }
 
 bool isFreeConfig(int pId) => freeConfigMenuIds.contains(pId);

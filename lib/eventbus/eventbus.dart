@@ -404,6 +404,16 @@ class EventConnectStaticIp {
   EventConnectStaticIp(this.obj);
 }
 
+class EventInitWifiResp {
+  dynamic obj;
+  EventInitWifiResp(this.obj);
+}
+
+class EventSetServerModeResp {
+  dynamic obj;
+  EventSetServerModeResp(this.obj);
+}
+
 class EventRespUpdateFirmware {
   dynamic obj;
   EventRespUpdateFirmware(this.obj);
@@ -1079,4 +1089,10 @@ class EventRespPluSetting {
 class EventRespDownAllPlu {
   dynamic obj;
   EventRespDownAllPlu(this.obj);
+}
+
+class EventVirtualSerialWrite {
+  final int scaleId;
+  final String base64Data;
+  EventVirtualSerialWrite(this.scaleId, this.base64Data);
 }

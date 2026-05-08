@@ -15,6 +15,7 @@ import 'package:t_max/widget/page_info.dart';
 
 import 'package:t_max/widget/sticky_table.dart';
 import '../data/language.dart';
+import '../widget/page_head.dart';
 
 // 定义 EncryptedValue 枚举
 enum RoleValue {
@@ -45,6 +46,8 @@ class SysUserManagerPage extends StatefulWidget {
 
 class SysUserManagerPageState extends State<SysUserManagerPage>
     with SingleTickerProviderStateMixin {
+
+
   bool sort = false;
   final ScrollController _scrollController =
       ScrollController(); // 添加 ScrollController
@@ -151,20 +154,30 @@ class SysUserManagerPageState extends State<SysUserManagerPage>
   }
 
   @override
+  @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
+
     return Scaffold(
-        body: Container(
-            color: colorScheme.surfaceDim,
-            child: Column(
-              children: [
-                thisPageHeadInfo(context, width - headWidthPadding,
-                    localizedStrings.userManagement, '',
-                    showHelp: false),
-                Expanded(
-                  child: Row(
-                    children: [
-                      Expanded(
+      // key: _scaffoldKey, // 移除全局键以解决断言错误
+      body: Container(
+        color: colorScheme.surfaceDim,
+        child: Column(
+          children: [
+            pageHeadInfo(context, width - headWidthPadding,
+                localizedStrings.userManagement, '', () {
+              widget.onNavigate(widget.lastRouteName);
+            }, showHelp: false),
+            Expanded(
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  return SingleChildScrollView(
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                        minHeight: constraints.maxHeight,
+                        maxWidth: constraints.maxWidth,
+                      ),
+                      child: IntrinsicHeight(
                         child: Column(
                           children: [
                             Divider(
@@ -181,14 +194,15 @@ class SysUserManagerPageState extends State<SysUserManagerPage>
                           ],
                         ),
                       ),
-                    ],
-                  ),
-                )
-              ],
-            )
-
-            // ),
-            ));
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget thisPageHeadInfo(

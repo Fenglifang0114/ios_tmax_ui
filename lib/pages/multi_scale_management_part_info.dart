@@ -2,135 +2,6 @@
 part of 'multi_scale_management_page.dart';
 
 extension MultiScaleManagementInfoExt on MultiScaleManagementState {
-//串口秤的明细信息
-  Widget showSerialScaleInfo() {
-    return Expanded(
-      child: SizedBox(
-        width: double.infinity,
-        child: LayoutBuilder(
-            builder: (BuildContext context, BoxConstraints constraints) {
-          return ListView(
-            children: [
-              SizedBox(
-                height: smallPadding,
-              ),
-              buildItemInfo(
-                  showItemNameWithStar(
-                      context, localizedStrings.gScaleName, false),
-                  showScaleNameInputBox(
-                      context,
-                      scaleNameCtl,
-                      '',
-                      IconButton(
-                        icon: Icon(Icons.edit_outlined), // 清除按钮图标
-                        onPressed: () {
-                          setState(() {
-                            isRename = true;
-                          });
-                        },
-                      ), (value) {
-                    setState(() {});
-                  }, isRename),
-                  showItemNameWithStar(
-                      context, localizedStrings.gModelName, false),
-                  showInputBox(context, scaleModelCtl, '', (value) {
-                    setState(() {});
-                  }, false)),
-              SizedBox(
-                height: smallPadding,
-              ),
-              buildItemInfo(
-                  showItemNameWithStar(
-                      context, localizedStrings.gScaleSn, false),
-                  showInputBox(context, snCtl, '', (value) {
-                    setState(() {});
-                  }, false),
-                  showItemNameWithStar(
-                      context, localizedStrings.gDataBits, false),
-                  showDropDownButton(context, '', dataBitCtl, dataBitsList,
-                      (value) {
-                    setState(() {
-                      if (dataBitsList.contains(value)) {
-                        dataBitCtl.text = value!;
-                      }
-                    });
-                  })),
-              SizedBox(
-                height: smallPadding,
-              ),
-              buildItemInfo(
-                  showItemNameWithStar(
-                      context, localizedStrings.gSerialPort, false),
-                  showDropDownButton(
-                    context,
-                    "",
-                    comPortCtl,
-                    usingComLists,
-                    (value) {
-                      setState(() {
-                        if (value != null && comLists.contains(value)) {
-                          comPortCtl.text = value;
-                        } else {
-                          // 若选择的值不在 comLists 中，清空输入框
-                          comPortCtl.clear();
-                        }
-                        usingComLists = List<String>.from(comLists);
-                      });
-                    },
-                    onTap: () {
-                      PublicFunctions.getPortList();
-                      if (comLists.isEmpty && comPortCtl.text.isNotEmpty) {
-                        comPortCtl.clear();
-                      }
-                    },
-                  ),
-                  showItemNameWithStar(
-                      context, localizedStrings.gBaudRate, false),
-                  showDropDownButton(context, '', baudRateCtl, baudRateList,
-                      (value) {
-                    setState(() {
-                      if (baudRateList.contains(value)) {
-                        baudRateCtl.text = value!;
-                      }
-                    });
-                  })),
-              SizedBox(
-                height: smallPadding,
-              ),
-              buildItemInfo(
-                  showItemNameWithStar(
-                      context, localizedStrings.gSerialParity, false),
-                  showDropDownButton(context, '', protocolCtl, checkBitsList,
-                      (value) {
-                    setState(() {
-                      if (checkBitsList.contains(value)) {
-                        protocolCtl.text = value!;
-                      }
-                    });
-                  }),
-                  showItemNameWithStar(
-                      context, localizedStrings.gStopBits, false),
-                  showDropDownButton(context, '', stopBitCtl, stopBitsList,
-                      (value) {
-                    setState(() {
-                      if (stopBitsList.contains(value)) {
-                        stopBitCtl.text = value!;
-                      }
-                    });
-                  })),
-              SizedBox(
-                height: regularPadding,
-              ),
-              SizedBox(
-                height: regularPadding,
-              ),
-              isRename ? showRenameConfirmBtn() : showComPortBtn(),
-            ],
-          );
-        }),
-      ),
-    );
-  }
 
   Widget showNetworkScaleInfo() {
     return Expanded(
@@ -275,35 +146,14 @@ extension MultiScaleManagementInfoExt on MultiScaleManagementState {
                   const SizedBox(
                     height: regularPadding,
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            SizedBox(
-                                width: inputWidth,
-                                child: showItemNameWithStar(context,
-                                    localizedStrings.bluetoothAddress, false)),
-                            SizedBox(
-                                width: inputWidth,
-                                child:
-                                    showInputBox(context, macCtl, '', (value) {
-                                  setState(() {});
-                                }, false))
-                          ]),
-                      Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            SizedBox(
-                              width: inputWidth,
-                            ),
-                            SizedBox(
-                              width: inputWidth,
-                            )
-                          ])
-                    ],
-                  ),
+                  buildItemInfo(
+                      showItemNameWithStar(
+                          context, localizedStrings.bluetoothAddress, false),
+                      showInputBox(context, macCtl, '', (value) {
+                        setState(() {});
+                      }, false),
+                      const SizedBox(),
+                      const SizedBox()),
                   const SizedBox(
                     height: regularPadding,
                   ),
@@ -316,86 +166,6 @@ extension MultiScaleManagementInfoExt on MultiScaleManagementState {
             })));
   }
 
-  Widget showComPortBtn() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        showTextButton(
-            context,
-            btnHeight,
-            localizedStrings.gBtnCloseSerialPort,
-            isClosePort || isComSetting
-                ? null
-                : () {
-                    PublicFunctions.closeSerialPort(selScaleId);
-                    setState(() {
-                      isClosePort = true;
-                      for (var i = 0; i < myAllScalesList.length; i++) {
-                        if (myAllScalesList[i].scaleId == selScaleId) {
-                          myAllScalesList[i].isOnline = false;
-                        }
-                      }
-                    });
-                  },
-            Theme.of(context).colorScheme.onPrimary,
-            Theme.of(context).colorScheme.error,
-            Theme.of(context).colorScheme.error),
-        const SizedBox(
-          width: regularPadding,
-        ),
-        showTextButton(
-            context,
-            btnHeight,
-            localizedStrings.gBtnOpenSerialPort,
-            !isClosePort || isComSetting
-                ? null
-                : () {
-                    PublicFunctions.openSerialPort(selScaleId);
-                    setState(() {
-                      isClosePort = false;
-                    });
-                  },
-            Theme.of(context).colorScheme.onPrimary,
-            Theme.of(context).colorScheme.primary,
-            Theme.of(context).colorScheme.onPrimary),
-        const SizedBox(
-          width: regularPadding,
-        ),
-        showTextButton(
-            context,
-            btnHeight,
-            localizedStrings.gBtnTestConnect,
-            isClosePort || isComSetting || comPortCtl.text == ''
-                ? null
-                : () {
-                    for (var scale in myAllScalesList) {
-                      if (scale.tMedia == comScaleType) {
-                        final serialConfig =
-                            scale.mediaConfig as SerialMediaConfig;
-                        if (serialConfig.devPath == comPortCtl.text &&
-                            scale.scaleId != selScaleId) {
-                          showTipInfo(
-                              localizedStrings.gTipPortInUsed + scale.scaleName,
-                              context);
-                          return;
-                        }
-                      }
-                    }
-                    setState(() {
-                      serialPortConnect = '';
-                      isComSetting = true;
-                    });
-                    modifyComInfo();
-                  },
-            Theme.of(context).colorScheme.onPrimary,
-            Theme.of(context).colorScheme.onTertiaryFixedVariant,
-            Theme.of(context).colorScheme.onPrimary),
-        const SizedBox(
-          width: regularPadding,
-        ),
-      ],
-    );
-  }
 
   Widget showRenameConfirmBtn() {
     return isRename
@@ -427,8 +197,8 @@ extension MultiScaleManagementInfoExt on MultiScaleManagementState {
                     }
                   }
 
-                  if (isComSetting) {
-                    isComSetting = false;
+                  if (isRename) {
+                    isRename = false;
                   }
                 });
               },
@@ -448,16 +218,32 @@ extension MultiScaleManagementInfoExt on MultiScaleManagementState {
             context,
             btnHeight,
             localizedStrings.gBtnTestConnect,
-            !isAddScale && !isTesting && !isDel && !isComSetting
+            !isAddScale && !isTesting && !isDel
                 ? () {
-                    PublicFunctions.checkSerialPort(selScaleId);
-                    setState(() {
-                      isTesting = true;
-                    });
+                    showConnectionProgressDialog(context, macCtl.text, selScaleId);
                   }
                 : null,
             Theme.of(context).colorScheme.onPrimary,
             Theme.of(context).colorScheme.onTertiaryFixedVariant,
+            Theme.of(context).colorScheme.onPrimary),
+        const SizedBox(width: regularPadding),
+        showTextButton(
+            context,
+            btnHeight,
+            localizedStrings.gBtnDelete,
+            !isAddScale && !isTesting && !isRename
+                ? () {
+                    setState(() {
+                      isDel = true;
+                      // 删除前先停止连续发送
+                      PublicFunctions.stopWeight(selScaleId);
+                      delScale();
+                      selScaleId = -1;
+                    });
+                  }
+                : null,
+            Theme.of(context).colorScheme.onPrimary,
+            Theme.of(context).colorScheme.error,
             Theme.of(context).colorScheme.onPrimary),
         if (showModify) ...[
           const SizedBox(width: regularPadding),
@@ -465,7 +251,7 @@ extension MultiScaleManagementInfoExt on MultiScaleManagementState {
               context,
               btnHeight,
               localizedStrings.gBtnModify,
-              !isAddScale && !isTesting && !isDel && !isComSetting
+              !isAddScale && !isTesting && !isDel
                   ? () {
                       setState(() {
                         editWifiInfo = true;
@@ -480,4 +266,94 @@ extension MultiScaleManagementInfoExt on MultiScaleManagementState {
     );
   }
 
+  void showConnectionProgressDialog(BuildContext context, String mac, int scaleId) {
+    List<String> logs = [];
+    bool isDone = false;
+    bool isSuccess = false;
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            // 开始连接（仅执行一次）
+            if (logs.isEmpty) {
+              bluetoothManager.connectToDevice(
+                mac, 
+                scaleId: scaleId,
+                onStatusUpdate: (status) {
+                  setDialogState(() {
+                    logs.add("${DateTime.now().toString().split(' ')[1].substring(0, 8)}: $status");
+                  });
+                }
+              ).then((success) {
+                setDialogState(() {
+                  isDone = true;
+                  isSuccess = success;
+                });
+              });
+            }
+
+            return AlertDialog(
+              title: Row(
+                children: [
+                  if (!isDone)
+                    SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    ),
+                  if (!isDone) SizedBox(width: 12),
+                  Text(isDone ? (isSuccess ? "连接成功" : "连接失败") : "正在连接蓝牙..."),
+                ],
+              ),
+              content: SizedBox(
+                width: 400,
+                height: 300,
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        padding: EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: Colors.black.withValues(alpha: 0.05),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: ListView.builder(
+                          itemCount: logs.length,
+                          itemBuilder: (context, index) {
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 2),
+                              child: Text(
+                                logs[index],
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  fontFamily: 'monospace',
+                                  color: logs[index].contains("错误") || logs[index].contains("异常") 
+                                    ? Colors.red 
+                                    : (logs[index].contains("成功") ? Colors.green : Colors.black87),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              actions: [
+                if (isDone)
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: Text("确定"),
+                  ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
 }

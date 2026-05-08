@@ -5,29 +5,32 @@ extension MultiScaleManagementAddExt on MultiScaleManagementState {
 //增加秤时显示
   Widget showAddScaleInfo(double maxWidth) {
     return Column(children: [
-      if (addScaleType == "bt" && isBtSearched && !isBtSearching)
+      if (addScaleType == "bt")
         Row(
           children: [
-            subTitleInfo(
-                context,
-                maxWidth - headWidthPadding,
-                localizedStrings.gBtnAdd,
-                localizedStrings.gTipScaleMgrPageHelp),
-            Spacer(),
-            TextButton(
-              onPressed: () {
-                PublicFunctions.getBtList();
-                setState(() {
-                  btInfoList.clear();
-                  selectBtInfo = BtInfo();
-                  isBtSearching = true;
-                });
-              },
-              child: Text(localizedStrings.gMsgRefresh,
-                  style: Theme.of(context).textTheme.bodySmall!.apply(
-                        color: Theme.of(context).colorScheme.primary,
-                      )),
+            Expanded(
+              child: subTitleInfo(
+                  context,
+                  maxWidth - headWidthPadding,
+                  localizedStrings.gBtnAdd,
+                  localizedStrings.gTipScaleMgrPageHelp),
             ),
+            if (!isBtSearching)
+              TextButton(
+                onPressed: () {
+                  debugPrint("BT: 点击刷新/开始搜索");
+                  PublicFunctions.getBtList();
+                  setState(() {
+                    btInfoList.clear();
+                    selectBtInfo = BtInfo();
+                    isBtSearching = true;
+                  });
+                },
+                child: Text(localizedStrings.gMsgRefresh,
+                    style: Theme.of(context).textTheme.bodySmall!.apply(
+                          color: Theme.of(context).colorScheme.primary,
+                        )),
+              ),
           ],
         ),
       if (addScaleType != "bt")
@@ -183,81 +186,54 @@ extension MultiScaleManagementAddExt on MultiScaleManagementState {
     );
   }
 
-  //PublicFunctions.getBtList();
   Widget showAddBtScaleInfo() {
     if (isBtSearching) {
-      return SizedBox(
-          child: Column(
+      return ListView(
+        padding: const EdgeInsets.symmetric(vertical: regularPadding),
         children: [
-          SizedBox(
-            height: regularPadding,
+          const SizedBox(height: 60),
+          Center(
+            child: SizedBox(
+              width: 50,
+              height: 50,
+              child: CircularProgressIndicator(),
+            ),
           ),
-          SizedBox(
-            height: 60,
-          ),
-          showGif(),
-          SizedBox(
-            height: 80,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                localizedStrings.searchingBluetoothDevices,
-                style: Theme.of(context).textTheme.bodySmall,
-              )
-            ],
-          ),
-          Spacer(),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              showTextButton(
-                  context,
-                  btnHeight,
-                  localizedStrings.gBtnConfirm,
-                  macCtl.text.isNotEmpty && btNameCtl.text.isNotEmpty
-                      ? () {
-                          isAddScale = false;
-                          isRename = false;
-                          addScaleType = '';
-
-                          addBtScale();
-                        }
-                      : null,
-                  Theme.of(context).colorScheme.onPrimary,
-                  Theme.of(context).colorScheme.primary,
-                  Theme.of(context).colorScheme.onPrimary),
-              const SizedBox(width: regularPadding),
-              SizedBox(
-                width: regularPadding,
+          const SizedBox(height: 40),
+          Center(
+            child: Text(
+              localizedStrings.gSearchingBtDevices,
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.blue,
               ),
-              showTextButton(context, btnHeight, localizedStrings.gBtnCancel,
-                  () {
-                setState(() {
-                  isAddScale = false;
-                  isRename = false;
-                  addScaleType = '';
-                  selScaleId = -1;
-
-                  if (isComSetting) {
-                    isComSetting = false;
-                  }
-                });
-              },
-                  Theme.of(context).colorScheme.onPrimary,
-                  Theme.of(context).colorScheme.onSurfaceVariant,
-                  Theme.of(context).colorScheme.onPrimary),
-            ],
+            ),
           ),
-          SizedBox(
-            height: regularPadding * 2,
+          const SizedBox(height: 80),
+          const SizedBox(height: 40),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: regularPadding),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                showTextButton(context, btnHeight, localizedStrings.gBtnCancel,
+                    () {
+                  setState(() {
+                    isBtSearching = false;
+                    isBtSearched = false;
+                  });
+                },
+                    Theme.of(context).colorScheme.onPrimary,
+                    Theme.of(context).colorScheme.onSurfaceVariant,
+                    Theme.of(context).colorScheme.onPrimary),
+              ],
+            ),
           ),
         ],
-      ));
+      );
     } else if (isBtSearched) {
-      return SizedBox(
-          child: Column(
+      return Column(
         children: [
           // 设备列表
           Expanded(
@@ -271,12 +247,12 @@ extension MultiScaleManagementAddExt on MultiScaleManagementState {
                           size: 80,
                           color: Colors.grey[300],
                         ),
-                        SizedBox(height: 16),
+                        const SizedBox(height: 16),
                         Text(
                           localizedStrings.noBluetoothDevicesFound,
                           style: Theme.of(context).textTheme.bodyMedium,
                         ),
-                        SizedBox(height: 8),
+                        const SizedBox(height: 8),
                         Text(
                           localizedStrings.ensureBluetoothIsEnabled,
                           style: Theme.of(context).textTheme.bodyMedium,
@@ -287,7 +263,12 @@ extension MultiScaleManagementAddExt on MultiScaleManagementState {
                 : BtInfoListWidget(
                     devices: btInfoList,
                     onRefresh: () {
-                      // 刷新逻辑
+                      PublicFunctions.getBtList();
+                      setState(() {
+                        btInfoList.clear();
+                        selectBtInfo = BtInfo();
+                        isBtSearching = true;
+                      });
                     },
                     onDeviceTap: (device) {
                       setState(() {
@@ -296,78 +277,66 @@ extension MultiScaleManagementAddExt on MultiScaleManagementState {
                     },
                   ),
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              showTextButton(
-                  context,
-                  btnHeight,
-                  localizedStrings.gBtnConfirm,
-                  selectBtInfo.mac != null
-                      ? () {
-                          isAddScale = false;
-                          isRename = false;
-                          addScaleType = '';
-
-                          isBtSearching = false;
-                          isBtSearched = false;
-
-                          addBtScale();
-                        }
-                      : null,
-                  Theme.of(context).colorScheme.onPrimary,
-                  Theme.of(context).colorScheme.primary,
-                  Theme.of(context).colorScheme.onPrimary),
-              const SizedBox(width: regularPadding),
-              SizedBox(
-                width: regularPadding,
-              ),
-              showTextButton(context, btnHeight, localizedStrings.gBtnCancel,
-                  () {
-                setState(() {
-                  isAddScale = false;
-                  isRename = false;
-                  addScaleType = '';
-                  selScaleId = -1;
-                  selectBtInfo = BtInfo();
-                  btInfoList.clear();
-                  isBtSearching = false;
-                  isBtSearched = false;
-
-                  if (isComSetting) {
-                    isComSetting = false;
-                  }
-                });
-              },
-                  Theme.of(context).colorScheme.onPrimary,
-                  Theme.of(context).colorScheme.onSurfaceVariant,
-                  Theme.of(context).colorScheme.onPrimary),
-            ],
-          ),
-          SizedBox(
-            height: regularPadding * 2,
+          Padding(
+            padding: const EdgeInsets.all(regularPadding),
+            child: Wrap(
+              spacing: regularPadding,
+              runSpacing: regularPadding,
+              alignment: WrapAlignment.center,
+              children: [
+                showTextButton(
+                    context,
+                    btnHeight,
+                    localizedStrings.gBtnConfirm,
+                    selectBtInfo.mac != null
+                        ? () {
+                            isAddScale = false;
+                            isRename = false;
+                            addScaleType = '';
+                            isBtSearching = false;
+                            isBtSearched = false;
+                            addBtScale();
+                          }
+                        : null,
+                    Theme.of(context).colorScheme.onPrimary,
+                    Theme.of(context).colorScheme.primary,
+                    Theme.of(context).colorScheme.onPrimary),
+                showTextButton(context, btnHeight, localizedStrings.gBtnCancel,
+                    () {
+                  setState(() {
+                    isAddScale = false;
+                    isRename = false;
+                    addScaleType = '';
+                    selScaleId = -1;
+                    selectBtInfo = BtInfo();
+                    btInfoList.clear();
+                    isBtSearching = false;
+                    isBtSearched = false;
+                    if (isComSetting) isComSetting = false;
+                  });
+                },
+                    Theme.of(context).colorScheme.onPrimary,
+                    Theme.of(context).colorScheme.onSurfaceVariant,
+                    Theme.of(context).colorScheme.onPrimary),
+              ],
+            ),
           ),
         ],
-      ));
+      );
     } else {
-      return SizedBox(
-          child: Column(
+      return ListView(
+        padding: const EdgeInsets.symmetric(vertical: regularPadding),
         children: [
-          SizedBox(
-            height: regularPadding,
-          ),
-          SizedBox(
-            height: 60,
-          ),
-          Image.asset(
-            'assets/images/bt_tips.png',
-            width: 600,
-            height: 100,
-            fit: BoxFit.scaleDown,
-          ),
-          SizedBox(
-            height: 80,
-          ),
+          const SizedBox(height: 60),
+          LayoutBuilder(builder: (context, constraints) {
+            return Image.asset(
+              'assets/images/bt_tips.png',
+              width: constraints.maxWidth * 0.9,
+              height: 100,
+              fit: BoxFit.scaleDown,
+            );
+          }),
+          const SizedBox(height: regularPadding),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -375,6 +344,7 @@ extension MultiScaleManagementAddExt on MultiScaleManagementState {
                 width: 300,
                 child: showTextButton(context, btnHeight,
                     localizedStrings.startSearchBluetoothDevices, () {
+                  debugPrint("BT: 点击开始搜索");
                   PublicFunctions.getBtList();
                   setState(() {
                     isBtSearching = true;
@@ -386,53 +356,30 @@ extension MultiScaleManagementAddExt on MultiScaleManagementState {
               ),
             ],
           ),
-          Spacer(),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              showTextButton(
-                  context,
-                  btnHeight,
-                  localizedStrings.gBtnConfirm,
-                  portCtl.text.isNotEmpty && _isValidIP
-                      ? () {
-                          isAddScale = false;
-                          isRename = false;
-                          addScaleType = '';
-
-                          addNetScale();
-                        }
-                      : null,
-                  Theme.of(context).colorScheme.onPrimary,
-                  Theme.of(context).colorScheme.primary,
-                  Theme.of(context).colorScheme.onPrimary),
-              const SizedBox(width: regularPadding),
-              SizedBox(
-                width: regularPadding,
-              ),
-              showTextButton(context, btnHeight, localizedStrings.gBtnCancel,
-                  () {
-                setState(() {
-                  isAddScale = false;
-                  isRename = false;
-                  addScaleType = '';
-                  selScaleId = -1;
-
-                  if (isComSetting) {
-                    isComSetting = false;
-                  }
-                });
-              },
-                  Theme.of(context).colorScheme.onPrimary,
-                  Theme.of(context).colorScheme.onSurfaceVariant,
-                  Theme.of(context).colorScheme.onPrimary),
-            ],
-          ),
-          SizedBox(
-            height: regularPadding * 2,
+          const SizedBox(height: 40),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: regularPadding),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                showTextButton(context, btnHeight, localizedStrings.gBtnCancel,
+                    () {
+                  setState(() {
+                    isAddScale = false;
+                    isRename = false;
+                    addScaleType = '';
+                    selScaleId = -1;
+                    if (isComSetting) isComSetting = false;
+                  });
+                },
+                    Theme.of(context).colorScheme.onPrimary,
+                    Theme.of(context).colorScheme.onSurfaceVariant,
+                    Theme.of(context).colorScheme.onPrimary),
+              ],
+            ),
           ),
         ],
-      ));
+      );
     }
   }
 

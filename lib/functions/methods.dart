@@ -9,6 +9,7 @@ import '../common/web_socket_channel.dart';
 import '../data/download_prt_fmt.dart';
 import '../data/manager_scale_channel.dart';
 import '../data/scalecmd_data.dart';
+import 'package:t_max/bluetooth/bluetooth_manager.dart';
 
 /// 常规称重模式。
 const String weighingMode = '0';
@@ -27,6 +28,9 @@ class PublicFunctions {
 
   /// 基础消息下发方法。用于向指定的离散辅秤 [scaleId] 通信。
   static void sendMsg(int scaleId, String str) {
+    if (!manager.isConnected(scaleId)) {
+      manager.connect(scaleId, GetUrl.getUrl(scaleId));
+    }
     manager.sendMessage(scaleId, str);
   }
 
@@ -272,9 +276,7 @@ class PublicFunctions {
   }
 
   static void getBtList() {
-    myScaleCmd.cmdMode = "get_bt_list";
-    myScaleCmd.cmdData = "";
-    sendMsgChan0(jsonEncode(myScaleCmd));
+    bluetoothManager.startScan();
   }
 
   static void delProduct(String str) {

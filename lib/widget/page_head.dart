@@ -337,7 +337,7 @@ Widget pageHeadDefScale(dynamic context, String pageTitle, String helpInfo) {
 
 Widget pageHeadInfo(dynamic context, double maxWidth, String pageTitle,
     String helpInfo, Function() onExit,
-    {bool showHelp = true}) {
+    {bool showHelp = true, Widget? leading, Widget? trailing}) {
   return Container(
       height: pageTopTitleHeight,
       color: Theme.of(context).colorScheme.surface,
@@ -346,14 +346,18 @@ Widget pageHeadInfo(dynamic context, double maxWidth, String pageTitle,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              subTitle(context, pageTitle, onExit),
-              if (showHelp)
-                Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+              Expanded(child: subTitle(context, pageTitle, onExit, leading: leading)),
+              Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+                if (trailing != null) ...[
+                  trailing,
+                  const SizedBox(width: regularPadding),
+                ],
+                if (showHelp)
                   PageInfoButton(helpInfo: helpInfo, onRefresh: () {}),
-                  const SizedBox(
-                    width: largePadding,
-                  ),
-                ])
+                const SizedBox(
+                  width: largePadding,
+                ),
+              ])
             ],
           ),
         ),
@@ -365,9 +369,11 @@ Widget pageHeadInfo(dynamic context, double maxWidth, String pageTitle,
       ]));
 }
 
-Widget subTitle(dynamic context, String pageTitle, Function() onExit) {
+Widget subTitle(dynamic context, String pageTitle, Function() onExit,
+    {Widget? leading}) {
   return Row(
     children: [
+      if (leading != null) leading,
       SizedBox(
         width: largePadding,
       ),
@@ -382,7 +388,7 @@ Widget subTitle(dynamic context, String pageTitle, Function() onExit) {
       SizedBox(
         width: regularPadding,
       ),
-      SizedBox(
+      Expanded(
         child: Text(
           pageTitle,
           style: Theme.of(context).textTheme.labelMedium!.apply(
@@ -565,7 +571,7 @@ Widget subTitleInfo(
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              subNewTitle(context, maxWidth, pageTitle),
+              Expanded(child: subNewTitle(context, maxWidth, pageTitle)),
               // Row(mainAxisAlignment: MainAxisAlignment.end, children: [
               //   PageInfoButton(helpInfo: helpInfo, onRefresh: () {}),
               //   const SizedBox(
@@ -601,8 +607,7 @@ Widget subNewTitle(
       SizedBox(
         width: regularPadding,
       ),
-      SizedBox(
-        width: maxWidth,
+      Expanded(
         child: Text(
           pageTitle,
           style: Theme.of(context).textTheme.labelMedium!.apply(

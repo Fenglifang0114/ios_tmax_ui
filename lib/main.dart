@@ -17,6 +17,7 @@ import 'data/setting_version_info.dart';
 import 'generated/l10n.dart';
 import 'widget/theme_color.dart';
 import 'package:win32/win32.dart';
+import 'package:flutter/services.dart';
 
 const String serviceName = "TmaxService";
 const bool isServiceVersion = true; //是否是服务版本
@@ -25,7 +26,26 @@ const bool isServiceVersion = true; //是否是服务版本
 /// 负责检查 Windows 服务状态、初始化 [WidgetsFlutterBinding]、
 /// 限制应用程序单例运行 (通过检测端口绑定) 并启动主界面的 Route 容器。
 Future<void> main() async {
-  if (isServiceVersion) {
+  WidgetsFlutterBinding.ensureInitialized();
+  if (Platform.isAndroid) {
+    // 增加启动后端的稳定性，先等待系统资源准备就绪
+    Future.microtask(() async {
+      await Future.delayed(const Duration(seconds: 3));
+      const platform = MethodChannel('com.example.t_max/backend');
+      try {
+        final String result = await platform.invokeMethod('startBackend');
+        debugPrint("Backend started: $result");
+        // 后端启动后，额外等待几秒让端口监听就绪
+        await Future.delayed(const Duration(seconds: 3));
+        final WebSocketManager socketManager = WebSocketManager();
+        if (!socketManager.isConnected) {
+          socketManager.connect();
+        }
+      } on PlatformException catch (e) {
+        debugPrint("Failed to start backend: '${e.message}'.");
+      }
+    });
+  } else if (isServiceVersion) {
     //如果是服务的话，先检测服务是否开启
     try {
       // 检查服务是否安装
@@ -68,10 +88,7 @@ Future<void> main() async {
       exit(0);
     }
   }
-  WidgetsFlutterBinding.ensureInitialized();
-  await windowManager.ensureInitialized();
-  await setWindowOptions();
-
+  
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String savedLanguage = prefs.getString('language') ?? 'en_US';
   String savedDarkMode = prefs.getString('darkMode') ?? 'false';
@@ -82,7 +99,12 @@ Future<void> main() async {
   }
   await initPageId();
   await ensureInitialized();
-  bool isPortAvailable = await checkAndBindPort();
+  bool isPortAvailable = true;
+  if (!Platform.isAndroid) {
+    await windowManager.ensureInitialized();
+    await setWindowOptions();
+    isPortAvailable = await checkAndBindPort();
+  }
   if (isPortAvailable) {
     runApp(MyApp(savedLanguage, ipAddress, savedDarkMode == 'true'));
   } else {
@@ -188,7 +210,14 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     writelog('go to start ui');
     final WebSocketManager socketManager = WebSocketManager();
-    socketManager.connect();
+    if (Platform.isAndroid) {
+      // 这里的延迟可以作为二次检查，确保连接
+      Future.delayed(const Duration(seconds: 8), () {
+        if (!socketManager.isConnected) socketManager.connect();
+      });
+    } else {
+      socketManager.connect();
+    }
 
     return MaterialApp(
       //自定义主题

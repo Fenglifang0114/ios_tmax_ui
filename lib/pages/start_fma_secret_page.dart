@@ -23,6 +23,8 @@ import 'package:t_max/widget/common_widget.dart';
 import 'package:t_max/widget/fma_process_bar.dart';
 import 'package:t_max/widget/sticky_table.dart';
 import '../data/language.dart';
+import '../functions/adaptive.dart';
+import '../widget/page_head.dart';
 
 class FormulaSecretWeighingPage extends StatefulWidget {
   const FormulaSecretWeighingPage(
@@ -48,6 +50,7 @@ class FormulaSecretWeighingPage extends StatefulWidget {
 
 class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
     with SingleTickerProviderStateMixin {
+
   late TabController _tabController;
   bool sort = false;
   final ScrollController _scrollController =
@@ -673,11 +676,14 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
   }
 
   final double maxWidth = 360; //最大宽度
-  showBottomBtn() {
+  Widget showBottomBtn() {
+    final bool isMobile = Adaptive.isMobile(context);
     return Container(
-        height: 76,
+        padding: isMobile ? const EdgeInsets.symmetric(vertical: 8) : EdgeInsets.zero,
         color: Theme.of(context).colorScheme.surface,
-        child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
           ConstrainedBox(
             constraints: BoxConstraints(maxWidth: maxWidth),
             child: showTextButton(
@@ -768,7 +774,8 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
                 Theme.of(context).colorScheme.error,
                 Theme.of(context).colorScheme.onPrimary),
           ),
-        ]));
+        ])),
+    );
   }
 
   void performAbandonFma() {
@@ -1042,17 +1049,32 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
   }
 
   @override
+  @override
   Widget build(BuildContext context) {
-    // final width = MediaQuery.of(context).size.width;
+    final width = MediaQuery.of(context).size.width;
+
     return Scaffold(
-        body: Container(
-      color: Theme.of(context).colorScheme.surfaceDim, //对接时修改颜色值
-      child:
-          // Padding(
-          //   padding: const EdgeInsets.all(14.0),
-          //   child:
-          Column(
-        children: [
+
+      body: Container(
+        color: Theme.of(context).colorScheme.surfaceDim,
+        child: Column(
+          children: [
+            pageHeadInfo(context, width - headWidthPadding,
+                localizedStrings.menuFormulaExecution, '', () {
+              Navigator.pop(context);
+            }),
+            Expanded(
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  return SingleChildScrollView(
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                        minHeight: constraints.maxHeight,
+                        maxWidth: constraints.maxWidth,
+                      ),
+                      child: IntrinsicHeight(
+                        child: Column(
+                          children: [
           showTitleBar(),
           Divider(
             color: Theme.of(context).colorScheme.surfaceDim,
@@ -1102,9 +1124,18 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
           //   color: Theme.of(context).colorScheme.surface,
           // ),
           startFormula ? showBottomBtn() : showStartBtn(),
-        ],
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
       ),
-    ));
+    );
   }
 
   bool checkRawDelete(Object? data) {

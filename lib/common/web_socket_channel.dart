@@ -10,6 +10,13 @@ import 'package:t_max/eventbus/eventbus.dart';
 import 'package:t_max/functions/methods.dart';
 import 'package:web_socket_channel/io.dart';
 
+enum ServiceState {
+  disconnected,
+  connecting,
+  connected,
+  retrying
+}
+
 /// 全局的 [WebSocket] 通信管理器。
 /// 采用单例模式 (Singleton) 维持与后端网关的长连接，统一分发 JSON 消息到底层网关的监听器，
 /// 并且内置了断线重拨机制 (Reconnect) 与心跳监控 (Heartbeat)。
@@ -28,6 +35,8 @@ class WebSocketManager {
   int _reconnectAttempts = 0;
   final int _maxReconnectAttempts = 10;
   final Duration _heartbeatInterval = const Duration(seconds: 30);
+  int _nextRetrySeconds = 0;
+  int get nextRetrySeconds => _nextRetrySeconds;
 
   /// 内部统一的日志追踪控制器。
   /// 捕获底层通信的状态转折并写入本机存储日志。
@@ -39,12 +48,18 @@ class WebSocketManager {
   }
 
   // 连接状态流控制器
-  final _connectionController = StreamController<bool>.broadcast();
-  Stream<bool> get connectionStream => _connectionController.stream;
+  final _connectionController = StreamController<ServiceState>.broadcast();
+  Stream<ServiceState> get connectionStream => _connectionController.stream;
 
   // 获取当前连接状态
   bool get isConnected => _isConnected;
   bool get isConnecting => _isConnecting;
+  ServiceState get currentState {
+    if (_isConnected) return ServiceState.connected;
+    if (_isConnecting) return ServiceState.connecting;
+    if (_reconnectTimer != null) return ServiceState.retrying;
+    return ServiceState.disconnected;
+  }
 
   /// 发起长连接通信 (WebSocket Connection)。
   /// 当与主机通信失败或抛出异常时会触发断网事件 [EventServiceOff]，并立即启动自动重连检测。
@@ -55,7 +70,7 @@ class WebSocketManager {
     }
 
     _isConnecting = true;
-    _connectionController.add(false);
+    _connectionController.add(ServiceState.connecting);
 
     try {
       _log('start connecting to server...');
@@ -80,7 +95,7 @@ class WebSocketManager {
       _isConnecting = false;
       _reconnectAttempts = 0;
 
-      _connectionController.add(true);
+      _connectionController.add(ServiceState.connected);
       _log('connect to server success.');
 
       // 启动心跳检测
@@ -91,9 +106,8 @@ class WebSocketManager {
     } catch (e) {
       _log('connect to server failed: $e');
       _isConnecting = false;
-      _connectionController.add(false);
+      _connectionController.add(ServiceState.disconnected);
 
-      // 连接失败时立即触发服务离线事件
       _log('Triggering service off event due to connection failure.');
       eventBus.fire(EventServiceOff(''));
 
@@ -119,7 +133,7 @@ class WebSocketManager {
       _log('disconnect to server failed: $e');
     }
 
-    _connectionController.add(false);
+    _connectionController.add(ServiceState.disconnected);
   }
 
   // 发送消息
@@ -187,7 +201,7 @@ class WebSocketManager {
     }
     _isConnected = false;
     _isConnecting = false;
-    _connectionController.add(false);
+    _connectionController.add(ServiceState.disconnected);
   }
 
   // 连接成功后的初始化
@@ -250,10 +264,12 @@ class WebSocketManager {
     // Exponential backoff: 2s, 4s, 8s, 16s, 32s...
     int delaySeconds = 2 << (_reconnectAttempts - 1);
     if (delaySeconds > 60) delaySeconds = 60; // Max 60 seconds
+    _nextRetrySeconds = delaySeconds;
 
     _log(
         'schedule reconnect, try times: $_reconnectAttempts/$_maxReconnectAttempts, delay: ${delaySeconds}s');
 
+    _connectionController.add(ServiceState.retrying);
     _reconnectTimer = Timer(Duration(seconds: delaySeconds), () {
       _reconnectTimer = null;
       if (!_isConnected && !_isConnecting) {

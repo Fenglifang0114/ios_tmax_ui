@@ -305,6 +305,17 @@ class S {
     );
   }
 
+  /// `Delete OK !`
+  String get gTipDeleteOk {
+    return Intl.message(
+      'Delete OK !',
+      name: 'gTipDeleteOk',
+      desc:
+          'This is a prompt indicating that the scale has been successfully deleted.',
+      args: [],
+    );
+  }
+
   /// `Get Ip Fail !`
   String get gTipGetIpFail {
     return Intl.message(
@@ -312,6 +323,16 @@ class S {
       name: 'gTipGetIpFail',
       desc:
           'This is a prompt indicating that the attempt to obtain IP information has failed.',
+      args: [],
+    );
+  }
+
+  /// `Searching for Bluetooth devices...`
+  String get gSearchingBtDevices {
+    return Intl.message(
+      'Searching for Bluetooth devices...',
+      name: 'gSearchingBtDevices',
+      desc: 'Searching for Bluetooth devices...',
       args: [],
     );
   }

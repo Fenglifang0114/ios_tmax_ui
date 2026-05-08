@@ -13,6 +13,7 @@ import 'package:t_max/data/scalelist_data.dart';
 import 'package:t_max/data/settingparam_data.dart';
 
 import 'package:t_max/data/wifi_list_info.dart';
+import 'package:t_max/bluetooth/bluetooth_manager.dart';
 import '../data/ipinfodata.dart';
 import '../data/manager_scale_channel.dart';
 import '../data/wifi_pwd_info.dart';
@@ -138,6 +139,7 @@ class RespSysMsgType {
   static const String respUpdateInputPort = 'resp_update_input_port';
 
   static const String respScaleInput = 'resp_scale_input'; // 按键输入
+  static const String cmdSendBtData = 'send_bt_data'; // 蓝牙发送数据
 
   static final Map<String, Function> handlers = {
     RespSysMsgType.respPortsList: handlePortsList,
@@ -147,6 +149,7 @@ class RespSysMsgType {
     RespSysMsgType.respProductList: handleProductList,
     RespSysMsgType.respPluList: handlePluList,
     RespSysMsgType.respPluSetting: handlePluSetting,
+    RespSysMsgType.cmdSendBtData: handleSendBtData,
     RespSysMsgType.respGetLicense: handleGetLicense,
     RespSysMsgType.respCheckLicenseKey: handleCheckLicenseKey,
     RespSysMsgType.respGetApList: handleGetApList,
@@ -284,6 +287,21 @@ class RespSysMsgType {
 
   static void handlePluSetting(dynamic jsonData) {
     eventBus.fire(EventRespPluSetting(jsonData['MsgBody']));
+  }
+
+  static void handleSendBtData(dynamic jsonData) {
+    var msgBody = jsonData['MsgBody'];
+    if (msgBody != null) {
+      // 如果 msgBody 是字符串（JSON），解析它
+      Map<String, dynamic> body = msgBody is String ? json.decode(msgBody) : msgBody;
+      int scaleId = body['scaleId'] ?? 0;
+      List<int> data = List<int>.from(body['data'] ?? []);
+      
+      // 检查当前连接的蓝牙秤是否匹配
+      if (bluetoothManager.currentScaleId == scaleId) {
+        bluetoothManager.sendData(data);
+      }
+    }
   }
 
   static void handleGetLicense(dynamic jsonData) {

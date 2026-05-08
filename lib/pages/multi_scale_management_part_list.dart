@@ -4,6 +4,69 @@ part of 'multi_scale_management_page.dart';
 extension MultiScaleManagementListExt on MultiScaleManagementState {
 //正常显示
   Widget showNormalScaleInfo(double maxWidth) {
+    bool isMobile = maxWidth < 600;
+
+    if (isMobile) {
+      // 手机端：如果有选中项且不是在添加状态，显示详情页，否则显示列表
+      if (selScaleId != -1 && !isAddScale && !isRename) {
+        return Column(
+          children: [
+            // 增加一个返回按钮
+            Container(
+              height: 50,
+              color: Theme.of(context).colorScheme.surface,
+              child: Row(
+                children: [
+                  IconButton(
+                    icon: Icon(Icons.arrow_back),
+                    onPressed: () {
+                      setState(() {
+                        selScaleId = -1;
+                      });
+                    },
+                  ),
+                  Text(localizedStrings.button_back),
+                  Spacer(),
+                  IconButton(
+                    icon: Icon(Icons.delete_outline, color: Theme.of(context).colorScheme.error),
+                    onPressed: () {
+                      setState(() {
+                        isDel = true;
+                        delScale();
+                        selScaleId = -1; // 删除后返回列表
+                      });
+                    },
+                  ),
+                  SizedBox(width: 8),
+                ],
+              ),
+            ),
+            Expanded(
+              child: getScaleType() == netScaleType
+                  ? showNetworkScaleInfo()
+                  : showBluetoothScaleInfo(),
+            ),
+          ],
+        );
+      } else {
+        // 列表页
+        return Column(
+          children: [
+            Expanded(
+              child: Column(
+                children: [
+                  SizedBox(height: regularPadding),
+                  showAddScaleBtn(),
+                  Expanded(child: showScaleList(maxWidth)),
+                ],
+              ),
+            ),
+          ],
+        );
+      }
+    }
+
+    // 宽屏模式：保持左右布局
     return Column(children: [
       Expanded(
           child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -33,11 +96,9 @@ extension MultiScaleManagementListExt on MultiScaleManagementState {
               ),
               selScaleId == -1
                   ? SizedBox()
-                  : getScaleType() == comScaleType
-                      ? showSerialScaleInfo()
-                      : getScaleType() == netScaleType
-                          ? showNetworkScaleInfo() //网络秤
-                          : showBluetoothScaleInfo(), //蓝牙秤
+                  : getScaleType() == netScaleType
+                      ? showNetworkScaleInfo() //网络秤
+                      : showBluetoothScaleInfo(), //蓝牙秤
             ],
           ),
         ),
@@ -352,6 +413,25 @@ extension MultiScaleManagementListExt on MultiScaleManagementState {
 
   Widget buildItemInfo(
       Widget title1, Widget content1, Widget title2, Widget content2) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    bool isMobile = screenWidth < 700;
+
+    if (isMobile) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: regularPadding),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            title1,
+            content1,
+            const SizedBox(height: regularPadding),
+            title2,
+            content2,
+          ],
+        ),
+      );
+    }
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [

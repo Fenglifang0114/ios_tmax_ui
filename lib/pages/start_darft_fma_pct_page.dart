@@ -28,6 +28,8 @@ import 'package:t_max/widget/fma_parameter_setting.dart';
 import 'package:t_max/widget/fma_process_bar.dart';
 import 'package:t_max/widget/sticky_table.dart';
 import '../data/language.dart';
+import '../functions/adaptive.dart';
+import '../widget/page_head.dart';
 
 class DarftFmaPctWgtPage extends StatefulWidget {
   const DarftFmaPctWgtPage(
@@ -51,6 +53,7 @@ class DarftFmaPctWgtPage extends StatefulWidget {
 
 class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
     with SingleTickerProviderStateMixin {
+
   final ScrollController _scrollController =
       ScrollController(); // 添加 ScrollController
   final TextEditingController encryptedCtl = TextEditingController();
@@ -1200,10 +1203,13 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
 
   final double maxWidth = 360; //最大宽度
   Widget showBottomBtn() {
+    final bool isMobile = Adaptive.isMobile(context);
     return Container(
-        height: 76,
+        padding: isMobile ? const EdgeInsets.symmetric(vertical: 8) : EdgeInsets.zero,
         color: colorScheme.surface,
-        child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
           if (checkAllOK())
             ConstrainedBox(
               constraints: BoxConstraints(maxWidth: maxWidth),
@@ -1263,24 +1269,36 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
               }, colorScheme.onPrimary, colorScheme.error,
                   colorScheme.onPrimary),
             ),
-        ]));
+        ])),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    // final width = MediaQuery.of(context).size.width;
+    final width = MediaQuery.of(context).size.width;
+
     return Scaffold(
-        body: Container(
-      color: colorScheme.surfaceDim, //对接时修改颜色值
-      child:
-          // Padding(
-          //   padding: const EdgeInsets.all(14.0),
-          //   child:
-          Row(
-        children: [
-          Expanded(
-            child: Column(
-              children: [
+
+      body: Container(
+        color: colorScheme.surfaceDim,
+        child: Column(
+          children: [
+            pageHeadInfo(context, width - headWidthPadding,
+                localizedStrings.menuFormulaExecution, '', () {
+              performAbandonBtn();
+            }),
+            Expanded(
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  return SingleChildScrollView(
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                        minHeight: constraints.maxHeight,
+                        maxWidth: constraints.maxWidth,
+                      ),
+                      child: IntrinsicHeight(
+                        child: Column(
+                          children: [
                 showTitleBar(),
                 Divider(
                   color: colorScheme.outline,
@@ -1356,19 +1374,24 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
                       ),
                       SizedBox(width: regularPadding),
                     ])),
-                showWgtTable(),
+                            showWgtTable(),
                 Container(
                   height: 14,
                   color: colorScheme.surface,
                 ),
                 showBottomBtn(),
-              ],
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
             ),
-          ),
-        ],
-        // ),
+          ],
+        ),
       ),
-    ));
+    );
   }
 
   Widget _buildScaleName() {

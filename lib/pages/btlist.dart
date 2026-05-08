@@ -44,70 +44,62 @@ class BtInfoListWidgetState extends State<BtInfoListWidget> {
   @override
   Widget build(BuildContext context) {
     List<BtInfo> sortedDevices = _sortedDevices;
+    double screenWidth = MediaQuery.of(context).size.width;
+    bool useSingleColumn = screenWidth < 700;
 
     if (sortedDevices.isEmpty) {
       return _buildEmptyState();
     }
 
-    // 创建左右交替的布局
+    if (useSingleColumn) {
+      return RefreshIndicator(
+        onRefresh: () async {
+          if (widget.onRefresh != null) widget.onRefresh!();
+          await Future.delayed(Duration(milliseconds: 500));
+        },
+        child: ListView.separated(
+          padding: EdgeInsets.all(12),
+          itemCount: sortedDevices.length,
+          separatorBuilder: (context, index) => SizedBox(height: 12),
+          itemBuilder: (context, index) {
+            int originalIndex = widget.devices.indexOf(sortedDevices[index]);
+            return _buildDeviceItem(sortedDevices[index], originalIndex, index);
+          },
+        ),
+      );
+    }
+
+    // 创建左右交替的布局 (双列模式)
     List<Widget> leftColumn = [];
     List<Widget> rightColumn = [];
 
-    // 交替分配设备到左右两列
     for (int i = 0; i < sortedDevices.length; i++) {
-      // 找到原始索引
       int originalIndex = widget.devices.indexOf(sortedDevices[i]);
       Widget deviceItem = _buildDeviceItem(sortedDevices[i], originalIndex, i);
 
       if (i % 2 == 0) {
-        // 偶数索引放左列
         leftColumn.add(deviceItem);
-        if (i + 1 < sortedDevices.length) {
-          leftColumn.add(SizedBox(height: 12));
-        }
+        if (i + 2 < sortedDevices.length) leftColumn.add(SizedBox(height: 12));
       } else {
-        // 奇数索引放右列
         rightColumn.add(deviceItem);
-        if (i + 1 < sortedDevices.length) {
-          rightColumn.add(SizedBox(height: 12));
-        }
+        if (i + 2 < sortedDevices.length) rightColumn.add(SizedBox(height: 12));
       }
     }
 
     return RefreshIndicator(
       onRefresh: () async {
-        if (widget.onRefresh != null) {
-          widget.onRefresh!();
-        }
+        if (widget.onRefresh != null) widget.onRefresh!();
         await Future.delayed(Duration(milliseconds: 500));
-        if (mounted) {
-          setState(() {
-            _selectedIndices.clear();
-            _selectedMacs.clear();
-          });
-        }
       },
       child: ListView(
-        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        padding: EdgeInsets.all(12),
         children: [
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // 左列
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: leftColumn,
-                ),
-              ),
+              Expanded(child: Column(children: leftColumn)),
               SizedBox(width: 12),
-              // 右列
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: rightColumn,
-                ),
-              ),
+              Expanded(child: Column(children: rightColumn)),
             ],
           ),
         ],
@@ -122,103 +114,73 @@ class BtInfoListWidgetState extends State<BtInfoListWidget> {
     String displayName =
         device.name?.isNotEmpty == true ? device.name! : 'Unknown Device';
     String displayMac = device.mac ?? 'N/A';
+    double screenWidth = MediaQuery.of(context).size.width;
+    double rssiWidth = screenWidth < 500 ? 65 : 100;
 
     return GestureDetector(
-      onTap: () {
-        _handleDeviceTap(device, originalIndex);
-      },
+      onTap: () => _handleDeviceTap(device, originalIndex),
       child: Container(
-        width: double.infinity,
         padding: EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: isSelected
               ? Theme.of(context).colorScheme.primary
               : Theme.of(context).colorScheme.surface,
-          borderRadius: BorderRadius.circular(0),
           border: Border.all(
-            color: isSelected
-                ? Theme.of(context).colorScheme.primary
-                : Theme.of(context).colorScheme.surfaceDim,
-            width: 1,
-          ),
+              color: isSelected
+                  ? Theme.of(context).colorScheme.primary
+                  : Theme.of(context).colorScheme.surfaceDim),
         ),
         child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // 蓝牙图标和名称
             SizedBox(
-              width: 40,
-              height: 40,
+              width: 32,
+              height: 32,
               child: getSvgIcon(
-                btDeviceSvgIcon(),
-                40,
-                40,
-                isSelected
-                    ? Theme.of(context).colorScheme.surface
-                    : Theme.of(context).colorScheme.onSurface,
-              ),
+                  btDeviceSvgIcon(),
+                  32,
+                  32,
+                  isSelected
+                      ? Colors.white
+                      : Theme.of(context).colorScheme.primary),
             ),
-
-            SizedBox(width: 8),
-
+            SizedBox(width: 10),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // 设备名称
                   Text(
                     displayName,
                     style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: isSelected
-                          ? Theme.of(context).colorScheme.surface
-                          : Theme.of(context).colorScheme.onSurface,
-                    ),
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: isSelected ? Colors.white : null),
                     overflow: TextOverflow.ellipsis,
-                    maxLines: 1,
                   ),
-
-                  SizedBox(height: 4),
-
-                  // MAC地址
                   Text(
                     displayMac,
-                    style: Theme.of(context).textTheme.bodySmall!.apply(
-                          color: isSelected
-                              ? Theme.of(context).colorScheme.surface
-                              : Theme.of(context).colorScheme.onSurface,
-                        ),
+                    style: TextStyle(
+                        fontSize: 12,
+                        color: isSelected ? Colors.white70 : Colors.grey),
                     overflow: TextOverflow.ellipsis,
-                    maxLines: 1,
                   ),
                 ],
               ),
             ),
-
             SizedBox(width: 8),
-
-            // 信号强度信息
             SizedBox(
-              width: 100,
+              width: rssiWidth,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  // 信号强度图标
                   if (widget.showSignalStrength && device.rssi != null)
                     buildWifiIcon(isSelected, device.rssi!),
-                  SizedBox(height: 4),
-                  // 信号强度值
-                  if (widget.showSignalStrength && device.rssi != null)
-                    Text(
-                      '${device.rssi} dBm',
-                      style: Theme.of(context).textTheme.bodySmall!.apply(
-                            color: isSelected
-                                ? Theme.of(context).colorScheme.surface
-                                : Theme.of(context).colorScheme.onSurface,
-                          ),
-                      textAlign: TextAlign.right,
-                    ),
+                  if (widget.showSignalStrength &&
+                      device.rssi != null &&
+                      screenWidth >= 400)
+                    Text('${device.rssi} dBm',
+                        style: TextStyle(
+                            fontSize: 10,
+                            color: isSelected ? Colors.white70 : Colors.grey)),
                 ],
               ),
             ),
@@ -234,13 +196,13 @@ class BtInfoListWidgetState extends State<BtInfoListWidget> {
     // 根据信号强度选择不同的图标
     String iconPath;
     if (rssi >= -70) {
-      iconPath = isSelected ? wifi4WhiteSvgIcon() : wifi4BlueSvgIcon();
+      iconPath = isSelected ? bt4WhiteSvgIcon() : bt4BlueSvgIcon();
     } else if (rssi >= -85) {
-      iconPath = isSelected ? wifi3WhiteSvgIcon() : wifi3BlueSvgIcon();
+      iconPath = isSelected ? bt3WhiteSvgIcon() : bt3BlueSvgIcon();
     } else if (rssi >= -100) {
-      iconPath = isSelected ? wifi2WhiteSvgIcon() : wifi2BlueSvgIcon();
+      iconPath = isSelected ? bt2WhiteSvgIcon() : bt2BlueSvgIcon();
     } else {
-      iconPath = isSelected ? wifi1WhiteSvgIcon() : wifi1BlueSvgIcon();
+      iconPath = isSelected ? bt1WhiteSvgIcon() : bt1BlueSvgIcon();
     }
 
     return Image.asset(
@@ -363,7 +325,6 @@ class AlternatingGridBtInfoList extends StatefulWidget {
 }
 
 class AlternatingGridBtInfoListState extends State<AlternatingGridBtInfoList> {
-
   @override
   Widget build(BuildContext context) {
     List<BtInfo> sortedDevices = List.from(widget.devices);
@@ -392,8 +353,6 @@ class AlternatingGridBtInfoListState extends State<AlternatingGridBtInfoList> {
       },
     );
   }
-
- 
 
   Widget buildWifiIcon(bool isSelected, int rssi) {
     double iconSize = 14;

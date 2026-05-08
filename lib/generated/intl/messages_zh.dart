@@ -483,6 +483,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "gSaveFormat": MessageLookupByLibrary.simpleMessage("保存格式"),
     "gScaleName": MessageLookupByLibrary.simpleMessage("设备名称"),
     "gScaleSn": MessageLookupByLibrary.simpleMessage("设备序列号"),
+    "gSearchingBtDevices": MessageLookupByLibrary.simpleMessage("正在搜索蓝牙设备..."),
     "gSelectAll": MessageLookupByLibrary.simpleMessage("全选"),
     "gSerialParity": MessageLookupByLibrary.simpleMessage("校验位"),
     "gSerialPort": MessageLookupByLibrary.simpleMessage("串口"),
@@ -546,6 +547,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "gTipDateNotUpdated": MessageLookupByLibrary.simpleMessage("日期未更新"),
     "gTipDecimal": MessageLookupByLibrary.simpleMessage("小数位"),
     "gTipDefaultValue": MessageLookupByLibrary.simpleMessage("默认值"),
+    "gTipDeleteOk": MessageLookupByLibrary.simpleMessage("删除成功！"),
     "gTipDeviceNameEmpty": MessageLookupByLibrary.simpleMessage(
       "设备名称不能为空,error.",
     ),

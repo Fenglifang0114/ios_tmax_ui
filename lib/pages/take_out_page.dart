@@ -46,7 +46,7 @@ class TakeOutPageState extends State<TakeOutPage> {
   final ValueNotifier<double> totalWeightNotifier = ValueNotifier<double>(0);
   final ValueNotifier<bool> totalWgtStableNotifier = ValueNotifier<bool>(false);
 
-  final Map<int, GlobalKey<TakeOutPageState>> _scaleWidgetKeys = {};
+  final Map<int, GlobalKey> _scaleWidgetKeys = {};
   ReqWeightCountine tempWeight = ReqWeightCountine();
   final Map<int, Widget> _scaleWidgetCache = {};
   Map<int, WeightInfo> scaleWgtMapDetail = {}; //存储每台秤的详细数据，组成total weight 的明细数据
@@ -524,6 +524,8 @@ class TakeOutPageState extends State<TakeOutPage> {
   }
 
   void checkSameScale() {
+    if (!mounted) return;
+
     if (mySelScaleIdList.length > 1) {
       Map<int, dynamic> scaleMap = {};
       for (var scale in myAllScalesList) {
@@ -617,7 +619,7 @@ class TakeOutPageState extends State<TakeOutPage> {
 
                 // 如果key不存在，创建新的GlobalKey
                 if (!_scaleWidgetKeys.containsKey(scaleId)) {
-                  _scaleWidgetKeys[scaleId] = GlobalKey<TakeOutPageState>();
+                  _scaleWidgetKeys[scaleId] = GlobalKey();
                 }
 
                 // 如果缓存不存在，使用稳定的GlobalKey创建新Widget

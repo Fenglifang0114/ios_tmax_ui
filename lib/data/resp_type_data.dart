@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
+import '../bluetooth/bluetooth_manager.dart';
 import 'package:t_max/data/scale_info_from_db.dart';
 import 'package:t_max/data/settingparam_data.dart';
 import '../eventbus/eventbus.dart';
@@ -99,6 +101,8 @@ class RespMsgType {
   static const String respSetInitialZero = 'resp_set_initial_zero';
   static const String respSetZeroTracking = 'resp_set_zero_tracking';
   static const String respSetGravAcc = 'resp_set_grav_acc';
+  static const String respVirtualSerialWrite = 'resp_virtual_serial_write';
+  static const String btPassthroughSend = 'bt_passthrough_send';
   static const String respGetWiredIp = 'resp_get_wired_ip';
   static const String respSetWiredIp = 'resp_set_wired_ip';
   static const String respSetWiredDhcp = 'resp_set_wired_dhcp';
@@ -107,6 +111,8 @@ class RespMsgType {
   static const String respSoftSeal = 'resp_soft_seal';
   static const String respRemoveSoftSeal = 'resp_remove_soft_seal';
   static const String respRemoveSoftSealOnce = 'resp_remove_soft_seal_once';
+  static const String respInitWifi = 'resp_init_wifi';
+  static const String respSetServerMode = 'resp_set_server_mode';
 
   static final Map<String, Function> handlers = {
     RespMsgType.respGetUIConf: handleGetUIConf,
@@ -183,7 +189,38 @@ class RespMsgType {
     RespMsgType.respSoftSeal: handleRespSoftSeal,
     RespMsgType.respRemoveSoftSeal: handleRespRemoveSoftSeal,
     RespMsgType.respRemoveSoftSealOnce: handleRespRemoveSoftSealOnce,
+    RespMsgType.respInitWifi: handleRespInitWifi,
+    RespMsgType.respSetServerMode: handleRespSetServerMode,
+    RespMsgType.btPassthroughSend: handleBtPassthroughSend,
+    RespMsgType.respVirtualSerialWrite: handleBtVirtualWrite,
+    'scale_online': handleScaleOnline,
   };
+
+  static void handleScaleOnline(dynamic data) {
+    try {
+      final bodyStr = data['MsgBody'] as String;
+      final body = json.decode(bodyStr);
+      int id = body['ScaleId'];
+      String model = body['ModelName'] ?? "";
+      String sn = body['ScaleSn'] ?? "";
+      bool isOnline = body['IsOnline'] ?? false;
+
+      debugPrint("BLE: 收到型号更新 - ID: $id, Model: $model, SN: $sn");
+
+      for (var scale in myAllScalesList) {
+        if (scale.scaleId == id) {
+          scale.isOnline = isOnline;
+          if (model.isNotEmpty) scale.scaleModel = model;
+          if (sn.isNotEmpty) scale.scaleSn = sn;
+          break;
+        }
+      }
+      // 发送事件通知 UI 刷新列表
+      eventBus.fire(EventRespScaleOnline(isOnline));
+    } catch (e) {
+      debugPrint("处理 scale_online 失败: $e");
+    }
+  }
 
   static void handleGetUIConf(dynamic data) {
     final jsonResponse = json.decode(data['MsgBody']);
@@ -463,17 +500,32 @@ class RespMsgType {
   // }
 
   static void handleRespGetfactoryInfo(dynamic data) {
-    final jsonStrings = data['MsgBody'];
-    dynamic mobj;
-    if (!jsonStrings.contains('fail')) {
-      mobj = FactoryInfoFromScale.fromJson(json.decode(jsonStrings));
-    } else {
-      mobj = FactoryInfoFromScale(
-        "",
-        "",
-      );
+    try {
+      final jsonStrings = data['MsgBody'];
+      int id = data['ScaleId'] ?? 0;
+      if (jsonStrings.contains('fail')) return;
+
+      final factoryInfo = FactoryInfoFromScale.fromJson(json.decode(jsonStrings));
+      String model = factoryInfo.modelName ?? "";
+      String sn = factoryInfo.scaleSn ?? "";
+
+      debugPrint("BLE: [获取型号成功] ID: $id, Model: $model, SN: $sn");
+
+      for (var scale in myAllScalesList) {
+        if (scale.scaleId == id) {
+          if (model.isNotEmpty) scale.scaleModel = model;
+          if (sn.isNotEmpty) scale.scaleSn = sn;
+          scale.isOnline = true;
+          break;
+        }
+      }
+      
+      // 触发界面刷新
+      eventBus.fire(EventGetFactoryInfo(OnlineInfo(id, factoryInfo)));
+      eventBus.fire(EventRespScaleOnline(true));
+    } catch (e) {
+      debugPrint("处理 resp_get_factory_info 失败: $e");
     }
-    eventBus.fire(EventGetFactoryInfo(mobj));
   }
 
   static void handleRespGetBasicData(dynamic data) {
@@ -546,6 +598,16 @@ class RespMsgType {
   static void handleRespGetWiredDhcp(dynamic data) {
     final jsonStrings = data['MsgBody'];
     eventBus.fire(EventRevGetWiredDhcp(jsonStrings));
+  }
+
+  static void handleRespInitWifi(dynamic data) {
+    dynamic mobj = ChannelResponse.fromJson(data);
+    eventBus.fire(EventInitWifiResp(mobj));
+  }
+
+  static void handleRespSetServerMode(dynamic data) {
+    dynamic mobj = ChannelResponse.fromJson(data);
+    eventBus.fire(EventSetServerModeResp(mobj));
   }
 
   static void handleRespGetGaduation1Value(dynamic data) {
@@ -647,6 +709,32 @@ class RespMsgType {
     myOnlineInfo.scaleId = id;
 
     return eventBus.fire(EventRespCheckNetScale(myOnlineInfo));
+  }
+
+  static void handleBtPassthroughSend(dynamic data) {
+    try {
+      final msgBody = json.decode(data['MsgBody']);
+      final base64Data = msgBody['data'];
+      if (base64Data != null) {
+        final rawData = base64Decode(base64Data);
+        BluetoothManager().sendData(rawData.toList());
+      }
+    } catch (e) {
+      debugPrint("处理蓝牙透传发送失败: $e");
+    }
+  }
+
+  static void handleBtVirtualWrite(dynamic data) {
+    try {
+      // Go 后端发送的格式是 {MsgType: "resp_virtual_serial_write", MsgBody: "base64...", ScaleId: X}
+      var body = data['MsgBody'];
+      if (body != null && body is String) {
+        var rawData = base64Decode(body);
+        BluetoothManager().sendData(rawData.toList());
+      }
+    } catch (e) {
+      debugPrint("处理蓝牙虚拟串口写入失败: $e");
+    }
   }
 
   static void handleRespTareCmd(dynamic data) {}

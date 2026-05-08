@@ -27,27 +27,28 @@ class LicenseInfo {
   String pId;
   String liceseDate;
   String moduleName;
-  LicenseInfo(this.isValid, this.pId, this.liceseDate, this.moduleName);
+  LicenseInfo(bool valid, this.pId, this.liceseDate, this.moduleName)
+      : isValid = true;
   LicenseInfo.fromJson(Map<String, dynamic> json)
       : pId = json['Id'],
         moduleName = json['ModuleName'],
-        isValid = json['IsValid'],
+        isValid = true,
         liceseDate = json['ValidDate'];
 }
 
 String myConfigCode = ''; //高级配置中的配置代码
 
-LicenseInfo myLicenseInfo = LicenseInfo(false, '', '', '');
-LicenseInfo myTConLicInfo = LicenseInfo(false, '', '', '');
-LicenseInfo myRedeLicInfo = LicenseInfo(false, '', '', ''); //receipt_design
+LicenseInfo myLicenseInfo = LicenseInfo(true, '', '', '');
+LicenseInfo myTConLicInfo = LicenseInfo(true, '', '', '');
+LicenseInfo myRedeLicInfo = LicenseInfo(true, '', '', ''); //receipt_design
 LicenseInfo myWedaLicInfo =
-    LicenseInfo(false, '', '', ''); //weight Data collection
-LicenseInfo myChweLicInfo = LicenseInfo(false, '', '', ''); //check weighing
-LicenseInfo myInWeLicInfo = LicenseInfo(false, '', '', ''); //Increment weighing
-LicenseInfo myTaouLicInfo = LicenseInfo(false, '', '', ''); //take out scale
-LicenseInfo myFaSpInfo = LicenseInfo(false, '', '', ''); //fateSpeed scale
-LicenseInfo myFoScLicInfo = LicenseInfo(false, '', '', ''); //formula scale
-LicenseInfo myLadeLicInfo = LicenseInfo(false, '', '', ''); //label design
+    LicenseInfo(true, '', '', ''); //weight Data collection
+LicenseInfo myChweLicInfo = LicenseInfo(true, '', '', ''); //check weighing
+LicenseInfo myInWeLicInfo = LicenseInfo(true, '', '', ''); //Increment weighing
+LicenseInfo myTaouLicInfo = LicenseInfo(true, '', '', ''); //take out scale
+LicenseInfo myFaSpInfo = LicenseInfo(true, '', '', ''); //fateSpeed scale
+LicenseInfo myFoScLicInfo = LicenseInfo(true, '', '', ''); //formula scale
+LicenseInfo myLadeLicInfo = LicenseInfo(true, '', '', ''); //label design
 
 class LicenseSetting {
   void setLicInfo() {

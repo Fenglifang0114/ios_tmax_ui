@@ -12,6 +12,7 @@ import '../data/common.dart';
 import '../data/language.dart';
 import '../data/timer_manager.dart';
 import 'package:adoptive_calendar/adoptive_calendar.dart';
+import 'package:t_max/functions/adaptive.dart';
 
 class SetSystemTimePage extends StatefulWidget {
   const SetSystemTimePage({super.key});
@@ -28,6 +29,7 @@ class SetSystemTimePageState extends State<SetSystemTimePage> {
   int selScaleId = -1; //选择的秤ID
   bool isGettingTime = false; //是否正在获取时间
   bool isSettingTime = false; //是否正在设置时间
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   DateTime customDate = DateTime.now();
   DateTime customTime = DateTime.now();
@@ -170,11 +172,45 @@ class SetSystemTimePageState extends State<SetSystemTimePage> {
 
   @override
   Widget build(BuildContext context) {
+    final bool isMobile = Adaptive.isMobile(context);
     final width = MediaQuery.of(context).size.width;
-    return Scaffold(body: firstLayout(context, width));
+    
+    return Scaffold(
+      key: _scaffoldKey,
+      drawer: isMobile
+          ? Drawer(
+              width: scaleListWidth,
+              child: Container(
+                color: Theme.of(context).colorScheme.surfaceTint,
+                child: Column(
+                  children: [
+                    SizedBox(height: MediaQuery.of(context).padding.top),
+                    Expanded(
+                      child: NewAllScaleListWidget(
+                        listWidth: scaleListWidth,
+                        selScaleId: selScaleId,
+                        clickScale: (scale) {
+                          if (isGettingTime || isSettingTime) {
+                            showTipInfo(
+                                localizedStrings.gTipPerformingOperation,
+                                context);
+                            return;
+                          }
+                          Navigator.pop(context); // 关闭抽屉
+                          changeScale(scale.scaleId);
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            )
+          : null,
+      body: firstLayout(context, width, isMobile),
+    );
   }
 
-  Widget firstLayout(context, width) {
+  Widget firstLayout(context, width, bool isMobile) {
     return Container(
         width: width,
         decoration: BoxDecoration(color: Theme.of(context).colorScheme.surface),
@@ -182,263 +218,278 @@ class SetSystemTimePageState extends State<SetSystemTimePage> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // pageHeadInfo(
-            //     context,
-            //     width - headWidthPadding,
-            //     localizedStrings.menuDeviceTime,
-            //     localizedStrings.gTipDeviceTimePageHelp),
+            if (isMobile)
+              AppBar(
+                backgroundColor: Colors.transparent,
+                elevation: 0,
+                leading: IconButton(
+                  icon: const Icon(Icons.menu),
+                  onPressed: () => _scaffoldKey.currentState?.openDrawer(),
+                ),
+                title: Text(
+                  localizedStrings.menuDeviceTime,
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+              ),
             Expanded(
                 child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                  Container(
-                    width: scaleListWidth,
-                    color: Theme.of(context).colorScheme.surfaceTint,
-                    child: SizedBox(
-                      height: MediaQuery.of(context).size.height,
-                      child: Column(
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          SizedBox(
-                            height: regularPadding,
-                          ),
-                          Expanded(
-                            child: NewAllScaleListWidget(
-                              listWidth: scaleListWidth, // 列表宽度
-                              selScaleId: selScaleId,
-                              clickScale: (scale) {
-                                if (isGettingTime || isSettingTime) {
-                                  showTipInfo(
-                                      localizedStrings.gTipPerformingOperation,
-                                      context);
-                                  return;
-                                }
-                                setState(() {
-                                  changeScale(scale.scaleId);
-                                });
-                              },
+                  if (!isMobile)
+                    Container(
+                      width: scaleListWidth,
+                      color: Theme.of(context).colorScheme.surfaceTint,
+                      child: SizedBox(
+                        height: MediaQuery.of(context).size.height,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            SizedBox(
+                              height: regularPadding,
                             ),
-                          ),
-                        ],
+                            Expanded(
+                              child: NewAllScaleListWidget(
+                                listWidth: scaleListWidth, // 列表宽度
+                                selScaleId: selScaleId,
+                                clickScale: (scale) {
+                                  if (isGettingTime || isSettingTime) {
+                                    showTipInfo(
+                                        localizedStrings.gTipPerformingOperation,
+                                        context);
+                                    return;
+                                  }
+                                  setState(() {
+                                    changeScale(scale.scaleId);
+                                  });
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
                   Expanded(
                     child: Row(
                       children: [
-                        Container(
-                          width: 1,
-                          color: Theme.of(context)
-                              .colorScheme
-                              .outlineVariant, //  分隔条颜色
-                        ),
+                        if (!isMobile)
+                          Container(
+                            width: 1,
+                            color: Theme.of(context)
+                                .colorScheme
+                                .outlineVariant, //  分隔条颜色
+                          ),
                         myAllScalesList.isEmpty
                             ? SizedBox()
                             : Expanded(
-                                child: Container(
-                                alignment: Alignment.center,
-                                child: Column(
-                                  children: [
-                                    SizedBox(
-                                      height: 50,
-                                    ),
-                                    Container(
-                                      height: scaleItemHeight,
-                                      width: 500,
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .surfaceContainerLow,
-                                      alignment: Alignment.center,
-                                      child: Text.rich(
-                                        TextSpan(
-                                            text:
-                                                "${deviceTime.year}-${pad0(deviceTime.month)}-${pad0(deviceTime.day)} ${pad0(deviceTime.hour)}:${pad0(deviceTime.minute)}:${pad0(deviceTime.second)}",
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .headlineMedium!
-                                                .apply(
-                                                    color: Theme.of(context)
-                                                        .colorScheme
-                                                        .primary)),
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      height: 100,
-                                    ),
-                                    Container(
-                                        height: leftBarHeight,
-                                        width: 500,
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .surfaceContainerLow,
-                                        alignment: Alignment.center,
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Expanded(
-                                                child: Container(
-                                              padding: EdgeInsets.only(
-                                                  left: regularPadding,
-                                                  right: regularPadding),
-                                              child: Text(
-                                                localizedStrings.gBtnSyncPcTime,
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .bodySmall!
-                                                    .apply(
-                                                        color: Theme.of(context)
-                                                            .colorScheme
-                                                            .onSurface),
-                                                overflow: TextOverflow.ellipsis,
-                                              ),
-                                            )),
-                                            Expanded(
-                                                child: Container(
-                                              height: scaleInnerItemHeight,
-                                              padding: EdgeInsets.only(
-                                                  left: regularPadding,
-                                                  right: regularPadding),
-                                              child: showTextButton(
-                                                  context,
-                                                  btnHeight,
-                                                  localizedStrings.gBtnSyncTime,
-                                                  selScaleId == -1
-                                                      ? null
-                                                      : () {
-                                                          var timestamp = (DateTime
-                                                                          .now()
-                                                                      .toUtc()
-                                                                      .millisecondsSinceEpoch /
-                                                                  1000)
-                                                              .truncate();
-                                                          // cntScaleTimerMgr.stopCntScaleTimer();
-                                                          PublicFunctions
-                                                              .setScaleTime(
-                                                                  timestamp
-                                                                      .toString(),
-                                                                  selScaleId);
-                                                          setState(() {
-                                                            isSettingTime =
-                                                                true;
-                                                          });
-                                                        },
-                                                  Theme.of(context)
-                                                      .colorScheme
-                                                      .primary,
-                                                  Theme.of(context)
-                                                      .colorScheme
-                                                      .secondaryContainer,
-                                                  Theme.of(context)
-                                                      .colorScheme
-                                                      .onPrimary),
-                                            ))
-                                          ],
-                                        )),
-                                    SizedBox(
-                                      height: largePadding,
-                                    ),
-                                    Container(
-                                        height: leftBarHeight,
-                                        width: 500,
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .surfaceContainerLow,
-                                        alignment: Alignment.center,
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Expanded(
-                                                child: Container(
-                                              padding: EdgeInsets.only(
-                                                  left: regularPadding,
-                                                  right: regularPadding),
-                                              child: Text(
-                                                localizedStrings.gBtnSelectDate,
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .bodySmall!
-                                                    .apply(
-                                                        color: Theme.of(context)
-                                                            .colorScheme
-                                                            .onSurface),
-                                                overflow: TextOverflow.ellipsis,
-                                              ),
-                                            )),
-                                            Expanded(
-                                                child: Container(
-                                              height: scaleInnerItemHeight,
-                                              padding: EdgeInsets.only(
-                                                  left: regularPadding,
-                                                  right: regularPadding),
-                                              child: showTextButton(
-                                                  context,
-                                                  btnHeight,
-                                                  localizedStrings.gBtnSetTime,
-                                                  selScaleId == -1
-                                                      ? null
-                                                      : () async {
-                                                          DateTime? pickedDate =
-                                                              await showDialog(
-                                                            context: context,
-                                                            builder:
-                                                                (BuildContext
-                                                                    context) {
-                                                              return AdoptiveCalendar(
-                                                                initialDate:
-                                                                    DateTime
-                                                                        .now(),
-                                                                selectedColor: Theme.of(
-                                                                        context)
-                                                                    .colorScheme
-                                                                    .primary,
-                                                                action: true,
-                                                              );
-                                                            },
-                                                          );
-                                                          setState(() {
-                                                            if (pickedDate !=
-                                                                null) {
-                                                              var timestamp = (pickedDate
+                                child: SingleChildScrollView(
+                                  child: Container(
+                                    alignment: Alignment.center,
+                                    child: Column(
+                                      children: [
+                                        SizedBox(
+                                          height: 50,
+                                        ),
+                                        Container(
+                                          height: scaleItemHeight,
+                                          width: isMobile ? width * 0.9 : 500,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .surfaceContainerLow,
+                                          alignment: Alignment.center,
+                                          child: FittedBox(
+                                            fit: BoxFit.scaleDown,
+                                            child: Text.rich(
+                                              TextSpan(
+                                                  text:
+                                                      "${deviceTime.year}-${pad0(deviceTime.month)}-${pad0(deviceTime.day)} ${pad0(deviceTime.hour)}:${pad0(deviceTime.minute)}:${pad0(deviceTime.second)}",
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .headlineMedium!
+                                                      .apply(
+                                                          color: Theme.of(context)
+                                                              .colorScheme
+                                                              .primary)),
+                                            ),
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          height: isMobile ? 50 : 100,
+                                        ),
+                                        Container(
+                                            height: leftBarHeight,
+                                            width: isMobile ? width * 0.9 : 500,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .surfaceContainerLow,
+                                            alignment: Alignment.center,
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.spaceBetween,
+                                              children: [
+                                                Expanded(
+                                                    child: Container(
+                                                  padding: EdgeInsets.only(
+                                                      left: regularPadding,
+                                                      right: regularPadding),
+                                                  child: Text(
+                                                    localizedStrings.gBtnSyncPcTime,
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .bodySmall!
+                                                        .apply(
+                                                            color: Theme.of(context)
+                                                                .colorScheme
+                                                                .onSurface),
+                                                    overflow: TextOverflow.ellipsis,
+                                                  ),
+                                                )),
+                                                Expanded(
+                                                    child: Container(
+                                                  height: scaleInnerItemHeight,
+                                                  padding: EdgeInsets.only(
+                                                      left: regularPadding,
+                                                      right: regularPadding),
+                                                  child: showTextButton(
+                                                      context,
+                                                      btnHeight,
+                                                      localizedStrings.gBtnSyncTime,
+                                                      selScaleId == -1
+                                                          ? null
+                                                          : () {
+                                                              var timestamp = (DateTime
+                                                                              .now()
                                                                           .toUtc()
                                                                           .millisecondsSinceEpoch /
                                                                       1000)
                                                                   .truncate();
-
-                                                              // 停止计时器
-                                                              // cntScaleTimerMgr
-                                                              //     .stopCntScaleTimer();
-
-                                                              // 同步时间到秤
+                                                              // cntScaleTimerMgr.stopCntScaleTimer();
                                                               PublicFunctions
                                                                   .setScaleTime(
-                                                                timestamp
-                                                                    .toString(),
-                                                                selScaleId,
-                                                              );
+                                                                      timestamp
+                                                                          .toString(),
+                                                                      selScaleId);
                                                               setState(() {
                                                                 isSettingTime =
                                                                     true;
                                                               });
-                                                            }
-                                                          });
-                                                        },
-                                                  Theme.of(context)
-                                                      .colorScheme
-                                                      .primary,
-                                                  Theme.of(context)
-                                                      .colorScheme
-                                                      .secondaryContainer,
-                                                  Theme.of(context)
-                                                      .colorScheme
-                                                      .onPrimary),
-                                            ))
-                                          ],
-                                        )),
-                                  ],
-                                ),
-                              ))
+                                                            },
+                                                      Theme.of(context)
+                                                          .colorScheme
+                                                          .primary,
+                                                      Theme.of(context)
+                                                          .colorScheme
+                                                          .secondaryContainer,
+                                                      Theme.of(context)
+                                                          .colorScheme
+                                                          .onPrimary),
+                                                ))
+                                              ],
+                                            )),
+                                        SizedBox(
+                                          height: largePadding,
+                                        ),
+                                        Container(
+                                            height: leftBarHeight,
+                                            width: isMobile ? width * 0.9 : 500,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .surfaceContainerLow,
+                                            alignment: Alignment.center,
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.spaceBetween,
+                                              children: [
+                                                Expanded(
+                                                    child: Container(
+                                                  padding: EdgeInsets.only(
+                                                      left: regularPadding,
+                                                      right: regularPadding),
+                                                  child: Text(
+                                                    localizedStrings.gBtnSelectDate,
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .bodySmall!
+                                                        .apply(
+                                                            color: Theme.of(context)
+                                                                .colorScheme
+                                                                .onSurface),
+                                                    overflow: TextOverflow.ellipsis,
+                                                  ),
+                                                )),
+                                                Expanded(
+                                                    child: Container(
+                                                  height: scaleInnerItemHeight,
+                                                  padding: EdgeInsets.only(
+                                                      left: regularPadding,
+                                                      right: regularPadding),
+                                                  child: showTextButton(
+                                                      context,
+                                                      btnHeight,
+                                                      localizedStrings.gBtnSetTime,
+                                                      selScaleId == -1
+                                                          ? null
+                                                          : () async {
+                                                              DateTime? pickedDate =
+                                                                  await showDialog(
+                                                                context: context,
+                                                                builder:
+                                                                    (BuildContext
+                                                                        context) {
+                                                                  return AdoptiveCalendar(
+                                                                    initialDate:
+                                                                        DateTime
+                                                                            .now(),
+                                                                    selectedColor: Theme.of(
+                                                                            context)
+                                                                        .colorScheme
+                                                                        .primary,
+                                                                    action: true,
+                                                                  );
+                                                                },
+                                                              );
+                                                              setState(() {
+                                                                if (pickedDate !=
+                                                                    null) {
+                                                                  var timestamp = (pickedDate
+                                                                              .toUtc()
+                                                                              .millisecondsSinceEpoch /
+                                                                          1000)
+                                                                      .truncate();
+ 
+                                                                  // 停止计时器
+                                                                  // cntScaleTimerMgr
+                                                                  //     .stopCntScaleTimer();
+ 
+                                                                  // 同步时间到秤
+                                                                  PublicFunctions
+                                                                      .setScaleTime(
+                                                                    timestamp
+                                                                        .toString(),
+                                                                    selScaleId,
+                                                                  );
+                                                                  setState(() {
+                                                                    isSettingTime =
+                                                                        true;
+                                                                  });
+                                                                }
+                                                              });
+                                                            },
+                                                      Theme.of(context)
+                                                          .colorScheme
+                                                          .primary,
+                                                      Theme.of(context)
+                                                          .colorScheme
+                                                          .secondaryContainer,
+                                                      Theme.of(context)
+                                                          .colorScheme
+                                                          .onPrimary),
+                                                ))
+                                              ],
+                                            )),
+                                      ],
+                                    ),
+                                  ),
+                                ))
                       ],
                     ),
                   ),

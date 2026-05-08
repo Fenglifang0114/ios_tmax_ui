@@ -16,6 +16,8 @@ import 'package:t_max/widget/common_widget.dart';
 import 'package:t_max/widget/scale_list.dart';
 import '../../functions/methods.dart';
 import '../data/language.dart';
+import '../functions/adaptive.dart';
+import '../widget/page_head.dart';
 
 const int step1 = 1; //步骤1
 const int step2 = 2; //步骤2
@@ -32,6 +34,7 @@ class CalibrationPage extends StatefulWidget {
 }
 
 class CalibrationPageState extends State<CalibrationPage> {
+
   ReqWeightCountine tempWeight = ReqWeightCountine();
   TextEditingController scaleRangeCtl = TextEditingController(text: "");
   TextEditingController scaleUnitCtl = TextEditingController(text: "kg");
@@ -614,98 +617,170 @@ class CalibrationPageState extends State<CalibrationPage> {
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
-    return Scaffold(body: firstLayout(context, width));
-  }
+    final bool isMobile = Adaptive.isMobile(context);
 
-  Widget firstLayout(context, width) {
-    return Container(
-        width: width,
-        decoration: BoxDecoration(color: Theme.of(context).colorScheme.surface),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // pageHeadInfo(context, width - headWidthPadding,
-            //     localizedStrings.menuCalibration, ''),
-            Expanded(
-                child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                  Container(
-                    width: thisScaleListWidth,
-                    color: Theme.of(context).colorScheme.surfaceTint,
-                    child: SizedBox(
-                      height: MediaQuery.of(context).size.height,
-                      child: Column(
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          SizedBox(
-                            height: regularPadding,
-                          ),
-                          Expanded(
-                            child: NewAllScaleListWidget(
-                              listWidth: thisScaleListWidth, // 列表宽度
-                              selScaleId: selScaleId,
-                              clickScale: (scale) {
-                                setState(() {
-                                  bool isS15 = false;
-                                  for (var item in myAllScalesList) {
-                                    if (item.scaleId == scale.scaleId) {
-                                      if (item.scaleModel != "S15") {
-                                        showTipInfo(
-                                            "Please select S15 scale", context);
-                                      } else {
-                                        isS15 = true;
-                                      }
-                                    }
-                                  }
-                                  if (isS15) {
-                                    changeScale(scale.scaleId);
-                                  }
-                                });
-                              },
+    return Scaffold(
+
+      drawer: isMobile
+          ? Drawer(
+              width: thisScaleListWidth + 20,
+              child: Container(
+                color: Theme.of(context).colorScheme.surface,
+                child: Column(
+                  children: [
+                    Container(
+                      height: btnHeight + 40,
+                      padding:
+                          const EdgeInsets.only(left: regularPadding, top: 40),
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        localizedStrings.gTitleDeviceList,
+                        style: Theme.of(context).textTheme.labelLarge!.apply(
+                              color: Theme.of(context).colorScheme.primary,
                             ),
-                          ),
-                        ],
                       ),
                     ),
-                  ),
+                    const Divider(),
+                    Expanded(
+                      child: NewAllScaleListWidget(
+                        listWidth: thisScaleListWidth,
+                        selScaleId: selScaleId,
+                        clickScale: (scale) {
+                          setState(() {
+                            bool isS15 = false;
+                            for (var item in myAllScalesList) {
+                              if (item.scaleId == scale.scaleId) {
+                                if (item.scaleModel != "S15") {
+                                  showTipInfo(
+                                      "Please select S15 scale", context);
+                                } else {
+                                  isS15 = true;
+                                }
+                              }
+                            }
+                            if (isS15) {
+                              changeScale(scale.scaleId);
+                            }
+                          });
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            )
+          : null,
+      body: Container(
+        color: Theme.of(context).colorScheme.surface,
+        child: Column(
+          children: [
+            pageHeadInfo(context, width - headWidthPadding,
+                localizedStrings.menuCalibration, '', () {
+              Navigator.pop(context);
+            },
+                leading: isMobile
+                    ? Padding(
+                        padding: const EdgeInsets.only(left: regularPadding),
+                        child: Builder(
+                          builder: (context) => IconButton(
+                            icon: Icon(Icons.menu_open,
+                                color: Theme.of(context).colorScheme.primary,
+                                size: 28),
+                            onPressed: () => Scaffold.of(context).openDrawer(),
+                          ),
+                        ),
+                      )
+                    : null),
+            Expanded(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (!isMobile)
+                    Container(
+                      width: thisScaleListWidth,
+                      color: Theme.of(context).colorScheme.surfaceTint,
+                      child: NewAllScaleListWidget(
+                        listWidth: thisScaleListWidth,
+                        selScaleId: selScaleId,
+                        clickScale: (scale) {
+                          setState(() {
+                            bool isS15 = false;
+                            for (var item in myAllScalesList) {
+                              if (item.scaleId == scale.scaleId) {
+                                if (item.scaleModel != "S15") {
+                                  showTipInfo(
+                                      "Please select S15 scale", context);
+                                } else {
+                                  isS15 = true;
+                                }
+                              }
+                            }
+                            if (isS15) {
+                              changeScale(scale.scaleId);
+                            }
+                          });
+                        },
+                      ),
+                    ),
                   Expanded(
                     child: Row(
                       children: [
-                        Container(
-                          width: 1,
-                          color: Theme.of(context)
-                              .colorScheme
-                              .outlineVariant, //  分隔条颜色
-                        ),
+                        if (!isMobile)
+                          Container(
+                            width: 1,
+                            color: Theme.of(context).colorScheme.outlineVariant,
+                          ),
                         myAllScalesList.isEmpty
-                            ? SizedBox()
+                            ? const SizedBox()
                             : Expanded(
-                                child: Container(
-                                    padding:
-                                        const EdgeInsets.all(regularPadding),
-                                    color:
-                                        Theme.of(context).colorScheme.surface,
-                                    child: Column(
-                                      children: [
-                                        showSetParameterBtn(),
-                                        SizedBox(
-                                          height: largePadding,
+                                child: LayoutBuilder(
+                                  builder: (context, constraints) {
+                                    return SingleChildScrollView(
+                                      child: ConstrainedBox(
+                                        constraints: BoxConstraints(
+                                          minHeight: constraints.maxHeight,
+                                          maxWidth: constraints.maxWidth,
                                         ),
-                                        if (isCalibration && selScaleId != -1)
-                                          ...showCalibrationPart(),
-                                        if (!isCalibration && selScaleId != -1)
-                                          ...showParameterSettingPart()
-                                      ],
-                                    )))
+                                        child: IntrinsicHeight(
+                                          child: Container(
+                                            padding: const EdgeInsets.all(
+                                                regularPadding),
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .surface,
+                                            child: Column(
+                                              children: [
+                                                showSetParameterBtn(),
+                                                const SizedBox(
+                                                  height: largePadding,
+                                                ),
+                                                if (isCalibration &&
+                                                    selScaleId != -1)
+                                                  ...showCalibrationPart(),
+                                                if (!isCalibration &&
+                                                    selScaleId != -1)
+                                                  ...showParameterSettingPart()
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
                       ],
                     ),
                   ),
-                ])),
+                ],
+              ),
+            ),
           ],
-        ));
+        ),
+      ),
+    );
   }
+
 
   Widget showTitle(String title) {
     return SizedBox(

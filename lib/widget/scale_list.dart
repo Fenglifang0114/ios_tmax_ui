@@ -1,4 +1,4 @@
-// 共用的秤列表 widget
+// 鍏辩敤鐨勭Г鍒楄〃 widget
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -9,7 +9,7 @@ import 'package:t_max/data/language.dart';
 import 'package:t_max/data/scale_info_from_db.dart';
 import 'package:t_max/widget/no_device_widget.dart';
 
-// 封装成 StatefulWidget
+// 灏佽鎴?StatefulWidget
 class ScaleListWidget extends StatefulWidget {
   final double listWidth;
   final List<NetScaleInfoLocal> scaleNetItems;
@@ -232,7 +232,7 @@ showComScale(BuildContext context, int selScaleId, Function()? onTap) {
   );
 }
 
-// 封装成 StatefulWidget
+// 灏佽鎴?StatefulWidget
 class ScaleListComWidget extends StatefulWidget {
   final double listWidth;
   final int selScaleId;
@@ -268,8 +268,8 @@ class _ScaleListComWidgetState extends State<ScaleListComWidget> {
   }
 }
 
-//多台秤列表
-// 封装成 StatefulWidget
+//澶氬彴绉ゅ垪琛?
+// 灏佽鎴?StatefulWidget
 class MutiScaleListWidget extends StatefulWidget {
   final double listWidth;
   final List<NetScaleInfoLocal> scaleNetItems;
@@ -494,9 +494,9 @@ showMutiComScale(
   );
 }
 
-//下面是多串口增加后的秤列表
+//涓嬮潰鏄涓插彛澧炲姞鍚庣殑绉ゅ垪琛?
 
-// 封装成 StatefulWidget
+// 灏佽鎴?StatefulWidget
 class NewAllScaleListWidget extends StatefulWidget {
   final double listWidth;
   final int selScaleId;
@@ -540,7 +540,7 @@ class _NewAllScaleListWidgetState extends State<NewAllScaleListWidget> {
                             child: GestureDetector(
                                 onTap: () => widget.clickScale(scale),
                                 child: Container(
-                                  height: scaleItemHeight,
+                                  constraints: BoxConstraints(minHeight: scaleItemHeight),
                                   color: !isSelect
                                       ? Theme.of(context)
                                           .colorScheme
@@ -685,8 +685,8 @@ class _NewAllScaleListWidgetState extends State<NewAllScaleListWidget> {
   }
 }
 
-//仅仅显示串口的秤
-// 封装成 StatefulWidget
+//浠呬粎鏄剧ず涓插彛鐨勭Г
+// 灏佽鎴?StatefulWidget
 class NewComScaleListWidget extends StatefulWidget {
   final double listWidth;
   final int selScaleId;
@@ -738,7 +738,7 @@ class _NewComScaleListWidgetState extends State<NewComScaleListWidget> {
                             child: GestureDetector(
                                 onTap: () => widget.clickScale(scale),
                                 child: Container(
-                                  height: scaleItemHeight,
+                                  constraints: BoxConstraints(minHeight: scaleItemHeight),
                                   color: !isSelect
                                       ? Theme.of(context)
                                           .colorScheme
@@ -940,11 +940,19 @@ class _NewMutiScaleListWidgetState extends State<NewMutiScaleListWidget> {
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 14),
                     child: ListView.separated(
+                      padding: const EdgeInsets.only(bottom: 20),
                       itemCount: myAllScalesList.length,
                       separatorBuilder: (context, index) =>
                           const SizedBox(height: smallPadding),
                       itemBuilder: (context, index) {
                         final scale = myAllScalesList[index];
+
+                        String detailInfo = "";
+                        if (scale.scaleModel.isNotEmpty ||
+                            scale.scaleSn.isNotEmpty) {
+                          detailInfo =
+                              "${scale.scaleModel}${scale.scaleSn.isNotEmpty ? " / " + scale.scaleSn : ""}";
+                        }
 
                         bool isSelect =
                             (widget.selScaleList.contains(scale.scaleId));
@@ -953,7 +961,7 @@ class _NewMutiScaleListWidgetState extends State<NewMutiScaleListWidget> {
                             child: GestureDetector(
                                 onTap: () => widget.clickScale(scale),
                                 child: Container(
-                                  height: scaleItemHeight,
+                                  constraints: BoxConstraints(minHeight: scaleItemHeight),
                                   color: !isSelect
                                       ? Theme.of(context)
                                           .colorScheme
@@ -980,7 +988,6 @@ class _NewMutiScaleListWidgetState extends State<NewMutiScaleListWidget> {
                                                   : Theme.of(context)
                                                       .colorScheme
                                                       .surface
-                                                      // 使用 withValues 替代 withOpacity
                                                       .withValues(alpha: 0.1),
                                             ),
                                             width: scaleInnerItemHeight,
@@ -1067,36 +1074,17 @@ class _NewMutiScaleListWidgetState extends State<NewMutiScaleListWidget> {
                                                   MainAxisAlignment
                                                       .spaceBetween,
                                               children: [
-                                                Text(
-                                                  scale.isOnline
-                                                      ? localizedStrings
-                                                          .gTipOnline
-                                                      : localizedStrings
-                                                          .gTipOffline,
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .bodySmall!
-                                                      .apply(
-                                                        color: isSelect
-                                                            ? Theme.of(context)
-                                                                .colorScheme
-                                                                .onPrimary
-                                                            : scale.isOnline
-                                                                ? Theme.of(
-                                                                        context)
-                                                                    .colorScheme
-                                                                    .onTertiaryFixedVariant
-                                                                : Theme.of(
-                                                                        context)
-                                                                    .colorScheme
-                                                                    .error,
-                                                      ),
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
+                                                Expanded(
+                                                  child: Text(
+                                                    detailInfo.isNotEmpty ? detailInfo : (scale.isOnline ? localizedStrings.gTipOnline : localizedStrings.gTipOffline),
+                                                    style: Theme.of(context).textTheme.bodySmall!.apply(
+                                                      color: isSelect ? Theme.of(context).colorScheme.onPrimary : scale.isOnline ? Theme.of(context).colorScheme.onTertiaryFixedVariant : Theme.of(context).colorScheme.error,
+                                                    ),
+                                                    overflow: TextOverflow.ellipsis,
+                                                  ),
                                                 ),
                                                 Checkbox(
-                                                  value: widget.selScaleList
-                                                      .contains(scale.scaleId),
+                                                  value: widget.selScaleList.contains(scale.scaleId),
                                                   side: WidgetStateBorderSide
                                                       .resolveWith(
                                                           (Set<WidgetState>
@@ -1143,8 +1131,8 @@ class _NewMutiScaleListWidgetState extends State<NewMutiScaleListWidget> {
   }
 }
 
-//  新的可以选择多台秤的列表
-// 封装成 StatefulWidget
+//  鏂扮殑鍙互閫夋嫨澶氬彴绉ょ殑鍒楄〃
+// 灏佽鎴?StatefulWidget
 class NewMutiScaleListWifiWidget extends StatefulWidget {
   final double listWidth;
   final List<int> selScaleList;
@@ -1221,7 +1209,7 @@ class _NewMutiScaleListWifiWidgetState
                             child: GestureDetector(
                                 onTap: () => widget.clickScale(scale),
                                 child: Container(
-                                  height: scaleItemHeight,
+                                  constraints: BoxConstraints(minHeight: scaleItemHeight),
                                   color: !isSelect
                                       ? Theme.of(context)
                                           .colorScheme
@@ -1248,7 +1236,7 @@ class _NewMutiScaleListWifiWidgetState
                                                   : Theme.of(context)
                                                       .colorScheme
                                                       .surface
-                                                      // 使用 withValues 替代 withOpacity
+                                                      // 浣跨敤 withValues 鏇夸唬 withOpacity
                                                       .withValues(alpha: 0.1),
                                             ),
                                             width: scaleInnerItemHeight,

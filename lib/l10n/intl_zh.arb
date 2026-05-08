@@ -100,9 +100,17 @@
     "@gTipGetIpOk": {
         "description": "This is a prompt indicating that the IP information has been successfully obtained."
     },
+    "gTipDeleteOk": "删除成功！",
+    "@gTipDeleteOk": {
+        "description": "This is a prompt indicating that the scale has been successfully deleted."
+    },
     "gTipGetIpFail": "获取IP失败!",
     "@gTipGetIpFail": {
         "description": "This is a prompt indicating that the attempt to obtain IP information has failed."
+    },
+    "gSearchingBtDevices": "正在搜索蓝牙设备...",
+    "@gSearchingBtDevices": {
+        "description": "Searching for Bluetooth devices..."
     },
     "gTipSSID": "SSID:",
     "@gTipSSID": {

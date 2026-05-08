@@ -28,6 +28,8 @@ import 'package:t_max/widget/home_widget.dart';
 import 'package:t_max/widget/page_info.dart';
 import 'package:t_max/widget/version.dart';
 import 'package:t_max/common/window_lifecycle_mixin.dart';
+import 'package:t_max/functions/adaptive.dart';
+import 'package:t_max/common/web_socket_channel.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
@@ -97,8 +99,9 @@ class MyHomePageState extends State<MyHomePage>
 
     _eventbus4 = eventBus.on<EventGetFactoryInfo>().listen((event) {
       if (mounted) {
+        OnlineInfo info = event.obj;
         setState(() {
-          myFactoryInfoFromScale = event.obj;
+          myFactoryInfoFromScale = info.factInfo!;
         });
       }
     });
@@ -335,21 +338,50 @@ class MyHomePageState extends State<MyHomePage>
 
   @override
   Widget build(BuildContext context) {
+    final bool isMobile = Adaptive.isMobile(context);
     ColorScheme colorScheme = Theme.of(context).colorScheme;
     TextTheme textTheme = Theme.of(context).textTheme;
     localizedStrings = S.of(context);
+    
     return Scaffold(
+      drawer: isMobile ? Drawer(
+        child: Container(
+          color: colorScheme.primary,
+          child: Column(
+            children: [
+              DrawerHeader(
+                decoration: BoxDecoration(color: colorScheme.primary),
+                child: Row(
+                  children: [
+                    Image.asset(logoIconPath, width: 40, height: 40),
+                    const SizedBox(width: 12),
+                    Expanded(child: Text(myAppName.appName!, style: textTheme.headlineSmall!.copyWith(color: colorScheme.onPrimary))),
+                  ],
+                ),
+              ),
+              Expanded(child: showNavigationBar()),
+            ],
+          ),
+        ),
+      ) : null,
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(40), // 自定义高度
-        child: DraggableTitleBar(title: ''),
+        preferredSize: Size.fromHeight(isMobile ? 56 : 40),
+        child: isMobile ? AppBar(
+          backgroundColor: colorScheme.primary,
+          foregroundColor: colorScheme.onPrimary,
+          title: Text(generateTitle(getPageId(_selectedNavRoute))),
+          actions: [
+             _buildTopBarActions(colorScheme, textTheme),
+          ],
+        ) : DraggableTitleBar(title: ''),
       ),
       body: Row(
         children: [
-          // 动态显示的左侧导航栏
-          if (showLeftNavigationBar)
+          // Desktop Navigation Bar
+          if (!isMobile && showLeftNavigationBar)
             Container(
               width: leftBarWidth,
-              color: Theme.of(context).colorScheme.primary, // 可替换为实际内容
+              color: colorScheme.primary,
               child: Column(children: [
                 SizedBox(
                   height: leftBarIconHeight,
@@ -360,186 +392,63 @@ class MyHomePageState extends State<MyHomePage>
                         padding: EdgeInsets.only(left: largePadding),
                         iconSize: iconAppSize,
                         onPressed: () {},
-                        icon: Image.asset(
-                          logoIconPath,
-                          width: iconAppSize,
-                          height: iconAppSize,
-                        ),
+                        icon: Image.asset(logoIconPath, width: iconAppSize, height: iconAppSize),
                       ),
                       Expanded(
-                          child: Container(
-                              padding: EdgeInsets.only(left: regularPadding),
-                              child: Text(
-                                myAppName.appName!,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .headlineSmall!
-                                    .apply(
-                                        // 根据选中状态改变颜色
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onPrimary),
-                              )))
+                        child: Container(
+                          padding: EdgeInsets.only(left: regularPadding),
+                          child: Text(myAppName.appName!, style: textTheme.headlineSmall!.copyWith(color: colorScheme.onPrimary)),
+                        ),
+                      )
                     ],
                   ),
                 ),
-                Expanded(
-                  child: showNavigationBar(),
-                ),
-                SizedBox(
-                  height: largePadding,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SizedBox(
-                        width: 120,
-                        height: 40,
-                        child: Image.asset(companyImage)),
-                  ],
-                ),
-                SizedBox(
-                  height: largePadding,
-                )
+                Expanded(child: showNavigationBar()),
+                const SizedBox(height: 16),
+                Image.asset(companyImage, width: 120, height: 40),
+                const SizedBox(height: 16),
               ]),
             ),
 
-          // 右侧主区域
+          // Main Area
           Expanded(
             child: Column(
               children: [
-                // 顶部设置栏（始终显示）
-                Container(
-                  height: topLinePadding,
-                  color: colorScheme.surfaceDim,
-                ),
-                SizedBox(
-                  height: topBarHeight,
-                  child: Row(
+                if (!isMobile) ...[
+                  Container(height: topLinePadding, color: colorScheme.surfaceDim),
+                  SizedBox(
+                    height: topBarHeight,
+                    child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        showLeftNavigationBar
-                            ? Container(
-                                padding: EdgeInsets.only(left: largePadding),
-                                child: Text(
-                                  generateTitle(getPageId(_selectedNavRoute)),
-                                  style: textTheme.bodySmall!.apply(
-                                      // 根据选中状态改变颜色
-                                      color: colorScheme.onSurface),
-                                ),
-                              )
-                            : Container(
-                                padding: EdgeInsets.only(left: largePadding),
-                                child: Row(
-                                  children: [
-                                    Image.asset(
-                                      appIconPath,
-                                      width: iconAppSize,
-                                      height: iconAppSize,
-                                    ),
-                                    Container(
-                                        padding: EdgeInsets.only(
-                                            left: regularPadding),
-                                        child: Text(
-                                          myAppName.appName!,
-                                          style: textTheme.headlineSmall!.apply(
-                                              // 根据选中状态改变颜色
-                                              color: colorScheme.primary),
-                                        ))
-                                  ],
-                                ),
-                              ),
-                        Row(
-                          children: [
-                            if (generateHelpTitle(
-                                    getPageId(_selectedNavRoute)) !=
-                                '')
-                              Tooltip(
-                                message: localizedStrings.gTipHelp,
-                                child: PageInfoButton(
-                                    helpInfo: generateHelpTitle(
-                                        getPageId(_selectedNavRoute)),
-                                    onRefresh: () {},
-                                    color: colorScheme.surfaceContainerHighest),
-                              ),
-                            SizedBox(
-                              width: regularPadding,
-                            ),
-                            Image.asset(
-                              'assets/images/person.png',
-                              width: 24.0,
-                              height: 24.0,
-                            ),
-                            SizedBox(
-                              width: regularPadding,
-                            ),
-                            SizedBox(
-                              child: Text(
-                                mySysUser.nickName ?? '',
-                                style: textTheme.bodySmall!.apply(
-                                  color: colorScheme.onSurface,
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                            SizedBox(
-                              width: regularPadding,
-                            ),
-                            showSysSetting(colorScheme, textTheme),
-                            SizedBox(
-                              width: regularPadding,
-                            ),
-                            Tooltip(
-                              message: localizedStrings.menuSystemInformation,
-                              child: IconButton(
-                                icon: getSvgIcon(
-                                    infoSvgIcon(),
-                                    topIconSize,
-                                    topIconSize,
-                                    colorScheme.surfaceContainerHighest),
-                                onPressed: () {
-                                  // showLicenseDialog(context);
-                                  showDialog(
-                                    context: context,
-                                    barrierDismissible: false, // 允许点击空白处关闭对话框
-                                    builder: (context) {
-                                      return const CompanyInfoDialog();
-                                    },
-                                  );
-                                },
-                              ),
-                            ),
-                            SizedBox(
-                              width: regularPadding,
-                            ),
-                          ],
+                        Container(
+                          padding: EdgeInsets.only(left: largePadding),
+                          child: Text(generateTitle(getPageId(_selectedNavRoute)), style: textTheme.bodySmall!.copyWith(color: colorScheme.onSurface)),
                         ),
-                      ]),
-                ),
-
-                Container(
-                  height: regularPadding,
-                  color: colorScheme.surfaceDim,
-                ),
-                // 内容区域导航器
-                Expanded(
-                    child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: regularPadding),
-                  color: colorScheme.surfaceDim,
-                  child: Navigator(
-                    key: contentNavigatorKey,
-                    initialRoute: _selectedNavRoute,
-                    onGenerateRoute: (settings) {
-                      final pageContent = buildPageContent(
-                          _navigateContent, settings.name, lastRouteName);
-
-                      return MaterialPageRoute(
-                        builder: (context) => pageContent,
-                        settings: settings,
-                      );
-                    },
+                        _buildTopBarActions(colorScheme, textTheme),
+                      ],
+                    ),
                   ),
-                ))
+                  Container(height: regularPadding, color: colorScheme.surfaceDim),
+                ],
+                // Content
+                Expanded(
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: regularPadding),
+                    color: colorScheme.surfaceDim,
+                    child: Navigator(
+                      key: contentNavigatorKey,
+                      initialRoute: _selectedNavRoute,
+                      onGenerateRoute: (settings) {
+                        final pageContent = buildPageContent(_navigateContent, settings.name, lastRouteName);
+                        return MaterialPageRoute(
+                          builder: (context) => pageContent,
+                          settings: settings,
+                        );
+                      },
+                    ),
+                  ),
+                )
               ],
             ),
           ),
@@ -689,6 +598,114 @@ class MyHomePageState extends State<MyHomePage>
           ),
         PopupMenuDivider(height: 1.0),
       ],
+    );
+  }
+
+  Widget _buildTopBarActions(ColorScheme colorScheme, TextTheme textTheme) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        _buildServiceStatusDot(colorScheme),
+        SizedBox(width: regularPadding),
+        if (generateHelpTitle(getPageId(_selectedNavRoute)) != '')
+          Tooltip(
+            message: localizedStrings.gTipHelp,
+            child: PageInfoButton(
+                helpInfo: generateHelpTitle(getPageId(_selectedNavRoute)),
+                onRefresh: () {},
+                color: colorScheme.surfaceContainerHighest),
+          ),
+        SizedBox(width: regularPadding),
+        Image.asset(
+          'assets/images/person.png',
+          width: 24.0,
+          height: 24.0,
+        ),
+        SizedBox(width: regularPadding),
+        SizedBox(
+          child: Text(
+            mySysUser.nickName ?? '',
+            style: textTheme.bodySmall!.apply(
+              color: Adaptive.isMobile(context) ? colorScheme.onPrimary : colorScheme.onSurface,
+            ),
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+        SizedBox(width: regularPadding),
+        showSysSetting(colorScheme, textTheme),
+        SizedBox(width: regularPadding),
+        Tooltip(
+          message: localizedStrings.menuSystemInformation,
+          child: IconButton(
+            icon: getSvgIcon(
+                infoSvgIcon(),
+                topIconSize,
+                topIconSize,
+                Adaptive.isMobile(context) ? colorScheme.onPrimary : colorScheme.surfaceContainerHighest),
+            onPressed: () {
+              showDialog(
+                context: context,
+                barrierDismissible: false,
+                builder: (context) {
+                  return const CompanyInfoDialog();
+                },
+              );
+            },
+          ),
+        ),
+        SizedBox(width: regularPadding),
+      ],
+    );
+  }
+
+  Widget _buildServiceStatusDot(ColorScheme colorScheme) {
+    return StreamBuilder<ServiceState>(
+      stream: WebSocketManager().connectionStream,
+      initialData: WebSocketManager().currentState,
+      builder: (context, snapshot) {
+        final state = snapshot.data ?? ServiceState.disconnected;
+        Color color;
+        String tooltip;
+
+        switch (state) {
+          case ServiceState.connected:
+            color = Colors.greenAccent;
+            tooltip = "Service Connected";
+            break;
+          case ServiceState.connecting:
+            color = Colors.orangeAccent;
+            tooltip = "Connecting to Service...";
+            break;
+          case ServiceState.retrying:
+            color = Colors.redAccent;
+            tooltip = "Service Lost. Retrying in ${WebSocketManager().nextRetrySeconds}s...";
+            break;
+          case ServiceState.disconnected:
+          default:
+            color = Colors.grey;
+            tooltip = "Service Disconnected";
+            break;
+        }
+
+        return Tooltip(
+          message: tooltip,
+          child: Container(
+            width: 10,
+            height: 10,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: color,
+              boxShadow: [
+                BoxShadow(
+                  color: color.withOpacity(0.5),
+                  blurRadius: 4,
+                  spreadRadius: 2,
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 

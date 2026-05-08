@@ -687,6 +687,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "gSaveFormat": MessageLookupByLibrary.simpleMessage("Save Format"),
     "gScaleName": MessageLookupByLibrary.simpleMessage("Scale Name"),
     "gScaleSn": MessageLookupByLibrary.simpleMessage("SN"),
+    "gSearchingBtDevices": MessageLookupByLibrary.simpleMessage(
+      "Searching for Bluetooth devices...",
+    ),
     "gSelectAll": MessageLookupByLibrary.simpleMessage("select all"),
     "gSerialParity": MessageLookupByLibrary.simpleMessage("Parity"),
     "gSerialPort": MessageLookupByLibrary.simpleMessage("Serial port"),
@@ -778,6 +781,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "gTipDecimal": MessageLookupByLibrary.simpleMessage("Decimal"),
     "gTipDefaultValue": MessageLookupByLibrary.simpleMessage("Default Value"),
+    "gTipDeleteOk": MessageLookupByLibrary.simpleMessage("Delete OK !"),
     "gTipDeviceNameEmpty": MessageLookupByLibrary.simpleMessage(
       "Device name can not be empty,error.",
     ),

@@ -4,7 +4,7 @@ part of 'multi_scale_management_page.dart';
 extension MultiScaleManagementEditExt on MultiScaleManagementState {
   showEditWifiInfo(double maxWidth) {
     return Column(children: [
-      subTitleInfo(context, maxWidth - headWidthPadding,
+      subTitleInfo(context, (maxWidth - (maxWidth < 600 ? 60 : headWidthPadding)).clamp(100.0, maxWidth),
           localizedStrings.gBtnModify, localizedStrings.gTipScaleMgrPageHelp),
       Expanded(
         child: showEditNetScaleInfo(),

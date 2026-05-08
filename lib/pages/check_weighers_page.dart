@@ -28,6 +28,7 @@ import '../../eventbus/eventbus.dart';
 import '../../functions/methods.dart';
 import '../data/downloadresponse.dart';
 import '../data/language.dart';
+import '../functions/adaptive.dart';
 import '../widget/page_head.dart';
 
 class CheckWeighersPage extends StatefulWidget {
@@ -40,12 +41,13 @@ class CheckWeighersPage extends StatefulWidget {
 }
 
 class CheckWeighersPageState extends State<CheckWeighersPage> {
+
   TextEditingController totalWgtUnitCtl = TextEditingController(text: 'kg');
 // 使用 ValueNotifier 来存储总重量和稳定状态
   final ValueNotifier<double> totalWeightNotifier = ValueNotifier<double>(0);
   final ValueNotifier<bool> totalWgtStableNotifier = ValueNotifier<bool>(false);
 
-  final Map<int, GlobalKey<CheckWeighersPageState>> _scaleWidgetKeys = {};
+  final Map<int, GlobalKey> _scaleWidgetKeys = {};
   ReqWeightCountine tempWeight = ReqWeightCountine();
   final Map<int, Widget> _scaleWidgetCache = {};
   Map<int, WeightInfo> scaleWeightMap = {}; // 存储每台秤的最新称重数据，键为秤的 ID，值为包含重量和单位的对象
@@ -390,58 +392,97 @@ class CheckWeighersPageState extends State<CheckWeighersPage> {
 
     return totalWeight;
   }
-
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
+    final bool isMobile = Adaptive.isMobile(context);
+
     return Scaffold(
-      body: Container(
-          width: width,
-          decoration:
-              BoxDecoration(color: Theme.of(context).colorScheme.surface),
-          child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                myPageHeadInfo(
-                    context,
-                    width - headWidthPadding,
-                    localizedStrings.menuCheckWeighing,
-                    localizedStrings.gTipCheckWgtPageHelp),
-                Container(
-                  height: regularPadding,
-                  color: Theme.of(context).colorScheme.surfaceContainerLow,
+
+      drawer: isMobile
+          ? Drawer(
+              width: appScaleListWidth + 20,
+              child: Container(
+                color: Theme.of(context).colorScheme.surface,
+                child: Column(
+                  children: [
+                    Container(
+                      height: btnHeight + 40,
+                      padding:
+                          const EdgeInsets.only(left: regularPadding, top: 40),
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        localizedStrings.gTitleDeviceList,
+                        style: Theme.of(context).textTheme.labelLarge!.apply(
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                      ),
+                    ),
+                    const Divider(),
+                    Expanded(
+                      child: NewMutiScaleListWidget(
+                        listWidth: appScaleListWidth,
+                        selScaleList: mySelScaleIdList,
+                        clickScale: (scale) {
+                          setState(() {
+                            addOrRemoveSelScale(scale.scaleId);
+                          });
+                        },
+                      ),
+                    ),
+                  ],
                 ),
-                Expanded(
-                    child: Container(
-                  color: Theme.of(context).colorScheme.surfaceTint,
-                  child: Row(
-                    children: [
+              ),
+            )
+          : null,
+      body: Container(
+        color: Theme.of(context).colorScheme.surface,
+        child: Column(
+          children: [
+            pageHeadInfo(context, width - headWidthPadding,
+                localizedStrings.menuCheckWeighing, '', () {
+              widget.onNavigate(widget.lastRouteName);
+            },
+                leading: isMobile
+                    ? Padding(
+                        padding: const EdgeInsets.only(left: regularPadding),
+                        child: Builder(
+                          builder: (context) => IconButton(
+                            icon: Icon(Icons.menu_open,
+                                color: Theme.of(context).colorScheme.primary,
+                                size: 28),
+                            onPressed: () => Scaffold.of(context).openDrawer(),
+                          ),
+                        ),
+                      )
+                    : null),
+            Container(
+              height: regularPadding,
+              color: Theme.of(context).colorScheme.surfaceContainerLow,
+            ),
+            Expanded(
+              child: Container(
+                color: Theme.of(context).colorScheme.surfaceTint,
+                child: Row(
+                  children: [
+                    if (!isMobile)
                       Container(
                         width: appScaleListWidth,
                         color: Theme.of(context).colorScheme.surfaceTint,
-                        child: SizedBox(
-                          height: MediaQuery.of(context).size.height,
-                          child: Column(
-                            mainAxisSize: MainAxisSize.max,
-                            children: [
-                              SizedBox(
-                                height: regularPadding,
-                              ),
-                              Expanded(
-                                child: NewMutiScaleListWidget(
-                                  listWidth: appScaleListWidth, // 列表宽度
-                                  selScaleList: mySelScaleIdList,
-                                  clickScale: (scale) {
-                                    setState(() {
-                                      addOrRemoveSelScale(scale.scaleId);
-                                    });
-                                  },
-                                ),
-                              ),
-                            ],
-                          ),
+                        child: NewMutiScaleListWidget(
+                          listWidth: appScaleListWidth,
+                          selScaleList: mySelScaleIdList,
+                          clickScale: (scale) {
+                            setState(() {
+                              addOrRemoveSelScale(scale.scaleId);
+                            });
+                          },
                         ),
+                      ),
+                    if (!isMobile)
+                      Container(
+                        width: regularPadding,
+                        color: Theme.of(context).colorScheme.surfaceContainerLow,
                       ),
                       Container(
                         width: regularPadding,
@@ -546,7 +587,7 @@ class CheckWeighersPageState extends State<CheckWeighersPage> {
                 // 如果key不存在，创建新的GlobalKey
                 if (!_scaleWidgetKeys.containsKey(scaleId)) {
                   _scaleWidgetKeys[scaleId] =
-                      GlobalKey<CheckWeighersPageState>();
+                      GlobalKey();
                 }
                 // 如果缓存不存在，使用稳定的GlobalKey创建新Widget
                 if (!_scaleWidgetCache.containsKey(scaleId)) {

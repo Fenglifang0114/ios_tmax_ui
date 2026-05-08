@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:t_max/bluetooth/bluetooth_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:t_max/data/btinfodata.dart';
@@ -88,6 +89,7 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
   dynamic _eventbus8;
   dynamic _eventbus9;
   dynamic _eventbus10;
+  dynamic _eventbus11;
 
   Timer? checkIsOnlineTimer;
   List<String> comLists = [];
@@ -155,7 +157,7 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
           if (dataStr.isNotEmpty) {
             if (dataStr.contains('ok')) {
               selScaleId = -1;
-              showTipInfo(localizedStrings.fSuccessMsg, context);
+              showTipInfo(localizedStrings.gTipDeleteOk, context);
               PublicFunctions.getScaleList();
               return;
             }
@@ -189,7 +191,7 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
               return;
             }
             dataStr.contains('ok')
-                ? showTipInfo(localizedStrings.fSuccessMsg, context)
+                ? showTipInfo(localizedStrings.gTipGetIpOk, context)
                 : showTipInfo(dataStr, context);
           }
         });
@@ -204,7 +206,7 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
           if (myFactoryInfoFromScale.modelName != '') {
             setScaleStatus(myOnlineInfo.scaleId!, true);
             if (isTesting) {
-              showTipInfo(localizedStrings.fSuccessMsg, context);
+              showTipInfo(localizedStrings.gTipGetIpOk, context);
             }
           } else {
             setScaleStatus(myOnlineInfo.scaleId!, false);
@@ -296,6 +298,22 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
           isBtSearching = false;
           isBtSearched = true;
         });
+      }
+    });
+
+    _eventbus11 = eventBus.on<EventGetFactoryInfo>().listen((event) {
+      if (mounted) {
+        OnlineInfo info = event.obj;
+        if (info.scaleId == selScaleId) {
+          setState(() {
+            if (info.factInfo?.modelName != null && info.factInfo!.modelName!.isNotEmpty) {
+              scaleModelCtl.text = info.factInfo!.modelName!;
+            }
+            if (info.factInfo?.scaleSn != null && info.factInfo!.scaleSn!.isNotEmpty) {
+              snCtl.text = info.factInfo!.scaleSn!;
+            }
+          });
+        }
       }
     });
   }
@@ -403,6 +421,8 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
     snCtl.dispose();
     macCtl.dispose();
     btNameCtl.dispose();
+    _eventbus10?.cancel();
+    _eventbus11?.cancel();
     checkIsOnlineTimer?.cancel();
     super.dispose();
   }
@@ -592,12 +612,22 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
     }
 
     if (delScaleInfo!.mediaConfig.type == btScaleType) {
-      PublicFunctions.getBuildInfo(selScaleId);
-      Future.delayed(const Duration(seconds: 3), () {
-        DelScaleInfo delScale = DelScaleInfo();
-        delScale.scaleId = selScaleId;
-        String delStr = jsonEncode(delScale);
-        PublicFunctions.sendDelScale(delStr);
+      int scaleIdToDel = selScaleId; // 预先捕获 ID，防止延时期间 UI 状态改变
+      
+      // 删除之前先关闭连续发送
+      PublicFunctions.stopWeight(scaleIdToDel);
+      
+      // 延迟一下确保关闭指令发出，然后再断开蓝牙连接并删除
+      Future.delayed(const Duration(milliseconds: 500), () {
+        // 显式断开蓝牙物理连接
+        bluetoothManager.disconnect();
+        
+        Future.delayed(const Duration(seconds: 2), () {
+          DelScaleInfo delScale = DelScaleInfo();
+          delScale.scaleId = scaleIdToDel;
+          String delStr = jsonEncode(delScale);
+          PublicFunctions.sendDelScale(delStr);
+        });
       });
     } else {
       DelScaleInfo delScale = DelScaleInfo();

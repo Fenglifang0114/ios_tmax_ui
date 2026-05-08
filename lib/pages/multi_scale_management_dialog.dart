@@ -80,69 +80,16 @@ class AddScaleDialogState extends State<AddScaleDialog> {
                   child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        MouseRegion(
-                          onEnter: (_) => setState(() => isComHovered = true),
-                          onExit: (_) => setState(() => isComHovered = false),
-                          child: InkWell(
-                            onTap: () {
-                              Navigator.pop(context, 'com');
-                            },
-                            child: Container(
-                                width: 160,
-                                height: 120,
-                                alignment: Alignment.center,
-                                color: isComHovered
-                                    ? Theme.of(context).colorScheme.primary
-                                    : Theme.of(context)
-                                        .colorScheme
-                                        .surfaceContainerLow,
-                                child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      getSvgIcon(
-                                          serialPortSvgIcon(),
-                                          btnHeight,
-                                          btnHeight,
-                                          isComHovered
-                                              ? Theme.of(context)
-                                                  .colorScheme
-                                                  .onPrimary
-                                              : Theme.of(context)
-                                                  .colorScheme
-                                                  .primary),
-                                      SizedBox(
-                                        height: regularPadding,
-                                      ),
-                                      Text(
-                                        localizedStrings.gSerialPort,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyMedium!
-                                            .apply(
-                                                color: isComHovered
-                                                    ? Theme.of(context)
-                                                        .colorScheme
-                                                        .onPrimary
-                                                    : Theme.of(context)
-                                                        .colorScheme
-                                                        .primary),
-                                      )
-                                    ])),
-                          ),
-                        ),
-                        SizedBox(
-                          width: largePadding,
-                        ),
-                        MouseRegion(
-                          onEnter: (_) => setState(() => isWifiHovered = true),
-                          onExit: (_) => setState(() => isWifiHovered = false),
-                          child: InkWell(
-                            onTap: () {
-                              Navigator.pop(context, 'wifi');
-                            },
-                            child: Container(
-                                width: 140,
-                                height: 120,
+                        Expanded(
+                          child: MouseRegion(
+                            onEnter: (_) => setState(() => isWifiHovered = true),
+                            onExit: (_) => setState(() => isWifiHovered = false),
+                            child: InkWell(
+                              onTap: () {
+                                Navigator.pop(context, 'wifi');
+                              },
+                              child: Container(
+                                  height: 120,
                                 alignment: Alignment.center,
                                 color: isWifiHovered
                                     ? Theme.of(context).colorScheme.primary
@@ -183,19 +130,20 @@ class AddScaleDialogState extends State<AddScaleDialog> {
                                     ])),
                           ),
                         ),
+                      ),
                         SizedBox(
-                          width: largePadding,
+                          width: 40,
                         ),
-                        MouseRegion(
-                          onEnter: (_) => setState(() => isBtHovered = true),
-                          onExit: (_) => setState(() => isBtHovered = false),
-                          child: InkWell(
-                            onTap: () {
-                              Navigator.pop(context, 'bt');
-                            },
-                            child: Container(
-                                width: 140,
-                                height: 120,
+                        Expanded(
+                          child: MouseRegion(
+                            onEnter: (_) => setState(() => isBtHovered = true),
+                            onExit: (_) => setState(() => isBtHovered = false),
+                            child: InkWell(
+                              onTap: () {
+                                Navigator.pop(context, 'bt');
+                              },
+                              child: Container(
+                                  height: 120,
                                 alignment: Alignment.center,
                                 color: isBtHovered
                                     ? Theme.of(context).colorScheme.primary
@@ -236,9 +184,7 @@ class AddScaleDialogState extends State<AddScaleDialog> {
                                     ])),
                           ),
                         ),
-                        SizedBox(
-                          width: largePadding,
-                        ),
+                      ),
                       ])),
             ),
             Container(
