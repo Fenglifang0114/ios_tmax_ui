@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:t_max/widget/dialog_head_style.dart';
 
 import '../data/language.dart';
@@ -20,7 +20,7 @@ void showErrorDialog(BuildContext context, String tipStr) {
               children: [
                 // 头部
                 ...dialogHeadStyle(
-                    context, localizedStrings.gTitleConfirm, false),
+                    context, (localizedStrings?.gTitleConfirm ?? "gTitleConfirm"), false),
 
                 // 中部
                 Expanded(
@@ -56,7 +56,7 @@ void showErrorDialog(BuildContext context, String tipStr) {
                             Navigator.of(ctx).pop(true); // 跳转
                           },
                           child: Text(
-                            localizedStrings.gBtnConfirm,
+                            (localizedStrings?.gBtnConfirm ?? "gBtnConfirm"),
                             style: Theme.of(ctx).textTheme.bodySmall!.apply(
                                   color: Theme.of(ctx).colorScheme.onPrimary,
                                 ),

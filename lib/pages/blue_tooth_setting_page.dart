@@ -1,4 +1,4 @@
-//蓝牙设置界面   蓝牙设置只能通过串口
+﻿//蓝牙设置界面   蓝牙设置只能通过串口
 
 import 'dart:async';
 import 'package:flutter/material.dart';
@@ -41,9 +41,9 @@ class BluetoothPageState extends State<BluetoothPage> {
   void initState() {
     super.initState();
     emissionPowerMap = {
-      "Strong": localizedStrings.gEPStrong,
-      "Normal": localizedStrings.gEPNormal,
-      "Weak": localizedStrings.gEPWeak,
+      "Strong": (localizedStrings?.gEPStrong ?? "gEPStrong"),
+      "Normal": (localizedStrings?.gEPNormal ?? "gEPNormal"),
+      "Weak": (localizedStrings?.gEPWeak ?? "gEPWeak"),
     };
     _deviceNameController.text = '';
     emissionPowerVale = 'Strong';
@@ -60,7 +60,7 @@ class BluetoothPageState extends State<BluetoothPage> {
           isSetting = false;
           if (myRespDataFromScale.msgBody.isNotEmpty) {
             if (myRespDataFromScale.msgBody.contains('time out')) {
-              showTipInfo(localizedStrings.gTipTimeOut, context);
+              showTipInfo((localizedStrings?.gTipTimeOut ?? "gTipTimeOut"), context);
             } else {
               showTipInfo(myRespDataFromScale.msgBody, context);
             }
@@ -80,9 +80,9 @@ class BluetoothPageState extends State<BluetoothPage> {
               _deviceNameController.text =
                   getBtName(myRespDataFromScale.msgBody);
             } else if (myRespDataFromScale.msgBody.contains("OK")) {
-              showTipInfo(localizedStrings.fSuccessMsg, context);
+              showTipInfo((localizedStrings?.fSuccessMsg ?? "fSuccessMsg"), context);
             } else if (myRespDataFromScale.msgBody.contains('time out')) {
-              showTipInfo(localizedStrings.gTipTimeOut, context);
+              showTipInfo((localizedStrings?.gTipTimeOut ?? "gTipTimeOut"), context);
             } else {
               showTipInfo(myRespDataFromScale.msgBody, context);
             }
@@ -94,10 +94,10 @@ class BluetoothPageState extends State<BluetoothPage> {
     // 在页面构建完成后显示提示
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (comScalesList.isEmpty) {
-        showTipInfo(localizedStrings.gTipNoDeviceAddFirst, context);
+        showTipInfo((localizedStrings?.gTipNoDeviceAddFirst ?? "gTipNoDeviceAddFirst"), context);
       } else {
         if (selScaleId == -1) {
-          showTipInfo(localizedStrings.gTipSelectDeviceFirst, context);
+          showTipInfo((localizedStrings?.gTipSelectDeviceFirst ?? "gTipSelectDeviceFirst"), context);
         }
       }
     });
@@ -147,7 +147,7 @@ class BluetoothPageState extends State<BluetoothPage> {
                           const EdgeInsets.only(left: regularPadding, top: 40),
                       alignment: Alignment.centerLeft,
                       child: Text(
-                        localizedStrings.gTitleDeviceList,
+                        (localizedStrings?.gTitleDeviceList ?? "gTitleDeviceList"),
                         style: Theme.of(context).textTheme.labelLarge!.apply(
                               color: Theme.of(context).colorScheme.primary,
                             ),
@@ -175,7 +175,7 @@ class BluetoothPageState extends State<BluetoothPage> {
         child: Column(
           children: [
             pageHeadInfo(context, width - headWidthPadding,
-                localizedStrings.menuBluetoothSetting, '', () {
+                (localizedStrings?.menuBluetoothSetting ?? "menuBluetoothSetting"), '', () {
               Navigator.pop(context);
             },
                 leading: isMobile
@@ -288,7 +288,7 @@ class BluetoothPageState extends State<BluetoothPage> {
                 height: 42,
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  localizedStrings.tipBluetoothDisconnect,
+                  (localizedStrings?.tipBluetoothDisconnect ?? "tipBluetoothDisconnect"),
                   overflow: TextOverflow.ellipsis,
                   style: getTextStyle(color: colorScheme.error),
                 ),
@@ -297,7 +297,7 @@ class BluetoothPageState extends State<BluetoothPage> {
                 height: 42,
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  localizedStrings.gDeviceName,
+                  (localizedStrings?.gDeviceName ?? "gDeviceName"),
                   overflow: TextOverflow.ellipsis,
                   style: getTextStyle(),
                 ),
@@ -340,7 +340,7 @@ class BluetoothPageState extends State<BluetoothPage> {
                                 child: showTextButton(
                                     context,
                                     38,
-                                    localizedStrings.gGetBluetoothName,
+                                    (localizedStrings?.gGetBluetoothName ?? "gGetBluetoothName"),
                                     isSetting || selScaleId == -1
                                         ? null
                                         : () {
@@ -363,7 +363,7 @@ class BluetoothPageState extends State<BluetoothPage> {
                       child: showTextButton(
                           context,
                           btnHeight,
-                          localizedStrings.gModifyBluetoothName,
+                          (localizedStrings?.gModifyBluetoothName ?? "gModifyBluetoothName"),
                           isSetting || selScaleId == -1
                               ? null
                               : () {
@@ -374,7 +374,7 @@ class BluetoothPageState extends State<BluetoothPage> {
                                   } catch (e) {
                                     setState(() {
                                       showTipInfo(
-                                          localizedStrings.gMsgSerialError,
+                                          (localizedStrings?.gMsgSerialError ?? "gMsgSerialError"),
                                           context);
                                     });
                                   }
@@ -398,7 +398,7 @@ class BluetoothPageState extends State<BluetoothPage> {
                 height: 42,
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  localizedStrings.gBluetoothEmissionPower,
+                  (localizedStrings?.gBluetoothEmissionPower ?? "gBluetoothEmissionPower"),
                   overflow: TextOverflow.ellipsis,
                   style: getTextStyle(),
                 ),
@@ -455,7 +455,7 @@ class BluetoothPageState extends State<BluetoothPage> {
 
                         context,
                         btnHeight,
-                        localizedStrings.gModifyBluetoothEmission,
+                        (localizedStrings?.gModifyBluetoothEmission ?? "gModifyBluetoothEmission"),
                         isSetting || selScaleId == -1
                             ? null
                             : () {
@@ -490,7 +490,7 @@ class BluetoothPageState extends State<BluetoothPage> {
       _startTimer(15);
     } else {
       setState(() {
-        showTipInfo(localizedStrings.gTipDeviceNameEmpty, context);
+        showTipInfo((localizedStrings?.gTipDeviceNameEmpty ?? "gTipDeviceNameEmpty"), context);
       });
     }
   }
@@ -504,7 +504,7 @@ class BluetoothPageState extends State<BluetoothPage> {
     _timer = Timer(Duration(seconds: time), () {
       setState(() {
         isSetting = false;
-        showTipInfo(localizedStrings.gTipTimeOut, context);
+        showTipInfo((localizedStrings?.gTipTimeOut ?? "gTipTimeOut"), context);
       });
     });
   }

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/dialog/custom_dialog_tip.dart';
@@ -25,11 +25,11 @@ class LanguageSettingPageState extends State<LanguageSettingPage> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     localizedStrings = S.of(context);
-    if (localizedStrings.gLanguage == 'Chinese') {
+    if ((localizedStrings?.gLanguage ?? "gLanguage") == 'Chinese') {
       languageCtl.text = 'English';
-    } else if ((localizedStrings.gLanguage == 'Русский')) {
+    } else if (((localizedStrings?.gLanguage ?? "gLanguage") == 'Русский')) {
       languageCtl.text = 'Русский';
-    } else if (localizedStrings.gLanguage == '中文') {
+    } else if ((localizedStrings?.gLanguage ?? "gLanguage") == '中文') {
       languageCtl.text = '中文';
     } else {
       languageCtl.text = 'English';
@@ -71,7 +71,7 @@ class LanguageSettingPageState extends State<LanguageSettingPage> {
         child: Column(
           children: [
             ...getCustomDialogTitle(
-                context, localizedStrings.gTitleLanguageSetting),
+                context, (localizedStrings?.gTitleLanguageSetting ?? "gTitleLanguageSetting")),
             Expanded(
                 child: Container(
                     padding: EdgeInsets.all(40),
@@ -84,7 +84,7 @@ class LanguageSettingPageState extends State<LanguageSettingPage> {
                         SizedBox(
                           width: 400,
                           child: Text(
-                            localizedStrings.gTipSelectLanguage,
+                            (localizedStrings?.gTipSelectLanguage ?? "gTipSelectLanguage"),
                             textAlign: TextAlign.left,
                             style: Theme.of(context).textTheme.bodySmall!.apply(
                                   color:
@@ -107,7 +107,7 @@ class LanguageSettingPageState extends State<LanguageSettingPage> {
                             )),
                       ],
                     ))),
-            showTextButton(context, btnHeight, localizedStrings.gBtnConfirm,
+            showTextButton(context, btnHeight, (localizedStrings?.gBtnConfirm ?? "gBtnConfirm"),
                 () async {
               String value = languageCtl.text;
               SharedPreferences prefs = await SharedPreferences.getInstance();

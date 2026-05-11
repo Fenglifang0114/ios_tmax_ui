@@ -1,4 +1,4 @@
-// import 'dart:convert';
+﻿// import 'dart:convert';
 // import 'package:flutter/material.dart';
 // import 'package:t_max/data/modifyscale_data.dart';
 // import '../../data/device_data.dart';
@@ -108,10 +108,10 @@
 //           isSetting = false;
 //           myComScaleSn = event.obj;
 //           if (myComScaleSn.modelName != '') {
-//             serialPortConnect = localizedStrings.txt_serial_port_connected;
+//             serialPortConnect = (localizedStrings?.txt_serial_port_connected ?? "txt_serial_port_connected");
 //             myComScaleInfo.isOnline = true;
 //           } else {
-//             serialPortConnect = localizedStrings.txt_serial_port_connected_fail;
+//             serialPortConnect = (localizedStrings?.txt_serial_port_connected_fail ?? "txt_serial_port_connected_fail");
 //             myComScaleInfo.isOnline = false;
 //           }
 //         });
@@ -137,10 +137,10 @@
 //   Widget build(BuildContext context) {
 //     tempCurrentPort = myCurrentPort;
 
-//     refresh = localizedStrings.gTipRefreshPort;
+//     refresh = (localizedStrings?.gTipRefreshPort ?? "gTipRefreshPort");
 //     return AlertDialog(
 //       title: getDialogTitle(
-//           context, localizedStrings.gTitleSerialModify, Icons.usb, 400),
+//           context, (localizedStrings?.gTitleSerialModify ?? "gTitleSerialModify"), Icons.usb, 400),
 //       content: Container(
 //         height: 356,
 //         decoration:
@@ -155,7 +155,7 @@
 //                   crossAxisAlignment: CrossAxisAlignment.start,
 //                   children: [
 //                     const SizedBox(height: 15),
-//                     Text(localizedStrings.gSerialPort),
+//                     Text(localizedStrings?.gSerialPort ?? "gSerialPort"),
 //                     Container(
 //                       height: 53,
 //                       width: 200,
@@ -170,7 +170,7 @@
 //                           PublicFunctions.getPortList();
 //                           checkPortList();
 //                           comPort = newPosition.toString();
-//                           if (comPort != localizedStrings.gTipRefreshPort) {
+//                           if (comPort != (localizedStrings?.gTipRefreshPort ?? "gTipRefreshPort")) {
 //                             tempCurrentPort.devPath = comPort;
 //                           } else {
 //                             tempCurrentPort.devPath = '';
@@ -191,11 +191,11 @@
 //                       ),
 //                     ),
 //                     const SizedBox(height: 15),
-//                     Text(localizedStrings.gBaudRate),
+//                     Text(localizedStrings?.gBaudRate ?? "gBaudRate"),
 //                     ComPortDropdown(
 //                         3, baudRateList, myCurrentPort.baud.toString()),
 //                     const SizedBox(height: 15),
-//                     Text(localizedStrings.gDataBits),
+//                     Text(localizedStrings?.gDataBits ?? "gDataBits"),
 //                     ComPortDropdown(
 //                         1, dataBitsList, myCurrentPort.dataBits.toString()),
 //                   ],
@@ -205,7 +205,7 @@
 //                   crossAxisAlignment: CrossAxisAlignment.start,
 //                   children: [
 //                     const SizedBox(height: 106),
-//                     Text(localizedStrings.gSerialParity),
+//                     Text(localizedStrings?.gSerialParity ?? "gSerialParity"),
 //                     ComPortDropdown(
 //                         4,
 //                         checkBitsList,
@@ -217,7 +217,7 @@
 //                                     ? (checkBitsList[2])
 //                                     : checkBitsList[0]),
 //                     const SizedBox(height: 15),
-//                     Text(localizedStrings.gStopBits),
+//                     Text(localizedStrings?.gStopBits ?? "gStopBits"),
 //                     ComPortDropdown(
 //                         2,
 //                         stopBitsList,
@@ -260,7 +260,7 @@
 //               btnWidth: 120,
 //               btnHeight: 40,
 //               icon: Icons.arrow_forward_ios,
-//               text: localizedStrings.gBtnConnect,
+//               text: (localizedStrings?.gBtnConnect ?? "gBtnConnect"),
 //               onPressed: isSetting || comPort == refresh
 //                   ? null
 //                   : () {
@@ -280,7 +280,7 @@
 //               btnWidth: 120,
 //               btnHeight: 40,
 //               icon: Icons.exit_to_app,
-//               text: localizedStrings.gBtnExit,
+//               text: (localizedStrings?.gBtnExit ?? "gBtnExit"),
 //               onPressed: () {
 //                 myScreenMgr.isMainScreen = true;
 //                 Navigator.of(context).pop();

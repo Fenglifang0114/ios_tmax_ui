@@ -1,4 +1,4 @@
-//称重共用的重量显示界面 20250521
+﻿//称重共用的重量显示界面 20250521
 
 import 'dart:async';
 import 'package:flutter/material.dart';
@@ -134,12 +134,12 @@ class _ScaleWgtWidgetState extends State<ScaleWgtWidget> {
         : (mySettingParam.recMode == msgAuto)
             ? cstStableSave
             : cstManualSave;
-    dateformat = int.parse(mySettingParam.dateFormat);
-    zeroRange = double.tryParse(mySettingParam.zeroRange)!;
+    dateformat = (int.tryParse(mySettingParam.dateFormat) ?? 0);
+    zeroRange = (double.tryParse(mySettingParam.zeroRange) ?? 0.0);
     String timeString = (mySettingParam.stableTime == "")
         ? "0"
         : mySettingParam.stableTime.toString();
-    _stableSaveTime = int.parse(timeString);
+    _stableSaveTime = (int.tryParse(timeString) ?? 0);
     if (weightMode == cstStableSave) {
       _isSaveBtnEnable = false;
     } else {
@@ -192,12 +192,12 @@ class _ScaleWgtWidgetState extends State<ScaleWgtWidget> {
               : (mySettingParam.recMode == msgAuto)
                   ? cstStableSave
                   : cstManualSave;
-          dateformat = int.parse(mySettingParam.dateFormat);
-          zeroRange = double.tryParse(mySettingParam.zeroRange)!;
+          dateformat = (int.tryParse(mySettingParam.dateFormat) ?? 0);
+          zeroRange = (double.tryParse(mySettingParam.zeroRange) ?? 0.0);
           String timeString = (mySettingParam.stableTime == "")
               ? "0"
               : mySettingParam.stableTime.toString();
-          _stableSaveTime = int.parse(timeString);
+          _stableSaveTime = (int.tryParse(timeString) ?? 0);
           if (weightMode == cstStableSave) {
             _isSaveBtnEnable = false;
           } else {
@@ -211,7 +211,7 @@ class _ScaleWgtWidgetState extends State<ScaleWgtWidget> {
       if (mounted) {
         setState(() {
           currGetScaleRecords = event.obj;
-          if (currGetScaleRecords.weightRecords!.isNotEmpty) {
+          if ((currGetScaleRecords.weightRecords ?? []).isNotEmpty) {
             late Scale tempScale;
             for (var scale in myAllScalesList) {
               if (scale.scaleId == widget.scaleId) {
@@ -232,7 +232,7 @@ class _ScaleWgtWidgetState extends State<ScaleWgtWidget> {
                 maxRecId = maxId;
 
                 // 遍历 weightRecords 列表
-                for (var record in currGetScaleRecords.weightRecords!) {
+                for (var record in (currGetScaleRecords.weightRecords ?? [])) {
                   int currentId = int.parse(record.id!);
                   if (currentId > maxId) {
                     maxId = currentId;
@@ -300,12 +300,12 @@ class _ScaleWgtWidgetState extends State<ScaleWgtWidget> {
     // 判断是否为稳定保存模式且 _stableSaveTime 大于 0
     if (weightMode == cstStableSave && _stableSaveTime > 0) {
       // 检查是否经过 0 点
-      if (weightInfo!.isZero! && weightInfo!.isStable!) {
+      if ((weightInfo?.isZero ?? false) && (weightInfo?.isStable ?? false)) {
         _hasPassedZero = true;
       }
-      if (weightInfo!.isStable!) {
+      if ((weightInfo?.isStable ?? false)) {
         // 检查重量数据是否有效
-        final weightValue = double.tryParse(weightInfo!.weightVal!) ?? 0;
+        final weightValue = double.tryParse((weightInfo?.weightVal ?? "0")) ?? 0;
         if (weightValue > 0 && _hasPassedZero) {
           if (_stableTimer == null) {
             _currentStableDuration = 0;
@@ -337,8 +337,8 @@ class _ScaleWgtWidgetState extends State<ScaleWgtWidget> {
 
   // 保存重量数据
   void _saveWeightData() {
-    if (_hasPassedZero && weightInfo!.isStable!) {
-      final weightValue = double.tryParse(weightInfo!.weightVal!) ?? 0;
+    if (_hasPassedZero && (weightInfo?.isStable ?? false)) {
+      final weightValue = double.tryParse((weightInfo?.weightVal ?? "0")) ?? 0;
       if (weightValue > 0) {
         _changeSaveButton();
         _hasPassedZero = false; // 保存后重置经过 0 点标记
@@ -452,19 +452,19 @@ class _ScaleWgtWidgetState extends State<ScaleWgtWidget> {
                             children: [
                               _buildIconAndText(
                                 context,
-                                localizedStrings.iStable,
+                                (localizedStrings?.iStable ?? "iStable"),
                                 weightInfo?.isStable,
                                 1,
                               ),
                               _buildIconAndText(
                                 context,
-                                localizedStrings.iTextNet,
+                                (localizedStrings?.iTextNet ?? "iTextNet"),
                                 weightInfo?.isNet,
                                 2,
                               ),
                               _buildIconAndText(
                                 context,
-                                localizedStrings.iTextZero,
+                                (localizedStrings?.iTextZero ?? "iTextZero"),
                                 weightInfo?.isZero,
                                 3,
                               ),
@@ -479,7 +479,7 @@ class _ScaleWgtWidgetState extends State<ScaleWgtWidget> {
                             children: [
                               showPerformIconBtn(
                                   performTareSvgIcon(),
-                                  localizedStrings.gBtnTare,
+                                  (localizedStrings?.gBtnTare ?? "gBtnTare"),
                                   isStart
                                       ? () {
                                           PublicFunctions
@@ -492,7 +492,7 @@ class _ScaleWgtWidgetState extends State<ScaleWgtWidget> {
                               ),
                               showPerformIconBtn(
                                   performZeroSvgIcon(),
-                                  localizedStrings.iBtnZero,
+                                  (localizedStrings?.iBtnZero ?? "iBtnZero"),
                                   isStart
                                       ? () {
                                           PublicFunctions
@@ -506,7 +506,7 @@ class _ScaleWgtWidgetState extends State<ScaleWgtWidget> {
                                 ),
                               if (mySettingParam.wgtMode == 0)
                                 Tooltip(
-                                    message: localizedStrings.gBtnSave,
+                                    message: (localizedStrings?.gBtnSave ?? "gBtnSave"),
                                     child: IconButton(
                                         iconSize: 28,
                                         color: Theme.of(context)
@@ -537,7 +537,7 @@ class _ScaleWgtWidgetState extends State<ScaleWgtWidget> {
                                         ),
                                         onPressed: isStart &&
                                                 _isSaveBtnEnable &&
-                                                weightInfo!.isStable!
+                                                (weightInfo?.isStable ?? false)
                                             ? () {
                                                 _changeSaveButton();
                                               }
@@ -548,7 +548,7 @@ class _ScaleWgtWidgetState extends State<ScaleWgtWidget> {
                                             28,
                                             isStart &&
                                                     _isSaveBtnEnable &&
-                                                    weightInfo!.isStable!
+                                                    (weightInfo?.isStable ?? false)
                                                 ? Theme.of(context)
                                                     .colorScheme
                                                     .onPrimary
@@ -693,7 +693,7 @@ class _ScaleWgtWidgetState extends State<ScaleWgtWidget> {
 
       (tempPlu.limitLow == null) ? "" : tempPlu.limitLow.toString(),
 
-      (weightInfo!.weightVal == '---------') ? (" ") : (weightInfo!.weightVal!),
+      (weightInfo!.weightVal == '---------') ? (" ") : ((weightInfo?.weightVal ?? "0")),
       (weightInfo?.weightUnit == '----') ? (" ") : (weightInfo!.weightUnit!),
       mySysUser.userName ?? "",
       mySysUser.nickName ?? "",

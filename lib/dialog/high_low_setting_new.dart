@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:t_max/data/high_low_weight.dart';
 import 'package:t_max/dialog/custom_dialog_tip.dart';
@@ -43,7 +43,7 @@ import '../data/language.dart';
 //           child: Row(
 //             children: [
 //               Icon(Icons.edit, color: Theme.of(context).colorScheme.onPrimary),
-//               Text(localizedStrings.iTitleHLSetting,
+//               Text((localizedStrings?.iTitleHLSetting ?? "iTitleHLSetting"),
 //                   style:
 //                       TextStyle(color: Theme.of(context).colorScheme.onPrimary))
 //             ],
@@ -147,7 +147,7 @@ import '../data/language.dart';
 //                       const SizedBox(
 //                         height: 20,
 //                       ),
-//                       Text(localizedStrings.iTipHLUnit,
+//                       Text((localizedStrings?.iTipHLUnit ?? "iTipHLUnit"),
 //                           textAlign: TextAlign.right),
 //                       const SizedBox(
 //                         height: 30,
@@ -190,7 +190,7 @@ import '../data/language.dart';
 //                 btnWidth: 120,
 //                 btnHeight: 40,
 //                 icon: Icons.check_circle,
-//                 text: localizedStrings.gBtnConfirm,
+//                 text: (localizedStrings?.gBtnConfirm ?? "gBtnConfirm"),
 //                 onPressed: () {
 //                   Navigator.of(context).pop(myHighLowWeight);
 //                 }),
@@ -199,7 +199,7 @@ import '../data/language.dart';
 //                 btnWidth: 120,
 //                 btnHeight: 40,
 //                 icon: Icons.cancel,
-//                 text: localizedStrings.gBtnCancel,
+//                 text: (localizedStrings?.gBtnCancel ?? "gBtnCancel"),
 //                 onPressed: () {
 //                   Navigator.of(context).pop();
 //                 })
@@ -255,7 +255,7 @@ class NewHighLowSettingDialogState extends State<NewHighLowSettingDialog> {
             // 头部
             ...dialogHeadStyle(
               context,
-              localizedStrings.iTitleHLSetting,
+              (localizedStrings?.iTitleHLSetting ?? "iTitleHLSetting"),
               true,
             ),
 
@@ -384,7 +384,7 @@ class NewHighLowSettingDialogState extends State<NewHighLowSettingDialog> {
                                 height: 42,
                                 width: 430,
                                 child: Text(
-                                  localizedStrings.iTipHLUnit,
+                                  (localizedStrings?.iTipHLUnit ?? "iTipHLUnit"),
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodyMedium!
@@ -429,13 +429,13 @@ class NewHighLowSettingDialogState extends State<NewHighLowSettingDialog> {
                         if (myHighLowWeight.highValue <
                             myHighLowWeight.lowValue) {
                           showTipInfo(
-                              localizedStrings.gTipInvalidInput, context);
+                              (localizedStrings?.gTipInvalidInput ?? "gTipInvalidInput"), context);
                           return;
                         }
                         Navigator.of(context).pop(myHighLowWeight);
                       },
                       child: Text(
-                        localizedStrings.gBtnConfirm,
+                        (localizedStrings?.gBtnConfirm ?? "gBtnConfirm"),
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.normal,
@@ -463,7 +463,7 @@ class NewHighLowSettingDialogState extends State<NewHighLowSettingDialog> {
                         Navigator.pop(context);
                       },
                       child: Text(
-                        localizedStrings.gBtnCancel,
+                        (localizedStrings?.gBtnCancel ?? "gBtnCancel"),
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.normal,

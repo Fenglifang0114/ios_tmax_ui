@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import '../data/company_info.dart';
 import '../data/language.dart';
 import '../data/timer_manager.dart';
@@ -165,7 +165,7 @@ class _SystemSettingPageState extends State<SystemSettingPage> {
             padding:
                 const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
             children: [
-              functionTitle(localizedStrings.gSystemSetting, Icons.settings),
+              functionTitle((localizedStrings?.gSystemSetting ?? "gSystemSetting"), Icons.settings),
               const SizedBox(
                 height: 10,
               ),
@@ -176,7 +176,7 @@ class _SystemSettingPageState extends State<SystemSettingPage> {
                     setLanguageDialog(context);
                   },
                   child: settingCard(
-                      localizedStrings.gTitleSetLanguage, Icons.language),
+                      (localizedStrings?.gTitleSetLanguage ?? "gTitleSetLanguage"), Icons.language),
                 ),
               ),
               const SizedBox(
@@ -189,7 +189,7 @@ class _SystemSettingPageState extends State<SystemSettingPage> {
                     showLicenseDialog(context);
                   },
                   child: settingCard(
-                    localizedStrings.gTitleLicenseInfo,
+                    (localizedStrings?.gTitleLicenseInfo ?? "gTitleLicenseInfo"),
                     Icons.key,
                   ),
                 ),
@@ -206,7 +206,7 @@ class _SystemSettingPageState extends State<SystemSettingPage> {
                     });
                   },
                   child: settingCard(
-                    localizedStrings.gTitleGetBuildInfo,
+                    (localizedStrings?.gTitleGetBuildInfo ?? "gTitleGetBuildInfo"),
                     Icons.privacy_tip,
                   ),
                 ),

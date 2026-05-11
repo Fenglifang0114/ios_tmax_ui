@@ -1,4 +1,4 @@
-import 'dart:convert';
+﻿import 'dart:convert';
 import 'dart:io';
 import 'package:data_table_2/data_table_2.dart';
 import 'package:file_picker/file_picker.dart';
@@ -91,7 +91,7 @@ class CalibrationSealPageState extends State<CalibrationSealPage> {
         PublicFunctions.checkSerialPort(selScaleId);
 
         if (dataStr.contains('fail') || dataStr.contains('time out')) {
-          showTipInfo(localizedStrings.checkSealFailed, context);
+          showTipInfo((localizedStrings?.checkSealFailed ?? "checkSealFailed"), context);
           setState(() {
             softSealStatus = "";
             hardSealStatus = "";
@@ -119,8 +119,8 @@ class CalibrationSealPageState extends State<CalibrationSealPage> {
             barrierDismissible: false, // 点击对话框外部不关闭对话框
             builder: (BuildContext context) {
               return ShowSealTipDialog(
-                title: localizedStrings.fTipTitle,
-                msg: localizedStrings.softwareSealAppliedFailed,
+                title: (localizedStrings?.fTipTitle ?? "fTipTitle"),
+                msg: (localizedStrings?.softwareSealAppliedFailed ?? "softwareSealAppliedFailed"),
                 iconPath: failedSvgIcon(),
                 iconColor: Theme.of(context).colorScheme.error,
               );
@@ -132,8 +132,8 @@ class CalibrationSealPageState extends State<CalibrationSealPage> {
             barrierDismissible: false, // 点击对话框外部不关闭对话框
             builder: (BuildContext context) {
               return ShowSealTipDialog(
-                title: localizedStrings.fTipTitle,
-                msg: localizedStrings.softwareSealAppliedSuccessfully,
+                title: (localizedStrings?.fTipTitle ?? "fTipTitle"),
+                msg: (localizedStrings?.softwareSealAppliedSuccessfully ?? "softwareSealAppliedSuccessfully"),
                 iconPath: sealOkSvgIcon(),
                 iconColor: Theme.of(context).colorScheme.onTertiaryFixedVariant,
               );
@@ -158,8 +158,8 @@ class CalibrationSealPageState extends State<CalibrationSealPage> {
             barrierDismissible: false, // 点击对话框外部不关闭对话框
             builder: (BuildContext context) {
               return ShowUnsealFailedDialog(
-                title: localizedStrings.fTipTitle,
-                msg: localizedStrings.softwareSealRemovalFailed,
+                title: (localizedStrings?.fTipTitle ?? "fTipTitle"),
+                msg: (localizedStrings?.softwareSealRemovalFailed ?? "softwareSealRemovalFailed"),
                 iconPath: failedSvgIcon(),
                 iconColor: Theme.of(context).colorScheme.error,
               );
@@ -172,8 +172,8 @@ class CalibrationSealPageState extends State<CalibrationSealPage> {
               barrierDismissible: false, // 点击对话框外部不关闭对话框
               builder: (BuildContext context) {
                 return ShowSealTipDialog(
-                  title: localizedStrings.fTipTitle,
-                  msg: localizedStrings.softwareSealRemovedSuccessfully,
+                  title: (localizedStrings?.fTipTitle ?? "fTipTitle"),
+                  msg: (localizedStrings?.softwareSealRemovedSuccessfully ?? "softwareSealRemovedSuccessfully"),
                   iconPath: unlockOkSvgIcon(),
                   iconColor:
                       Theme.of(context).colorScheme.onTertiaryFixedVariant,
@@ -230,7 +230,7 @@ class CalibrationSealPageState extends State<CalibrationSealPage> {
         }
 
         if (dataStr.contains('fail')) {
-          showTipInfo(localizedStrings.removeSealFailed, context);
+          showTipInfo((localizedStrings?.removeSealFailed ?? "removeSealFailed"), context);
           return;
         } else {
           PublicFunctions.getSealStatus(selScaleId);
@@ -244,10 +244,10 @@ class CalibrationSealPageState extends State<CalibrationSealPage> {
     // 在页面构建完成后显示提示
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (myAllScalesList.isEmpty) {
-        showTipInfo(localizedStrings.gTipNoDeviceAddFirst, context);
+        showTipInfo((localizedStrings?.gTipNoDeviceAddFirst ?? "gTipNoDeviceAddFirst"), context);
       } else {
         if (selScaleId == -1) {
-          showTipInfo(localizedStrings.gTipSelectDeviceFirst, context);
+          showTipInfo((localizedStrings?.gTipSelectDeviceFirst ?? "gTipSelectDeviceFirst"), context);
         }
       }
     });
@@ -303,7 +303,7 @@ class CalibrationSealPageState extends State<CalibrationSealPage> {
                             clickScale: (scale) {
                               if (!enabledGetInfo) {
                                 showTipInfo(
-                                    localizedStrings.gTipPerformingOperation,
+                                    (localizedStrings?.gTipPerformingOperation ?? "gTipPerformingOperation"),
                                     context);
                                 return;
                               }
@@ -537,7 +537,7 @@ class CalibrationSealPageState extends State<CalibrationSealPage> {
                                       child: showTextButton(
                                           context,
                                           btnHeight,
-                                          localizedStrings.checkSeal,
+                                          (localizedStrings?.checkSeal ?? "checkSeal"),
                                           enabledGetInfo
                                               ? () {
                                                   if (selScaleId == -1) {
@@ -569,7 +569,7 @@ class CalibrationSealPageState extends State<CalibrationSealPage> {
                                       child: showTextButton(
                                           context,
                                           btnHeight,
-                                          localizedStrings.applySoftwareSeal,
+                                          (localizedStrings?.applySoftwareSeal ?? "applySoftwareSeal"),
                                           softSealStatus == "false" &&
                                                   enabledGetInfo
                                               ? () {
@@ -600,7 +600,7 @@ class CalibrationSealPageState extends State<CalibrationSealPage> {
                                       child: showTextButton(
                                           context,
                                           btnHeight,
-                                          localizedStrings.removeSoftwareSeal,
+                                          (localizedStrings?.removeSoftwareSeal ?? "removeSoftwareSeal"),
                                           softSealStatus == "true" &&
                                                   enabledGetInfo
                                               ? () {
@@ -649,7 +649,7 @@ class CalibrationSealPageState extends State<CalibrationSealPage> {
                               columns: [
                                 DataColumn2(
                                   label: Text(
-                                    localizedStrings.fTipOperation,
+                                    (localizedStrings?.fTipOperation ?? "fTipOperation"),
                                     style:
                                         Theme.of(context).textTheme.bodySmall,
                                     overflow: TextOverflow.ellipsis,
@@ -668,7 +668,7 @@ class CalibrationSealPageState extends State<CalibrationSealPage> {
                                 ),
                                 DataColumn2(
                                   label: Text(
-                                    localizedStrings.operator,
+                                    (localizedStrings?.operator ?? "operator"),
                                     style:
                                         Theme.of(context).textTheme.bodySmall,
                                     overflow: TextOverflow.ellipsis,
@@ -686,7 +686,7 @@ class CalibrationSealPageState extends State<CalibrationSealPage> {
                                 ),
                                 DataColumn2(
                                   label: Text(
-                                    localizedStrings.fCreatedAtCol,
+                                    (localizedStrings?.fCreatedAtCol ?? "fCreatedAtCol"),
                                     style:
                                         Theme.of(context).textTheme.bodySmall,
                                     overflow: TextOverflow.ellipsis,
@@ -711,8 +711,8 @@ class CalibrationSealPageState extends State<CalibrationSealPage> {
                                     DataCell(
                                       Text(
                                         seallog.operation! == "seal"
-                                            ? localizedStrings.fTipSeal
-                                            : localizedStrings.fTipUnseal,
+                                            ? (localizedStrings?.fTipSeal ?? "fTipSeal")
+                                            : (localizedStrings?.fTipUnseal ?? "fTipUnseal"),
                                         style: Theme.of(context)
                                             .textTheme
                                             .bodySmall!
@@ -749,7 +749,7 @@ class CalibrationSealPageState extends State<CalibrationSealPage> {
 
   String getSealCode() {
     if (myConfigCode.isEmpty) {
-      showTipInfo(localizedStrings.reAcquireAuthCode, context);
+      showTipInfo((localizedStrings?.reAcquireAuthCode ?? "reAcquireAuthCode"), context);
       return "";
     } else {
       String code = myConfigCode;
@@ -907,7 +907,7 @@ class ShowSealTipDialogState extends State<ShowSealTipDialog> {
                       Navigator.pop(context, true);
                     },
                     child: Text(
-                      localizedStrings.gBtnConfirm,
+                      (localizedStrings?.gBtnConfirm ?? "gBtnConfirm"),
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.normal,
@@ -1013,7 +1013,7 @@ class ShowUnsealFailedDialogState extends State<ShowUnsealFailedDialog> {
                       Navigator.pop(context, true);
                     },
                     child: Text(
-                      localizedStrings.removeWithCode,
+                      (localizedStrings?.removeWithCode ?? "removeWithCode"),
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.normal,
@@ -1042,7 +1042,7 @@ class ShowUnsealFailedDialogState extends State<ShowUnsealFailedDialog> {
                         Navigator.pop(context, false);
                       },
                       child: Text(
-                        localizedStrings.gBtnCancel,
+                        (localizedStrings?.gBtnCancel ?? "gBtnCancel"),
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.normal,
@@ -1085,10 +1085,10 @@ class ShowUnSealOnceDialogState extends State<ShowUnSealOnceDialog> {
         String dataStr = event.obj;
 
         if (dataStr.contains('invalid')) {
-          showTipInfo(localizedStrings.invalidData, context);
+          showTipInfo((localizedStrings?.invalidData ?? "invalidData"), context);
           return;
         } else if (dataStr.contains('expired')) {
-          showTipInfo(localizedStrings.dataExpired, context);
+          showTipInfo((localizedStrings?.dataExpired ?? "dataExpired"), context);
           return;
         }
 
@@ -1121,7 +1121,7 @@ class ShowUnSealOnceDialogState extends State<ShowUnSealOnceDialog> {
         child: Column(
           children: [
             // 头部
-            ...dialogHeadStyle(context, localizedStrings.removeWithCode, true,
+            ...dialogHeadStyle(context, (localizedStrings?.removeWithCode ?? "removeWithCode"), true,
                 onClose: () {
               Navigator.pop(context, false);
             }),
@@ -1138,11 +1138,11 @@ class ShowUnSealOnceDialogState extends State<ShowUnSealOnceDialog> {
                     children: [
                       Expanded(
                         child: showInputBox(context, fileCtl,
-                            localizedStrings.removeWithCode, (value) {}, false),
+                            (localizedStrings?.removeWithCode ?? "removeWithCode"), (value) {}, false),
                       ),
                       SizedBox(width: 10),
                       showTextButton(
-                          context, btnHeight, localizedStrings.gBtnSelectFile,
+                          context, btnHeight, (localizedStrings?.gBtnSelectFile ?? "gBtnSelectFile"),
                           () async {
                         // 开始选择文件时，将状态设置为忙碌
                         if (isFilePickerBusy) {
@@ -1183,7 +1183,7 @@ class ShowUnSealOnceDialogState extends State<ShowUnSealOnceDialog> {
                     padding: const EdgeInsets.only(top: 10),
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      localizedStrings.contactSupplierForRemovalCode,
+                      (localizedStrings?.contactSupplierForRemovalCode ?? "contactSupplierForRemovalCode"),
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.normal,
@@ -1232,7 +1232,7 @@ class ShowUnSealOnceDialogState extends State<ShowUnSealOnceDialog> {
                           }
                         : null,
                     child: Text(
-                      localizedStrings.removeWithCode,
+                      (localizedStrings?.removeWithCode ?? "removeWithCode"),
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.normal,
@@ -1261,7 +1261,7 @@ class ShowUnSealOnceDialogState extends State<ShowUnSealOnceDialog> {
                         Navigator.pop(context, false);
                       },
                       child: Text(
-                        localizedStrings.gBtnCancel,
+                        (localizedStrings?.gBtnCancel ?? "gBtnCancel"),
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.normal,

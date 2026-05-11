@@ -1,4 +1,4 @@
-// ignore_for_file: invalid_use_of_protected_member
+﻿// ignore_for_file: invalid_use_of_protected_member
 part of 'multi_scale_management_page.dart';
 
 extension MultiScaleManagementListExt on MultiScaleManagementState {
@@ -25,7 +25,7 @@ extension MultiScaleManagementListExt on MultiScaleManagementState {
                       });
                     },
                   ),
-                  Text(localizedStrings.button_back),
+                  Text(localizedStrings?.button_back ?? "button_back"),
                   Spacer(),
                   IconButton(
                     icon: Icon(Icons.delete_outline, color: Theme.of(context).colorScheme.error),
@@ -142,7 +142,7 @@ extension MultiScaleManagementListExt on MultiScaleManagementState {
                           }
                         });
                       },
-                localizedStrings.gBtnAdd,
+                (localizedStrings?.gBtnAdd ?? "gBtnAdd"),
                 btnHeight,
                 Theme.of(context).colorScheme.primary,
                 Theme.of(context).colorScheme.onPrimary,
@@ -168,7 +168,7 @@ extension MultiScaleManagementListExt on MultiScaleManagementState {
                           delScale();
                         });
                       },
-                localizedStrings.gBtnDelete,
+                (localizedStrings?.gBtnDelete ?? "gBtnDelete"),
                 btnHeight,
                 Theme.of(context).colorScheme.error,
                 Theme.of(context).colorScheme.onPrimary,
@@ -380,8 +380,8 @@ extension MultiScaleManagementListExt on MultiScaleManagementState {
                                 ),
                                 Text(
                                   scale.isOnline
-                                      ? localizedStrings.gTipOnline
-                                      : localizedStrings.gTipOffline,
+                                      ? (localizedStrings?.gTipOnline ?? "gTipOnline")
+                                      : (localizedStrings?.gTipOffline ?? "gTipOffline"),
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodySmall!

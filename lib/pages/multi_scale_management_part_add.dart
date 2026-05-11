@@ -1,4 +1,4 @@
-// ignore_for_file: invalid_use_of_protected_member
+﻿// ignore_for_file: invalid_use_of_protected_member
 part of 'multi_scale_management_page.dart';
 
 extension MultiScaleManagementAddExt on MultiScaleManagementState {
@@ -12,8 +12,8 @@ extension MultiScaleManagementAddExt on MultiScaleManagementState {
               child: subTitleInfo(
                   context,
                   maxWidth - headWidthPadding,
-                  localizedStrings.gBtnAdd,
-                  localizedStrings.gTipScaleMgrPageHelp),
+                  (localizedStrings?.gBtnAdd ?? "gBtnAdd"),
+                  (localizedStrings?.gTipScaleMgrPageHelp ?? "gTipScaleMgrPageHelp")),
             ),
             if (!isBtSearching)
               TextButton(
@@ -26,7 +26,7 @@ extension MultiScaleManagementAddExt on MultiScaleManagementState {
                     isBtSearching = true;
                   });
                 },
-                child: Text(localizedStrings.gMsgRefresh,
+                child: Text((localizedStrings?.gMsgRefresh ?? "gMsgRefresh"),
                     style: Theme.of(context).textTheme.bodySmall!.apply(
                           color: Theme.of(context).colorScheme.primary,
                         )),
@@ -35,7 +35,7 @@ extension MultiScaleManagementAddExt on MultiScaleManagementState {
         ),
       if (addScaleType != "bt")
         subTitleInfo(context, maxWidth - headWidthPadding,
-            localizedStrings.gBtnAdd, localizedStrings.gTipScaleMgrPageHelp),
+            (localizedStrings?.gBtnAdd ?? "gBtnAdd"), (localizedStrings?.gTipScaleMgrPageHelp ?? "gTipScaleMgrPageHelp")),
       Expanded(
         child: addScaleType == "com"
             ? showAddComScaleInfo()
@@ -53,7 +53,7 @@ extension MultiScaleManagementAddExt on MultiScaleManagementState {
           height: regularPadding,
         ),
         buildItemInfo(
-            showItemNameWithStar(context, localizedStrings.gSerialPort, false),
+            showItemNameWithStar(context, (localizedStrings?.gSerialPort ?? "gSerialPort"), false),
             showDropDownButton(
               context,
               "",
@@ -77,7 +77,7 @@ extension MultiScaleManagementAddExt on MultiScaleManagementState {
                 }
               },
             ),
-            showItemNameWithStar(context, localizedStrings.gBaudRate, false),
+            showItemNameWithStar(context, (localizedStrings?.gBaudRate ?? "gBaudRate"), false),
             showDropDownButton(context, '', baudRateCtl, baudRateList, (value) {
               setState(() {
                 if (baudRateList.contains(value)) {
@@ -87,7 +87,7 @@ extension MultiScaleManagementAddExt on MultiScaleManagementState {
             })),
         buildItemInfo(
             showItemNameWithStar(
-                context, localizedStrings.gSerialParity, false),
+                context, (localizedStrings?.gSerialParity ?? "gSerialParity"), false),
             showDropDownButton(context, '', protocolCtl, checkBitsList,
                 (value) {
               setState(() {
@@ -96,7 +96,7 @@ extension MultiScaleManagementAddExt on MultiScaleManagementState {
                 }
               });
             }),
-            showItemNameWithStar(context, localizedStrings.gStopBits, false),
+            showItemNameWithStar(context, (localizedStrings?.gStopBits ?? "gStopBits"), false),
             showDropDownButton(context, '', stopBitCtl, stopBitsList, (value) {
               setState(() {
                 if (stopBitsList.contains(value)) {
@@ -105,7 +105,7 @@ extension MultiScaleManagementAddExt on MultiScaleManagementState {
               });
             })),
         buildItemInfo(
-          showItemNameWithStar(context, localizedStrings.gDataBits, false),
+          showItemNameWithStar(context, (localizedStrings?.gDataBits ?? "gDataBits"), false),
           showDropDownButton(context, '', dataBitCtl, dataBitsList, (value) {
             setState(() {
               if (dataBitsList.contains(value)) {
@@ -113,7 +113,7 @@ extension MultiScaleManagementAddExt on MultiScaleManagementState {
               }
             });
           }),
-          showItemNameWithStar(context, localizedStrings.commonApp, false),
+          showItemNameWithStar(context, (localizedStrings?.commonApp ?? "commonApp"), false),
           Container(
             width: inputWidth,
             alignment: Alignment.centerLeft,
@@ -139,7 +139,7 @@ extension MultiScaleManagementAddExt on MultiScaleManagementState {
             showTextButton(
                 context,
                 btnHeight,
-                localizedStrings.gBtnConfirm,
+                (localizedStrings?.gBtnConfirm ?? "gBtnConfirm"),
                 comPortCtl.text.isNotEmpty
                     ? () {
                         for (var scale in myAllScalesList) {
@@ -148,7 +148,7 @@ extension MultiScaleManagementAddExt on MultiScaleManagementState {
                                 scale.mediaConfig as SerialMediaConfig;
                             if (serialConfig.devPath == comPortCtl.text) {
                               showTipInfo(
-                                  localizedStrings.gTipPortInUsed +
+                                  (localizedStrings?.gTipPortInUsed ?? "gTipPortInUsed") +
                                       scale.scaleName,
                                   context);
                               return;
@@ -166,7 +166,7 @@ extension MultiScaleManagementAddExt on MultiScaleManagementState {
                 Theme.of(context).colorScheme.primary,
                 Theme.of(context).colorScheme.onPrimary),
             const SizedBox(width: regularPadding),
-            showTextButton(context, btnHeight, localizedStrings.gBtnCancel, () {
+            showTextButton(context, btnHeight, (localizedStrings?.gBtnCancel ?? "gBtnCancel"), () {
               setState(() {
                 isAddScale = false;
                 isRename = false;
@@ -202,7 +202,7 @@ extension MultiScaleManagementAddExt on MultiScaleManagementState {
           const SizedBox(height: 40),
           Center(
             child: Text(
-              localizedStrings.gSearchingBtDevices,
+              (localizedStrings?.gSearchingBtDevices ?? "gSearchingBtDevices"),
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -217,7 +217,7 @@ extension MultiScaleManagementAddExt on MultiScaleManagementState {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                showTextButton(context, btnHeight, localizedStrings.gBtnCancel,
+                showTextButton(context, btnHeight, (localizedStrings?.gBtnCancel ?? "gBtnCancel"),
                     () {
                   setState(() {
                     isBtSearching = false;
@@ -249,12 +249,12 @@ extension MultiScaleManagementAddExt on MultiScaleManagementState {
                         ),
                         const SizedBox(height: 16),
                         Text(
-                          localizedStrings.noBluetoothDevicesFound,
+                          (localizedStrings?.noBluetoothDevicesFound ?? "noBluetoothDevicesFound"),
                           style: Theme.of(context).textTheme.bodyMedium,
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          localizedStrings.ensureBluetoothIsEnabled,
+                          (localizedStrings?.ensureBluetoothIsEnabled ?? "ensureBluetoothIsEnabled"),
                           style: Theme.of(context).textTheme.bodyMedium,
                         ),
                       ],
@@ -287,7 +287,7 @@ extension MultiScaleManagementAddExt on MultiScaleManagementState {
                 showTextButton(
                     context,
                     btnHeight,
-                    localizedStrings.gBtnConfirm,
+                    (localizedStrings?.gBtnConfirm ?? "gBtnConfirm"),
                     selectBtInfo.mac != null
                         ? () {
                             isAddScale = false;
@@ -301,7 +301,7 @@ extension MultiScaleManagementAddExt on MultiScaleManagementState {
                     Theme.of(context).colorScheme.onPrimary,
                     Theme.of(context).colorScheme.primary,
                     Theme.of(context).colorScheme.onPrimary),
-                showTextButton(context, btnHeight, localizedStrings.gBtnCancel,
+                showTextButton(context, btnHeight, (localizedStrings?.gBtnCancel ?? "gBtnCancel"),
                     () {
                   setState(() {
                     isAddScale = false;
@@ -343,7 +343,7 @@ extension MultiScaleManagementAddExt on MultiScaleManagementState {
               SizedBox(
                 width: 300,
                 child: showTextButton(context, btnHeight,
-                    localizedStrings.startSearchBluetoothDevices, () {
+                    (localizedStrings?.startSearchBluetoothDevices ?? "startSearchBluetoothDevices"), () {
                   debugPrint("BT: 点击开始搜索");
                   PublicFunctions.getBtList();
                   setState(() {
@@ -362,7 +362,7 @@ extension MultiScaleManagementAddExt on MultiScaleManagementState {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                showTextButton(context, btnHeight, localizedStrings.gBtnCancel,
+                showTextButton(context, btnHeight, (localizedStrings?.gBtnCancel ?? "gBtnCancel"),
                     () {
                   setState(() {
                     isAddScale = false;
@@ -390,11 +390,11 @@ extension MultiScaleManagementAddExt on MultiScaleManagementState {
           height: regularPadding,
         ),
         buildItemInfo(
-            showItemNameWithStar(context, localizedStrings.gIpAddress, false),
+            showItemNameWithStar(context, (localizedStrings?.gIpAddress ?? "gIpAddress"), false),
             showInputBox(context, ipCtl, '', (value) {
               setState(() {});
             }, true),
-            showItemNameWithStar(context, localizedStrings.gTipPort, false),
+            showItemNameWithStar(context, (localizedStrings?.gTipPort ?? "gTipPort"), false),
             Container(
               height: inputHeight,
               padding: const EdgeInsets.only(left: 16, right: 20),
@@ -444,7 +444,7 @@ extension MultiScaleManagementAddExt on MultiScaleManagementState {
             showTextButton(
                 context,
                 btnHeight,
-                localizedStrings.gBtnConfirm,
+                (localizedStrings?.gBtnConfirm ?? "gBtnConfirm"),
                 portCtl.text.isNotEmpty && _isValidIP
                     ? () {
                         isAddScale = false;
@@ -458,7 +458,7 @@ extension MultiScaleManagementAddExt on MultiScaleManagementState {
                 Theme.of(context).colorScheme.primary,
                 Theme.of(context).colorScheme.onPrimary),
             const SizedBox(width: regularPadding),
-            showTextButton(context, btnHeight, localizedStrings.gBtnCancel, () {
+            showTextButton(context, btnHeight, (localizedStrings?.gBtnCancel ?? "gBtnCancel"), () {
               setState(() {
                 isAddScale = false;
                 isRename = false;

@@ -101,6 +101,7 @@ dependencies:
   fast_gbk: ^1.0.0
   flutter_blue_plus: ^1.31.0
   permission_handler: ^11.3.1
+  path_provider: ^2.1.0
 
 dev_dependencies:
   flutter_test:

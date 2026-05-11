@@ -1,4 +1,4 @@
-//显示认证结果
+﻿//显示认证结果
 import 'package:flutter/material.dart';
 import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/data/language.dart';
@@ -30,23 +30,23 @@ class ShowLicenseResDialogState extends State<ShowLicenseResDialog> {
 
     switch (name) {
       case tConfigLic:
-        return localizedStrings.gTipAllConfigFunctions;
+        return (localizedStrings?.gTipAllConfigFunctions ?? "gTipAllConfigFunctions");
       case redeLic:
-        return localizedStrings.menuReceiptDesign;
+        return (localizedStrings?.menuReceiptDesign ?? "menuReceiptDesign");
       case wedaLic:
-        return localizedStrings.menuWeighingDataCollection;
+        return (localizedStrings?.menuWeighingDataCollection ?? "menuWeighingDataCollection");
       case chweLic:
-        return localizedStrings.menuCheckWeighing;
+        return (localizedStrings?.menuCheckWeighing ?? "menuCheckWeighing");
       case inweLic:
-        return localizedStrings.menuIncrementWeighing;
+        return (localizedStrings?.menuIncrementWeighing ?? "menuIncrementWeighing");
       case taouLic:
-        return localizedStrings.menuTakeOutScale;
+        return (localizedStrings?.menuTakeOutScale ?? "menuTakeOutScale");
       case faspLic:
-        return localizedStrings.menuFlowRate;
+        return (localizedStrings?.menuFlowRate ?? "menuFlowRate");
       case foscLic:
-        return localizedStrings.menuFormula;
+        return (localizedStrings?.menuFormula ?? "menuFormula");
       case ladeLic:
-        return localizedStrings.menuLabelDesign;
+        return (localizedStrings?.menuLabelDesign ?? "menuLabelDesign");
       default:
         return res;
     }
@@ -67,7 +67,7 @@ class ShowLicenseResDialogState extends State<ShowLicenseResDialog> {
             height: regularPadding,
           ),
           Text(
-            localizedStrings.gTipActivationFileError,
+            (localizedStrings?.gTipActivationFileError ?? "gTipActivationFileError"),
             style: Theme.of(context)
                 .textTheme
                 .bodySmall!
@@ -93,7 +93,7 @@ class ShowLicenseResDialogState extends State<ShowLicenseResDialog> {
           children: [
             ...dialogHeadStyle(
               context,
-              localizedStrings.gTitleActivationFeedback,
+              (localizedStrings?.gTitleActivationFeedback ?? "gTitleActivationFeedback"),
               true,
             ),
             Expanded(
@@ -147,7 +147,7 @@ class ShowLicenseResDialogState extends State<ShowLicenseResDialog> {
                                         alignment: Alignment.centerRight,
                                         child: Text(
                                           info.date == '2299-01-01'
-                                              ? localizedStrings.gTipPerpetual
+                                              ? (localizedStrings?.gTipPerpetual ?? "gTipPerpetual")
                                               : '${info.date} ${info.desp}',
                                           style: Theme.of(context)
                                               .textTheme
@@ -209,7 +209,7 @@ class ShowLicenseResDialogState extends State<ShowLicenseResDialog> {
                           Navigator.pop(context);
                         },
                         child: Text(
-                          localizedStrings.gBtnConfirm,
+                          (localizedStrings?.gBtnConfirm ?? "gBtnConfirm"),
                           style: Theme.of(context).textTheme.bodyMedium!.apply(
                               color: Theme.of(context).colorScheme.onPrimary),
                           overflow: TextOverflow.ellipsis,

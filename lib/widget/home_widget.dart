@@ -1,4 +1,4 @@
-// 修改 MenuItem 以支持选中状态和点击回调
+﻿// 修改 MenuItem 以支持选中状态和点击回调
 import 'dart:async';
 import 'dart:io';
 
@@ -239,7 +239,7 @@ class _WindowButtonsState extends State<WindowButtons> with WindowListener {
             barrierDismissible: false, // 允许点击空白处关闭对话框
             builder: (context) {
               return CustomAlertDialog(
-                titleText: localizedStrings.gTipExitApp,
+                titleText: (localizedStrings?.gTipExitApp ?? "gTipExitApp"),
                 onNoPressed: () {
                   Navigator.of(context).pop();
                 },

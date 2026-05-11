@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:t_max/functions/methods.dart';
 
 import '../data/downloadresponse.dart';
@@ -48,7 +48,7 @@ class GetBuildInfoPageState extends State<GetBuildInfoPage> {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: getDialogTitle(
-          context, localizedStrings.gTitleGetBuildInfo, Icons.privacy_tip, 400),
+          context, (localizedStrings?.gTitleGetBuildInfo ?? "gTitleGetBuildInfo"), Icons.privacy_tip, 400),
       content: Container(
         height: 300,
         decoration:
@@ -79,7 +79,7 @@ class GetBuildInfoPageState extends State<GetBuildInfoPage> {
                     width: 400,
                     height: 60,
                     child: Text(
-                      localizedStrings.gBuildInfoTip,
+                      (localizedStrings?.gBuildInfoTip ?? "gBuildInfoTip"),
                       style: TextStyle(
                           color: Theme.of(context).colorScheme.primary),
                     ),
@@ -99,7 +99,7 @@ class GetBuildInfoPageState extends State<GetBuildInfoPage> {
               btnWidth: 120,
               btnHeight: 40,
               icon: Icons.exit_to_app,
-              text: localizedStrings.gBtnExit,
+              text: (localizedStrings?.gBtnExit ?? "gBtnExit"),
               onPressed: () {
                 myScreenMgr.isMainScreen = true;
                 Navigator.of(context).pop();

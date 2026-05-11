@@ -1,4 +1,4 @@
-import 'dart:convert';
+﻿import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -93,7 +93,7 @@ class HeaderFooterPageState extends State<HeaderFooterPage> {
               children: [
                 ...dialogHeadStyle(
                   context,
-                  localizedStrings.menuVariableValueSetting,
+                  (localizedStrings?.menuVariableValueSetting ?? "menuVariableValueSetting"),
                   true,
                 ),
                 Expanded(
@@ -108,17 +108,17 @@ class HeaderFooterPageState extends State<HeaderFooterPage> {
                             SizedBox(
                               height: 42,
                               child: Row(children: [
-                                showHeader(localizedStrings.rTipHeader,
+                                showHeader((localizedStrings?.rTipHeader ?? "rTipHeader"),
                                     Theme.of(context).colorScheme.primary),
                                 SizedBox(
                                   width: smallPadding,
                                 ),
-                                showHeader(localizedStrings.rTipFooter,
+                                showHeader((localizedStrings?.rTipFooter ?? "rTipFooter"),
                                     Theme.of(context).colorScheme.primary),
                                 SizedBox(
                                   width: smallPadding,
                                 ),
-                                showHeader(localizedStrings.rTipOperator,
+                                showHeader((localizedStrings?.rTipOperator ?? "rTipOperator"),
                                     Theme.of(context).colorScheme.primary),
                               ]),
                             ),
@@ -134,7 +134,7 @@ class HeaderFooterPageState extends State<HeaderFooterPage> {
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     children: [
                                       showHeader(
-                                          localizedStrings.rTipHeader + ' 1:',
+                                          (localizedStrings?.rTipHeader ?? "rTipHeader") + ' 1:',
                                           Theme.of(context)
                                               .colorScheme
                                               .onSurface),
@@ -154,7 +154,7 @@ class HeaderFooterPageState extends State<HeaderFooterPage> {
                                           MainAxisAlignment.start,
                                       children: [
                                         showHeader(
-                                            localizedStrings.rTipFooter + ' 1:',
+                                            (localizedStrings?.rTipFooter ?? "rTipFooter") + ' 1:',
                                             Theme.of(context)
                                                 .colorScheme
                                                 .onSurface),
@@ -176,7 +176,7 @@ class HeaderFooterPageState extends State<HeaderFooterPage> {
                                           MainAxisAlignment.start,
                                       children: [
                                         showHeader(
-                                            localizedStrings.rTipOperator +
+                                            (localizedStrings?.rTipOperator ?? "rTipOperator") +
                                                 ' 1:',
                                             Theme.of(context)
                                                 .colorScheme
@@ -206,7 +206,7 @@ class HeaderFooterPageState extends State<HeaderFooterPage> {
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     children: [
                                       showHeader(
-                                          localizedStrings.rTipHeader + ' 2:',
+                                          (localizedStrings?.rTipHeader ?? "rTipHeader") + ' 2:',
                                           Theme.of(context)
                                               .colorScheme
                                               .onSurface),
@@ -224,7 +224,7 @@ class HeaderFooterPageState extends State<HeaderFooterPage> {
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     children: [
                                       showHeader(
-                                          localizedStrings.rTipFooter + ' 2:',
+                                          (localizedStrings?.rTipFooter ?? "rTipFooter") + ' 2:',
                                           Theme.of(context)
                                               .colorScheme
                                               .onSurface),
@@ -245,7 +245,7 @@ class HeaderFooterPageState extends State<HeaderFooterPage> {
                                           MainAxisAlignment.start,
                                       children: [
                                         showHeader(
-                                            localizedStrings.rTipOperator +
+                                            (localizedStrings?.rTipOperator ?? "rTipOperator") +
                                                 ' 2:',
                                             Theme.of(context)
                                                 .colorScheme
@@ -275,7 +275,7 @@ class HeaderFooterPageState extends State<HeaderFooterPage> {
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     children: [
                                       showHeader(
-                                          localizedStrings.rTipHeader + ' 3:',
+                                          (localizedStrings?.rTipHeader ?? "rTipHeader") + ' 3:',
                                           Theme.of(context)
                                               .colorScheme
                                               .onSurface),
@@ -293,7 +293,7 @@ class HeaderFooterPageState extends State<HeaderFooterPage> {
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     children: [
                                       showHeader(
-                                          localizedStrings.rTipFooter + ' 3:',
+                                          (localizedStrings?.rTipFooter ?? "rTipFooter") + ' 3:',
                                           Theme.of(context)
                                               .colorScheme
                                               .onSurface),
@@ -314,7 +314,7 @@ class HeaderFooterPageState extends State<HeaderFooterPage> {
                                           MainAxisAlignment.start,
                                       children: [
                                         showHeader(
-                                            localizedStrings.rTipOperator +
+                                            (localizedStrings?.rTipOperator ?? "rTipOperator") +
                                                 ' 3:',
                                             Theme.of(context)
                                                 .colorScheme
@@ -355,7 +355,7 @@ class HeaderFooterPageState extends State<HeaderFooterPage> {
                                           MainAxisAlignment.start,
                                       children: [
                                         showHeader(
-                                            localizedStrings.rTipOperator +
+                                            (localizedStrings?.rTipOperator ?? "rTipOperator") +
                                                 ' 4:',
                                             Theme.of(context)
                                                 .colorScheme
@@ -384,7 +384,7 @@ class HeaderFooterPageState extends State<HeaderFooterPage> {
                               child: showTextButton(
                                   context,
                                   btnHeight,
-                                  localizedStrings.gBtnDownload,
+                                  (localizedStrings?.gBtnDownload ?? "gBtnDownload"),
                                   (!isDownloadClicked) &&
                                           (header1Ctl.text.isNotEmpty ||
                                               header2Ctl.text.isNotEmpty ||
@@ -404,7 +404,7 @@ class HeaderFooterPageState extends State<HeaderFooterPage> {
                                             builder: (BuildContext context) {
                                               return ShowNormalTipDialog(
                                                 title:
-                                                    localizedStrings.fTipTitle,
+                                                    (localizedStrings?.fTipTitle ?? "fTipTitle"),
                                                 msg: localizedStrings
                                                     .gTipConfirmInfo,
                                               );

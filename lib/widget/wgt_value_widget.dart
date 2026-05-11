@@ -1,4 +1,4 @@
-//称重共用的重量显示界面 20250521
+﻿//称重共用的重量显示界面 20250521
 
 import 'dart:async';
 import 'package:flutter/material.dart';
@@ -182,21 +182,21 @@ class _ScaleItemWidgetState extends State<ScaleItemWidget> {
                             children: [
                               _buildIconAndText(
                                 context,
-                                localizedStrings.iStable,
+                                (localizedStrings?.iStable ?? "iStable"),
                                 weightInfo?.isStable,
                                 1,
                               ),
                               SizedBox(width: isMobile ? 8 : 24),
                               _buildIconAndText(
                                 context,
-                                localizedStrings.iTextNet,
+                                (localizedStrings?.iTextNet ?? "iTextNet"),
                                 weightInfo?.isNet,
                                 2,
                               ),
                               SizedBox(width: isMobile ? 8 : 24),
                               _buildIconAndText(
                                 context,
-                                localizedStrings.iTextZero,
+                                (localizedStrings?.iTextZero ?? "iTextZero"),
                                 weightInfo?.isZero,
                                 3,
                               ),
@@ -265,7 +265,7 @@ class _ScaleItemWidgetState extends State<ScaleItemWidget> {
                           showTextButton(
                               context,
                               isMobile ? 32 : 36,
-                              localizedStrings.gBtnTare,
+                              (localizedStrings?.gBtnTare ?? "gBtnTare"),
                               isStart
                                   ? () {
                                       PublicFunctions.performTareWithScaleId(
@@ -278,7 +278,7 @@ class _ScaleItemWidgetState extends State<ScaleItemWidget> {
                           showTextButton(
                               context,
                               isMobile ? 32 : 36,
-                              localizedStrings.iBtnZero,
+                              (localizedStrings?.iBtnZero ?? "iBtnZero"),
                               isStart
                                   ? () {
                                       PublicFunctions.performZeroWithScaleId(

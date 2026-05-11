@@ -1,4 +1,4 @@
-import 'dart:convert';
+﻿import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/data/olul_err_data.dart';
@@ -39,7 +39,7 @@ class BasicDataPageState extends State<BasicDataPage> {
         String jsonString = event.obj;
         setState(() {
           if (jsonString.contains('fail') || jsonString.contains('time out')) {
-            showTipInfo(localizedStrings.gTipTimeOut, context);
+            showTipInfo((localizedStrings?.gTipTimeOut ?? "gTipTimeOut"), context);
             for (var item in myAllScalesList) {
               if (item.scaleId == selScaleId) {
                 item.isOnline = false;
@@ -50,7 +50,7 @@ class BasicDataPageState extends State<BasicDataPage> {
             try {
               final jsonResponse = json.decode(jsonString);
               myBasicErrInfo = BasicErrInfo.fromJson(jsonResponse);
-              showTipInfo(localizedStrings.fSuccessMsg, context);
+              showTipInfo((localizedStrings?.fSuccessMsg ?? "fSuccessMsg"), context);
             } catch (e) {
               showTipInfo(jsonString, context);
             }
@@ -74,10 +74,10 @@ class BasicDataPageState extends State<BasicDataPage> {
     // 在页面构建完成后显示提示
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (myAllScalesList.isEmpty) {
-        showTipInfo(localizedStrings.gTipNoDeviceAddFirst, context);
+        showTipInfo((localizedStrings?.gTipNoDeviceAddFirst ?? "gTipNoDeviceAddFirst"), context);
       } else {
         if (selScaleId == -1) {
-          showTipInfo(localizedStrings.gTipSelectDeviceFirst, context);
+          showTipInfo((localizedStrings?.gTipSelectDeviceFirst ?? "gTipSelectDeviceFirst"), context);
         }
       }
     });
@@ -129,7 +129,7 @@ class BasicDataPageState extends State<BasicDataPage> {
                             clickScale: (scale) {
                               if (!enabledGetDataBtn) {
                                 showTipInfo(
-                                    localizedStrings.gTipPerformingOperation,
+                                    (localizedStrings?.gTipPerformingOperation ?? "gTipPerformingOperation"),
                                     context);
                                 return;
                               }
@@ -157,50 +157,50 @@ class BasicDataPageState extends State<BasicDataPage> {
                               child: Column(children: [
                             showTitleItem(
                               Theme.of(context).colorScheme.surfaceContainerLow,
-                              localizedStrings.gTipInformation,
-                              localizedStrings.gTipValue,
-                              localizedStrings.gTipInformation,
-                              localizedStrings.gTipValue,
+                              (localizedStrings?.gTipInformation ?? "gTipInformation"),
+                              (localizedStrings?.gTipValue ?? "gTipValue"),
+                              (localizedStrings?.gTipInformation ?? "gTipInformation"),
+                              (localizedStrings?.gTipValue ?? "gTipValue"),
                             ),
                             showBasicDataItem(
                                 Theme.of(context).colorScheme.surface,
-                                localizedStrings.cTipPowerOnCnt,
+                                (localizedStrings?.cTipPowerOnCnt ?? "cTipPowerOnCnt"),
                                 myBasicErrInfo.powerOnCnt.toString(),
-                                localizedStrings.cTipRunningTime,
+                                (localizedStrings?.cTipRunningTime ?? "cTipRunningTime"),
                                 myBasicErrInfo.runningTime.toString()),
                             showBasicDataItem(
                                 Theme.of(context)
                                     .colorScheme
                                     .surfaceContainerLow,
-                                localizedStrings.cTipPowerOffCnt,
+                                (localizedStrings?.cTipPowerOffCnt ?? "cTipPowerOffCnt"),
                                 myBasicErrInfo.forcedShutdownCnt.toString(),
-                                localizedStrings.cTipWeighingCount,
+                                (localizedStrings?.cTipWeighingCount ?? "cTipWeighingCount"),
                                 myBasicErrInfo.wgtCnt.toString()),
                             showBasicDataItem(
                                 Theme.of(context).colorScheme.surface,
-                                localizedStrings.cTipOlTime,
+                                (localizedStrings?.cTipOlTime ?? "cTipOlTime"),
                                 myBasicErrInfo.olTime.toString(),
-                                localizedStrings.cTipUlTime,
+                                (localizedStrings?.cTipUlTime ?? "cTipUlTime"),
                                 myBasicErrInfo.ulTime.toString()),
                             showBasicDataItem(
                               Theme.of(context).colorScheme.surfaceContainerLow,
-                              localizedStrings.cTipCalswitchCnt,
+                              (localizedStrings?.cTipCalswitchCnt ?? "cTipCalswitchCnt"),
                               myBasicErrInfo.calSwitchCnt.toString(),
-                              localizedStrings.cTipCalCnt,
+                              (localizedStrings?.cTipCalCnt ?? "cTipCalCnt"),
                               myBasicErrInfo.caliCnt.toString(),
                             ),
                             showBasicDataItem(
                                 Theme.of(context).colorScheme.surface,
-                                localizedStrings.cTipErr4Cnt,
+                                (localizedStrings?.cTipErr4Cnt ?? "cTipErr4Cnt"),
                                 myBasicErrInfo.err4Cnt.toString(),
-                                localizedStrings.cTipErr19Cnt,
+                                (localizedStrings?.cTipErr19Cnt ?? "cTipErr19Cnt"),
                                 myBasicErrInfo.err19Cnt.toString()),
                           ])),
                           Container(
                             child: showTextButton(
                                 context,
                                 btnHeight,
-                                localizedStrings.gBtnGetBasicData,
+                                (localizedStrings?.gBtnGetBasicData ?? "gBtnGetBasicData"),
                                 enabledGetDataBtn
                                     ? () {
                                         PublicFunctions.getBasicData(

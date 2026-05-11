@@ -1,4 +1,4 @@
-// ignore_for_file: invalid_use_of_protected_member
+﻿// ignore_for_file: invalid_use_of_protected_member
 part of 'multi_scale_management_page.dart';
 
 extension MultiScaleManagementInfoExt on MultiScaleManagementState {
@@ -16,7 +16,7 @@ extension MultiScaleManagementInfoExt on MultiScaleManagementState {
                   ),
                   buildItemInfo(
                       showItemNameWithStar(
-                          context, localizedStrings.gScaleName, false),
+                          context, (localizedStrings?.gScaleName ?? "gScaleName"), false),
                       showScaleNameInputBox(
                           context,
                           scaleNameCtl,
@@ -32,7 +32,7 @@ extension MultiScaleManagementInfoExt on MultiScaleManagementState {
                         setState(() {});
                       }, isRename),
                       showItemNameWithStar(
-                          context, localizedStrings.gModelName, false),
+                          context, (localizedStrings?.gModelName ?? "gModelName"), false),
                       showInputBox(context, scaleModelCtl, '', (value) {
                         setState(() {});
                       }, false)),
@@ -41,12 +41,12 @@ extension MultiScaleManagementInfoExt on MultiScaleManagementState {
                   ),
                   buildItemInfo(
                       showItemNameWithStar(
-                          context, localizedStrings.gScaleSn, false),
+                          context, (localizedStrings?.gScaleSn ?? "gScaleSn"), false),
                       showInputBox(context, snCtl, '', (value) {
                         setState(() {});
                       }, false),
                       showItemNameWithStar(
-                          context, localizedStrings.gTipPort, false),
+                          context, (localizedStrings?.gTipPort ?? "gTipPort"), false),
                       showInputBox(context, portCtl, '', (value) {
                         setState(() {});
                       }, false)),
@@ -62,7 +62,7 @@ extension MultiScaleManagementInfoExt on MultiScaleManagementState {
                             SizedBox(
                                 width: inputWidth,
                                 child: showItemNameWithStar(context,
-                                    localizedStrings.gIpAddress, false)),
+                                    (localizedStrings?.gIpAddress ?? "gIpAddress"), false)),
                             SizedBox(
                                 width: inputWidth,
                                 child:
@@ -109,7 +109,7 @@ extension MultiScaleManagementInfoExt on MultiScaleManagementState {
                   ),
                   buildItemInfo(
                       showItemNameWithStar(
-                          context, localizedStrings.gScaleName, false),
+                          context, (localizedStrings?.gScaleName ?? "gScaleName"), false),
                       showScaleNameInputBox(
                           context,
                           scaleNameCtl,
@@ -125,7 +125,7 @@ extension MultiScaleManagementInfoExt on MultiScaleManagementState {
                         setState(() {});
                       }, isRename),
                       showItemNameWithStar(
-                          context, localizedStrings.gModelName, false),
+                          context, (localizedStrings?.gModelName ?? "gModelName"), false),
                       showInputBox(context, scaleModelCtl, '', (value) {
                         setState(() {});
                       }, false)),
@@ -134,12 +134,12 @@ extension MultiScaleManagementInfoExt on MultiScaleManagementState {
                   ),
                   buildItemInfo(
                       showItemNameWithStar(
-                          context, localizedStrings.gScaleSn, false),
+                          context, (localizedStrings?.gScaleSn ?? "gScaleSn"), false),
                       showInputBox(context, snCtl, '', (value) {
                         setState(() {});
                       }, false),
                       showItemNameWithStar(
-                          context, localizedStrings.bluetoothName, false),
+                          context, (localizedStrings?.bluetoothName ?? "bluetoothName"), false),
                       showInputBox(context, btNameCtl, '', (value) {
                         setState(() {});
                       }, false)),
@@ -148,7 +148,7 @@ extension MultiScaleManagementInfoExt on MultiScaleManagementState {
                   ),
                   buildItemInfo(
                       showItemNameWithStar(
-                          context, localizedStrings.bluetoothAddress, false),
+                          context, (localizedStrings?.bluetoothAddress ?? "bluetoothAddress"), false),
                       showInputBox(context, macCtl, '', (value) {
                         setState(() {});
                       }, false),
@@ -175,7 +175,7 @@ extension MultiScaleManagementInfoExt on MultiScaleManagementState {
               showTextButton(
                   context,
                   btnHeight,
-                  localizedStrings.gBtnConfirm,
+                  (localizedStrings?.gBtnConfirm ?? "gBtnConfirm"),
                   scaleNameCtl.text.isNotEmpty && _isModifyName
                       ? () {
                           modifyScaleName();
@@ -186,7 +186,7 @@ extension MultiScaleManagementInfoExt on MultiScaleManagementState {
                   Theme.of(context).colorScheme.primary,
                   Theme.of(context).colorScheme.onPrimary),
               const SizedBox(width: regularPadding),
-              showTextButton(context, btnHeight, localizedStrings.gBtnCancel,
+              showTextButton(context, btnHeight, (localizedStrings?.gBtnCancel ?? "gBtnCancel"),
                   () {
                 setState(() {
                   isAddScale = false;
@@ -217,7 +217,7 @@ extension MultiScaleManagementInfoExt on MultiScaleManagementState {
         showTextButton(
             context,
             btnHeight,
-            localizedStrings.gBtnTestConnect,
+            (localizedStrings?.gBtnTestConnect ?? "gBtnTestConnect"),
             !isAddScale && !isTesting && !isDel
                 ? () {
                     showConnectionProgressDialog(context, macCtl.text, selScaleId);
@@ -230,7 +230,7 @@ extension MultiScaleManagementInfoExt on MultiScaleManagementState {
         showTextButton(
             context,
             btnHeight,
-            localizedStrings.gBtnDelete,
+            (localizedStrings?.gBtnDelete ?? "gBtnDelete"),
             !isAddScale && !isTesting && !isRename
                 ? () {
                     setState(() {
@@ -250,7 +250,7 @@ extension MultiScaleManagementInfoExt on MultiScaleManagementState {
           showTextButton(
               context,
               btnHeight,
-              localizedStrings.gBtnModify,
+              (localizedStrings?.gBtnModify ?? "gBtnModify"),
               !isAddScale && !isTesting && !isDel
                   ? () {
                       setState(() {

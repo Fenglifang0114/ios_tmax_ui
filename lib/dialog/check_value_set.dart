@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:t_max/widget/custom_button.dart';
 
@@ -49,7 +49,7 @@ class CheckValueSetDialogState extends State<CheckValueSetDialog> {
           child: Row(
             children: [
               Icon(Icons.edit, color: Theme.of(context).colorScheme.onPrimary),
-              Text(localizedStrings.iTitleHLSetting,
+              Text((localizedStrings?.iTitleHLSetting ?? "iTitleHLSetting"),
                   style:
                       TextStyle(color: Theme.of(context).colorScheme.onPrimary))
             ],
@@ -193,7 +193,7 @@ class CheckValueSetDialogState extends State<CheckValueSetDialog> {
                 btnWidth: 120,
                 btnHeight: 40,
                 icon: Icons.check_circle,
-                text: localizedStrings.gBtnConfirm,
+                text: (localizedStrings?.gBtnConfirm ?? "gBtnConfirm"),
                 onPressed: (lowValue > highValue)
                     ? null
                     : () {
@@ -204,7 +204,7 @@ class CheckValueSetDialogState extends State<CheckValueSetDialog> {
                 btnWidth: 120,
                 btnHeight: 40,
                 icon: Icons.cancel,
-                text: localizedStrings.gBtnCancel,
+                text: (localizedStrings?.gBtnCancel ?? "gBtnCancel"),
                 onPressed: () {
                   Navigator.of(context)
                       .pop([widget.initialHigh, widget.initialLow]);

@@ -1,4 +1,4 @@
-import 'dart:async';
+﻿import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:t_max/data/home_page_common_data.dart';
@@ -140,7 +140,7 @@ class WeightModePageState extends State<WeightModePage> {
                             horizontal: regularPadding),
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          localizedStrings.gTitleDeviceList,
+                          (localizedStrings?.gTitleDeviceList ?? "gTitleDeviceList"),
                           style: Theme.of(context).textTheme.labelLarge!.apply(
                                 color: Theme.of(context).colorScheme.primary,
                               ),
@@ -244,7 +244,7 @@ class WeightModePageState extends State<WeightModePage> {
       for (var group in groups.values) {
         if (group.length > 1) {
           // 冲突：同一个物理设备选择了多种连接方式
-          showTipInfo(localizedStrings.tipSameScale, context);
+          showTipInfo((localizedStrings?.tipSameScale ?? "tipSameScale"), context);
 
           // 优先级：串口(0) > 网口(1) > 蓝牙(2)。排序并保留最高优先级的连接。
           group.sort((a, b) => a.tMedia.compareTo(b.tMedia));

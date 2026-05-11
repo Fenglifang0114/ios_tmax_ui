@@ -1,4 +1,4 @@
-// import 'dart:convert';
+﻿// import 'dart:convert';
 // import 'dart:io';
 // import 'dart:math';
 // import 'package:csv/csv.dart';
@@ -2812,7 +2812,7 @@
 //       ),
 //       const SizedBox(height: 20),
 //       Text(
-//         localizedStrings.gQrcodeWidth,
+//         (localizedStrings?.gQrcodeWidth ?? "gQrcodeWidth"),
 //         style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
 //       ),
 //       buildDropdownButton(
@@ -2823,13 +2823,13 @@
 //       ),
 //       const SizedBox(height: 20),
 //       Text(
-//         localizedStrings.gQrcodeWidth,
+//         (localizedStrings?.gQrcodeWidth ?? "gQrcodeWidth"),
 //         style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
 //       ),
 //       buildDropdownButton(
 //         value: _selectedQr,
 //         items: _qrWidths,
-//         hintText: localizedStrings.gQrcodeWidth,
+//         hintText: (localizedStrings?.gQrcodeWidth ?? "gQrcodeWidth"),
 //         onSelect: _handleQrWidthSelected,
 //       ),
 //       const SizedBox(height: 20),

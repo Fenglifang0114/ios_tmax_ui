@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import 'package:intl/intl.dart';
 import 'package:t_max/data/formula_common.dart';
@@ -220,7 +220,7 @@ class _FormulaTableState extends State<FormulaTable> {
               ),
               SizedBox(width: 16),
               Text(
-                localizedStrings.tipJumpPage,
+                (localizedStrings?.tipJumpPage ?? "tipJumpPage"),
                 style: textTheme.bodySmall,
               ),
               SizedBox(width: 8),
@@ -249,7 +249,7 @@ class _FormulaTableState extends State<FormulaTable> {
             width: regularPadding,
           ),
           Text(
-            '${localizedStrings.tipPageTotal}: ${widget.searchFmaList.length} ${localizedStrings.tipPageItems}',
+            '${(localizedStrings?.tipPageTotal ?? "tipPageTotal")}: ${widget.searchFmaList.length} ${(localizedStrings?.tipPageItems ?? "tipPageItems")}',
             style: textTheme.bodySmall,
           ),
         ],
@@ -465,27 +465,27 @@ class _FormulaTableState extends State<FormulaTable> {
           ),
         ),
       ),
-      getColumnWidget(120, 'formulaId', localizedStrings.fFmaIdLabel, textTheme,
+      getColumnWidget(120, 'formulaId', (localizedStrings?.fFmaIdLabel ?? "fFmaIdLabel"), textTheme,
           colorScheme),
-      getColumnWidget(300, 'formulaName', localizedStrings.fFmaNameLabel,
+      getColumnWidget(300, 'formulaName', (localizedStrings?.fFmaNameLabel ?? "fFmaNameLabel"),
           textTheme, colorScheme),
-      getColumnWidget(150, 'fmaBarcode', localizedStrings.fFmaBarcode,
+      getColumnWidget(150, 'fmaBarcode', (localizedStrings?.fFmaBarcode ?? "fFmaBarcode"),
           textTheme, colorScheme),
-      getColumnWidget(150, 'category', localizedStrings.fFmaCategoryCol,
+      getColumnWidget(150, 'category', (localizedStrings?.fFmaCategoryCol ?? "fFmaCategoryCol"),
           textTheme, colorScheme),
-      getColumnWidget(150, 'confidential', localizedStrings.fConfidential,
+      getColumnWidget(150, 'confidential', (localizedStrings?.fConfidential ?? "fConfidential"),
           textTheme, colorScheme),
       getColumnWidget(
-          120, 'mode', localizedStrings.fFmaModeCol, textTheme, colorScheme),
+          120, 'mode', (localizedStrings?.fFmaModeCol ?? "fFmaModeCol"), textTheme, colorScheme),
       getColumnWidget(120, 'materialCount',
-          localizedStrings.fIngredientCountLabel, textTheme, colorScheme),
-      getColumnWidget(200, 'createdAt', localizedStrings.fCreatedAtCol,
+          (localizedStrings?.fIngredientCountLabel ?? "fIngredientCountLabel"), textTheme, colorScheme),
+      getColumnWidget(200, 'createdAt', (localizedStrings?.fCreatedAtCol ?? "fCreatedAtCol"),
           textTheme, colorScheme),
-      getColumnWidget(200, 'updatedAt', localizedStrings.fUpdatedAtCol,
+      getColumnWidget(200, 'updatedAt', (localizedStrings?.fUpdatedAtCol ?? "fUpdatedAtCol"),
           textTheme, colorScheme),
       getColumnWidget(
-          300, 'remark', localizedStrings.fRemarkCol, textTheme, colorScheme),
-      getColumnWidgetNoSort(140, 'operation', localizedStrings.fTipOperation,
+          300, 'remark', (localizedStrings?.fRemarkCol ?? "fRemarkCol"), textTheme, colorScheme),
+      getColumnWidgetNoSort(140, 'operation', (localizedStrings?.fTipOperation ?? "fTipOperation"),
           textTheme, colorScheme),
     ];
   }
@@ -560,14 +560,14 @@ class FormulaDataSource extends DataGridSource {
         DataGridCell<String>(
           columnName: 'confidential',
           value: formula.header?.isEncrypted ?? false
-              ? localizedStrings.fConfidential
-              : localizedStrings.fPublic,
+              ? (localizedStrings?.fConfidential ?? "fConfidential")
+              : (localizedStrings?.fPublic ?? "fPublic"),
         ),
         DataGridCell<String>(
           columnName: 'mode',
           value: formula.header?.formulaMode == 'pct'
-              ? localizedStrings.fPctMode
-              : localizedStrings.fWeightMode,
+              ? (localizedStrings?.fPctMode ?? "fPctMode")
+              : (localizedStrings?.fWeightMode ?? "fWeightMode"),
         ),
         DataGridCell<String>(
           columnName: 'materialCount',
@@ -747,7 +747,7 @@ class FormulaDataSource extends DataGridSource {
         return;
       }
       if (hasDraft) {
-        showTipInfo(localizedStrings.formulaDeleteError, context);
+        showTipInfo((localizedStrings?.formulaDeleteError ?? "formulaDeleteError"), context);
         return;
       }
 
@@ -756,8 +756,8 @@ class FormulaDataSource extends DataGridSource {
         barrierDismissible: false,
         builder: (BuildContext context) {
           return ShowNormalTipDialog(
-            title: localizedStrings.fTipTitle,
-            msg: localizedStrings.fConfirmDelete,
+            title: (localizedStrings?.fTipTitle ?? "fTipTitle"),
+            msg: (localizedStrings?.fConfirmDelete ?? "fConfirmDelete"),
           );
         },
       ).then((value) {

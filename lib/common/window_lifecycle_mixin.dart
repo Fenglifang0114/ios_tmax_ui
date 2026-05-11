@@ -1,4 +1,4 @@
-import 'dart:io';
+﻿import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:tray_manager/tray_manager.dart';
 import 'package:window_manager/window_manager.dart';
@@ -81,7 +81,7 @@ mixin WindowLifecycleMixin<T extends StatefulWidget> on State<T>
           barrierDismissible: false,
           builder: (context) {
             return CustomAlertDialog(
-              titleText: localizedStrings.gTipExitApp,
+              titleText: (localizedStrings?.gTipExitApp ?? "gTipExitApp"),
               onNoPressed: () {
                 Navigator.of(context).pop();
               },

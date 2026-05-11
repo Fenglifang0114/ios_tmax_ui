@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:path/path.dart' as p;
+import 'package:path_provider/path_provider.dart';
 
 const String myLogName = 'operation.log';
 const String myIpConfig = 'server_ip.config';
@@ -138,19 +139,25 @@ List<String> getSerialOutputFromLog(List<Map<String, dynamic>> jsonDataList) {
 }
 
 Future<String> getAppFilePath(String fileName) async {
-  String appDirectory = Platform.resolvedExecutable;
-  var directory = p.dirname(appDirectory);
-  directory = '$directory\\$myLogDir';
-  final formatfilePath = Directory('$directory\\$fileName');
-  return formatfilePath.path;
+  String directory;
+  if (Platform.isAndroid) {
+    directory = (await getApplicationDocumentsDirectory()).path;
+  } else {
+    directory = p.dirname(Platform.resolvedExecutable);
+  }
+  directory = p.join(directory, myLogDir);
+  return p.join(directory, fileName);
 }
 
 Future<String> getAppImportPath(String fileName) async {
-  String appDirectory = Platform.resolvedExecutable;
-  var directory = p.dirname(appDirectory);
-  directory = '$directory\\$myImportDir';
-  final formatfilePath = Directory('$directory\\$fileName');
-  return formatfilePath.path;
+  String directory;
+  if (Platform.isAndroid) {
+    directory = (await getApplicationDocumentsDirectory()).path;
+  } else {
+    directory = p.dirname(Platform.resolvedExecutable);
+  }
+  directory = p.join(directory, myImportDir);
+  return p.join(directory, fileName);
 }
 
 /// 将选择的 pageId 列表写入 JSON 文件
@@ -169,16 +176,20 @@ Future<void> writePageIdsToJson(
   // 将 Map 转换为 JSON 字符串
   final jsonString = jsonEncode(data);
 
-  // 获取应用目录
-  String appDirectory = Platform.resolvedExecutable;
-  var directory = p.dirname(appDirectory);
-  directory = '$directory\\$myLogDir';
+  // 获取目录
+  String directory;
+  if (Platform.isAndroid) {
+    directory = (await getApplicationDocumentsDirectory()).path;
+  } else {
+    directory = p.dirname(Platform.resolvedExecutable);
+  }
+  directory = p.join(directory, myLogDir);
 
   // 确保目录存在
   await Directory(directory).create(recursive: true);
 
   // 构建文件路径
-  final filePath = '$directory\\$mySelectedPageJson';
+  final filePath = p.join(directory, mySelectedPageJson);
 
   // 将 JSON 字符串写入文件
   await File(filePath).writeAsString(jsonString);
@@ -186,12 +197,16 @@ Future<void> writePageIdsToJson(
 
 Future<Map<String, dynamic>> readPageIdsFromJsonReversed() async {
   // 获取应用目录
-  String appDirectory = Platform.resolvedExecutable;
-  var directory = p.dirname(appDirectory);
-  directory = '$directory\\$myLogDir';
+  String directory;
+  if (Platform.isAndroid) {
+    directory = (await getApplicationDocumentsDirectory()).path;
+  } else {
+    directory = p.dirname(Platform.resolvedExecutable);
+  }
+  directory = p.join(directory, myLogDir);
 
   // 构建文件路径
-  final filePath = '$directory\\$mySelectedPageJson';
+  final filePath = p.join(directory, mySelectedPageJson);
   final file = File(filePath);
 
   // 检查文件是否存在
@@ -201,8 +216,12 @@ Future<Map<String, dynamic>> readPageIdsFromJsonReversed() async {
     final data = jsonDecode(jsonString) as Map<String, dynamic>;
 
     // 倒序处理列表
-    data['configPageList'] = (data['configPageList'] as List).toList();
-    data['appPagedList'] = (data['appPagedList'] as List).toList();
+    if (data.containsKey('configPageList')) {
+      data['configPageList'] = (data['configPageList'] as List).toList();
+    }
+    if (data.containsKey('appPagedList')) {
+      data['appPagedList'] = (data['appPagedList'] as List).toList();
+    }
 
     return data;
   }

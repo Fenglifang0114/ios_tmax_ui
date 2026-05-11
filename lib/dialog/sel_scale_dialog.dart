@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:t_max/data/formula_common.dart';
 import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/data/icons.dart';
@@ -166,8 +166,8 @@ class SelScaleDialogState extends State<SelScaleDialog> {
                         ),
                         Text(
                             scale.isOnline
-                                ? localizedStrings.gTipOnline
-                                : localizedStrings.gTipOffline,
+                                ? (localizedStrings?.gTipOnline ?? "gTipOnline")
+                                : (localizedStrings?.gTipOffline ?? "gTipOffline"),
                             style: getTextStyle(
                               color: isSelect
                                   ? Theme.of(context).colorScheme.onPrimary
@@ -200,7 +200,7 @@ class SelScaleDialogState extends State<SelScaleDialog> {
           children: [
             // 头部
             ...dialogHeadStyle(
-                context, localizedStrings.gTitleDeviceList, false),
+                context, (localizedStrings?.gTitleDeviceList ?? "gTitleDeviceList"), false),
 
             // 中部
             Expanded(
@@ -252,7 +252,7 @@ class SelScaleDialogState extends State<SelScaleDialog> {
                       child: showTextButton(
                           context,
                           btnHeight,
-                          localizedStrings.gBtnConfirm,
+                          (localizedStrings?.gBtnConfirm ?? "gBtnConfirm"),
                           (selScaleId == -1)
                               ? null
                               : () {
@@ -264,7 +264,7 @@ class SelScaleDialogState extends State<SelScaleDialog> {
                   SizedBox(width: largePadding),
                   Expanded(
                       child: showTextButton(
-                          context, btnHeight, localizedStrings.gBtnCancel, () {
+                          context, btnHeight, (localizedStrings?.gBtnCancel ?? "gBtnCancel"), () {
                     Navigator.pop(context, selScaleId);
                   },
                           Theme.of(context).colorScheme.onPrimary,

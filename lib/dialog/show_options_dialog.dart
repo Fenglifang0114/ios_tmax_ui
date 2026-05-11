@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:t_max/widget/dialog_head_style.dart';
 import '../data/language.dart';
 import '../data/plu_field_status_data.dart';
@@ -85,7 +85,7 @@ class MultiSelectDialogState extends State<MultiSelectDialog> {
           child: Column(
             children: [
               // 头部
-              ...dialogHeadStyle(context, localizedStrings.gPluField, false),
+              ...dialogHeadStyle(context, (localizedStrings?.gPluField ?? "gPluField"), false),
 
               // 中部
               Expanded(
@@ -94,7 +94,7 @@ class MultiSelectDialogState extends State<MultiSelectDialog> {
                       child: Column(children: [
                         CheckboxListTile(
                           title: Text(
-                            localizedStrings.gSelectAll,
+                            (localizedStrings?.gSelectAll ?? "gSelectAll"),
                             style: TextStyle(overflow: TextOverflow.ellipsis),
                           ),
                           value: isSelectAll,
@@ -152,7 +152,7 @@ class MultiSelectDialogState extends State<MultiSelectDialog> {
                           Navigator.of(context).pop(_selectedOptions);
                         },
                         child: Text(
-                          localizedStrings.gBtnConfirm,
+                          (localizedStrings?.gBtnConfirm ?? "gBtnConfirm"),
                           style: getTextStyle(
                             color: Theme.of(context).colorScheme.onPrimary,
                           ),
@@ -178,7 +178,7 @@ class MultiSelectDialogState extends State<MultiSelectDialog> {
                           Navigator.pop(context);
                         },
                         child: Text(
-                          localizedStrings.gBtnCancel,
+                          (localizedStrings?.gBtnCancel ?? "gBtnCancel"),
                           style: getTextStyle(
                             color: Theme.of(context).colorScheme.onPrimary,
                           ),

@@ -1,4 +1,4 @@
-//称重共用的重量显示界面 20250521
+﻿//称重共用的重量显示界面 20250521
 
 import 'dart:async';
 import 'package:flutter/material.dart';
@@ -467,19 +467,19 @@ class _ScaleWgtTakeOutWidgetState extends State<ScaleWgtTakeOutWidget> {
                             children: [
                               _buildIconAndText(
                                 context,
-                                localizedStrings.iStable,
+                                (localizedStrings?.iStable ?? "iStable"),
                                 weightInfo?.isStable,
                                 1,
                               ),
                               _buildIconAndText(
                                 context,
-                                localizedStrings.iTextNet,
+                                (localizedStrings?.iTextNet ?? "iTextNet"),
                                 weightInfo?.isNet,
                                 2,
                               ),
                               _buildIconAndText(
                                 context,
-                                localizedStrings.iTextZero,
+                                (localizedStrings?.iTextZero ?? "iTextZero"),
                                 weightInfo?.isZero,
                                 3,
                               ),
@@ -597,7 +597,7 @@ class _ScaleWgtTakeOutWidgetState extends State<ScaleWgtTakeOutWidget> {
         children: [
           showPerformIconBtn(
               performTareSvgIcon(),
-              localizedStrings.gBtnTare,
+              (localizedStrings?.gBtnTare ?? "gBtnTare"),
               isStart
                   ? () {
                       PublicFunctions.performTareWithScaleId(widget.scaleId);
@@ -609,7 +609,7 @@ class _ScaleWgtTakeOutWidgetState extends State<ScaleWgtTakeOutWidget> {
           ),
           showPerformIconBtn(
               performZeroSvgIcon(),
-              localizedStrings.iBtnZero,
+              (localizedStrings?.iBtnZero ?? "iBtnZero"),
               isStart
                   ? () {
                       PublicFunctions.performZeroWithScaleId(widget.scaleId);
@@ -622,13 +622,13 @@ class _ScaleWgtTakeOutWidgetState extends State<ScaleWgtTakeOutWidget> {
           if (!startTakeOut)
             showPerformIconBtn(
                 startWgtSvgIcon(),
-                localizedStrings.gBtnStart,
+                (localizedStrings?.gBtnStart ?? "gBtnStart"),
                 isStart
                     ? () {
                         if ((double.tryParse(weightInfo?.weightVal ?? '0.000') ?? 0.0) <=
                             0) {
                           showTipInfo(
-                              localizedStrings.gTipInvalidWeightData, context);
+                              (localizedStrings?.gTipInvalidWeightData ?? "gTipInvalidWeightData"), context);
                           return;
                         }
                         setState(() {
@@ -642,7 +642,7 @@ class _ScaleWgtTakeOutWidgetState extends State<ScaleWgtTakeOutWidget> {
           if (startTakeOut)
             showPerformIconBtn(
                 endWgtSvgIcon(),
-                localizedStrings.gBtnEnd,
+                (localizedStrings?.gBtnEnd ?? "gBtnEnd"),
                 isStart
                     ? () {
                         setState(() {
@@ -658,7 +658,7 @@ class _ScaleWgtTakeOutWidgetState extends State<ScaleWgtTakeOutWidget> {
             ),
           if (mySettingParam.wgtMode == 0)
             Tooltip(
-              message: localizedStrings.gBtnSave,
+              message: (localizedStrings?.gBtnSave ?? "gBtnSave"),
               child: IconButton(
                 iconSize: 28,
                 color: Theme.of(context).colorScheme.primary,
@@ -735,18 +735,18 @@ class _ScaleWgtTakeOutWidgetState extends State<ScaleWgtTakeOutWidget> {
     setState(() {
       String wgtValue = '';
       if (weightInfo!.weightVal!.contains('-')) {
-        showTipInfo(localizedStrings.gTipInvalidWeightData, context);
+        showTipInfo((localizedStrings?.gTipInvalidWeightData ?? "gTipInvalidWeightData"), context);
         return;
       }
       if (startTakeOut && takeOutWgtvalue <= 0) {
-        showTipInfo(localizedStrings.gTipInvalidWeightData, context);
+        showTipInfo((localizedStrings?.gTipInvalidWeightData ?? "gTipInvalidWeightData"), context);
         return;
       }
       if (!startTakeOut) {
         wgtValue = weightInfo!.weightVal!;
         double temp = double.tryParse(wgtValue) ?? 0.0;
         if (temp <= 0) {
-          showTipInfo(localizedStrings.gTipInvalidWeightData, context);
+          showTipInfo((localizedStrings?.gTipInvalidWeightData ?? "gTipInvalidWeightData"), context);
           return;
         }
       } else {

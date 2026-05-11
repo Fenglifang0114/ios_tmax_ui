@@ -1,4 +1,4 @@
-// PLU data
+﻿// PLU data
 // 0-kg 1-100g 2-amount 3-lb 4-g 5-oz 6-lboz 7-tj 8-hj 9-t
 // 0-tax1 1-tax2  2-tax3
 
@@ -43,29 +43,29 @@ String getPluTax(int tax) {
 String getColumnName(String columnName) {
   switch (columnName) {
     case 'plu':
-      return localizedStrings.gPluPlu;
+      return (localizedStrings?.gPluPlu ?? "gPluPlu");
     case 'productName':
-      return localizedStrings.gPluPluName;
+      return (localizedStrings?.gPluPluName ?? "gPluPluName");
     case 'category':
-      return localizedStrings.gPluCategory;
+      return (localizedStrings?.gPluCategory ?? "gPluCategory");
     case 'price':
-      return localizedStrings.gPluPrice;
+      return (localizedStrings?.gPluPrice ?? "gPluPrice");
     case 'generalUnit':
-      return localizedStrings.gPluWgtUnit;
+      return (localizedStrings?.gPluWgtUnit ?? "gPluWgtUnit");
     case 'taxType':
-      return localizedStrings.gPluTaxType;
+      return (localizedStrings?.gPluTaxType ?? "gPluTaxType");
     case 'unitWeight':
-      return localizedStrings.gPluUnitWgt;
+      return (localizedStrings?.gPluUnitWgt ?? "gPluUnitWgt");
     case 'pretare':
-      return localizedStrings.gPluPretare;
+      return (localizedStrings?.gPluPretare ?? "gPluPretare");
     case 'limitHigh':
-      return localizedStrings.gPluLimitHigh;
+      return (localizedStrings?.gPluLimitHigh ?? "gPluLimitHigh");
     case 'limitLow':
-      return localizedStrings.gPluLimitLow;
+      return (localizedStrings?.gPluLimitLow ?? "gPluLimitLow");
     case 'productCode':
-      return localizedStrings.gPluPluCode;
+      return (localizedStrings?.gPluPluCode ?? "gPluPluCode");
     case 'itemCode':
-      return localizedStrings.gPluItemCode;
+      return (localizedStrings?.gPluItemCode ?? "gPluItemCode");
     default:
       return columnName;
   }

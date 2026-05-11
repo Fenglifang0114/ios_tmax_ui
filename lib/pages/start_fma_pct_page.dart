@@ -1,4 +1,4 @@
-import 'dart:async';
+﻿import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:t_max/data/darf_fma_data_from_db.dart';
@@ -591,7 +591,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
       if (mounted) {
         String dataStr = event.obj;
         if (dataStr.contains("fail")) {
-          showTipInfo(localizedStrings.openOutputPortFailed, context);
+          showTipInfo((localizedStrings?.openOutputPortFailed ?? "openOutputPortFailed"), context);
         }
       }
     });
@@ -891,9 +891,9 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
       barrierDismissible: false, // 点击对话框外部不关闭对话框
       builder: (BuildContext context) {
         return ShowUnitTipDialog(
-          title: localizedStrings.fTipTitle,
+          title: (localizedStrings?.fTipTitle ?? "fTipTitle"),
           msg:
-              '${localizedStrings.fWgtUnit} ${(myFmaInfo.header?.formulaUnit ?? '')}, ${localizedStrings.fSwitchUnitHint}',
+              '${(localizedStrings?.fWgtUnit ?? "fWgtUnit")} ${(myFmaInfo.header?.formulaUnit ?? '')}, ${(localizedStrings?.fSwitchUnitHint ?? "fSwitchUnitHint")}',
         );
       },
     ).then((value) {
@@ -931,8 +931,8 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
       barrierDismissible: false, // 点击对话框外部不关闭对话框
       builder: (BuildContext context) {
         return ShowDeleteTipDialog(
-          title: localizedStrings.fTipTitle,
-          msg: localizedStrings.fClearWeighingDataMsg,
+          title: (localizedStrings?.fTipTitle ?? "fTipTitle"),
+          msg: (localizedStrings?.fClearWeighingDataMsg ?? "fClearWeighingDataMsg"),
         );
       },
     ).then((value) {
@@ -1045,7 +1045,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
     bool hasRawWeight = getCanSaveFlag();
 
     if (!hasRawWeight) {
-      showTipInfo(localizedStrings.tipNoRawMaterialWeightData, context);
+      showTipInfo((localizedStrings?.tipNoRawMaterialWeightData ?? "tipNoRawMaterialWeightData"), context);
 
       return;
     }
@@ -1160,8 +1160,8 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
         barrierDismissible: false, // 点击对话框外部不关闭对话框
         builder: (BuildContext context) {
           return ShowDeleteTipDialog(
-            title: localizedStrings.fTipTitle,
-            msg: localizedStrings.fClearWeighingDataMsg,
+            title: (localizedStrings?.fTipTitle ?? "fTipTitle"),
+            msg: (localizedStrings?.fClearWeighingDataMsg ?? "fClearWeighingDataMsg"),
           );
         },
       ).then((value) {
@@ -1198,7 +1198,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
               child: showTextButton(
                   context,
                   btnHeight,
-                  localizedStrings.fCompleteIngredientsBtn,
+                  (localizedStrings?.fCompleteIngredientsBtn ?? "fCompleteIngredientsBtn"),
                   !isFinish
                       ? () {
                           performFinishBtn();
@@ -1215,7 +1215,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
               child: showTextButton(
                   context,
                   btnHeight,
-                  localizedStrings.fPrintFmaBtn,
+                  (localizedStrings?.fPrintFmaBtn ?? "fPrintFmaBtn"),
                   !isFinish
                       ? () {
                           performPrintBtn();
@@ -1232,7 +1232,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
               child: showTextButton(
                   context,
                   btnHeight,
-                  localizedStrings.fRepeatWeighingBtn,
+                  (localizedStrings?.fRepeatWeighingBtn ?? "fRepeatWeighingBtn"),
                   !isFinish
                       ? () {
                           performReWgtBtn();
@@ -1249,7 +1249,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
               child: showTextButton(
                   context,
                   btnHeight,
-                  localizedStrings.btnTemporarySave,
+                  (localizedStrings?.btnTemporarySave ?? "btnTemporarySave"),
                   !isEnableNext
                       ? null
                       : () {
@@ -1266,7 +1266,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
               child: showTextButton(
                   context,
                   btnHeight,
-                  localizedStrings.fAbandonIngredientsBtn,
+                  (localizedStrings?.fAbandonIngredientsBtn ?? "fAbandonIngredientsBtn"),
                   !isFinish
                       ? () {
                           performAbandonBtn();
@@ -1283,7 +1283,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
               child: showTextButton(
                   context,
                   btnHeight,
-                  localizedStrings.btnRestart,
+                  (localizedStrings?.btnRestart ?? "btnRestart"),
                   !isFinish
                       ? () {
                           showDeleteDialog();
@@ -1308,7 +1308,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
         child: Column(
           children: [
             pageHeadInfo(context, width - headWidthPadding,
-                localizedStrings.menuFormulaExecution, '', () {
+                (localizedStrings?.menuFormulaExecution ?? "menuFormulaExecution"), '', () {
               performAbandonBtn();
             }),
             Expanded(
@@ -1344,7 +1344,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
                       ),
                       Expanded(
                         child: Text(
-                          localizedStrings.fIngredientsRecordTitle,
+                          (localizedStrings?.fIngredientsRecordTitle ?? "fIngredientsRecordTitle"),
                           style: Theme.of(context)
                               .textTheme
                               .labelMedium!
@@ -1378,7 +1378,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
                                 children: [
                                   Flexible(
                                     child: Text(
-                                      localizedStrings.fEditFmaBtn,
+                                      (localizedStrings?.fEditFmaBtn ?? "fEditFmaBtn"),
                                       style: Theme.of(context)
                                           .textTheme
                                           .bodyMedium!
@@ -1527,7 +1527,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
               },
               columns: [
                 StickyTableColumn(
-                  localizedStrings.fIngredientOrder,
+                  (localizedStrings?.fIngredientOrder ?? "fIngredientOrder"),
                   fixedStart: true,
                   showSort: true,
                   sort: false,
@@ -1553,7 +1553,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
                   },
                 ),
                 StickyTableColumn(
-                  localizedStrings.fMaterialIdCol,
+                  (localizedStrings?.fMaterialIdCol ?? "fMaterialIdCol"),
                   showSort: true,
                   sort: false,
                   columnWidth: FixedColumnWidth(columnWidth),
@@ -1573,7 +1573,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
                   },
                 ),
                 StickyTableColumn(
-                  localizedStrings.fMaterialNameCol,
+                  (localizedStrings?.fMaterialNameCol ?? "fMaterialNameCol"),
                   columnWidth: FixedColumnWidth(columnWidth),
                   showSort: true,
                   sort: false,
@@ -1584,7 +1584,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
                     return Text(
                         //修改了此处
                         (data as FormulaWgtProcessData).no == 0
-                            ? localizedStrings.fFmaContainer
+                            ? (localizedStrings?.fFmaContainer ?? "fFmaContainer")
                             : (data).rawName!,
                         style: getTextStyle(
                             color: Theme.of(context)
@@ -1597,7 +1597,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
                 ),
                 if ((myFmaInfo.header?.formulaMode ?? '') == "pct")
                   StickyTableColumn(
-                    localizedStrings.fPctMode,
+                    (localizedStrings?.fPctMode ?? "fPctMode"),
                     columnWidth: FixedColumnWidth(columnWidth),
                     showSort: true,
                     sort: false,
@@ -1618,7 +1618,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
                     },
                   ),
                 StickyTableColumn(
-                  localizedStrings.fTargetWeightLabel,
+                  (localizedStrings?.fTargetWeightLabel ?? "fTargetWeightLabel"),
                   showSort: true,
                   sort: false,
                   columnWidth: FixedColumnWidth(columnWidth),
@@ -1641,7 +1641,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
                   },
                 ),
                 StickyTableColumn(
-                  localizedStrings.fCurrentWeightLabel,
+                  (localizedStrings?.fCurrentWeightLabel ?? "fCurrentWeightLabel"),
                   showSort: true,
                   sort: false,
                   columnWidth: FixedColumnWidth(columnWidth),
@@ -1661,7 +1661,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
                   },
                 ),
                 StickyTableColumn(
-                  localizedStrings.fAllowableErrorWeightLabel,
+                  (localizedStrings?.fAllowableErrorWeightLabel ?? "fAllowableErrorWeightLabel"),
                   showSort: true,
                   sort: false,
                   columnWidth: FixedColumnWidth(columnWidth),
@@ -1684,7 +1684,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
                   },
                 ),
                 StickyTableColumn(
-                  localizedStrings.fCurrentErrorWeightLabel,
+                  (localizedStrings?.fCurrentErrorWeightLabel ?? "fCurrentErrorWeightLabel"),
                   showSort: true,
                   sort: false,
                   columnWidth: FixedColumnWidth(columnWidth),
@@ -1707,7 +1707,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
                   },
                 ),
                 StickyTableColumn(
-                  localizedStrings.fQualificationStatus,
+                  (localizedStrings?.fQualificationStatus ?? "fQualificationStatus"),
                   showSort: true,
                   sort: false,
                   columnWidth: FixedColumnWidth(columnWidth),
@@ -1747,10 +1747,10 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
                             (data).no == 0
                                 ? "-"
                                 : (data).isOK! == "no"
-                                    ? localizedStrings.fIncompleteStatus
+                                    ? (localizedStrings?.fIncompleteStatus ?? "fIncompleteStatus")
                                     : (data).isOK! == "ok"
-                                        ? localizedStrings.fQualified
-                                        : localizedStrings.fUnqualified,
+                                        ? (localizedStrings?.fQualified ?? "fQualified")
+                                        : (localizedStrings?.fUnqualified ?? "fUnqualified"),
                             style: textTheme.bodySmall!.apply(
                               color: (data).isOK! == "no"
                                   ? colorScheme.primary
@@ -1830,7 +1830,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
             maxWidth: 200, // 最大宽度为 200
           ),
           child: Text(
-            localizedStrings.fFmaNameLabel + ": ",
+            (localizedStrings?.fFmaNameLabel ?? "fFmaNameLabel") + ": ",
             style: getTitleTextStyle(color: colorScheme.onSurfaceVariant),
             overflow: TextOverflow.ellipsis,
             maxLines: 1,
@@ -1878,7 +1878,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
                   text: TextSpan(
                     children: [
                       TextSpan(
-                        text: localizedStrings.fFmaIdLabel + ": ",
+                        text: (localizedStrings?.fFmaIdLabel ?? "fFmaIdLabel") + ": ",
                         style: getTitleTextStyle(
                             color: colorScheme.onSurfaceVariant),
                       ),
@@ -1900,7 +1900,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
                   text: TextSpan(
                     children: [
                       TextSpan(
-                        text: localizedStrings.fFmaBarcode + ": ",
+                        text: (localizedStrings?.fFmaBarcode ?? "fFmaBarcode") + ": ",
                         style: getTitleTextStyle(
                             color: colorScheme.onSurfaceVariant),
                       ),
@@ -1922,7 +1922,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
             Flexible(
               fit: FlexFit.loose,
               child: Text(
-                localizedStrings.fTotalWeightLabel + ": ",
+                (localizedStrings?.fTotalWeightLabel ?? "fTotalWeightLabel") + ": ",
                 style: getTitleTextStyle(color: colorScheme.onSurfaceVariant),
                 overflow: TextOverflow.ellipsis,
                 maxLines: 1,
@@ -1940,7 +1940,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
             // 显示标签部分，设置固定宽度
             Expanded(
               child: Text(
-                localizedStrings.fRemarkCol,
+                (localizedStrings?.fRemarkCol ?? "fRemarkCol"),
                 style: getTitleTextStyle(),
                 overflow: TextOverflow.ellipsis,
                 maxLines: 1,
@@ -2019,7 +2019,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
                           Container(
                             alignment: Alignment.center,
                             child: Text(
-                              localizedStrings.fFormulaCompletedTip,
+                              (localizedStrings?.fFormulaCompletedTip ?? "fFormulaCompletedTip"),
                               style: Theme.of(context)
                                   .textTheme
                                   .bodyMedium!
@@ -2044,7 +2044,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
         // 显示标签部分，设置固定宽度
         Expanded(
           child: Text(
-            '${localizedStrings.gDeviceName} : ${myScale.scaleName}',
+            '${(localizedStrings?.gDeviceName ?? "gDeviceName")} : ${myScale.scaleName}',
             style: Theme.of(context)
                 .textTheme
                 .bodyMedium!
@@ -2082,7 +2082,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
                               child: Text(
                                 //修改了此处
                                 selectedProcessWgt.no == 0
-                                    ? localizedStrings.fFmaContainer
+                                    ? (localizedStrings?.fFmaContainer ?? "fFmaContainer")
                                     : selectedProcessWgt.rawName ?? "",
                                 maxLines: 1,
                                 style: Theme.of(context)
@@ -2170,7 +2170,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
                                   padding: const EdgeInsets.only(left: 8.0),
                                   alignment: Alignment.centerLeft,
                                   child: Text(
-                                      localizedStrings.fTargetWeightLabel,
+                                      (localizedStrings?.fTargetWeightLabel ?? "fTargetWeightLabel"),
                                       maxLines: 1,
                                       style: Theme.of(context)
                                           .textTheme
@@ -2261,7 +2261,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
                               padding: const EdgeInsets.only(left: 8.0),
                               alignment: Alignment.centerLeft,
                               child: Text(
-                                localizedStrings.fAllowableError,
+                                (localizedStrings?.fAllowableError ?? "fAllowableError"),
                                 maxLines: 1,
                                 style: Theme.of(context)
                                     .textTheme
@@ -2354,7 +2354,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
                                 alignment: Alignment.centerLeft,
                                 color: Color.fromARGB(255, 249, 252, 252),
                                 child: Text(
-                                    localizedStrings.fRawMaterialWeightLabel,
+                                    (localizedStrings?.fRawMaterialWeightLabel ?? "fRawMaterialWeightLabel"),
                                     style: getTextStyle()),
                               )),
                           Expanded(
@@ -2425,7 +2425,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
                                 alignment: Alignment.centerLeft,
                                 color: Color.fromARGB(255, 249, 252, 252),
                                 child: Text(
-                                    localizedStrings.fFormulaProgressLabel,
+                                    (localizedStrings?.fFormulaProgressLabel ?? "fFormulaProgressLabel"),
                                     style: getTextStyle()),
                               )),
                           Expanded(
@@ -2487,7 +2487,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
                                   myScale.scaleId);
                             },
                             child: Text(
-                              localizedStrings.iBtnZero,
+                              (localizedStrings?.iBtnZero ?? "iBtnZero"),
                               //修改了此处
 
                               style: getTextStyle(color: colorScheme.primary),
@@ -2516,8 +2516,8 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
                                 barrierDismissible: false,
                                 builder: (BuildContext context) {
                                   return ShowNormalTipDialog(
-                                    title: localizedStrings.fTipTitle,
-                                    msg: localizedStrings.tipForceClearTare,
+                                    title: (localizedStrings?.fTipTitle ?? "fTipTitle"),
+                                    msg: (localizedStrings?.tipForceClearTare ?? "tipForceClearTare"),
                                   );
                                 },
                               ).then((value) {
@@ -2546,7 +2546,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
                             ),
                             elevation: 0,
                             child: Text(
-                              localizedStrings.gBtnTare,
+                              (localizedStrings?.gBtnTare ?? "gBtnTare"),
                               style:
                                   Theme.of(context).textTheme.bodySmall!.apply(
                                         color: colorScheme.primary,
@@ -2579,7 +2579,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
                                   }
                                 : null,
                             child: Text(
-                              localizedStrings.fNextStepBtn,
+                              (localizedStrings?.fNextStepBtn ?? "fNextStepBtn"),
                               style: textTheme.bodySmall!.apply(
                                 color: colorScheme.onPrimary,
                               ),
@@ -2657,12 +2657,12 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
   void handleNexBtn() {
     //判断为空
     if (myReqWeightCountine.msgBody == null) {
-      showTipInfo(localizedStrings.fDeviceDisconnected, context);
+      showTipInfo((localizedStrings?.fDeviceDisconnected ?? "fDeviceDisconnected"), context);
       return;
     }
     //判断当前是否已经稳定
     if ((myReqWeightCountine.msgBody?.isStable ?? false) == false) {
-      showTipInfo(localizedStrings.fStableOperationHint, context);
+      showTipInfo((localizedStrings?.fStableOperationHint ?? "fStableOperationHint"), context);
       return;
     }
 
@@ -2690,8 +2690,8 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
         barrierDismissible: false, // 点击对话框外部不关闭对话框
         builder: (BuildContext context) {
           return ShowLowWgtTipDialog(
-            title: localizedStrings.fTipTitle,
-            msg: localizedStrings.fCurrentMaterialWeightInvalidMsg,
+            title: (localizedStrings?.fTipTitle ?? "fTipTitle"),
+            msg: (localizedStrings?.fCurrentMaterialWeightInvalidMsg ?? "fCurrentMaterialWeightInvalidMsg"),
           );
         },
       ).then((value) {
@@ -2714,8 +2714,8 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
         barrierDismissible: false, // 点击对话框外部不关闭对话框
         builder: (BuildContext context) {
           return ShowHignWgtTipDialog(
-            title: localizedStrings.fTipTitle,
-            msg: localizedStrings.fCurrentMaterialOverweightMsg,
+            title: (localizedStrings?.fTipTitle ?? "fTipTitle"),
+            msg: (localizedStrings?.fCurrentMaterialOverweightMsg ?? "fCurrentMaterialOverweightMsg"),
           );
         },
       ).then((value) {
@@ -2915,7 +2915,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
       setState(() {
         isEnableNext = false; // 禁用按钮
       });
-      showTipInfo(localizedStrings.fFormulaCompletionMsg, context);
+      showTipInfo((localizedStrings?.fFormulaCompletionMsg ?? "fFormulaCompletionMsg"), context);
       handleCloseIoPort();
       //自动保存配方
       saveFormula();
@@ -2934,7 +2934,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
         barrierDismissible: false,
         builder: (BuildContext context) {
           return ShowCheckCodeDialog(
-            title: localizedStrings.ingredientVerification,
+            title: (localizedStrings?.ingredientVerification ?? "ingredientVerification"),
             rawId: selectedProcessWgt.rawId!,
             rawName: selectedProcessWgt.rawName!,
             rawCode: selectedProcessWgt.checkCode!,
@@ -3027,7 +3027,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
         } else {
           // 处理空值情况
           needTotalWgt = 0.0;
-          showTipInfo(localizedStrings.tipFormulaDataError, context);
+          showTipInfo((localizedStrings?.tipFormulaDataError ?? "tipFormulaDataError"), context);
         }
       } catch (e) {
         return; // 处理未找到匹配项的情况
@@ -3270,7 +3270,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
           ),
           Expanded(
               child: Text(
-            localizedStrings.fOrderNo + ': $recRecNumber',
+            (localizedStrings?.fOrderNo ?? "fOrderNo") + ': $recRecNumber',
             style: Theme.of(context)
                 .textTheme
                 .labelMedium!
@@ -3285,7 +3285,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
                 icon: Icon(openIoPortFlag
                     ? Icons.toggle_on_outlined
                     : Icons.toggle_off_outlined),
-                tooltip: localizedStrings.ioPort,
+                tooltip: (localizedStrings?.ioPort ?? "ioPort"),
                 color: openIoPortFlag
                     ? Theme.of(context).colorScheme.onTertiaryFixedVariant
                     : Theme.of(context).colorScheme.onSurfaceVariant,
@@ -3310,15 +3310,15 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
                   Icons.cleaning_services_outlined,
                   color: colorScheme.primary,
                 ),
-                tooltip: localizedStrings.btnForceClearTare,
+                tooltip: (localizedStrings?.btnForceClearTare ?? "btnForceClearTare"),
                 onPressed: () {
                   showDialog(
                     context: context,
                     barrierDismissible: false,
                     builder: (BuildContext context) {
                       return ShowNormalTipDialog(
-                        title: localizedStrings.fTipTitle,
-                        msg: localizedStrings.tipForceClearTare,
+                        title: (localizedStrings?.fTipTitle ?? "fTipTitle"),
+                        msg: (localizedStrings?.tipForceClearTare ?? "tipForceClearTare"),
                       );
                     },
                   ).then((value) {
@@ -3338,7 +3338,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
                   Icons.settings_outlined,
                   color: colorScheme.primary,
                 ),
-                tooltip: localizedStrings.gParameterSettingsTitle,
+                tooltip: (localizedStrings?.gParameterSettingsTitle ?? "gParameterSettingsTitle"),
                 onPressed: () {
                   showSettigDialog();
                 }),

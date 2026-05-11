@@ -1,4 +1,4 @@
-import 'dart:async';
+﻿import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -198,7 +198,7 @@ class CalibrationPageState extends State<CalibrationPage> {
               isCalSuccess = false;
             });
           } else if (!tempRespData.msgBody.contains('ok')) {
-            showTipInfo(localizedStrings.gTipRedoLastStep, context);
+            showTipInfo((localizedStrings?.gTipRedoLastStep ?? "gTipRedoLastStep"), context);
             setState(() {
               curStep = curStep - 1;
               if (curStep < 1) {
@@ -221,7 +221,7 @@ class CalibrationPageState extends State<CalibrationPage> {
         tempRespData = event.obj;
         if (mounted) {
           if (!tempRespData.msgBody.contains('ok')) {
-            showTipInfo(localizedStrings.gTipRedoLastStep, context);
+            showTipInfo((localizedStrings?.gTipRedoLastStep ?? "gTipRedoLastStep"), context);
             setState(() {
               curStep = curStep - 1;
               if (curStep < 1) {
@@ -236,8 +236,8 @@ class CalibrationPageState extends State<CalibrationPage> {
                   setState(() {
                     isFinish = true;
                     isCalSuccess = true;
-                    newWeight = double.parse(weightInfo!.weightVal.toString());
-                    currentWgtUnit = weightInfo!.weightUnit.toString();
+                    newWeight = (double.tryParse((weightInfo?.weightVal?.toString() ?? "0")) ?? 0.0);
+                    currentWgtUnit = (weightInfo?.weightUnit?.toString() ?? "kg");
 
                     CalLog calLog = CalLog(
                         scaleId: selScaleId,
@@ -267,9 +267,9 @@ class CalibrationPageState extends State<CalibrationPage> {
         tempRespData = event.obj;
         if (mounted) {
           if (!tempRespData.msgBody.contains('ok')) {
-            showTipInfo(localizedStrings.gTipSetParameterFail, context);
+            showTipInfo((localizedStrings?.gTipSetParameterFail ?? "gTipSetParameterFail"), context);
           } else {
-            showTipInfo(localizedStrings.fSuccessMsg, context);
+            showTipInfo((localizedStrings?.fSuccessMsg ?? "fSuccessMsg"), context);
           }
         }
       }
@@ -349,7 +349,7 @@ class CalibrationPageState extends State<CalibrationPage> {
         if (mounted) {
           if (tempRespData.msgBody.length > 7 ||
               tempRespData.msgBody.contains('fail')) {
-            showTipInfo(localizedStrings.gTipGetParameterFail, context);
+            showTipInfo((localizedStrings?.gTipGetParameterFail ?? "gTipGetParameterFail"), context);
             return;
           }
           initialGravAcc = (tempRespData.msgBody);
@@ -357,7 +357,7 @@ class CalibrationPageState extends State<CalibrationPage> {
           setState(() {
             gravAccCtl.text = initialGravAcc;
           });
-          showTipInfo(localizedStrings.fSuccessMsg, context);
+          showTipInfo((localizedStrings?.fSuccessMsg ?? "fSuccessMsg"), context);
         }
       }
     });
@@ -495,10 +495,10 @@ class CalibrationPageState extends State<CalibrationPage> {
     // 在页面构建完成后显示提示
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (myAllScalesList.isEmpty) {
-        showTipInfo(localizedStrings.gTipNoDeviceAddFirst, context);
+        showTipInfo((localizedStrings?.gTipNoDeviceAddFirst ?? "gTipNoDeviceAddFirst"), context);
       } else {
         if (selScaleId == -1) {
-          showTipInfo(localizedStrings.gTipSelectDeviceFirst, context);
+          showTipInfo((localizedStrings?.gTipSelectDeviceFirst ?? "gTipSelectDeviceFirst"), context);
         }
       }
     });
@@ -573,7 +573,7 @@ class CalibrationPageState extends State<CalibrationPage> {
   }
 
   void getAllParameter() {
-    showTipInfo(localizedStrings.gTipGettingParameter, context);
+    showTipInfo((localizedStrings?.gTipGettingParameter ?? "gTipGettingParameter"), context);
     PublicFunctions.getMaxRange1(selScaleId);
     PublicFunctions.getWeightUnit(selScaleId);
     PublicFunctions.getInitialZero(selScaleId);
@@ -585,7 +585,7 @@ class CalibrationPageState extends State<CalibrationPage> {
   }
 
   showCalibrationWarning() {
-    showTipInfo(localizedStrings.gTipCalibrating, context);
+    showTipInfo((localizedStrings?.gTipCalibrating ?? "gTipCalibrating"), context);
   }
 
   void changeScale(int scaleId) {
@@ -595,8 +595,8 @@ class CalibrationPageState extends State<CalibrationPage> {
         barrierDismissible: false, // 点击对话框外部不关闭对话框
         builder: (BuildContext ctx) {
           return ShowNormalTipDialog(
-            title: localizedStrings.fTipTitle,
-            msg: localizedStrings.gTipCalibrationWarning,
+            title: (localizedStrings?.fTipTitle ?? "fTipTitle"),
+            msg: (localizedStrings?.gTipCalibrationWarning ?? "gTipCalibrationWarning"),
           );
         },
       ).then((value) {
@@ -634,7 +634,7 @@ class CalibrationPageState extends State<CalibrationPage> {
                           const EdgeInsets.only(left: regularPadding, top: 40),
                       alignment: Alignment.centerLeft,
                       child: Text(
-                        localizedStrings.gTitleDeviceList,
+                        (localizedStrings?.gTitleDeviceList ?? "gTitleDeviceList"),
                         style: Theme.of(context).textTheme.labelLarge!.apply(
                               color: Theme.of(context).colorScheme.primary,
                             ),
@@ -675,7 +675,7 @@ class CalibrationPageState extends State<CalibrationPage> {
         child: Column(
           children: [
             pageHeadInfo(context, width - headWidthPadding,
-                localizedStrings.menuCalibration, '', () {
+                (localizedStrings?.menuCalibration ?? "menuCalibration"), '', () {
               Navigator.pop(context);
             },
                 leading: isMobile
@@ -809,7 +809,7 @@ class CalibrationPageState extends State<CalibrationPage> {
         SizedBox(
           width: 300,
           child: Column(children: [
-            showTitle(localizedStrings.gTipMaxRange),
+            showTitle(localizedStrings?.gTipMaxRange ?? "gTipMaxRange"),
             showCapInputBox(scaleCap1Ctl),
           ]),
         ),
@@ -819,7 +819,7 @@ class CalibrationPageState extends State<CalibrationPage> {
         SizedBox(
           width: 300,
           child: Column(children: [
-            showTitle(localizedStrings.gTipGaduation),
+            showTitle(localizedStrings?.gTipGaduation ?? "gTipGaduation"),
             showDropDownButton(context, '', gaduation1Ctl, [
               '1',
               '2',
@@ -840,7 +840,7 @@ class CalibrationPageState extends State<CalibrationPage> {
         SizedBox(
           width: 300,
           child: Column(children: [
-            showTitle(localizedStrings.gTipWeightUnit),
+            showTitle(localizedStrings?.gTipWeightUnit ?? "gTipWeightUnit"),
             SizedBox(
                 child: showDropDownButton(context, '', unitCtl, [
               'kg',
@@ -852,8 +852,8 @@ class CalibrationPageState extends State<CalibrationPage> {
                 barrierDismissible: false, // 点击对话框外部不关闭对话框
                 builder: (BuildContext ctx) {
                   return ShowNormalTipDialog(
-                    title: localizedStrings.fTipTitle,
-                    msg: localizedStrings.gTipSwitchUnit,
+                    title: (localizedStrings?.fTipTitle ?? "fTipTitle"),
+                    msg: (localizedStrings?.gTipSwitchUnit ?? "gTipSwitchUnit"),
                   );
                 },
               );
@@ -869,7 +869,7 @@ class CalibrationPageState extends State<CalibrationPage> {
         SizedBox(
           width: 300,
           child: Column(children: [
-            showTitle(localizedStrings.gTipDecimal),
+            showTitle(localizedStrings?.gTipDecimal ?? "gTipDecimal"),
             SizedBox(
                 child: showDropDownButton(context, '', decimalCtl, [
               '0',
@@ -888,7 +888,7 @@ class CalibrationPageState extends State<CalibrationPage> {
         SizedBox(
           width: 300,
           child: Column(children: [
-            showTitle(localizedStrings.gTipInitialZero),
+            showTitle(localizedStrings?.gTipInitialZero ?? "gTipInitialZero"),
             SizedBox(
                 child: showDropDownButton(context, '', initialZeroCtl,
                     ['0', '2', '3', '4', '10', '20', '50', '100'], (onValue) {
@@ -904,7 +904,7 @@ class CalibrationPageState extends State<CalibrationPage> {
         SizedBox(
           width: 300,
           child: Column(children: [
-            showTitle(localizedStrings.gTipManualZero),
+            showTitle(localizedStrings?.gTipManualZero ?? "gTipManualZero"),
             SizedBox(
                 child: showDropDownButton(context, '', manualZeroCtl,
                     ['0', '2', '3', '4', '10', '20', '50', '100'], (onValue) {
@@ -919,7 +919,7 @@ class CalibrationPageState extends State<CalibrationPage> {
         SizedBox(
           width: 300,
           child: Column(children: [
-            showTitle(localizedStrings.gTipZeroTracking),
+            showTitle(localizedStrings?.gTipZeroTracking ?? "gTipZeroTracking"),
             //   0:off 1:0.5 2:1 3:2 4:3 5:4
             SizedBox(
                 child: showDropDownButton(context, '', zeroTrackingCtl,
@@ -936,7 +936,7 @@ class CalibrationPageState extends State<CalibrationPage> {
         SizedBox(
           width: 300,
           child: Column(children: [
-            showTitle(localizedStrings.gTipGravityAcceleration),
+            showTitle(localizedStrings?.gTipGravityAcceleration ?? "gTipGravityAcceleration"),
             showGravAccInputBox(),
           ]),
         ),
@@ -974,7 +974,7 @@ class CalibrationPageState extends State<CalibrationPage> {
                         performModifyParameter();
                       },
                 child: Text(
-                  localizedStrings.gBtnConfirm,
+                  (localizedStrings?.gBtnConfirm ?? "gBtnConfirm"),
                   style: Theme.of(context).textTheme.bodyMedium!.apply(
                         color: Theme.of(context).colorScheme.onPrimary,
                       ),
@@ -998,14 +998,14 @@ class CalibrationPageState extends State<CalibrationPage> {
                 onPressed: () {
                   //取消的话重新获取下参数
 
-                  showTipInfo(localizedStrings.gTipGettingParameter, context);
+                  showTipInfo((localizedStrings?.gTipGettingParameter ?? "gTipGettingParameter"), context);
 
                   Future.delayed(const Duration(seconds: 2), () {
                     getAllParameter();
                   });
                 },
                 child: Text(
-                  localizedStrings.gBtnCancel,
+                  (localizedStrings?.gBtnCancel ?? "gBtnCancel"),
                   style: Theme.of(context).textTheme.bodyMedium!.apply(
                         color: Theme.of(context).colorScheme.onPrimary,
                       ),
@@ -1099,8 +1099,8 @@ class CalibrationPageState extends State<CalibrationPage> {
     if (gravAccCtl.text == "") {
       return false;
     }
-    if (double.parse(gravAccCtl.text) < 9.7 ||
-        double.parse(gravAccCtl.text) > 9.9) {
+    if ((double.tryParse(gravAccCtl.text) ?? 0.0) < 9.7 ||
+        (double.tryParse(gravAccCtl.text) ?? 0.0) > 9.9) {
       return false;
     }
     return true;
@@ -1214,7 +1214,7 @@ class CalibrationPageState extends State<CalibrationPage> {
                       children: [
                         Container(
                           alignment: Alignment.centerLeft,
-                          child: Text(localizedStrings.gTipCalibrationWeight),
+                          child: Text(localizedStrings?.gTipCalibrationWeight ?? "gTipCalibrationWeight"),
                         ),
                         SizedBox(
                           height: inputHeight,
@@ -1240,7 +1240,7 @@ class CalibrationPageState extends State<CalibrationPage> {
                               border: OutlineInputBorder(
                                   borderRadius:
                                       BorderRadius.all(Radius.circular(0.0))),
-                              hintText: localizedStrings.gTipCalibrationWeight,
+                              hintText: (localizedStrings?.gTipCalibrationWeight ?? "gTipCalibrationWeight"),
                               hintStyle: TextStyle(
                                 color: Theme.of(context)
                                     .colorScheme
@@ -1299,7 +1299,7 @@ class CalibrationPageState extends State<CalibrationPage> {
                 stableLightSvgIcon(),
                 60,
                 60,
-                weightInfo!.isStable!
+                (weightInfo?.isStable ?? false)
                     ? Theme.of(context).colorScheme.onTertiaryFixedVariant
                     : Theme.of(context).colorScheme.onSurfaceVariant),
           ),
@@ -1314,7 +1314,7 @@ class CalibrationPageState extends State<CalibrationPage> {
                         SizedBox(
                           width: 230,
                           child: Text(
-                            localizedStrings.gTipBeforeCalibration + ":  ",
+                            (localizedStrings?.gTipBeforeCalibration ?? "gTipBeforeCalibration") + ":  ",
                             style: Theme.of(context).textTheme.bodySmall!.apply(
                                   color:
                                       Theme.of(context).colorScheme.onSurface,
@@ -1339,7 +1339,7 @@ class CalibrationPageState extends State<CalibrationPage> {
                                         .surfaceContainerLowest,
                                     alignment: Alignment.center,
                                     child: Text(
-                                      weightInfo!.weightVal.toString(),
+                                      (weightInfo?.weightVal?.toString() ?? "0"),
                                       style: Theme.of(context)
                                           .textTheme
                                           .bodySmall!
@@ -1360,7 +1360,7 @@ class CalibrationPageState extends State<CalibrationPage> {
                                         .colorScheme
                                         .surfaceContainerLowest,
                                     child: Text(
-                                      weightInfo!.weightUnit.toString(),
+                                      (weightInfo?.weightUnit?.toString() ?? "kg"),
                                       style: Theme.of(context)
                                           .textTheme
                                           .bodySmall!
@@ -1393,7 +1393,7 @@ class CalibrationPageState extends State<CalibrationPage> {
             stableLightSvgIcon(),
             60,
             60,
-            weightInfo!.isStable!
+            (weightInfo?.isStable ?? false)
                 ? Theme.of(context).colorScheme.onTertiaryFixedVariant
                 : Theme.of(context).colorScheme.onSurfaceVariant),
       ),
@@ -1405,7 +1405,7 @@ class CalibrationPageState extends State<CalibrationPage> {
             text: TextSpan(
               children: [
                 TextSpan(
-                  text: localizedStrings.gTipPleaseLoadWeight,
+                  text: (localizedStrings?.gTipPleaseLoadWeight ?? "gTipPleaseLoadWeight"),
                   style: Theme.of(context).textTheme.bodySmall!.apply(
                         color: Theme.of(context).colorScheme.onSurface,
                         overflow: TextOverflow.ellipsis,
@@ -1454,8 +1454,8 @@ class CalibrationPageState extends State<CalibrationPage> {
                 alignment: Alignment.center,
                 child: Text(
                   isCalSuccess
-                      ? localizedStrings.gTipCalibrationSuccess
-                      : localizedStrings.gTipCalibrationFailed,
+                      ? (localizedStrings?.gTipCalibrationSuccess ?? "gTipCalibrationSuccess")
+                      : (localizedStrings?.gTipCalibrationFailed ?? "gTipCalibrationFailed"),
                   style: Theme.of(context).textTheme.bodySmall!.apply(
                         color: isCalSuccess
                             ? Theme.of(context)
@@ -1473,7 +1473,7 @@ class CalibrationPageState extends State<CalibrationPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        localizedStrings.gTipBeforeCalibration +
+                        (localizedStrings?.gTipBeforeCalibration ?? "gTipBeforeCalibration") +
                             ":  ${oldWeight.toString()} $currentWgtUnit",
                         style: Theme.of(context).textTheme.bodySmall!.apply(
                               color: Theme.of(context).colorScheme.onSurface,
@@ -1483,7 +1483,7 @@ class CalibrationPageState extends State<CalibrationPage> {
                         width: 20,
                       ),
                       Text(
-                        localizedStrings.gTipAfterCalibration +
+                        (localizedStrings?.gTipAfterCalibration ?? "gTipAfterCalibration") +
                             ":  ${newWeight.toString()} $currentWgtUnit",
                         style: Theme.of(context).textTheme.bodySmall!.apply(
                               color: Theme.of(context).colorScheme.onSurface,
@@ -1493,7 +1493,7 @@ class CalibrationPageState extends State<CalibrationPage> {
                         width: 20,
                       ),
                       Text(
-                        localizedStrings.gTipErrorValue +
+                        (localizedStrings?.gTipErrorValue ?? "gTipErrorValue") +
                             ":  ${(newWeight - oldWeight).toStringAsFixed(3)} $currentWgtUnit",
                         style: Theme.of(context).textTheme.bodySmall!.apply(
                               color: Theme.of(context).colorScheme.onSurface,
@@ -1514,7 +1514,7 @@ class CalibrationPageState extends State<CalibrationPage> {
             stableLightSvgIcon(),
             60,
             60,
-            weightInfo!.isStable!
+            (weightInfo?.isStable ?? false)
                 ? Theme.of(context).colorScheme.onTertiaryFixedVariant
                 : Theme.of(context).colorScheme.onSurfaceVariant),
       ),
@@ -1523,7 +1523,7 @@ class CalibrationPageState extends State<CalibrationPage> {
         //   height: 48,
         //   alignment: Alignment.center,
         //   child: Text(
-        //     localizedStrings.gTipPleaseEmptyScalePan,
+        //     (localizedStrings?.gTipPleaseEmptyScalePan ?? "gTipPleaseEmptyScalePan"),
         //     style: Theme.of(context).textTheme.bodySmall!.apply(
         //           color: Theme.of(context).colorScheme.onSurface,
         //         ),
@@ -1546,7 +1546,7 @@ class CalibrationPageState extends State<CalibrationPage> {
           curStep == step5 || curStep == step1
               ? SizedBox()
               : showTextButton(
-                  context, btnHeight, localizedStrings.gBtnPrevious, () {
+                  context, btnHeight, (localizedStrings?.gBtnPrevious ?? "gBtnPrevious"), () {
                   setState(() {
                     curStep = curStep - 1;
                   });
@@ -1563,13 +1563,13 @@ class CalibrationPageState extends State<CalibrationPage> {
               context,
               btnHeight,
               curStep == step5 && !isCalSuccess
-                  ? localizedStrings.gTipCalibrationAgain
+                  ? (localizedStrings?.gTipCalibrationAgain ?? "gTipCalibrationAgain")
                   : curStep == step5 && isCalSuccess
-                      ? localizedStrings.finishBtn
-                      : localizedStrings.fNextStepBtn,
+                      ? (localizedStrings?.finishBtn ?? "finishBtn")
+                      : (localizedStrings?.fNextStepBtn ?? "fNextStepBtn"),
               curStep == step4 && scaleRangeCtl.text == ''
                   ? null
-                  : isStart && weightInfo!.isStable!
+                  : isStart && (weightInfo?.isStable ?? false)
                       ? () {
                           setState(() {
                             if (curStep == step1) {
@@ -1579,8 +1579,7 @@ class CalibrationPageState extends State<CalibrationPage> {
                             } else if (curStep == step2) {
                               curStep = step3;
                             } else if (curStep == step3) {
-                              oldWeight = double.parse(
-                                  weightInfo!.weightVal.toString());
+                              oldWeight = (double.tryParse((weightInfo?.weightVal?.toString() ?? "0")) ?? 0.0);
                               oldWeight <= 0 ? oldWeight = 0 : oldWeight;
                               curStep = step4;
                             } else if (curStep == step4) {
@@ -1628,16 +1627,16 @@ class CalibrationPageState extends State<CalibrationPage> {
   String getStepTip(int stepIndex) {
     switch (stepIndex) {
       case step1:
-        return localizedStrings.gTipEmptyScalePanThenNext;
+        return (localizedStrings?.gTipEmptyScalePanThenNext ?? "gTipEmptyScalePanThenNext");
       case step3:
-        return localizedStrings.gTipPlaceCalibrationWeight +
+        return (localizedStrings?.gTipPlaceCalibrationWeight ?? "gTipPlaceCalibrationWeight") +
             " ${scaleRangeCtl.text} kg";
       case step2:
-        return localizedStrings.gTipSetCalibrationWeightThenNext;
+        return (localizedStrings?.gTipSetCalibrationWeightThenNext ?? "gTipSetCalibrationWeightThenNext");
       case step4:
-        return localizedStrings.gTipLoadWeightThenNext;
+        return (localizedStrings?.gTipLoadWeightThenNext ?? "gTipLoadWeightThenNext");
       case step5:
-        return localizedStrings.gTipCalResult;
+        return (localizedStrings?.gTipCalResult ?? "gTipCalResult");
       default:
         return "";
     }
@@ -1646,15 +1645,15 @@ class CalibrationPageState extends State<CalibrationPage> {
   String getStepTitle(int stepIndex) {
     switch (stepIndex) {
       case step1:
-        return localizedStrings.gTipEmptyScalePan;
+        return (localizedStrings?.gTipEmptyScalePan ?? "gTipEmptyScalePan");
       case step3:
-        return localizedStrings.gTipPlaceCalibrationWeight;
+        return (localizedStrings?.gTipPlaceCalibrationWeight ?? "gTipPlaceCalibrationWeight");
       case step2:
-        return localizedStrings.gTipSetCalibrationWeight;
+        return (localizedStrings?.gTipSetCalibrationWeight ?? "gTipSetCalibrationWeight");
       case step4:
-        return localizedStrings.gTipPlaceWeight;
+        return (localizedStrings?.gTipPlaceWeight ?? "gTipPlaceWeight");
       case step5:
-        return localizedStrings.gTipCalibrationResult;
+        return (localizedStrings?.gTipCalibrationResult ?? "gTipCalibrationResult");
       default:
         return "";
     }
@@ -1784,7 +1783,7 @@ class CalibrationPageState extends State<CalibrationPage> {
             child: showTextButton(
                 context,
                 48,
-                localizedStrings.menuParameterSetting,
+                (localizedStrings?.menuParameterSetting ?? "menuParameterSetting"),
                 selScaleId == -1
                     ? null
                     : () {
@@ -1809,7 +1808,7 @@ class CalibrationPageState extends State<CalibrationPage> {
             child: showTextButton(
                 context,
                 48,
-                localizedStrings.menuCalibration,
+                (localizedStrings?.menuCalibration ?? "menuCalibration"),
                 selScaleId == -1
                     ? null
                     : () {

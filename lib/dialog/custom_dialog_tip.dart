@@ -1,4 +1,4 @@
-import 'dart:async';
+﻿import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:t_max/data/home_page_common_data.dart';
@@ -180,7 +180,7 @@ class ShowNormalTipDialogState extends State<ShowNormalTipDialog> {
                         Navigator.pop(context, true);
                       },
                       child: Text(
-                        localizedStrings.gBtnConfirm,
+                        (localizedStrings?.gBtnConfirm ?? "gBtnConfirm"),
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.normal,
@@ -209,7 +209,7 @@ class ShowNormalTipDialogState extends State<ShowNormalTipDialog> {
                         Navigator.pop(context, false);
                       },
                       child: Text(
-                        localizedStrings.gBtnCancel,
+                        (localizedStrings?.gBtnCancel ?? "gBtnCancel"),
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.normal,
@@ -309,7 +309,7 @@ class ShowDeleteTipDialogState extends State<ShowDeleteTipDialog> {
                         Navigator.pop(context, true);
                       },
                       child: Text(
-                        localizedStrings.gBtnDelete,
+                        (localizedStrings?.gBtnDelete ?? "gBtnDelete"),
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.normal,
@@ -339,7 +339,7 @@ class ShowDeleteTipDialogState extends State<ShowDeleteTipDialog> {
                         Navigator.pop(context, false);
                       },
                       child: Text(
-                        localizedStrings.gBtnCancel,
+                        (localizedStrings?.gBtnCancel ?? "gBtnCancel"),
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.normal,
@@ -439,7 +439,7 @@ class ShowHignWgtTipDialogState extends State<ShowHignWgtTipDialog> {
                         Navigator.pop(context, 1);
                       },
                       child: Text(
-                        localizedStrings.fAbandonBtn,
+                        (localizedStrings?.fAbandonBtn ?? "fAbandonBtn"),
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.normal,
@@ -467,7 +467,7 @@ class ShowHignWgtTipDialogState extends State<ShowHignWgtTipDialog> {
                         Navigator.pop(context, 2);
                       },
                       child: Text(
-                        localizedStrings.fReviseBtn,
+                        (localizedStrings?.fReviseBtn ?? "fReviseBtn"),
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.normal,
@@ -554,7 +554,7 @@ class ShowLowWgtTipDialogState extends State<ShowLowWgtTipDialog> {
                 children: [
                   Expanded(
                       child: showTextButton(
-                          context, btnHeight, localizedStrings.gBtnConfirm, () {
+                          context, btnHeight, (localizedStrings?.gBtnConfirm ?? "gBtnConfirm"), () {
                     Navigator.pop(context, 1);
                   },
                           Theme.of(context).colorScheme.onPrimary,
@@ -565,7 +565,7 @@ class ShowLowWgtTipDialogState extends State<ShowLowWgtTipDialog> {
                   ),
                   Expanded(
                       child: showTextButton(
-                          context, btnHeight, localizedStrings.gBtnCancel, () {
+                          context, btnHeight, (localizedStrings?.gBtnCancel ?? "gBtnCancel"), () {
                     Navigator.pop(context, 0);
                   },
                           Theme.of(context).colorScheme.onPrimary,
@@ -660,7 +660,7 @@ class ShowUnitTipDialogState extends State<ShowUnitTipDialog> {
                         Navigator.pop(context);
                       },
                       child: Text(
-                        localizedStrings.gBtnConfirm,
+                        (localizedStrings?.gBtnConfirm ?? "gBtnConfirm"),
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.normal,
@@ -808,7 +808,7 @@ class ShowCheckCodeDialogState extends State<ShowCheckCodeDialog> {
           children: [
             // 头部
             ...fmaDialogHeadStyle(
-                context, widget.title, localizedStrings.gParameterSettingsTitle,
+                context, widget.title, (localizedStrings?.gParameterSettingsTitle ?? "gParameterSettingsTitle"),
                 () {
               Navigator.pop(context, "set");
             }),
@@ -834,7 +834,7 @@ class ShowCheckCodeDialogState extends State<ShowCheckCodeDialog> {
                           child: Align(
                               alignment: Alignment.centerRight,
                               child: showTextTitle(
-                                  localizedStrings.fMaterialIdCol + ":  "))),
+                                  (localizedStrings?.fMaterialIdCol ?? "fMaterialIdCol") + ":  "))),
                       Expanded(
                           flex: 3,
                           child: Align(
@@ -850,7 +850,7 @@ class ShowCheckCodeDialogState extends State<ShowCheckCodeDialog> {
                           child: Align(
                               alignment: Alignment.centerRight,
                               child: showTextTitle(
-                                  localizedStrings.fMaterialCodeCol + ":  "))),
+                                  (localizedStrings?.fMaterialCodeCol ?? "fMaterialCodeCol") + ":  "))),
                       Expanded(
                         flex: 3,
                         child: TextField(
@@ -861,7 +861,7 @@ class ShowCheckCodeDialogState extends State<ShowCheckCodeDialog> {
                             border: OutlineInputBorder(
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(0.0))),
-                            hintText: localizedStrings.fMaterialCodeCol,
+                            hintText: (localizedStrings?.fMaterialCodeCol ?? "fMaterialCodeCol"),
                             hintStyle:
                                 Theme.of(context).textTheme.bodySmall!.apply(
                                       color: Theme.of(context)
@@ -889,7 +889,7 @@ class ShowCheckCodeDialogState extends State<ShowCheckCodeDialog> {
                             } else {
                               setState(() {
                                 errorText =
-                                    localizedStrings.verificationCodeMismatch;
+                                    (localizedStrings?.verificationCodeMismatch ?? "verificationCodeMismatch");
                                 checkCodeCtl.text = "";
                                 _checkCodeFocusNode.requestFocus();
                               });
@@ -939,7 +939,7 @@ class ShowCheckCodeDialogState extends State<ShowCheckCodeDialog> {
                         Navigator.pop(context, "skip");
                       },
                       child: Text(
-                        localizedStrings.skipThisIngredient,
+                        (localizedStrings?.skipThisIngredient ?? "skipThisIngredient"),
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.normal,
@@ -965,7 +965,7 @@ class ShowCheckCodeDialogState extends State<ShowCheckCodeDialog> {
                         Navigator.pop(context, "abandon");
                       },
                       child: Text(
-                        localizedStrings.fAbandonIngredientsBtn,
+                        (localizedStrings?.fAbandonIngredientsBtn ?? "fAbandonIngredientsBtn"),
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.normal,
@@ -993,7 +993,7 @@ class ShowCheckCodeDialogState extends State<ShowCheckCodeDialog> {
                             }
                           : null,
                       child: Text(
-                        localizedStrings.btnTemporarySave,
+                        (localizedStrings?.btnTemporarySave ?? "btnTemporarySave"),
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.normal,

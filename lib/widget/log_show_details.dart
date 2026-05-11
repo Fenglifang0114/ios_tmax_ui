@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/data/language.dart';
@@ -41,7 +41,7 @@ class SyslogDetailDialog extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             // 头部
-            ...dialogHeadStyle(context, localizedStrings.logDetails, true,
+            ...dialogHeadStyle(context, (localizedStrings?.logDetails ?? "logDetails"), true,
                 onClose: () {
               Navigator.of(context).pop();
             }),
@@ -56,17 +56,17 @@ class SyslogDetailDialog extends StatelessWidget {
                     // 基本信息区域
                     _buildInfoRow(
                       context: context,
-                      label: '${localizedStrings.module}:',
+                      label: '${(localizedStrings?.module ?? "module")}:',
                       value: getSysLogTrans(log.module ?? ""),
                     ),
                     _buildInfoRow(
                       context: context,
-                      label: '${localizedStrings.funcName}:',
+                      label: '${(localizedStrings?.funcName ?? "funcName")}:',
                       value: getSysLogTrans(log.funcName ?? ""),
                     ),
                     _buildInfoRow(
                       context: context,
-                      label: '${localizedStrings.operationType}:',
+                      label: '${(localizedStrings?.operationType ?? "operationType")}:',
                       value: getSysLogTrans(log.operationType ?? ""),
                     ),
 
@@ -77,7 +77,7 @@ class SyslogDetailDialog extends StatelessWidget {
                           children: [
                             showText(
                               context,
-                              '${localizedStrings.operation}:',
+                              '${(localizedStrings?.operation ?? "operation")}:',
                               Theme.of(context).colorScheme.onSurfaceVariant,
                             ),
                             Spacer(),
@@ -222,7 +222,7 @@ class CalLogDetailDialog extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             // 头部
-            ...dialogHeadStyle(context, localizedStrings.logDetails, true,
+            ...dialogHeadStyle(context, (localizedStrings?.logDetails ?? "logDetails"), true,
                 onClose: () {
               Navigator.of(context).pop();
             }),
@@ -237,32 +237,32 @@ class CalLogDetailDialog extends StatelessWidget {
                     // 基本信息区域
                     _buildInfoRow(
                       context: context,
-                      label: '${localizedStrings.calibrationType}:',
+                      label: '${(localizedStrings?.calibrationType ?? "calibrationType")}:',
                       value: getCalLogTrans(log.type ?? ""),
                     ),
                     _buildInfoRow(
                       context: context,
-                      label: '${localizedStrings.gTipWeightUnit}:',
+                      label: '${(localizedStrings?.gTipWeightUnit ?? "gTipWeightUnit")}:',
                       value: (log.unit ?? ""),
                     ),
                     _buildInfoRow(
                       context: context,
-                      label: '${localizedStrings.calibrationValue}:',
+                      label: '${(localizedStrings?.calibrationValue ?? "calibrationValue")}:',
                       value: log.calValue.toString(),
                     ),
                     _buildInfoRow(
                       context: context,
-                      label: '${localizedStrings.weightBeforeCalibration}:',
+                      label: '${(localizedStrings?.weightBeforeCalibration ?? "weightBeforeCalibration")}:',
                       value: log.before.toString(),
                     ),
                     _buildInfoRow(
                       context: context,
-                      label: '${localizedStrings.weightAfterCalibration}:',
+                      label: '${(localizedStrings?.weightAfterCalibration ?? "weightAfterCalibration")}:',
                       value: log.after.toString(),
                     ),
                     _buildInfoRow(
                       context: context,
-                      label: '${localizedStrings.calibrationError}:',
+                      label: '${(localizedStrings?.calibrationError ?? "calibrationError")}:',
                       value: log.calError.toString(),
                     ),
                     Spacer(),
@@ -382,7 +382,7 @@ class WgtLogDetailDialog extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             // 头部
-            ...dialogHeadStyle(context, localizedStrings.logDetails, true,
+            ...dialogHeadStyle(context, (localizedStrings?.logDetails ?? "logDetails"), true,
                 onClose: () {
               Navigator.of(context).pop();
             }),
@@ -397,28 +397,28 @@ class WgtLogDetailDialog extends StatelessWidget {
                     // 基本信息区域
                     _buildInfoRow(
                       context: context,
-                      label: '${localizedStrings.module}:',
+                      label: '${(localizedStrings?.module ?? "module")}:',
                       value: getWgtLogTrans(log.module ?? ""),
                     ),
                     _buildInfoRow(
                       context: context,
-                      label: '${localizedStrings.fTotalWeight}:',
+                      label: '${(localizedStrings?.fTotalWeight ?? "fTotalWeight")}:',
                       value: log.weight.toString(),
                     ),
                     _buildInfoRow(
                       context: context,
-                      label: '${localizedStrings.gTipWeightUnit}:',
+                      label: '${(localizedStrings?.gTipWeightUnit ?? "gTipWeightUnit")}:',
                       value: (log.unit ?? ""),
                     ),
 
                     _buildInfoRow(
                       context: context,
-                      label: '${localizedStrings.gDeviceName}:',
+                      label: '${(localizedStrings?.gDeviceName ?? "gDeviceName")}:',
                       value: log.scaleName.toString(),
                     ),
                     _buildInfoRow(
                       context: context,
-                      label: '${localizedStrings.gModelName}:',
+                      label: '${(localizedStrings?.gModelName ?? "gModelName")}:',
                       value: log.modelName.toString(),
                     ),
                     _buildInfoRow(

@@ -1,4 +1,4 @@
-// //主界面
+﻿// //主界面
 
 // import 'package:flutter/material.dart';
 // import 'package:t_max/data/company_info.dart';
@@ -121,7 +121,7 @@
 //                   height: topBarHeight,
 //                   color: Colors.green, // 可替换为实际内容
 //                   child:
-//                       Center(child: Text(localizedStrings.menuLabelDesign)),
+//                       Center(child: Text(localizedStrings?.menuLabelDesign ?? "menuLabelDesign")),
 //                 ),
 //                 SizedBox(
 //                   height: regularPadding,

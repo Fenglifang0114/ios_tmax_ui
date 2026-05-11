@@ -1,4 +1,4 @@
-// wifi 设置界面 只能用串口设置
+﻿// wifi 设置界面 只能用串口设置
 
 import 'dart:async';
 import 'dart:convert';
@@ -175,7 +175,7 @@ class WifiSettingPageState extends State<WifiSettingPage> {
             if (myRespDataFromScale.msgBody.contains(msgOk)) {
               isConnecting = false;
 
-              showTipInfo(localizedStrings.gTipGetIP, context);
+              showTipInfo((localizedStrings?.gTipGetIP ?? "gTipGetIP"), context);
 
               _startGetIP(2);
             } else {
@@ -198,7 +198,7 @@ class WifiSettingPageState extends State<WifiSettingPage> {
             if (myRespDataFromScale.msgBody.contains(msgOk)) {
               isConnecting = false;
               if (alreadyConnected) {
-                showTipInfo(localizedStrings.gTipConnected, context);
+                showTipInfo((localizedStrings?.gTipConnected ?? "gTipConnected"), context);
               } else {
                 connectAp();
               }
@@ -223,9 +223,9 @@ class WifiSettingPageState extends State<WifiSettingPage> {
               gateWayController.text = myIpInfoData.gateway!;
               netMaskController.text = myIpInfoData.netmask!;
 
-              showTipInfo(localizedStrings.gTipGetIpOk, context);
+              showTipInfo((localizedStrings?.gTipGetIpOk ?? "gTipGetIpOk"), context);
             } else {
-              showTipInfo(localizedStrings.gTipGetIpFail, context);
+              showTipInfo((localizedStrings?.gTipGetIpFail ?? "gTipGetIpFail"), context);
             }
 
             PublicFunctions.getIpMode(selScaleId);
@@ -279,7 +279,7 @@ class WifiSettingPageState extends State<WifiSettingPage> {
           }
         });
         if (firstGetApList) {
-          showTipInfo(localizedStrings.gTipGetAPList, context);
+          showTipInfo((localizedStrings?.gTipGetAPList ?? "gTipGetAPList"), context);
           PublicFunctions.getWifiList(selScaleId);
           isSetting = true;
           firstGetApList = false;
@@ -333,7 +333,7 @@ class WifiSettingPageState extends State<WifiSettingPage> {
             if (myRespDataFromScale.msgBody.contains(msgOk)) {
               isConnecting = false;
 
-              showTipInfo(localizedStrings.gTipGetIP, context);
+              showTipInfo((localizedStrings?.gTipGetIP ?? "gTipGetIP"), context);
               cntScaleTimerMgr.stopCntScaleTimer();
             } else {
               isConnecting = false;
@@ -374,10 +374,10 @@ class WifiSettingPageState extends State<WifiSettingPage> {
     // 在页面构建完成后显示提示
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (comScalesList.isEmpty) {
-        showTipInfo(localizedStrings.gTipNoDeviceAddFirst, context);
+        showTipInfo((localizedStrings?.gTipNoDeviceAddFirst ?? "gTipNoDeviceAddFirst"), context);
       } else {
         if (selScaleId == -1) {
-          showTipInfo(localizedStrings.gTipSelectDeviceFirst, context);
+          showTipInfo((localizedStrings?.gTipSelectDeviceFirst ?? "gTipSelectDeviceFirst"), context);
         }
       }
     });
@@ -535,7 +535,7 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                           const EdgeInsets.only(left: regularPadding, top: 40),
                       alignment: Alignment.centerLeft,
                       child: Text(
-                        localizedStrings.gTitleDeviceList,
+                        (localizedStrings?.gTitleDeviceList ?? "gTitleDeviceList"),
                         style: Theme.of(context).textTheme.labelLarge!.apply(
                               color: Theme.of(context).colorScheme.primary,
                             ),
@@ -549,7 +549,7 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                         clickScale: (scale) {
                           if (isSetting) {
                             showTipInfo(
-                                localizedStrings.gTipPerformingOperation,
+                                (localizedStrings?.gTipPerformingOperation ?? "gTipPerformingOperation"),
                                 context);
                             return;
                           }
@@ -570,7 +570,7 @@ class WifiSettingPageState extends State<WifiSettingPage> {
         child: Column(
           children: [
             pageHeadInfo(context, width - headWidthPadding,
-                localizedStrings.menuWifiSetting, '', () {
+                (localizedStrings?.menuWifiSetting ?? "menuWifiSetting"), '', () {
               Navigator.pop(context);
             },
                 leading: isMobile
@@ -599,7 +599,7 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                         clickScale: (scale) {
                           if (isSetting) {
                             showTipInfo(
-                                localizedStrings.gTipPerformingOperation,
+                                (localizedStrings?.gTipPerformingOperation ?? "gTipPerformingOperation"),
                                 context);
                             return;
                           }
@@ -661,7 +661,7 @@ class WifiSettingPageState extends State<WifiSettingPage> {
       selScaleId = scaleId;
       // PublicFunctions.stopWeight(selScaleId);
 
-      showTipInfo(localizedStrings.gTipGetApListAndIP, context);
+      showTipInfo((localizedStrings?.gTipGetApListAndIP ?? "gTipGetApListAndIP"), context);
       PublicFunctions.changeWifiMode(selScaleId);
 
       isSetting = true;
@@ -719,7 +719,7 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                                 Icons.search,
                                 color: Theme.of(context).colorScheme.primary,
                               ),
-                              labelText: localizedStrings.gFindSsid,
+                              labelText: (localizedStrings?.gFindSsid ?? "gFindSsid"),
                               floatingLabelBehavior:
                                   FloatingLabelBehavior.never,
                               border: OutlineInputBorder(
@@ -754,7 +754,7 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                           color:
                               Theme.of(context).colorScheme.surfaceContainerLow,
                           child: Tooltip(
-                            message: localizedStrings.gMsgRefresh,
+                            message: (localizedStrings?.gMsgRefresh ?? "gMsgRefresh"),
                             child: IconButton(
                               splashRadius: 20,
                               onPressed: _enableRefresh
@@ -765,7 +765,7 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                                       });
 
                                       showTipInfo(
-                                          localizedStrings.gTipGetAPList,
+                                          (localizedStrings?.gTipGetAPList ?? "gTipGetAPList"),
                                           context);
                                       PublicFunctions.getWifiList(selScaleId);
                                       isSetting = true;
@@ -817,8 +817,8 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                               const SizedBox(height: regularPadding),
                               Text(
                                 getScaleModel() == "DPM"
-                                    ? localizedStrings.gTipConnectedInfo + "            (Port: 8580)"
-                                    : localizedStrings.gTipConnectedInfo,
+                                    ? (localizedStrings?.gTipConnectedInfo ?? "gTipConnectedInfo") + "            (Port: 8580)"
+                                    : (localizedStrings?.gTipConnectedInfo ?? "gTipConnectedInfo"),
                                 style: Theme.of(context).textTheme.bodyMedium!.apply(
                                       color: Theme.of(context).colorScheme.primary,
                                     ),
@@ -855,7 +855,7 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                               Container(
                                 height: 30,
                                 alignment: Alignment.centerLeft,
-                                child: Text(localizedStrings.gTipSSID),
+                                child: Text(localizedStrings?.gTipSSID ?? "gTipSSID"),
                               ),
                               TextField(
                                 readOnly: false,
@@ -895,7 +895,7 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                               Container(
                                 height: 30,
                                 alignment: Alignment.centerLeft,
-                                child: Text(localizedStrings.gPassword),
+                                child: Text(localizedStrings?.gPassword ?? "gPassword"),
                               ),
                               TextField(
                                 controller: passwordController,
@@ -945,7 +945,7 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                               Container(
                                 height: 30,
                                 alignment: Alignment.centerLeft,
-                                child: Text(localizedStrings.gIpAddress),
+                                child: Text(localizedStrings?.gIpAddress ?? "gIpAddress"),
                               ),
                               SizedBox(
                                 height: 78,
@@ -963,7 +963,7 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                                       ),
                                     ),
                                     border: const OutlineInputBorder(),
-                                    errorText: validateIpFlag(ipController.text) ? null : localizedStrings.gTipErrorIp,
+                                    errorText: validateIpFlag(ipController.text) ? null : (localizedStrings?.gTipErrorIp ?? "gTipErrorIp"),
                                   ),
                                   style: Theme.of(context).textTheme.bodySmall!.apply(
                                         color: !_isStatic
@@ -988,7 +988,7 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                               Container(
                                 height: 30,
                                 alignment: Alignment.centerLeft,
-                                child: Text(localizedStrings.gNetmask),
+                                child: Text(localizedStrings?.gNetmask ?? "gNetmask"),
                               ),
                               SizedBox(
                                 height: 78,
@@ -1006,7 +1006,7 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                                       ),
                                     ),
                                     border: const OutlineInputBorder(),
-                                    errorText: validateIpFlag(netMaskController.text) ? null : localizedStrings.gTipErrorIp,
+                                    errorText: validateIpFlag(netMaskController.text) ? null : (localizedStrings?.gTipErrorIp ?? "gTipErrorIp"),
                                   ),
                                   style: Theme.of(context).textTheme.bodySmall!.apply(
                                       color: !_isStatic
@@ -1030,7 +1030,7 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                               Container(
                                 height: 30,
                                 alignment: Alignment.centerLeft,
-                                child: Text(localizedStrings.gGateway),
+                                child: Text(localizedStrings?.gGateway ?? "gGateway"),
                               ),
                               SizedBox(
                                 height: 78,
@@ -1048,7 +1048,7 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                                       ),
                                     ),
                                     border: const OutlineInputBorder(),
-                                    errorText: validateIpFlag(gateWayController.text) ? null : localizedStrings.gTipErrorIp,
+                                    errorText: validateIpFlag(gateWayController.text) ? null : (localizedStrings?.gTipErrorIp ?? "gTipErrorIp"),
                                   ),
                                   style: Theme.of(context).textTheme.bodySmall!.apply(
                                       color: !_isStatic
@@ -1088,7 +1088,7 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                           child: showTextButton(
                               context,
                               btnHeight,
-                              localizedStrings.gBtnGetIp,
+                              (localizedStrings?.gBtnGetIp ?? "gBtnGetIp"),
                               isConnecting || isSetting
                                   ? null
                                   : () {
@@ -1106,13 +1106,13 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                           child: showTextButton(
                               context,
                               btnHeight,
-                              localizedStrings.gBtnStatic,
+                              (localizedStrings?.gBtnStatic ?? "gBtnStatic"),
                               (_isStatic || isConnecting || isSetting)
                                   ? null
                                   : () {
                                       setState(() {
                                         _isStatic = true;
-                                        showTipInfo(localizedStrings.gTipConnectStaticIp, context);
+                                        showTipInfo((localizedStrings?.gTipConnectStaticIp ?? "gTipConnectStaticIp"), context);
                                       });
                                     },
                               Theme.of(context).colorScheme.onPrimary,
@@ -1126,7 +1126,7 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                           child: showTextButton(
                               context,
                               btnHeight,
-                              localizedStrings.gBtnDynamic,
+                              (localizedStrings?.gBtnDynamic ?? "gBtnDynamic"),
                               (_isStatic && !isConnecting && !isSetting)
                                   ? () {
                                       setState(() {
@@ -1147,10 +1147,10 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                           child: showTextButton(
                               context,
                               btnHeight,
-                              localizedStrings.gBtnConnect,
+                              (localizedStrings?.gBtnConnect ?? "gBtnConnect"),
                               (isValidData() && !isConnecting && !isSetting)
                                   ? () {
-                                      showTipInfo(localizedStrings.gTipConnecting, context);
+                                      showTipInfo((localizedStrings?.gTipConnecting ?? "gTipConnecting"), context);
                                       isConnecting = true;
                                       cntScaleTimerMgr.stopCntScaleTimer();
                                       if (_isStatic) {
@@ -1253,7 +1253,7 @@ class WifiSettingPageState extends State<WifiSettingPage> {
         myWiFiAPInfo.bssid == bssId) {
       isConnecting = false;
 
-      showTipInfo(localizedStrings.gTipConnected, context);
+      showTipInfo((localizedStrings?.gTipConnected ?? "gTipConnected"), context);
     } else {
       myRespDataFromScale.msgBody = '';
       connectAp();

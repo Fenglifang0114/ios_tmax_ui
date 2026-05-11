@@ -1,4 +1,4 @@
-//配方导入方法
+﻿//配方导入方法
 
 import 'dart:convert';
 import 'dart:io';
@@ -55,7 +55,7 @@ Future<ImportFmaResult> importFormulasFromExcel(File file) async {
       try {
         csvString = gbk.decode(bytes);
       } catch (e) {
-        result.errorMessage = localizedStrings.gMsgUseUtf8;
+        result.errorMessage = (localizedStrings?.gMsgUseUtf8 ?? "gMsgUseUtf8");
         return result;
       }
     }
@@ -67,13 +67,13 @@ Future<ImportFmaResult> importFormulasFromExcel(File file) async {
     List<List<dynamic>> sheetRows = const CsvToListConverter().convert(csvString);
 
     if (sheetRows.isEmpty) {
-      result.errorMessage = localizedStrings.noDataImport;
+      result.errorMessage = (localizedStrings?.noDataImport ?? "noDataImport");
       return result;
     }
 
     //大于1000行 提示用户一次读取1000行
     if (sheetRows.length > 1001) {
-      result.errorMessage = localizedStrings.max1000Rows;
+      result.errorMessage = (localizedStrings?.max1000Rows ?? "max1000Rows");
       return result;
     }
 
@@ -103,7 +103,7 @@ Future<ImportFmaResult> importFormulasFromExcel(File file) async {
         if (internalKey != null) {
           if (columnIndexMap.containsKey(internalKey)) {
             result.errorMessage =
-                localizedStrings.duplicateHeaders + '：$header  ';
+                (localizedStrings?.duplicateHeaders ?? "duplicateHeaders") + '：$header  ';
             return result;
           }
           columnIndexMap[internalKey] = i;
@@ -113,7 +113,7 @@ Future<ImportFmaResult> importFormulasFromExcel(File file) async {
     //验证表头是否完整
     final missingHeader = _validateHeaders(columnIndexMap.keys.toList());
     if (missingHeader.isNotEmpty) {
-      result.errorMessage = localizedStrings.missingHeaders + '：$missingHeader';
+      result.errorMessage = (localizedStrings?.missingHeaders ?? "missingHeaders") + '：$missingHeader';
       return result;
     }
 
@@ -133,12 +133,12 @@ Future<ImportFmaResult> importFormulasFromExcel(File file) async {
       final formulaIdCol = columnIndexMap['formulaid']!;
       final formulaIdValue = _getCellValue(row, formulaIdCol);
       if (formulaIdValue.isEmpty) {
-        result.errorMessage = localizedStrings.formulaIdEmpty +
-            ',${localizedStrings.tipRow}:${rowIdx + 1}';
+        result.errorMessage = (localizedStrings?.formulaIdEmpty ?? "formulaIdEmpty") +
+            ',${(localizedStrings?.tipRow ?? "tipRow")}:${rowIdx + 1}';
         return result;
       } else if (isFormulaExist(formulaIdValue)) {
         result.errorMessage =
-            '$formulaIdValue ${localizedStrings.formulaIdExists}, ${localizedStrings.tipRow}:${rowIdx + 1}';
+            '$formulaIdValue ${(localizedStrings?.formulaIdExists ?? "formulaIdExists")}, ${(localizedStrings?.tipRow ?? "tipRow")}:${rowIdx + 1}';
         return result;
       } else {
         rowData['formulaid'] = formulaIdValue;
@@ -162,7 +162,7 @@ Future<ImportFmaResult> importFormulasFromExcel(File file) async {
       }
       if (isFormulaBarcodeExist(barcodeValue)) {
         result.errorMessage =
-            '$barcodeValue ${localizedStrings.formulaBarcodeExists}, ${localizedStrings.tipRow}:${rowIdx + 1}';
+            '$barcodeValue ${(localizedStrings?.formulaBarcodeExists ?? "formulaBarcodeExists")}, ${(localizedStrings?.tipRow ?? "tipRow")}:${rowIdx + 1}';
         return result;
       }
 
@@ -172,8 +172,8 @@ Future<ImportFmaResult> importFormulasFromExcel(File file) async {
       final formulaNameCol = columnIndexMap['formulaname']!;
       final formulaName = _getCellValue(row, formulaNameCol).trim();
       if (formulaName.isEmpty) {
-        result.errorMessage = localizedStrings.formulaNameEmpty +
-            ', ${localizedStrings.tipRow}:${rowIdx + 1}';
+        result.errorMessage = (localizedStrings?.formulaNameEmpty ?? "formulaNameEmpty") +
+            ', ${(localizedStrings?.tipRow ?? "tipRow")}:${rowIdx + 1}';
         return result;
       } else {
         rowData['formulaname'] = formulaName;
@@ -183,12 +183,12 @@ Future<ImportFmaResult> importFormulasFromExcel(File file) async {
       final modeCol = columnIndexMap['mode']!;
       final mode = _getCellValue(row, modeCol).trim().toLowerCase();
       if (mode.isEmpty) {
-        result.errorMessage = localizedStrings.modeEmpty +
-            ', ${localizedStrings.tipRow}:${rowIdx + 1}';
+        result.errorMessage = (localizedStrings?.modeEmpty ?? "modeEmpty") +
+            ', ${(localizedStrings?.tipRow ?? "tipRow")}:${rowIdx + 1}';
         return result;
       } else if (!['weight', 'percent', "percentage"].contains(mode)) {
-        result.errorMessage = localizedStrings.modeInvalid +
-            '：$mode , ${localizedStrings.tipRow}:${rowIdx + 1}';
+        result.errorMessage = (localizedStrings?.modeInvalid ?? "modeInvalid") +
+            '：$mode , ${(localizedStrings?.tipRow ?? "tipRow")}:${rowIdx + 1}';
         return result;
       } else {
         rowData['mode'] = mode;
@@ -197,8 +197,8 @@ Future<ImportFmaResult> importFormulasFromExcel(File file) async {
           final weightUnitCol = columnIndexMap['weightunit']!;
           final weightUnit = _getCellValue(row, weightUnitCol).trim();
           if (weightUnit.isEmpty) {
-            result.errorMessage = localizedStrings.weightUnitEmpty +
-                ', ${localizedStrings.tipRow}:${rowIdx + 1}';
+            result.errorMessage = (localizedStrings?.weightUnitEmpty ?? "weightUnitEmpty") +
+                ', ${(localizedStrings?.tipRow ?? "tipRow")}:${rowIdx + 1}';
             return result;
           } else {
             rowData['weightunit'] = weightUnit;
@@ -210,12 +210,12 @@ Future<ImportFmaResult> importFormulasFromExcel(File file) async {
       final ingredientIdCol = columnIndexMap['ingredientid']!;
       final ingredientId = _getCellValue(row, ingredientIdCol).trim();
       if (ingredientId.isEmpty) {
-        result.errorMessage = localizedStrings.ingredientIdEmpty +
-            ', ${localizedStrings.tipRow}:${rowIdx + 1}';
+        result.errorMessage = (localizedStrings?.ingredientIdEmpty ?? "ingredientIdEmpty") +
+            ', ${(localizedStrings?.tipRow ?? "tipRow")}:${rowIdx + 1}';
         return result;
       } else if (!isRawExist(ingredientId)) {
-        result.errorMessage = localizedStrings.ingredientIdNotExist +
-            ', ${localizedStrings.tipRow}:${rowIdx + 1}';
+        result.errorMessage = (localizedStrings?.ingredientIdNotExist ?? "ingredientIdNotExist") +
+            ', ${(localizedStrings?.tipRow ?? "tipRow")}:${rowIdx + 1}';
         return result;
       } else {
         rowData['ingredientid'] = ingredientId;
@@ -225,13 +225,13 @@ Future<ImportFmaResult> importFormulasFromExcel(File file) async {
       final weightCol = columnIndexMap['ingredientweight/percentage']!;
       final weightValue = _getCellValue(row, weightCol);
       if (weightValue.isEmpty) {
-        result.errorMessage = localizedStrings.weightPercentEmpty +
-            ', ${localizedStrings.tipRow}:${rowIdx + 1}';
+        result.errorMessage = (localizedStrings?.weightPercentEmpty ?? "weightPercentEmpty") +
+            ', ${(localizedStrings?.tipRow ?? "tipRow")}:${rowIdx + 1}';
         return result;
       } else if (!_isValidDecimal(weightValue,
           maxDecimals: 3, minValue: 0.001)) {
-        result.errorMessage = localizedStrings.weightPercentInvalid +
-            '：$weightValue , ${localizedStrings.tipRow}:${rowIdx + 1}';
+        result.errorMessage = (localizedStrings?.weightPercentInvalid ?? "weightPercentInvalid") +
+            '：$weightValue , ${(localizedStrings?.tipRow ?? "tipRow")}:${rowIdx + 1}';
         return result;
       } else {
         rowData['ingredientweight/percentage'] = double.parse(weightValue);
@@ -241,13 +241,13 @@ Future<ImportFmaResult> importFormulasFromExcel(File file) async {
       final errorCol = columnIndexMap['allowableerror']!;
       final errorValue = _getCellValue(row, errorCol);
       if (errorValue.isEmpty) {
-        result.errorMessage = localizedStrings.allowErrorEmpty +
-            ', ${localizedStrings.tipRow}:${rowIdx + 1}';
+        result.errorMessage = (localizedStrings?.allowErrorEmpty ?? "allowErrorEmpty") +
+            ', ${(localizedStrings?.tipRow ?? "tipRow")}:${rowIdx + 1}';
         return result;
       } else if (!_isValidDecimal(errorValue,
           maxDecimals: 3, minValue: 0.001)) {
-        result.errorMessage = localizedStrings.allowErrorInvalid +
-            '：$errorValue , ${localizedStrings.tipRow}:${rowIdx + 1}';
+        result.errorMessage = (localizedStrings?.allowErrorInvalid ?? "allowErrorInvalid") +
+            '：$errorValue , ${(localizedStrings?.tipRow ?? "tipRow")}:${rowIdx + 1}';
         return result;
       } else {
         rowData['allowableerror'] = double.parse(errorValue);
@@ -290,7 +290,7 @@ Future<ImportFmaResult> importFormulasFromExcel(File file) async {
       final barcode = row['barcode'] as String;
       if (barcodeList.containsKey(barcode) &&
           formulaId != barcodeList[barcode]) {
-        result.errorMessage = localizedStrings.formulaBarcodeInconsistent +
+        result.errorMessage = (localizedStrings?.formulaBarcodeInconsistent ?? "formulaBarcodeInconsistent") +
             ',  ID :$formulaId  :${barcodeList[barcode]}';
         return result; // 找到一个不一致就终止循环，无需继续检查
       } else {
@@ -334,7 +334,7 @@ Future<ImportFmaResult> importFormulasFromExcel(File file) async {
       for (final row in groupRows) {
         final currentName = row['formulaname'] as String;
         if (currentName != firstFormulaName) {
-          result.errorMessage = localizedStrings.formulaNameInconsistent +
+          result.errorMessage = (localizedStrings?.formulaNameInconsistent ?? "formulaNameInconsistent") +
               ', :$currentName  :$firstFormulaName';
           return result; // 找到一个不一致就终止循环，无需继续检查
         }
@@ -344,7 +344,7 @@ Future<ImportFmaResult> importFormulasFromExcel(File file) async {
       for (final row in groupRows) {
         final currentName = row['barcode'] as String;
         if (currentName != firstBarcodeName) {
-          result.errorMessage = localizedStrings.formulaBarcodeInconsistent +
+          result.errorMessage = (localizedStrings?.formulaBarcodeInconsistent ?? "formulaBarcodeInconsistent") +
               ', :$currentName  :$firstBarcodeName';
           return result; // 找到一个不一致就终止循环，无需继续检查
         }
@@ -367,7 +367,7 @@ Future<ImportFmaResult> importFormulasFromExcel(File file) async {
         totalPercent = double.parse(totalPercent.toStringAsFixed(3));
         // 浮点数比较需用容差，避免精度问题（如99.9999999999或100.0000000001应视为有效）
         if (totalPercent != 100) {
-          result.errorMessage = localizedStrings.percentNot100 +
+          result.errorMessage = (localizedStrings?.percentNot100 ?? "percentNot100") +
               '${totalPercent.toStringAsFixed(3)}%';
           return result;
         }
@@ -395,7 +395,7 @@ Future<ImportFmaResult> importFormulasFromExcel(File file) async {
 
     return ImportFmaResult(
         isSuccess: true,
-        errorMessage: localizedStrings.tipImporting,
+        errorMessage: (localizedStrings?.tipImporting ?? "tipImporting"),
         importFmaInfoList: validFormulas);
   } catch (e) {
     stopwatch.stop();
@@ -476,30 +476,30 @@ String _cleanHeader(String header) {
 // 获取配方导入表头与本地化的映射
 Map<String, String> _getFormulaHeaderMap() {
   return {
-    'formulaid': localizedStrings.fFmaIdLabel,
-    'formulaname': localizedStrings.fFmaNameLabel,
-    'barcode': localizedStrings.fFmaBarcode,
-    'mode': localizedStrings.fFmaModeCol,
-    'weightunit': localizedStrings.gTipWeightUnit,
-    'category': localizedStrings.fFmaCategoryCol,
-    'confidential': localizedStrings.fConfidential,
-    'needcontainer': localizedStrings.fFmaContainer,
-    'ingredientid': localizedStrings.fMaterialIdCol,
-    'ingredientweight/percentage': localizedStrings.fMaterialSingleWeight,
-    'allowableerror': localizedStrings.fAllowableError,
-    'notes': localizedStrings.fFmaRemark,
+    'formulaid': (localizedStrings?.fFmaIdLabel ?? "fFmaIdLabel"),
+    'formulaname': (localizedStrings?.fFmaNameLabel ?? "fFmaNameLabel"),
+    'barcode': (localizedStrings?.fFmaBarcode ?? "fFmaBarcode"),
+    'mode': (localizedStrings?.fFmaModeCol ?? "fFmaModeCol"),
+    'weightunit': (localizedStrings?.gTipWeightUnit ?? "gTipWeightUnit"),
+    'category': (localizedStrings?.fFmaCategoryCol ?? "fFmaCategoryCol"),
+    'confidential': (localizedStrings?.fConfidential ?? "fConfidential"),
+    'needcontainer': (localizedStrings?.fFmaContainer ?? "fFmaContainer"),
+    'ingredientid': (localizedStrings?.fMaterialIdCol ?? "fMaterialIdCol"),
+    'ingredientweight/percentage': (localizedStrings?.fMaterialSingleWeight ?? "fMaterialSingleWeight"),
+    'allowableerror': (localizedStrings?.fAllowableError ?? "fAllowableError"),
+    'notes': (localizedStrings?.fFmaRemark ?? "fFmaRemark"),
   };
 }
 
 // 获取原料导入表头与本地化的映射
 Map<String, String> _getRawHeaderMap() {
   return {
-    'ingredientid': localizedStrings.fMaterialIdCol,
-    'ingredientname': localizedStrings.fMaterialNameCol,
-    'verificationcode': localizedStrings.fMaterialCodeCol,
-    'category': localizedStrings.fFmaCategoryCol,
-    'ingredientnotes': localizedStrings.fIngredientRemark,
-    'devicename': localizedStrings.gDeviceName,
+    'ingredientid': (localizedStrings?.fMaterialIdCol ?? "fMaterialIdCol"),
+    'ingredientname': (localizedStrings?.fMaterialNameCol ?? "fMaterialNameCol"),
+    'verificationcode': (localizedStrings?.fMaterialCodeCol ?? "fMaterialCodeCol"),
+    'category': (localizedStrings?.fFmaCategoryCol ?? "fFmaCategoryCol"),
+    'ingredientnotes': (localizedStrings?.fIngredientRemark ?? "fIngredientRemark"),
+    'devicename': (localizedStrings?.gDeviceName ?? "gDeviceName"),
   };
 }
 
@@ -567,17 +567,17 @@ Future<ImportRawResult> importRawFromExcel(File file) async {
       'scaleNameList': scaleNameList,
       'localizedRawHeaders': _getRawHeaderMap(), // 传入当前语言的表头
       'messages': {
-        'noDataImport': localizedStrings.noDataImport,
-        'max5000Rows': localizedStrings.max5000Rows,
-        'missingHeaders': localizedStrings.missingHeaders,
-        'tipRow': localizedStrings.tipRow,
-        'ingredientNameEmpty': localizedStrings.ingredientNameEmpty,
-        'deviceNameNotExist': localizedStrings.deviceNameNotExist,
-        'ingredientIdIsEmpty': localizedStrings.ingredientIdIsEmpty,
-        'fRawIdDuplicate': localizedStrings.fRawIdDuplicate,
-        'duplicateHeaders': localizedStrings.duplicateHeaders,
-        'tipImporting': localizedStrings.tipImporting,
-        'useUtf8': localizedStrings.gMsgUseUtf8,
+        'noDataImport': (localizedStrings?.noDataImport ?? "noDataImport"),
+        'max5000Rows': (localizedStrings?.max5000Rows ?? "max5000Rows"),
+        'missingHeaders': (localizedStrings?.missingHeaders ?? "missingHeaders"),
+        'tipRow': (localizedStrings?.tipRow ?? "tipRow"),
+        'ingredientNameEmpty': (localizedStrings?.ingredientNameEmpty ?? "ingredientNameEmpty"),
+        'deviceNameNotExist': (localizedStrings?.deviceNameNotExist ?? "deviceNameNotExist"),
+        'ingredientIdIsEmpty': (localizedStrings?.ingredientIdIsEmpty ?? "ingredientIdIsEmpty"),
+        'fRawIdDuplicate': (localizedStrings?.fRawIdDuplicate ?? "fRawIdDuplicate"),
+        'duplicateHeaders': (localizedStrings?.duplicateHeaders ?? "duplicateHeaders"),
+        'tipImporting': (localizedStrings?.tipImporting ?? "tipImporting"),
+        'useUtf8': (localizedStrings?.gMsgUseUtf8 ?? "gMsgUseUtf8"),
       }
     });
   } catch (e) {

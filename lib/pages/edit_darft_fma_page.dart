@@ -1,4 +1,4 @@
-//因为含有暂存的配方，所以要限制修改
+﻿//因为含有暂存的配方，所以要限制修改
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -50,8 +50,8 @@ class EditDarftFmaPageState extends State<EditDarftFmaPage> {
   double totalWgt = 0.0; // 总权重
   // 创建一个映射表，将枚举值与翻译关联起来
   Map<FormulaMode, String> formulaModeTranslation = {
-    FormulaMode.wgt: localizedStrings.fWeightMode,
-    FormulaMode.pct: localizedStrings.fPctMode,
+    FormulaMode.wgt: (localizedStrings?.fWeightMode ?? "fWeightMode"),
+    FormulaMode.pct: (localizedStrings?.fPctMode ?? "fPctMode"),
   };
 
   int selectedIndex = -1;
@@ -193,8 +193,8 @@ class EditDarftFmaPageState extends State<EditDarftFmaPage> {
                           barrierDismissible: false, // 点击对话框外部不关闭对话框
                           builder: (BuildContext context) {
                             return ShowNormalTipDialog(
-                              title: localizedStrings.fTipTitle,
-                              msg: localizedStrings.fSwitchModeClearMsg,
+                              title: (localizedStrings?.fTipTitle ?? "fTipTitle"),
+                              msg: (localizedStrings?.fSwitchModeClearMsg ?? "fSwitchModeClearMsg"),
                             );
                           },
                         ).then((value) {
@@ -282,7 +282,7 @@ class EditDarftFmaPageState extends State<EditDarftFmaPage> {
                   DropdownMenuItem<String>(
                     value: null,
                     child: Text(
-                      localizedStrings.fPleaseSelectCategory,
+                      (localizedStrings?.fPleaseSelectCategory ?? "fPleaseSelectCategory"),
                       style: Theme.of(context).textTheme.bodySmall!.apply(
                             color: Theme.of(context)
                                 .colorScheme
@@ -294,7 +294,7 @@ class EditDarftFmaPageState extends State<EditDarftFmaPage> {
               : [
                   DropdownMenuItem<String>(
                     value: null,
-                    child: Text(localizedStrings.fPleaseSelectCategory,
+                    child: Text((localizedStrings?.fPleaseSelectCategory ?? "fPleaseSelectCategory"),
                         style: Theme.of(context).textTheme.bodySmall!.apply(
                               color: Theme.of(context)
                                   .colorScheme
@@ -348,7 +348,7 @@ class EditDarftFmaPageState extends State<EditDarftFmaPage> {
               ? [
                   DropdownMenuItem<String>(
                     value: null,
-                    child: Text(localizedStrings.fSelectRawMaterialHint,
+                    child: Text((localizedStrings?.fSelectRawMaterialHint ?? "fSelectRawMaterialHint"),
                         style: Theme.of(context).textTheme.bodySmall!.apply(
                               color: Theme.of(context)
                                   .colorScheme
@@ -359,7 +359,7 @@ class EditDarftFmaPageState extends State<EditDarftFmaPage> {
               : [
                   DropdownMenuItem<String>(
                     value: null,
-                    child: Text(localizedStrings.fSelectRawMaterialHint,
+                    child: Text((localizedStrings?.fSelectRawMaterialHint ?? "fSelectRawMaterialHint"),
                         style: Theme.of(context).textTheme.bodySmall!.apply(
                               color: Theme.of(context)
                                   .colorScheme
@@ -455,8 +455,8 @@ class EditDarftFmaPageState extends State<EditDarftFmaPage> {
           height: 90,
           child: Column(children: [
             showItemNameWithStar(
-                context, localizedStrings.fFmaIdLabel + ' ', true),
-            showInputBox(formulaCodeCtl, localizedStrings.fInputFormulaIdHint,
+                context, (localizedStrings?.fFmaIdLabel ?? "fFmaIdLabel") + ' ', true),
+            showInputBox(formulaCodeCtl, (localizedStrings?.fInputFormulaIdHint ?? "fInputFormulaIdHint"),
                 enable: false),
           ]),
         ),
@@ -467,9 +467,9 @@ class EditDarftFmaPageState extends State<EditDarftFmaPage> {
           height: 90,
           child: Column(children: [
             showItemNameWithStar(
-                context, localizedStrings.fFmaModeCol + " ", true),
+                context, (localizedStrings?.fFmaModeCol ?? "fFmaModeCol") + " ", true),
             showModeDropDownButton([FormulaMode.wgt, FormulaMode.pct],
-                localizedStrings.fSelectFormulaModeHint, formulaModeCtl)
+                (localizedStrings?.fSelectFormulaModeHint ?? "fSelectFormulaModeHint"), formulaModeCtl)
           ]),
         ),
       ]),
@@ -485,8 +485,8 @@ class EditDarftFmaPageState extends State<EditDarftFmaPage> {
           height: 90,
           child: Column(children: [
             showItemNameWithStar(
-                context, localizedStrings.fFmaNameLabel + " ", true),
-            showInputBox(formulaNameCtl, localizedStrings.fInputFormulaNameHint,
+                context, (localizedStrings?.fFmaNameLabel ?? "fFmaNameLabel") + " ", true),
+            showInputBox(formulaNameCtl, (localizedStrings?.fInputFormulaNameHint ?? "fInputFormulaNameHint"),
                 enable: false),
           ]),
         ),
@@ -496,11 +496,11 @@ class EditDarftFmaPageState extends State<EditDarftFmaPage> {
           width: width,
           height: 90,
           child: Column(children: [
-            showItemNameWithStar(context, localizedStrings.fWgtUnit, true),
+            showItemNameWithStar(context, (localizedStrings?.fWgtUnit ?? "fWgtUnit"), true),
             formulaModeCtl.text == FormulaMode.wgt.name
                 ? showUnitDropDownButton(
                     [FormulaWgtUnit.g, FormulaWgtUnit.kg, FormulaWgtUnit.lb],
-                    localizedStrings.fSelectUnitHint,
+                    (localizedStrings?.fSelectUnitHint ?? "fSelectUnitHint"),
                     formulaUnitCtl)
                 : Container(
                     height: 48,
@@ -534,12 +534,12 @@ class EditDarftFmaPageState extends State<EditDarftFmaPage> {
           height: 90,
           child: Column(children: [
             showItemNameWithStar(
-                context, localizedStrings.fFmaCategoryCol, false),
+                context, (localizedStrings?.fFmaCategoryCol ?? "fFmaCategoryCol"), false),
             Row(
               children: [
                 Expanded(
                   child: showTypeDropDownButton(
-                      localizedStrings.fPleaseSelectCategory, formulaTypeCtl),
+                      (localizedStrings?.fPleaseSelectCategory ?? "fPleaseSelectCategory"), formulaTypeCtl),
                 ),
                 Container(
                   width: 10,
@@ -547,7 +547,7 @@ class EditDarftFmaPageState extends State<EditDarftFmaPage> {
                 showTextButton(
                     context,
                     btnHeight,
-                    localizedStrings.fRawCategoryManagement,
+                    (localizedStrings?.fRawCategoryManagement ?? "fRawCategoryManagement"),
                     isHaveDarft
                         ? null
                         : () {
@@ -567,8 +567,8 @@ class EditDarftFmaPageState extends State<EditDarftFmaPage> {
           height: 90,
           child: Column(children: [
             showItemNameWithStar(
-                context, localizedStrings.fFmaBarcode + " ", false),
-            showInputBox(formulaBarcodeCtl, localizedStrings.fFmaBarcode,
+                context, (localizedStrings?.fFmaBarcode ?? "fFmaBarcode") + " ", false),
+            showInputBox(formulaBarcodeCtl, (localizedStrings?.fFmaBarcode ?? "fFmaBarcode"),
                 enable: false),
           ]),
         ),
@@ -591,7 +591,7 @@ class EditDarftFmaPageState extends State<EditDarftFmaPage> {
                 ),
                 Expanded(
                   child: Text(
-                    localizedStrings.fConfidential,
+                    (localizedStrings?.fConfidential ?? "fConfidential"),
                     style: Theme.of(context).textTheme.bodySmall!.apply(
                           color: Theme.of(context).colorScheme.onSurface,
                         ),
@@ -621,7 +621,7 @@ class EditDarftFmaPageState extends State<EditDarftFmaPage> {
                 ),
                 Expanded(
                   child: Text(
-                    localizedStrings.fNeedContainer,
+                    (localizedStrings?.fNeedContainer ?? "fNeedContainer"),
                     style: Theme.of(context).textTheme.bodySmall!.apply(
                           color: Theme.of(context).colorScheme.onSurface,
                         ),
@@ -740,7 +740,7 @@ class EditDarftFmaPageState extends State<EditDarftFmaPage> {
                             text: TextSpan(
                               children: [
                                 TextSpan(
-                                  text: localizedStrings.fFmaNameLabel + ':  ',
+                                  text: (localizedStrings?.fFmaNameLabel ?? "fFmaNameLabel") + ':  ',
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodySmall!
@@ -774,8 +774,8 @@ class EditDarftFmaPageState extends State<EditDarftFmaPage> {
                                 TextSpan(
                                   text: formulaModeCtl.text ==
                                           FormulaMode.wgt.name
-                                      ? localizedStrings.fWeightMode + ":"
-                                      : localizedStrings.fPctMode + ":",
+                                      ? (localizedStrings?.fWeightMode ?? "fWeightMode") + ":"
+                                      : (localizedStrings?.fPctMode ?? "fPctMode") + ":",
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodySmall!
@@ -807,7 +807,7 @@ class EditDarftFmaPageState extends State<EditDarftFmaPage> {
                                 ),
                                 TextSpan(text: '    '),
                                 TextSpan(
-                                  text: localizedStrings.fAllowableError + ':',
+                                  text: (localizedStrings?.fAllowableError ?? "fAllowableError") + ':',
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodySmall!
@@ -840,7 +840,7 @@ class EditDarftFmaPageState extends State<EditDarftFmaPage> {
                                 TextSpan(text: '    '),
                                 TextSpan(
                                   text:
-                                      localizedStrings.fIngredientRemark + ": ",
+                                      (localizedStrings?.fIngredientRemark ?? "fIngredientRemark") + ": ",
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodySmall!
@@ -995,7 +995,7 @@ class EditDarftFmaPageState extends State<EditDarftFmaPage> {
                       text: TextSpan(
                         children: [
                           TextSpan(
-                            text: localizedStrings.fFmaContainer,
+                            text: (localizedStrings?.fFmaContainer ?? "fFmaContainer"),
                             style: Theme.of(context).textTheme.bodySmall!.apply(
                                   color: Theme.of(context)
                                       .colorScheme
@@ -1051,7 +1051,7 @@ class EditDarftFmaPageState extends State<EditDarftFmaPage> {
                     child: Container(
                   alignment: Alignment.centerLeft,
                   child: Text(
-                    localizedStrings.fSetRawMaterialBtn,
+                    (localizedStrings?.fSetRawMaterialBtn ?? "fSetRawMaterialBtn"),
                     style: Theme.of(context).textTheme.labelMedium!.apply(
                           color: Theme.of(context).colorScheme.onSurface,
                         ),
@@ -1063,7 +1063,7 @@ class EditDarftFmaPageState extends State<EditDarftFmaPage> {
                       : () {
                           showAddRawInfoDialog();
                         },
-                  child: Text(localizedStrings.fAddRawMaterialBtn,
+                  child: Text((localizedStrings?.fAddRawMaterialBtn ?? "fAddRawMaterialBtn"),
                       style: Theme.of(context).textTheme.bodySmall!.apply(
                             color: Theme.of(context).colorScheme.primary,
                           )),
@@ -1079,9 +1079,9 @@ class EditDarftFmaPageState extends State<EditDarftFmaPage> {
                   flex: 1,
                   child: Column(children: [
                     showItemNameWithStar(
-                        context, localizedStrings.fSelectRawMaterialHint, true),
+                        context, (localizedStrings?.fSelectRawMaterialHint ?? "fSelectRawMaterialHint"), true),
                     showRawDropDownBtn(
-                      localizedStrings.fSelectRawMaterialHint,
+                      (localizedStrings?.fSelectRawMaterialHint ?? "fSelectRawMaterialHint"),
                     )
                   ]),
                 ),
@@ -1094,8 +1094,8 @@ class EditDarftFmaPageState extends State<EditDarftFmaPage> {
                       showItemNameWithStar(
                           context,
                           formulaModeCtl.text == FormulaMode.wgt.name
-                              ? localizedStrings.fWeightMode + ':'
-                              : localizedStrings.fPctMode + ':',
+                              ? (localizedStrings?.fWeightMode ?? "fWeightMode") + ':'
+                              : (localizedStrings?.fPctMode ?? "fPctMode") + ':',
                           true),
                       SizedBox(
                           height: 48,
@@ -1118,8 +1118,8 @@ class EditDarftFmaPageState extends State<EditDarftFmaPage> {
                                             Radius.circular(0.0))),
                                     hintText: formulaModeCtl.text ==
                                             FormulaMode.wgt.name
-                                        ? localizedStrings.fInputWeightHint
-                                        : localizedStrings.fInputPercentageHint,
+                                        ? (localizedStrings?.fInputWeightHint ?? "fInputWeightHint")
+                                        : (localizedStrings?.fInputPercentageHint ?? "fInputPercentageHint"),
                                     hintStyle: Theme.of(context)
                                         .textTheme
                                         .bodySmall!
@@ -1170,7 +1170,7 @@ class EditDarftFmaPageState extends State<EditDarftFmaPage> {
                   flex: 1,
                   child: Column(children: [
                     showItemNameWithStar(
-                        context, localizedStrings.fAllowableError, true),
+                        context, (localizedStrings?.fAllowableError ?? "fAllowableError"), true),
                     SizedBox(
                         height: 48,
                         child: Row(children: [
@@ -1189,7 +1189,7 @@ class EditDarftFmaPageState extends State<EditDarftFmaPage> {
                                 border: OutlineInputBorder(
                                     borderRadius:
                                         BorderRadius.all(Radius.circular(0.0))),
-                                hintText: localizedStrings.fInputErrorHint,
+                                hintText: (localizedStrings?.fInputErrorHint ?? "fInputErrorHint"),
                                 hintStyle: Theme.of(context)
                                     .textTheme
                                     .bodySmall!
@@ -1260,7 +1260,7 @@ class EditDarftFmaPageState extends State<EditDarftFmaPage> {
                               child: showTextButton(
                                   context,
                                   btnHeight,
-                                  localizedStrings.gBtnAdd,
+                                  (localizedStrings?.gBtnAdd ?? "gBtnAdd"),
                                   (selectedRawDataInfo == null ||
                                           wgtCtl.text == '' ||
                                           errorCtl.text == '')
@@ -1276,7 +1276,7 @@ class EditDarftFmaPageState extends State<EditDarftFmaPage> {
                               child: showTextButton(
                                   context,
                                   btnHeight,
-                                  localizedStrings.gBtnModify,
+                                  (localizedStrings?.gBtnModify ?? "gBtnModify"),
                                   (selectedRawDataInfo == null ||
                                           wgtCtl.text == '' ||
                                           errorCtl.text == '')
@@ -1294,7 +1294,7 @@ class EditDarftFmaPageState extends State<EditDarftFmaPage> {
                         if (selectedIndex != -1)
                           Expanded(
                               child: showTextButton(context, btnHeight,
-                                  localizedStrings.gBtnCancel, () {
+                                  (localizedStrings?.gBtnCancel ?? "gBtnCancel"), () {
                             setState(() {
                               wgtCtl.text = '';
                               errorCtl.text = '';
@@ -1479,7 +1479,7 @@ class EditDarftFmaPageState extends State<EditDarftFmaPage> {
                     child: Container(
                   alignment: Alignment.centerLeft,
                   child: Text(
-                    localizedStrings.fIngredientOrder,
+                    (localizedStrings?.fIngredientOrder ?? "fIngredientOrder"),
                     style: Theme.of(context).textTheme.labelMedium!.apply(
                           color: Theme.of(context).colorScheme.onSurface,
                         ),
@@ -1493,8 +1493,8 @@ class EditDarftFmaPageState extends State<EditDarftFmaPage> {
                   alignment: Alignment.centerRight,
                   child: Text(
                     formulaModeCtl.text == FormulaMode.wgt.name
-                        ? '${localizedStrings.fTotalWeightLabel} :  ${totalWgt.toString()} ${formulaUnitCtl.text}'
-                        : '${localizedStrings.fTotalWeightLabel} :  ${totalWgt.toString()} %',
+                        ? '${(localizedStrings?.fTotalWeightLabel ?? "fTotalWeightLabel")} :  ${totalWgt.toString()} ${formulaUnitCtl.text}'
+                        : '${(localizedStrings?.fTotalWeightLabel ?? "fTotalWeightLabel")} :  ${totalWgt.toString()} %',
                     style: Theme.of(context).textTheme.labelMedium!.apply(
                           color: Theme.of(context).colorScheme.onSurface,
                         ),
@@ -1525,7 +1525,7 @@ class EditDarftFmaPageState extends State<EditDarftFmaPage> {
                             });
                           },
                     child: Text(
-                      localizedStrings.fClearBtn,
+                      (localizedStrings?.fClearBtn ?? "fClearBtn"),
                       style: Theme.of(context).textTheme.bodySmall!.apply(
                             color: Theme.of(context).colorScheme.onSurface,
                           ),
@@ -1581,7 +1581,7 @@ class EditDarftFmaPageState extends State<EditDarftFmaPage> {
                             saveFormula(1);
                           },
                 child: Text(
-                  localizedStrings.gBtnSave,
+                  (localizedStrings?.gBtnSave ?? "gBtnSave"),
                   style: Theme.of(context).textTheme.bodySmall!.apply(
                         color: Theme.of(context).colorScheme.onPrimary,
                       ),
@@ -1607,7 +1607,7 @@ class EditDarftFmaPageState extends State<EditDarftFmaPage> {
                   Navigator.pop(context);
                 },
                 child: Text(
-                  localizedStrings.fBackBtn,
+                  (localizedStrings?.fBackBtn ?? "fBackBtn"),
                   style: Theme.of(context).textTheme.bodySmall!.apply(
                         color: Theme.of(context).colorScheme.onSurface,
                       ),
@@ -1632,7 +1632,7 @@ class EditDarftFmaPageState extends State<EditDarftFmaPage> {
                     child: Container(
                   alignment: Alignment.centerLeft,
                   child: Text(
-                    localizedStrings.fRemarkCol,
+                    (localizedStrings?.fRemarkCol ?? "fRemarkCol"),
                     style: Theme.of(context).textTheme.labelMedium!.apply(
                           color: Theme.of(context).colorScheme.onSurface,
                         ),
@@ -1654,7 +1654,7 @@ class EditDarftFmaPageState extends State<EditDarftFmaPage> {
                     decoration: InputDecoration(
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.all(Radius.circular(0.0))),
-                      hintText: localizedStrings.fInputRemarkHint,
+                      hintText: (localizedStrings?.fInputRemarkHint ?? "fInputRemarkHint"),
                       hintStyle: TextStyle(
                         color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
@@ -1679,7 +1679,7 @@ class EditDarftFmaPageState extends State<EditDarftFmaPage> {
             children: [
               ...dialogHeadStyle(
                 context,
-                localizedStrings.fEditFmaBtn,
+                (localizedStrings?.fEditFmaBtn ?? "fEditFmaBtn"),
                 false,
               ),
               Expanded(

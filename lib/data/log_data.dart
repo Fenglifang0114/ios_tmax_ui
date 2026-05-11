@@ -1,4 +1,4 @@
-// 日志数据模型
+﻿// 日志数据模型
 //模块：系统，功能模块：登录，操作类型：登录
 //模块：系统，功能模块：登出，操作类型：登出
 //模块：系统，功能模块：修改密码，操作类型：修改密码
@@ -362,74 +362,74 @@ class SysLogTranslator {
 
   static void updateLanguageMap() {
     _sysLogLanguageMap = {
-      "3": localizedStrings.operator,
-      "2": localizedStrings.admin,
-      "1": localizedStrings.superAdmin,
+      "3": (localizedStrings?.operator ?? "operator"),
+      "2": (localizedStrings?.admin ?? "admin"),
+      "1": (localizedStrings?.superAdmin ?? "superAdmin"),
 
       //主模块
-      "system": localizedStrings.systemOperation,
-      "syslog": localizedStrings.systemRecords,
-      "callog": localizedStrings.calibrationRecords,
-      "scalelog": localizedStrings.weighingRecords,
-      "scale_manage": localizedStrings.menuMultiScaleManagement,
-      "plu_manage": localizedStrings.menuPluManagement,
-      "user_manage": localizedStrings.userManagement,
-      "formula_manage": localizedStrings.menuFormula,
-      "device_time": localizedStrings.menuDeviceTime,
-      "device_bt": localizedStrings.menuBluetoothSetting,
-      "update_firmware": localizedStrings.menuFirmwareUpdate,
-      "down_label_fmt": localizedStrings.menuLabelFormatDownload,
-      "down_receipt_fmt": localizedStrings.menuReceiptFormatDownload,
+      "system": (localizedStrings?.systemOperation ?? "systemOperation"),
+      "syslog": (localizedStrings?.systemRecords ?? "systemRecords"),
+      "callog": (localizedStrings?.calibrationRecords ?? "calibrationRecords"),
+      "scalelog": (localizedStrings?.weighingRecords ?? "weighingRecords"),
+      "scale_manage": (localizedStrings?.menuMultiScaleManagement ?? "menuMultiScaleManagement"),
+      "plu_manage": (localizedStrings?.menuPluManagement ?? "menuPluManagement"),
+      "user_manage": (localizedStrings?.userManagement ?? "userManagement"),
+      "formula_manage": (localizedStrings?.menuFormula ?? "menuFormula"),
+      "device_time": (localizedStrings?.menuDeviceTime ?? "menuDeviceTime"),
+      "device_bt": (localizedStrings?.menuBluetoothSetting ?? "menuBluetoothSetting"),
+      "update_firmware": (localizedStrings?.menuFirmwareUpdate ?? "menuFirmwareUpdate"),
+      "down_label_fmt": (localizedStrings?.menuLabelFormatDownload ?? "menuLabelFormatDownload"),
+      "down_receipt_fmt": (localizedStrings?.menuReceiptFormatDownload ?? "menuReceiptFormatDownload"),
 
       //子模块
-      "log_del": localizedStrings.deleteLog,
-      "log_export": localizedStrings.opExport,
-      "log_clear": localizedStrings.fClearBtn,
-      "user_update_pswd": localizedStrings.titleChangePassword,
+      "log_del": (localizedStrings?.deleteLog ?? "deleteLog"),
+      "log_export": (localizedStrings?.opExport ?? "opExport"),
+      "log_clear": (localizedStrings?.fClearBtn ?? "fClearBtn"),
+      "user_update_pswd": (localizedStrings?.titleChangePassword ?? "titleChangePassword"),
 
-      "user_enabled": localizedStrings.enableOrDisable,
-      "formula_add": localizedStrings.addFormula,
-      "formula_del": localizedStrings.deleteFormula,
-      "formula_update": localizedStrings.modifyFormula,
-      "formula_type_add": localizedStrings.addFormulaCategory,
-      "formula_type_del": localizedStrings.deleteFormulaCategory,
-      "formula_type_update": localizedStrings.modifyFormulaCategory,
-      "formula_type_clear_unused": localizedStrings.clearUnusedFormulaCategory,
-      "raw_type_add": localizedStrings.addIngredientCategory,
-      "raw_type_del": localizedStrings.deleteIngredientCategory,
-      "raw_type_update": localizedStrings.modifyIngredientCategory,
-      "raw_type_clear_unused": localizedStrings.clearUnusedIngredientCategory,
-      "raw_add": localizedStrings.addIngredient,
-      "raw_del": localizedStrings.deleteIngredient,
-      "raw_update": localizedStrings.modifyIngredient,
-      "fma_wgt_rec_add": localizedStrings.addFormulaWeighingRecord,
-      "fma_wgt_rec_del": localizedStrings.deleteFormulaWeighingRecord,
-      "fma_draft_add": localizedStrings.addTemporaryWeighingRecord,
-      "fma_draft_del": localizedStrings.deleteTemporaryWeighingRecord,
-      "fma_draft_update": localizedStrings.modifyTemporaryWeighingRecord,
-      "device_time_set": localizedStrings.setTime,
-      "bt_set_name": localizedStrings.setName,
-      "bt_set_power": localizedStrings.setPower,
-      "fma_wgt_rec_upload": localizedStrings.uploadFmaWgtRecord,
+      "user_enabled": (localizedStrings?.enableOrDisable ?? "enableOrDisable"),
+      "formula_add": (localizedStrings?.addFormula ?? "addFormula"),
+      "formula_del": (localizedStrings?.deleteFormula ?? "deleteFormula"),
+      "formula_update": (localizedStrings?.modifyFormula ?? "modifyFormula"),
+      "formula_type_add": (localizedStrings?.addFormulaCategory ?? "addFormulaCategory"),
+      "formula_type_del": (localizedStrings?.deleteFormulaCategory ?? "deleteFormulaCategory"),
+      "formula_type_update": (localizedStrings?.modifyFormulaCategory ?? "modifyFormulaCategory"),
+      "formula_type_clear_unused": (localizedStrings?.clearUnusedFormulaCategory ?? "clearUnusedFormulaCategory"),
+      "raw_type_add": (localizedStrings?.addIngredientCategory ?? "addIngredientCategory"),
+      "raw_type_del": (localizedStrings?.deleteIngredientCategory ?? "deleteIngredientCategory"),
+      "raw_type_update": (localizedStrings?.modifyIngredientCategory ?? "modifyIngredientCategory"),
+      "raw_type_clear_unused": (localizedStrings?.clearUnusedIngredientCategory ?? "clearUnusedIngredientCategory"),
+      "raw_add": (localizedStrings?.addIngredient ?? "addIngredient"),
+      "raw_del": (localizedStrings?.deleteIngredient ?? "deleteIngredient"),
+      "raw_update": (localizedStrings?.modifyIngredient ?? "modifyIngredient"),
+      "fma_wgt_rec_add": (localizedStrings?.addFormulaWeighingRecord ?? "addFormulaWeighingRecord"),
+      "fma_wgt_rec_del": (localizedStrings?.deleteFormulaWeighingRecord ?? "deleteFormulaWeighingRecord"),
+      "fma_draft_add": (localizedStrings?.addTemporaryWeighingRecord ?? "addTemporaryWeighingRecord"),
+      "fma_draft_del": (localizedStrings?.deleteTemporaryWeighingRecord ?? "deleteTemporaryWeighingRecord"),
+      "fma_draft_update": (localizedStrings?.modifyTemporaryWeighingRecord ?? "modifyTemporaryWeighingRecord"),
+      "device_time_set": (localizedStrings?.setTime ?? "setTime"),
+      "bt_set_name": (localizedStrings?.setName ?? "setName"),
+      "bt_set_power": (localizedStrings?.setPower ?? "setPower"),
+      "fma_wgt_rec_upload": (localizedStrings?.uploadFmaWgtRecord ?? "uploadFmaWgtRecord"),
 
       //操作结果
-      "ok": localizedStrings.success,
-      "fail": localizedStrings.failure,
+      "ok": (localizedStrings?.success ?? "success"),
+      "fail": (localizedStrings?.failure ?? "failure"),
 
       //操作
-      "login": localizedStrings.login,
-      "logout": localizedStrings.logout,
-      "delete": localizedStrings.delete,
-      "add": localizedStrings.gBtnAdd,
-      "clear": localizedStrings.fClearBtn,
-      "update": localizedStrings.opUpdate,
-      "enabled": localizedStrings.opEnable,
-      "query": localizedStrings.opQuery,
-      "issue": localizedStrings.opIssue,
-      "import": localizedStrings.opImport,
-      "export": localizedStrings.opExport,
-      "setting": localizedStrings.opSetting,
-      "upload": localizedStrings.opUpload,
+      "login": (localizedStrings?.login ?? "login"),
+      "logout": (localizedStrings?.logout ?? "logout"),
+      "delete": (localizedStrings?.delete ?? "delete"),
+      "add": (localizedStrings?.gBtnAdd ?? "gBtnAdd"),
+      "clear": (localizedStrings?.fClearBtn ?? "fClearBtn"),
+      "update": (localizedStrings?.opUpdate ?? "opUpdate"),
+      "enabled": (localizedStrings?.opEnable ?? "opEnable"),
+      "query": (localizedStrings?.opQuery ?? "opQuery"),
+      "issue": (localizedStrings?.opIssue ?? "opIssue"),
+      "import": (localizedStrings?.opImport ?? "opImport"),
+      "export": (localizedStrings?.opExport ?? "opExport"),
+      "setting": (localizedStrings?.opSetting ?? "opSetting"),
+      "upload": (localizedStrings?.opUpload ?? "opUpload"),
     };
   }
 
@@ -485,13 +485,13 @@ class WgtLogTranslator {
 
   static void updateLanguageMap() {
     _wgtLogLanguageMap = {
-      "wgt_col": localizedStrings.menuWeighingDataCollection,
-      "check_wgt": localizedStrings.menuCheckWeighing,
-      "take_in": localizedStrings.menuIncrementWeighing,
-      "take_out": localizedStrings.menuTakeOutScale,
-      "3": localizedStrings.operator,
-      "2": localizedStrings.admin,
-      "1": localizedStrings.superAdmin,
+      "wgt_col": (localizedStrings?.menuWeighingDataCollection ?? "menuWeighingDataCollection"),
+      "check_wgt": (localizedStrings?.menuCheckWeighing ?? "menuCheckWeighing"),
+      "take_in": (localizedStrings?.menuIncrementWeighing ?? "menuIncrementWeighing"),
+      "take_out": (localizedStrings?.menuTakeOutScale ?? "menuTakeOutScale"),
+      "3": (localizedStrings?.operator ?? "operator"),
+      "2": (localizedStrings?.admin ?? "admin"),
+      "1": (localizedStrings?.superAdmin ?? "superAdmin"),
     };
   }
 
@@ -519,7 +519,7 @@ void showDeleteDialog(Function()? onDelete, String msg, BuildContext context) {
     barrierDismissible: false, // 点击对话框外部不关闭对话框
     builder: (BuildContext context) {
       return ShowDeleteTipDialog(
-        title: localizedStrings.fTipTitle,
+        title: (localizedStrings?.fTipTitle ?? "fTipTitle"),
         msg: msg,
       );
     },
@@ -535,13 +535,13 @@ class CalLogTranslator {
 
   static void updateLanguageMap() {
     _calLogLanguageMap = {
-      "3": localizedStrings.operator,
-      "2": localizedStrings.admin,
-      "1": localizedStrings.superAdmin,
-      "single": localizedStrings.singlePoint,
-      "multi": localizedStrings.multiPoint,
-      "ok": localizedStrings.success,
-      "fail": localizedStrings.failure,
+      "3": (localizedStrings?.operator ?? "operator"),
+      "2": (localizedStrings?.admin ?? "admin"),
+      "1": (localizedStrings?.superAdmin ?? "superAdmin"),
+      "single": (localizedStrings?.singlePoint ?? "singlePoint"),
+      "multi": (localizedStrings?.multiPoint ?? "multiPoint"),
+      "ok": (localizedStrings?.success ?? "success"),
+      "fail": (localizedStrings?.failure ?? "failure"),
     };
   }
 

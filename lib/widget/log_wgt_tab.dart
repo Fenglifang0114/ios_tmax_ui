@@ -1,4 +1,4 @@
-import 'dart:convert';
+﻿import 'dart:convert';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -115,7 +115,7 @@ class _ScaleWgtLogTabPageState extends State<ScaleWgtLogTabPage> {
         String josnData = event.obj;
         try {
           if (josnData.isEmpty) {
-            showTipInfo(localizedStrings.gTipExportFail, context);
+            showTipInfo((localizedStrings?.gTipExportFail ?? "gTipExportFail"), context);
             return;
           }
           if (josnData.contains('ok')) {
@@ -342,7 +342,7 @@ class _ScaleWgtLogTabPageState extends State<ScaleWgtLogTabPage> {
               ),
               SizedBox(width: 16),
               Text(
-                localizedStrings.tipJumpPage,
+                (localizedStrings?.tipJumpPage ?? "tipJumpPage"),
                 style: textTheme.bodySmall,
               ),
               SizedBox(width: 8),
@@ -371,13 +371,13 @@ class _ScaleWgtLogTabPageState extends State<ScaleWgtLogTabPage> {
             width: regularPadding,
           ),
           Text(
-            '${localizedStrings.tipPageTotal} $totalCount ${localizedStrings.tipPageItems}',
+            '${(localizedStrings?.tipPageTotal ?? "tipPageTotal")} $totalCount ${(localizedStrings?.tipPageItems ?? "tipPageItems")}',
             style: textTheme.bodySmall,
           ),
           SizedBox(width: 16),
           // 显示选中的记录数量
           Text(
-            '${localizedStrings.selected} ${allSelectedRecIds.length} ${localizedStrings.tipPageItems}',
+            '${(localizedStrings?.selected ?? "selected")} ${allSelectedRecIds.length} ${(localizedStrings?.tipPageItems ?? "tipPageItems")}',
             style: textTheme.bodySmall!.copyWith(
               color: colorScheme.primary,
             ),
@@ -547,25 +547,25 @@ class _ScaleWgtLogTabPageState extends State<ScaleWgtLogTabPage> {
         ),
       ),
       getColumnWidget(80, 'recId', 'ID', textTheme, colorScheme),
-      getColumnWidget(columnWidth, 'operator', localizedStrings.operator,
+      getColumnWidget(columnWidth, 'operator', (localizedStrings?.operator ?? "operator"),
           textTheme, colorScheme),
-      getColumnWidget(columnWidth, 'roleId', localizedStrings.userRole,
+      getColumnWidget(columnWidth, 'roleId', (localizedStrings?.userRole ?? "userRole"),
           textTheme, colorScheme),
       getColumnWidget(
-          200, 'module', localizedStrings.module, textTheme, colorScheme),
-      getColumnWidget(columnWidth, 'weight', localizedStrings.fTotalWeight,
+          200, 'module', (localizedStrings?.module ?? "module"), textTheme, colorScheme),
+      getColumnWidget(columnWidth, 'weight', (localizedStrings?.fTotalWeight ?? "fTotalWeight"),
           textTheme, colorScheme),
-      getColumnWidget(columnWidth, 'unit', localizedStrings.fWgtUnit, textTheme,
+      getColumnWidget(columnWidth, 'unit', (localizedStrings?.fWgtUnit ?? "fWgtUnit"), textTheme,
           colorScheme),
-      getColumnWidget(columnWidth, 'scaleName', localizedStrings.gDeviceName,
+      getColumnWidget(columnWidth, 'scaleName', (localizedStrings?.gDeviceName ?? "gDeviceName"),
           textTheme, colorScheme),
-      getColumnWidget(columnWidth, 'modelName', localizedStrings.gModelName,
+      getColumnWidget(columnWidth, 'modelName', (localizedStrings?.gModelName ?? "gModelName"),
           textTheme, colorScheme),
       getColumnWidget(
-          columnWidth, 'sn', localizedStrings.gScaleSn, textTheme, colorScheme),
-      getColumnWidget(200, 'createTime', localizedStrings.fCreatedAtCol,
+          columnWidth, 'sn', (localizedStrings?.gScaleSn ?? "gScaleSn"), textTheme, colorScheme),
+      getColumnWidget(200, 'createTime', (localizedStrings?.fCreatedAtCol ?? "fCreatedAtCol"),
           textTheme, colorScheme),
-      getColumnWidgetNoSort(120, 'operate', localizedStrings.fTipOperation,
+      getColumnWidgetNoSort(120, 'operate', (localizedStrings?.fTipOperation ?? "fTipOperation"),
           textTheme, colorScheme),
     ];
   }
@@ -604,7 +604,7 @@ class _ScaleWgtLogTabPageState extends State<ScaleWgtLogTabPage> {
                         });
                       },
                     ),
-                    hintText: localizedStrings.operator,
+                    hintText: (localizedStrings?.operator ?? "operator"),
                     contentPadding: EdgeInsets.symmetric(vertical: 10),
                     hintStyle: Theme.of(context).textTheme.bodySmall!.copyWith(
                           // 设置提示文本样式
@@ -646,7 +646,7 @@ class _ScaleWgtLogTabPageState extends State<ScaleWgtLogTabPage> {
               DropdownMenuItem<String>(
                 value: null,
                 child: Text(
-                  localizedStrings.userRole,
+                  (localizedStrings?.userRole ?? "userRole"),
                   style: Theme.of(context).textTheme.bodySmall!.copyWith(
                         fontSize: 12,
                         color: Theme.of(context)
@@ -658,7 +658,7 @@ class _ScaleWgtLogTabPageState extends State<ScaleWgtLogTabPage> {
               DropdownMenuItem<String>(
                 value: "1",
                 child: Text(
-                  localizedStrings.superAdmin,
+                  (localizedStrings?.superAdmin ?? "superAdmin"),
                   style: Theme.of(context).textTheme.bodySmall!.copyWith(
                         color: Theme.of(context).colorScheme.onSurface,
                       ),
@@ -667,7 +667,7 @@ class _ScaleWgtLogTabPageState extends State<ScaleWgtLogTabPage> {
               DropdownMenuItem<String>(
                 value: "2",
                 child: Text(
-                  localizedStrings.admin,
+                  (localizedStrings?.admin ?? "admin"),
                   style: Theme.of(context).textTheme.bodySmall!.copyWith(
                         color: Theme.of(context).colorScheme.onSurface,
                       ),
@@ -676,7 +676,7 @@ class _ScaleWgtLogTabPageState extends State<ScaleWgtLogTabPage> {
               DropdownMenuItem<String>(
                 value: "3",
                 child: Text(
-                  localizedStrings.operator,
+                  (localizedStrings?.operator ?? "operator"),
                   style: Theme.of(context).textTheme.bodySmall!.copyWith(
                         color: Theme.of(context).colorScheme.onSurface,
                       ),
@@ -712,7 +712,7 @@ class _ScaleWgtLogTabPageState extends State<ScaleWgtLogTabPage> {
             controller: dateCtl,
             readOnly: true,
             decoration: InputDecoration(
-              hintText: localizedStrings.gBtnSelectDate,
+              hintText: (localizedStrings?.gBtnSelectDate ?? "gBtnSelectDate"),
               hintStyle: Theme.of(context).textTheme.bodySmall!.copyWith(
                     fontSize: 12,
                     color:
@@ -743,7 +743,7 @@ class _ScaleWgtLogTabPageState extends State<ScaleWgtLogTabPage> {
           width: 14,
         ),
         Tooltip(
-            message: localizedStrings.search, // 翻译
+            message: (localizedStrings?.search ?? "search"), // 翻译
             child: IconButton(
               icon: Icon(
                 Icons.search_rounded,
@@ -760,7 +760,7 @@ class _ScaleWgtLogTabPageState extends State<ScaleWgtLogTabPage> {
           width: 14,
         ),
         Tooltip(
-            message: localizedStrings.fClearSearchConditionBtn, // 提示信息
+            message: (localizedStrings?.fClearSearchConditionBtn ?? "fClearSearchConditionBtn"), // 提示信息
             child: IconButton(
               icon: Icon(
                 Icons.cleaning_services_outlined,
@@ -785,7 +785,7 @@ class _ScaleWgtLogTabPageState extends State<ScaleWgtLogTabPage> {
         showTextButton(
             context,
             btnHeight,
-            localizedStrings.gBtnExport,
+            (localizedStrings?.gBtnExport ?? "gBtnExport"),
             _allWgtLogs.isEmpty
                 ? null
                 : () async {
@@ -826,15 +826,15 @@ class _ScaleWgtLogTabPageState extends State<ScaleWgtLogTabPage> {
                       translation: WgtLogTranslator.getLanguageMap(),
                       headers: [
                         'ID',
-                        localizedStrings.operator,
-                        localizedStrings.userRole,
-                        localizedStrings.module,
-                        localizedStrings.fTotalWeight,
-                        localizedStrings.fWgtUnit,
-                        localizedStrings.gDeviceName,
-                        localizedStrings.gModelName,
-                        localizedStrings.gScaleSn,
-                        localizedStrings.fCreatedAtCol,
+                        (localizedStrings?.operator ?? "operator"),
+                        (localizedStrings?.userRole ?? "userRole"),
+                        (localizedStrings?.module ?? "module"),
+                        (localizedStrings?.fTotalWeight ?? "fTotalWeight"),
+                        (localizedStrings?.fWgtUnit ?? "fWgtUnit"),
+                        (localizedStrings?.gDeviceName ?? "gDeviceName"),
+                        (localizedStrings?.gModelName ?? "gModelName"),
+                        (localizedStrings?.gScaleSn ?? "gScaleSn"),
+                        (localizedStrings?.fCreatedAtCol ?? "fCreatedAtCol"),
                       ],
                     );
                     String jsonStr = json.encode(exportLog.toJson());
@@ -852,14 +852,14 @@ class _ScaleWgtLogTabPageState extends State<ScaleWgtLogTabPage> {
           showTextButton(
               context,
               btnHeight,
-              localizedStrings.fClearBtn,
+              (localizedStrings?.fClearBtn ?? "fClearBtn"),
               _allWgtLogs.isEmpty
                   ? null
                   : () {
                       _clearSelection();
                       showDeleteDialog(() {
                         PublicFunctions.deleteAllWgtLog();
-                      }, localizedStrings.data_delete_confirm, context);
+                      }, (localizedStrings?.data_delete_confirm ?? "data_delete_confirm"), context);
                     },
               Theme.of(context).colorScheme.onPrimary,
               Theme.of(context).colorScheme.error,
@@ -872,7 +872,7 @@ class _ScaleWgtLogTabPageState extends State<ScaleWgtLogTabPage> {
           showTextButton(
               context,
               btnHeight,
-              localizedStrings.gBtnDelete,
+              (localizedStrings?.gBtnDelete ?? "gBtnDelete"),
               allSelectedRecIds.isEmpty
                   ? null
                   : () {
@@ -883,7 +883,7 @@ class _ScaleWgtLogTabPageState extends State<ScaleWgtLogTabPage> {
 
                       showDeleteDialog(() {
                         PublicFunctions.deleteWgtLog(jsonStr);
-                      }, localizedStrings.fConfirmDelete, context);
+                      }, (localizedStrings?.fConfirmDelete ?? "fConfirmDelete"), context);
                     },
               Theme.of(context).colorScheme.onPrimary,
               Theme.of(context).colorScheme.error,
@@ -1092,7 +1092,7 @@ class WgtLogDataSource extends DataGridSource {
                 reqDelLogsToJson(ReqDelLogs(recId: [syslog.recId!]));
             showDeleteDialog(() {
               PublicFunctions.deleteWgtLog(jsonStr);
-            }, localizedStrings.fConfirmDelete, context);
+            }, (localizedStrings?.fConfirmDelete ?? "fConfirmDelete"), context);
           },
         );
 

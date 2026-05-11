@@ -1,4 +1,4 @@
-//更新软件界面
+﻿//更新软件界面
 
 import 'dart:async';
 import 'package:flutter/material.dart';
@@ -64,8 +64,8 @@ class _UpdateFirmwarePageState extends State<UpdateFirmwarePage> {
                 // pageHeadInfo(
                 //     context,
                 //     width - headWidthPadding,
-                //     localizedStrings.menuFirmwareUpdate,
-                //     localizedStrings.gTipUpdateFirmwarePageHelp),
+                //     (localizedStrings?.menuFirmwareUpdate ?? "menuFirmwareUpdate"),
+                //     (localizedStrings?.gTipUpdateFirmwarePageHelp ?? "gTipUpdateFirmwarePageHelp")),
                 Expanded(
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center, // 设置主轴对齐方式为居中
@@ -73,7 +73,7 @@ class _UpdateFirmwarePageState extends State<UpdateFirmwarePage> {
                       SizedBox(
                         width: 200,
                         child: Text(
-                          localizedStrings.gTipFirmwareZipFile,
+                          (localizedStrings?.gTipFirmwareZipFile ?? "gTipFirmwareZipFile"),
                           style: Theme.of(context)
                               .textTheme
                               .bodySmall!
@@ -116,7 +116,7 @@ class _UpdateFirmwarePageState extends State<UpdateFirmwarePage> {
                       SizedBox(
                           width: 260,
                           child: showTextButton(context, btnHeight,
-                              localizedStrings.gBtnSelectZipFirmware, () async {
+                              (localizedStrings?.gBtnSelectZipFirmware ?? "gBtnSelectZipFirmware"), () async {
                             zipFileCtl.text = '';
                             pickFiles(zipFileCtl);
                           },
@@ -134,7 +134,7 @@ class _UpdateFirmwarePageState extends State<UpdateFirmwarePage> {
                       showTextButton(
                           context,
                           btnHeight,
-                          localizedStrings.gBtnDownload,
+                          (localizedStrings?.gBtnDownload ?? "gBtnDownload"),
                           (isSetting || zipFileCtl.text.isEmpty)
                               ? null
                               : () {
@@ -190,7 +190,7 @@ class _UpdateFirmwarePageState extends State<UpdateFirmwarePage> {
                       SizedBox(
                         width: 200,
                         child: Text(
-                          localizedStrings.gTipFirmwareZipFile,
+                          (localizedStrings?.gTipFirmwareZipFile ?? "gTipFirmwareZipFile"),
                           textAlign: TextAlign.right,
                         ),
                       ),
@@ -221,7 +221,7 @@ class _UpdateFirmwarePageState extends State<UpdateFirmwarePage> {
                         btnWidth: 150,
                         btnHeight: 40,
                         icon: Icons.file_open_outlined,
-                        text: localizedStrings.gBtnSelectZipFirmware,
+                        text: (localizedStrings?.gBtnSelectZipFirmware ?? "gBtnSelectZipFirmware"),
                         onPressed: () async {
                           zipFileCtl.text = '';
                           pickFiles(zipFileCtl);
@@ -281,13 +281,13 @@ class _UpdateFirmwarePageState extends State<UpdateFirmwarePage> {
   void useSerialPortUpdate(String force, int scaleId) {
     PublicFunctions.sendFormatToScale("${zipFileCtl.text},$force", scaleId);
     setState(() {
-      _errMsgSerial = localizedStrings.gTipWait;
+      _errMsgSerial = (localizedStrings?.gTipWait ?? "gTipWait");
       isSetting = true;
     });
     Timer(const Duration(seconds: 10), () {
       if (!(_progress > 0) && isSetting) {
         setState(() {
-          _errMsgSerial = localizedStrings.gTipRebootForUpdate;
+          _errMsgSerial = (localizedStrings?.gTipRebootForUpdate ?? "gTipRebootForUpdate");
         });
       }
     });
@@ -319,7 +319,7 @@ class _UpdateFirmwarePageState extends State<UpdateFirmwarePage> {
           btnWidth: 150,
           btnHeight: 50,
           icon: Icons.arrow_circle_right_outlined,
-          text: localizedStrings.gBtnDownload,
+          text: (localizedStrings?.gBtnDownload ?? "gBtnDownload"),
           onPressed: (isSetting || zipFileCtl.text.isEmpty)
               ? null
               : () {
@@ -688,7 +688,7 @@ class SelectScalesPageNewState extends State<SelectScalesPageNew> {
                     child: Container(
                       alignment: Alignment.centerLeft,
                       child: Text(
-                        localizedStrings.gBtnDownload,
+                        (localizedStrings?.gBtnDownload ?? "gBtnDownload"),
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -738,7 +738,7 @@ class SelectScalesPageNewState extends State<SelectScalesPageNew> {
                   showTextButton(
                     context,
                     btnHeight,
-                    localizedStrings.gBtnStart,
+                    (localizedStrings?.gBtnStart ?? "gBtnStart"),
                     !isDownloading && checkSelect()
                         ? () {
                             showDialog(
@@ -746,8 +746,8 @@ class SelectScalesPageNewState extends State<SelectScalesPageNew> {
                               barrierDismissible: false, // 点击对话框外部不关闭对话框
                               builder: (BuildContext context) {
                                 return ShowNormalTipDialog(
-                                  title: localizedStrings.fTipTitle,
-                                  msg: localizedStrings.gTipConfirmContinue,
+                                  title: (localizedStrings?.fTipTitle ?? "fTipTitle"),
+                                  msg: (localizedStrings?.gTipConfirmContinue ?? "gTipConfirmContinue"),
                                 );
                               },
                             ).then((value) {
@@ -778,7 +778,7 @@ class SelectScalesPageNewState extends State<SelectScalesPageNew> {
                   showTextButton(
                     context,
                     btnHeight,
-                    localizedStrings.gBtnExit,
+                    (localizedStrings?.gBtnExit ?? "gBtnExit"),
                     isDownloading
                         ? null
                         : () {
@@ -837,7 +837,7 @@ class SelectScalesPageNewState extends State<SelectScalesPageNew> {
           label: SizedBox(
             width: 80, // 设置固定宽度
             child: Text(
-              localizedStrings.gStatus,
+              (localizedStrings?.gStatus ?? "gStatus"),
               textAlign: TextAlign.left,
               overflow: TextOverflow.ellipsis,
             ),
@@ -847,7 +847,7 @@ class SelectScalesPageNewState extends State<SelectScalesPageNew> {
           label: SizedBox(
             width: 120, // 设置固定宽度
             child: Text(
-              localizedStrings.gScaleName,
+              (localizedStrings?.gScaleName ?? "gScaleName"),
               textAlign: TextAlign.left,
               overflow: TextOverflow.ellipsis,
             ),
@@ -857,7 +857,7 @@ class SelectScalesPageNewState extends State<SelectScalesPageNew> {
           label: SizedBox(
             width: 150, // 设置固定宽度
             child: Text(
-              localizedStrings.gModelName + '/Sn',
+              (localizedStrings?.gModelName ?? "gModelName") + '/Sn',
               textAlign: TextAlign.left,
               overflow: TextOverflow.ellipsis,
             ),
@@ -876,7 +876,7 @@ class SelectScalesPageNewState extends State<SelectScalesPageNew> {
             label: SizedBox(
           width: 100, // 设置固定宽度
           child: Text(
-            localizedStrings.gProgress,
+            (localizedStrings?.gProgress ?? "gProgress"),
             textAlign: TextAlign.left,
             overflow: TextOverflow.ellipsis,
           ),
@@ -885,7 +885,7 @@ class SelectScalesPageNewState extends State<SelectScalesPageNew> {
             label: SizedBox(
           width: 345, // 设置固定宽度
           child: Text(
-            localizedStrings.gTipResult,
+            (localizedStrings?.gTipResult ?? "gTipResult"),
             textAlign: TextAlign.left,
             overflow: TextOverflow.ellipsis,
           ),
@@ -928,8 +928,8 @@ class SelectScalesPageNewState extends State<SelectScalesPageNew> {
                   width: 50,
                   child: Text(
                       tempScale.isOnline
-                          ? localizedStrings.gTipOnline
-                          : localizedStrings.gTipOffline,
+                          ? (localizedStrings?.gTipOnline ?? "gTipOnline")
+                          : (localizedStrings?.gTipOffline ?? "gTipOffline"),
                       maxLines: 2,
                       style: TextStyle(
                           color: Theme.of(context).colorScheme.onSurface,
@@ -1056,7 +1056,7 @@ class SelectScalesPageNewState extends State<SelectScalesPageNew> {
       builder: (BuildContext ctx) {
         return AlertDialog(
           title: Text(
-            localizedStrings.gTitleConfirm,
+            (localizedStrings?.gTitleConfirm ?? "gTitleConfirm"),
             style: TextStyle(color: Theme.of(context).colorScheme.primary),
           ),
           content: SizedBox(
@@ -1075,7 +1075,7 @@ class SelectScalesPageNewState extends State<SelectScalesPageNew> {
                   btnWidth: 100,
                   btnHeight: 40,
                   icon: Icons.check_circle,
-                  text: localizedStrings.gBtnConfirm,
+                  text: (localizedStrings?.gBtnConfirm ?? "gBtnConfirm"),
                   onPressed: () {
                     Navigator.of(context).pop(true);
                   },
@@ -1087,7 +1087,7 @@ class SelectScalesPageNewState extends State<SelectScalesPageNew> {
                   btnWidth: 100,
                   btnHeight: 40,
                   icon: Icons.cancel,
-                  text: localizedStrings.gBtnCancel,
+                  text: (localizedStrings?.gBtnCancel ?? "gBtnCancel"),
                   onPressed: () {
                     Navigator.of(context).pop(false);
                   },
@@ -1157,7 +1157,7 @@ class SelectScalesPageNewState extends State<SelectScalesPageNew> {
             } else if (scaleResMap[id]!.process < 0.8 &&
                 !scaleResMap[id]!
                     .res
-                    .contains(localizedStrings.gTipRebootForUpdate)) {
+                    .contains(localizedStrings?.gTipRebootForUpdate ?? "gTipRebootForUpdate")) {
               setState(() {
                 scaleResMap[id]!.process += 0.8 / downTime;
               });
@@ -1256,13 +1256,13 @@ class SelectScalesPageNewState extends State<SelectScalesPageNew> {
   void useSerialPortUpdate(String force, int scaleId) {
     PublicFunctions.sendFormatToScale("${widget.sendMsgStr} ,$force", scaleId);
     setState(() {
-      scaleResMap[scaleId]!.res = localizedStrings.gTipRebootForUpdate;
+      scaleResMap[scaleId]!.res = (localizedStrings?.gTipRebootForUpdate ?? "gTipRebootForUpdate");
       isDownloading = true;
     });
     // Timer(const Duration(seconds: 2), () {
     //   if (!(_progress > 0) && isDownloading) {
     //     setState(() {
-    //       scaleResMap[scaleId]!.res = localizedStrings.gTipRebootForUpdate;
+    //       scaleResMap[scaleId]!.res = (localizedStrings?.gTipRebootForUpdate ?? "gTipRebootForUpdate");
     //     });
     //   }
     // });
@@ -1313,7 +1313,7 @@ class AddScaleDialog1State extends State<AddScaleDialog1> {
                     child: Container(
                       alignment: Alignment.centerLeft,
                       child: Text(
-                        localizedStrings.gBtnDownload,
+                        (localizedStrings?.gBtnDownload ?? "gBtnDownload"),
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,

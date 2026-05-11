@@ -1,4 +1,4 @@
-import 'dart:convert';
+﻿import 'dart:convert';
 import 'dart:io';
 import 'package:csv/csv.dart';
 import 'package:file_picker/file_picker.dart';
@@ -308,7 +308,7 @@ class _AllFmaWgtRecPageState extends State<AllFmaWgtRecPage> {
                   },
                 ),
                 Text(
-                  localizedStrings.fRecordTitle,
+                  (localizedStrings?.fRecordTitle ?? "fRecordTitle"),
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
               ],
@@ -478,7 +478,7 @@ class _AllFmaWgtRecPageState extends State<AllFmaWgtRecPage> {
           currentSortColumn: _sortColumn,
           sortAscending: _sortAscending,
           onSort: () => _handleSort('fmaId'),
-          child: titleText(localizedStrings.fFmaIdLabel),
+          child: titleText(localizedStrings?.fFmaIdLabel ?? "fFmaIdLabel"),
         ),
       ),
 
@@ -490,7 +490,7 @@ class _AllFmaWgtRecPageState extends State<AllFmaWgtRecPage> {
           currentSortColumn: _sortColumn,
           sortAscending: _sortAscending,
           onSort: () => _handleSort('fmaName'),
-          child: titleText(localizedStrings.fFmaNameLabel),
+          child: titleText(localizedStrings?.fFmaNameLabel ?? "fFmaNameLabel"),
         ),
       ),
 
@@ -502,7 +502,7 @@ class _AllFmaWgtRecPageState extends State<AllFmaWgtRecPage> {
           currentSortColumn: _sortColumn,
           sortAscending: _sortAscending,
           onSort: () => _handleSort('barcode'),
-          child: titleText(localizedStrings.fFmaBarcode),
+          child: titleText(localizedStrings?.fFmaBarcode ?? "fFmaBarcode"),
         ),
       ),
 
@@ -513,7 +513,7 @@ class _AllFmaWgtRecPageState extends State<AllFmaWgtRecPage> {
           padding: const EdgeInsets.all(8.0),
           alignment: Alignment.center,
           child: titleText(
-            localizedStrings.fMaterialNameCol,
+            (localizedStrings?.fMaterialNameCol ?? "fMaterialNameCol"),
           ),
         ),
       ),
@@ -524,7 +524,7 @@ class _AllFmaWgtRecPageState extends State<AllFmaWgtRecPage> {
           padding: const EdgeInsets.all(8.0),
           alignment: Alignment.center,
           child: titleText(
-            localizedStrings.fMaterialIdCol,
+            (localizedStrings?.fMaterialIdCol ?? "fMaterialIdCol"),
           ),
         ),
       ),
@@ -535,7 +535,7 @@ class _AllFmaWgtRecPageState extends State<AllFmaWgtRecPage> {
           padding: const EdgeInsets.all(8.0),
           alignment: Alignment.center,
           child: titleText(
-            localizedStrings.fFmaModeCol,
+            (localizedStrings?.fFmaModeCol ?? "fFmaModeCol"),
           ),
         ),
       ),
@@ -546,7 +546,7 @@ class _AllFmaWgtRecPageState extends State<AllFmaWgtRecPage> {
           padding: const EdgeInsets.all(8.0),
           alignment: Alignment.center,
           child: titleText(
-            localizedStrings.fConfidential,
+            (localizedStrings?.fConfidential ?? "fConfidential"),
           ),
         ),
       ),
@@ -559,7 +559,7 @@ class _AllFmaWgtRecPageState extends State<AllFmaWgtRecPage> {
           currentSortColumn: _sortColumn,
           sortAscending: _sortAscending,
           onSort: () => _handleSort('fmaTotalWeight'),
-          child: titleText(localizedStrings.fFormulaTotalWeight),
+          child: titleText(localizedStrings?.fFormulaTotalWeight ?? "fFormulaTotalWeight"),
         ),
       ),
 
@@ -571,7 +571,7 @@ class _AllFmaWgtRecPageState extends State<AllFmaWgtRecPage> {
           currentSortColumn: _sortColumn,
           sortAscending: _sortAscending,
           onSort: () => _handleSort('actualTotalWeight'),
-          child: titleText(localizedStrings.fActualTotalWeight),
+          child: titleText(localizedStrings?.fActualTotalWeight ?? "fActualTotalWeight"),
         ),
       ),
 
@@ -582,7 +582,7 @@ class _AllFmaWgtRecPageState extends State<AllFmaWgtRecPage> {
           padding: const EdgeInsets.all(8.0),
           alignment: Alignment.center,
           child: titleText(
-            localizedStrings.fMaterialSingleWeight,
+            (localizedStrings?.fMaterialSingleWeight ?? "fMaterialSingleWeight"),
           ),
         ),
       ),
@@ -593,7 +593,7 @@ class _AllFmaWgtRecPageState extends State<AllFmaWgtRecPage> {
           padding: const EdgeInsets.all(8.0),
           alignment: Alignment.center,
           child: titleText(
-            localizedStrings.fActualSingleWeight,
+            (localizedStrings?.fActualSingleWeight ?? "fActualSingleWeight"),
           ),
         ),
       ),
@@ -604,7 +604,7 @@ class _AllFmaWgtRecPageState extends State<AllFmaWgtRecPage> {
           padding: const EdgeInsets.all(8.0),
           alignment: Alignment.center,
           child: titleText(
-            localizedStrings.fAllowableError,
+            (localizedStrings?.fAllowableError ?? "fAllowableError"),
           ),
         ),
       ),
@@ -615,7 +615,7 @@ class _AllFmaWgtRecPageState extends State<AllFmaWgtRecPage> {
           padding: const EdgeInsets.all(8.0),
           alignment: Alignment.center,
           child: titleText(
-            localizedStrings.fActualError,
+            (localizedStrings?.fActualError ?? "fActualError"),
           ),
         ),
       ),
@@ -626,7 +626,7 @@ class _AllFmaWgtRecPageState extends State<AllFmaWgtRecPage> {
           padding: const EdgeInsets.all(8.0),
           alignment: Alignment.center,
           child: titleText(
-            localizedStrings.fQualificationStatus,
+            (localizedStrings?.fQualificationStatus ?? "fQualificationStatus"),
           ),
         ),
       ),
@@ -637,7 +637,7 @@ class _AllFmaWgtRecPageState extends State<AllFmaWgtRecPage> {
           padding: const EdgeInsets.all(8.0),
           alignment: Alignment.center,
           child: titleText(
-            localizedStrings.gDeviceName,
+            (localizedStrings?.gDeviceName ?? "gDeviceName"),
           ),
         ),
       ),
@@ -648,7 +648,7 @@ class _AllFmaWgtRecPageState extends State<AllFmaWgtRecPage> {
           padding: const EdgeInsets.all(8.0),
           alignment: Alignment.center,
           child: titleText(
-            localizedStrings.fCreatedAtCol,
+            (localizedStrings?.fCreatedAtCol ?? "fCreatedAtCol"),
           ),
         ),
       ),
@@ -659,7 +659,7 @@ class _AllFmaWgtRecPageState extends State<AllFmaWgtRecPage> {
           padding: const EdgeInsets.all(8.0),
           alignment: Alignment.center,
           child: titleText(
-            localizedStrings.operator,
+            (localizedStrings?.operator ?? "operator"),
           ),
         ),
       ),
@@ -670,7 +670,7 @@ class _AllFmaWgtRecPageState extends State<AllFmaWgtRecPage> {
           padding: const EdgeInsets.all(8.0),
           alignment: Alignment.center,
           child: titleText(
-            localizedStrings.fTipOperation,
+            (localizedStrings?.fTipOperation ?? "fTipOperation"),
           ),
         ),
       ),
@@ -680,31 +680,31 @@ class _AllFmaWgtRecPageState extends State<AllFmaWgtRecPage> {
   Map<String, FieldNameStatus> getrptFields() {
     Map<String, FieldNameStatus> rptFields = {
       "formulaId": FieldNameStatus(
-          localizedStrings.fFmaIdLabel, rptPrintSetting.formulaId ?? true),
+          (localizedStrings?.fFmaIdLabel ?? "fFmaIdLabel"), rptPrintSetting.formulaId ?? true),
       "formulaName": FieldNameStatus(
-          localizedStrings.fFmaNameLabel, rptPrintSetting.formulaName ?? true),
+          (localizedStrings?.fFmaNameLabel ?? "fFmaNameLabel"), rptPrintSetting.formulaName ?? true),
       "formulaBarcode": FieldNameStatus(
-          localizedStrings.fFmaBarcode, rptPrintSetting.formulaBarcode ?? true),
+          (localizedStrings?.fFmaBarcode ?? "fFmaBarcode"), rptPrintSetting.formulaBarcode ?? true),
       "orderId": FieldNameStatus("NO.", rptPrintSetting.orderId ?? true),
       "saveTime": FieldNameStatus(
-          localizedStrings.fCreatedAtCol, rptPrintSetting.saveTime ?? true),
+          (localizedStrings?.fCreatedAtCol ?? "fCreatedAtCol"), rptPrintSetting.saveTime ?? true),
       "operator": FieldNameStatus(
-          localizedStrings.operator, rptPrintSetting.operator ?? true),
+          (localizedStrings?.operator ?? "operator"), rptPrintSetting.operator ?? true),
       "rawId": FieldNameStatus(
-          localizedStrings.fMaterialIdCol, rptPrintSetting.rawId ?? true),
+          (localizedStrings?.fMaterialIdCol ?? "fMaterialIdCol"), rptPrintSetting.rawId ?? true),
       "rawName": FieldNameStatus(
-          localizedStrings.fMaterialNameCol, rptPrintSetting.rawName ?? true),
+          (localizedStrings?.fMaterialNameCol ?? "fMaterialNameCol"), rptPrintSetting.rawName ?? true),
       "pass": FieldNameStatus(
-          localizedStrings.fQualificationStatus, rptPrintSetting.pass ?? true),
-      "fmaTotalWgt": FieldNameStatus(localizedStrings.fFormulaTotalWeight,
+          (localizedStrings?.fQualificationStatus ?? "fQualificationStatus"), rptPrintSetting.pass ?? true),
+      "fmaTotalWgt": FieldNameStatus((localizedStrings?.fFormulaTotalWeight ?? "fFormulaTotalWeight"),
           rptPrintSetting.fmaTotalWgt ?? true),
-      "actualTotalWgt": FieldNameStatus(localizedStrings.fActualTotalWeight,
+      "actualTotalWgt": FieldNameStatus((localizedStrings?.fActualTotalWeight ?? "fActualTotalWeight"),
           rptPrintSetting.actualTotalWgt ?? true),
       "deviceName": FieldNameStatus(
-          localizedStrings.gDeviceName, rptPrintSetting.deviceName ?? true),
+          (localizedStrings?.gDeviceName ?? "gDeviceName"), rptPrintSetting.deviceName ?? true),
       "rawActualErr": FieldNameStatus(
-          localizedStrings.fActualError, rptPrintSetting.rawActualErr ?? true),
-      "rawActualWgt": FieldNameStatus(localizedStrings.fActualSingleWeight,
+          (localizedStrings?.fActualError ?? "fActualError"), rptPrintSetting.rawActualErr ?? true),
+      "rawActualWgt": FieldNameStatus((localizedStrings?.fActualSingleWeight ?? "fActualSingleWeight"),
           rptPrintSetting.rawActualWgt ?? true),
     };
 
@@ -719,22 +719,22 @@ class _AllFmaWgtRecPageState extends State<AllFmaWgtRecPage> {
     try {
       final header = [
         'No.',
-        localizedStrings.fFmaIdLabel,
-        localizedStrings.fFmaNameLabel,
-        localizedStrings.fFmaBarcode,
-        localizedStrings.fMaterialNameCol,
-        localizedStrings.fMaterialIdCol,
-        localizedStrings.fFmaModeCol,
-        localizedStrings.fConfidential,
-        localizedStrings.fFormulaTotalWeight,
-        localizedStrings.fActualTotalWeight,
-        localizedStrings.fMaterialSingleWeight,
-        localizedStrings.fActualSingleWeight,
-        localizedStrings.fAllowableError,
-        localizedStrings.fActualError,
-        localizedStrings.fQualificationStatus,
-        localizedStrings.fCreatedAtCol,
-        localizedStrings.operator,
+        (localizedStrings?.fFmaIdLabel ?? "fFmaIdLabel"),
+        (localizedStrings?.fFmaNameLabel ?? "fFmaNameLabel"),
+        (localizedStrings?.fFmaBarcode ?? "fFmaBarcode"),
+        (localizedStrings?.fMaterialNameCol ?? "fMaterialNameCol"),
+        (localizedStrings?.fMaterialIdCol ?? "fMaterialIdCol"),
+        (localizedStrings?.fFmaModeCol ?? "fFmaModeCol"),
+        (localizedStrings?.fConfidential ?? "fConfidential"),
+        (localizedStrings?.fFormulaTotalWeight ?? "fFormulaTotalWeight"),
+        (localizedStrings?.fActualTotalWeight ?? "fActualTotalWeight"),
+        (localizedStrings?.fMaterialSingleWeight ?? "fMaterialSingleWeight"),
+        (localizedStrings?.fActualSingleWeight ?? "fActualSingleWeight"),
+        (localizedStrings?.fAllowableError ?? "fAllowableError"),
+        (localizedStrings?.fActualError ?? "fActualError"),
+        (localizedStrings?.fQualificationStatus ?? "fQualificationStatus"),
+        (localizedStrings?.fCreatedAtCol ?? "fCreatedAtCol"),
+        (localizedStrings?.operator ?? "operator"),
       ];
 
       List<List<dynamic>> csvData = [header];
@@ -766,11 +766,11 @@ class _AllFmaWgtRecPageState extends State<AllFmaWgtRecPage> {
           "",
           "",
           headerData?.formulaMode == 'wgt'
-              ? localizedStrings.fWeightMode
-              : localizedStrings.fPctMode,
+              ? (localizedStrings?.fWeightMode ?? "fWeightMode")
+              : (localizedStrings?.fPctMode ?? "fPctMode"),
           headerData?.isEncrypted.toString() == "true"
-              ? localizedStrings.fConfidential
-              : localizedStrings.fPublic,
+              ? (localizedStrings?.fConfidential ?? "fConfidential")
+              : (localizedStrings?.fPublic ?? "fPublic"),
           "${headerData?.actualFmaTotalWgt} ${headerData?.totalWeightUnit}",
           "${(headerData?.actualTotalWeight)!.toStringAsFixed(3)} ${headerData?.totalWeightUnit}",
           "",
@@ -794,7 +794,7 @@ class _AllFmaWgtRecPageState extends State<AllFmaWgtRecPage> {
               "",
               "",
               detail.sequence == 0
-                  ? localizedStrings.fFmaContainer
+                  ? (localizedStrings?.fFmaContainer ?? "fFmaContainer")
                   : detail.materialName ?? "",
               detail.materialId ?? "",
               "",
@@ -923,7 +923,7 @@ class _AllFmaWgtRecPageState extends State<AllFmaWgtRecPage> {
               });
             },
             child: Text(
-              localizedStrings.printSettings,
+              (localizedStrings?.printSettings ?? "printSettings"),
               style: Theme.of(context).textTheme.bodySmall!.apply(
                     color: Theme.of(context).colorScheme.onPrimary,
                   ),
@@ -956,7 +956,7 @@ class _AllFmaWgtRecPageState extends State<AllFmaWgtRecPage> {
               });
             },
             child: Text(
-              localizedStrings.autoSync, //Sync Settings
+              (localizedStrings?.autoSync ?? "autoSync"), //Sync Settings
               style: Theme.of(context).textTheme.bodySmall!.apply(
                     color: Theme.of(context).colorScheme.onPrimary,
                   ),
@@ -984,7 +984,7 @@ class _AllFmaWgtRecPageState extends State<AllFmaWgtRecPage> {
                     exportSelectedDataToCSV();
                   },
             child: Text(
-              localizedStrings.fExportRecordsBtn,
+              (localizedStrings?.fExportRecordsBtn ?? "fExportRecordsBtn"),
               style: Theme.of(context).textTheme.bodySmall!.apply(
                     color: Theme.of(context).colorScheme.onPrimary,
                   ),

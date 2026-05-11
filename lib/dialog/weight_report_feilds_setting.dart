@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/widget/dialog_head_style.dart';
 import '../data/language.dart';
@@ -60,7 +60,7 @@ class ReportSettingDialogState extends State<ReportSettingDialog> {
           children: [
             // 头部
             ...dialogHeadStyle(
-                context, localizedStrings.gBtnReportSetting, true, onClose: () {
+                context, (localizedStrings?.gBtnReportSetting ?? "gBtnReportSetting"), true, onClose: () {
               Navigator.of(context).pop(false);
             }),
 
@@ -89,7 +89,7 @@ class ReportSettingDialogState extends State<ReportSettingDialog> {
                       ),
                       Flexible(
                         child: Text(
-                          localizedStrings.gSelectAll,
+                          (localizedStrings?.gSelectAll ?? "gSelectAll"),
                           style: TextStyle(overflow: TextOverflow.ellipsis),
                         ),
                       ),
@@ -188,7 +188,7 @@ class ReportSettingDialogState extends State<ReportSettingDialog> {
                         Navigator.of(context).pop(true);
                       },
                       child: Text(
-                        localizedStrings.gBtnConfirm,
+                        (localizedStrings?.gBtnConfirm ?? "gBtnConfirm"),
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.normal,
@@ -216,7 +216,7 @@ class ReportSettingDialogState extends State<ReportSettingDialog> {
                         Navigator.of(context).pop(false);
                       },
                       child: Text(
-                        localizedStrings.gBtnCancel,
+                        (localizedStrings?.gBtnCancel ?? "gBtnCancel"),
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.normal,

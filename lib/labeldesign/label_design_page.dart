@@ -1,4 +1,4 @@
-import 'dart:convert';
+﻿import 'dart:convert';
 import 'dart:io';
 
 import 'package:csv/csv.dart';
@@ -1049,52 +1049,52 @@ class LabelDesignPageState extends State<LabelDesignPage> {
       return;
     }
     langVarMap = {
-      "Variable": localizedStrings.l_var_title,
-      "Free Text": localizedStrings.l_text_title,
-      "BarCode Variable": localizedStrings.l_barcode_title,
-      "Qrcode Variable": localizedStrings.l_qrcode_title,
-      "Shape": localizedStrings.l_shape_title,
-      "Line": localizedStrings.l_line_var,
-      "Text": localizedStrings.l_text_var,
-      "BarCode": localizedStrings.l_barcode_var,
-      "Qrcode": localizedStrings.l_qrcode_var,
-      "NO.": localizedStrings.l_no_var,
-      "Gross": localizedStrings.l_gross_var,
-      "Tare": localizedStrings.l_tare_var,
-      "Net": localizedStrings.l_net_var,
-      "PCS": localizedStrings.l_pcs_var,
-      "WeightUnit": localizedStrings.l_wgt_unit_var,
-      "DATE": localizedStrings.l_date_var,
-      "TIME": localizedStrings.l_time_var,
-      "U.WGT": localizedStrings.l_uwgt_var,
-      "U.WU": localizedStrings.l_uwu_var,
-      "UnitWeight": localizedStrings.l_unit_wgt_var,
-      "Percent": localizedStrings.l_percent_var,
-      "TotalWeight": localizedStrings.l_total_wgt_var,
-      "TotalCount": localizedStrings.l_total_cnt_var,
-      "TotalPcs": localizedStrings.l_total_pcs_var,
+      "Variable": (localizedStrings?.l_var_title ?? "l_var_title"),
+      "Free Text": (localizedStrings?.l_text_title ?? "l_text_title"),
+      "BarCode Variable": (localizedStrings?.l_barcode_title ?? "l_barcode_title"),
+      "Qrcode Variable": (localizedStrings?.l_qrcode_title ?? "l_qrcode_title"),
+      "Shape": (localizedStrings?.l_shape_title ?? "l_shape_title"),
+      "Line": (localizedStrings?.l_line_var ?? "l_line_var"),
+      "Text": (localizedStrings?.l_text_var ?? "l_text_var"),
+      "BarCode": (localizedStrings?.l_barcode_var ?? "l_barcode_var"),
+      "Qrcode": (localizedStrings?.l_qrcode_var ?? "l_qrcode_var"),
+      "NO.": (localizedStrings?.l_no_var ?? "l_no_var"),
+      "Gross": (localizedStrings?.l_gross_var ?? "l_gross_var"),
+      "Tare": (localizedStrings?.l_tare_var ?? "l_tare_var"),
+      "Net": (localizedStrings?.l_net_var ?? "l_net_var"),
+      "PCS": (localizedStrings?.l_pcs_var ?? "l_pcs_var"),
+      "WeightUnit": (localizedStrings?.l_wgt_unit_var ?? "l_wgt_unit_var"),
+      "DATE": (localizedStrings?.l_date_var ?? "l_date_var"),
+      "TIME": (localizedStrings?.l_time_var ?? "l_time_var"),
+      "U.WGT": (localizedStrings?.l_uwgt_var ?? "l_uwgt_var"),
+      "U.WU": (localizedStrings?.l_uwu_var ?? "l_uwu_var"),
+      "UnitWeight": (localizedStrings?.l_unit_wgt_var ?? "l_unit_wgt_var"),
+      "Percent": (localizedStrings?.l_percent_var ?? "l_percent_var"),
+      "TotalWeight": (localizedStrings?.l_total_wgt_var ?? "l_total_wgt_var"),
+      "TotalCount": (localizedStrings?.l_total_cnt_var ?? "l_total_cnt_var"),
+      "TotalPcs": (localizedStrings?.l_total_pcs_var ?? "l_total_pcs_var"),
     };
 
     langVarExplMap = {
-      "Line": localizedStrings.l_line_expl,
-      "Text": localizedStrings.l_text_expl,
-      "BarCode": localizedStrings.l_barcode_expl,
-      "Qrcode": localizedStrings.l_qrcode_expl,
-      "NO.": localizedStrings.l_no_expl,
-      "Gross": localizedStrings.l_gross_expl,
-      "Tare": localizedStrings.l_tare_expl,
-      "Net": localizedStrings.l_net_expl,
-      "PCS": localizedStrings.l_pcs_expl,
-      "WeightUnit": localizedStrings.l_wgt_unit_expl,
-      "DATE": localizedStrings.l_date_expl,
-      "TIME": localizedStrings.l_time_expl,
-      "U.WGT": localizedStrings.l_uwgt_expl,
-      "U.WU": localizedStrings.l_uwu_expl,
-      "UnitWeight": localizedStrings.l_unit_wgt_expl,
-      "Percent": localizedStrings.l_percent_expl,
-      "TotalWeight": localizedStrings.l_total_wgt_expl,
-      "TotalCount": localizedStrings.l_total_cnt_expl,
-      "TotalPcs": localizedStrings.l_total_pcs_expl,
+      "Line": (localizedStrings?.l_line_expl ?? "l_line_expl"),
+      "Text": (localizedStrings?.l_text_expl ?? "l_text_expl"),
+      "BarCode": (localizedStrings?.l_barcode_expl ?? "l_barcode_expl"),
+      "Qrcode": (localizedStrings?.l_qrcode_expl ?? "l_qrcode_expl"),
+      "NO.": (localizedStrings?.l_no_expl ?? "l_no_expl"),
+      "Gross": (localizedStrings?.l_gross_expl ?? "l_gross_expl"),
+      "Tare": (localizedStrings?.l_tare_expl ?? "l_tare_expl"),
+      "Net": (localizedStrings?.l_net_expl ?? "l_net_expl"),
+      "PCS": (localizedStrings?.l_pcs_expl ?? "l_pcs_expl"),
+      "WeightUnit": (localizedStrings?.l_wgt_unit_expl ?? "l_wgt_unit_expl"),
+      "DATE": (localizedStrings?.l_date_expl ?? "l_date_expl"),
+      "TIME": (localizedStrings?.l_time_expl ?? "l_time_expl"),
+      "U.WGT": (localizedStrings?.l_uwgt_expl ?? "l_uwgt_expl"),
+      "U.WU": (localizedStrings?.l_uwu_expl ?? "l_uwu_expl"),
+      "UnitWeight": (localizedStrings?.l_unit_wgt_expl ?? "l_unit_wgt_expl"),
+      "Percent": (localizedStrings?.l_percent_expl ?? "l_percent_expl"),
+      "TotalWeight": (localizedStrings?.l_total_wgt_expl ?? "l_total_wgt_expl"),
+      "TotalCount": (localizedStrings?.l_total_cnt_expl ?? "l_total_cnt_expl"),
+      "TotalPcs": (localizedStrings?.l_total_pcs_expl ?? "l_total_pcs_expl"),
     };
   }
 
@@ -1725,7 +1725,7 @@ class LabelDesignPageState extends State<LabelDesignPage> {
 
     FormatContent fromatContent = FormatContent.fromJson(jsonDecode(dataStr));
     if (fromatContent.prtType != null && fromatContent.prtType == 'P') {
-      showTipInfo(localizedStrings.l_open_fmt_err, context);
+      showTipInfo((localizedStrings?.l_open_fmt_err ?? "l_open_fmt_err"), context);
       return;
     }
 
@@ -1814,7 +1814,7 @@ class LabelDesignPageState extends State<LabelDesignPage> {
                             SizedBox(
                               width: 150,
                               child: Text(
-                                localizedStrings.gPrinter,
+                                (localizedStrings?.gPrinter ?? "gPrinter"),
                                 textAlign: TextAlign.right,
                                 style: Theme.of(context)
                                     .textTheme
@@ -1852,7 +1852,7 @@ class LabelDesignPageState extends State<LabelDesignPage> {
                             SizedBox(
                               width: 150,
                               child: Text(
-                                localizedStrings.gPrintDirection,
+                                (localizedStrings?.gPrintDirection ?? "gPrintDirection"),
                                 textAlign: TextAlign.right,
                                 style: Theme.of(context)
                                     .textTheme
@@ -1897,7 +1897,7 @@ class LabelDesignPageState extends State<LabelDesignPage> {
                         height: 40,
                         child: Row(
                           children: [
-                            buildBtnText(localizedStrings.gPageWidth + '(mm):'),
+                            buildBtnText((localizedStrings?.gPageWidth ?? "gPageWidth") + '(mm):'),
                             const SizedBox(
                               width: 10,
                             ),
@@ -1920,7 +1920,7 @@ class LabelDesignPageState extends State<LabelDesignPage> {
                         child: Row(
                           children: [
                             buildBtnText(
-                                localizedStrings.gPageHeight + '(mm):'),
+                                (localizedStrings?.gPageHeight ?? "gPageHeight") + '(mm):'),
                             const SizedBox(
                               width: 10,
                             ),
@@ -1952,7 +1952,7 @@ class LabelDesignPageState extends State<LabelDesignPage> {
                         width: btnWidth,
                         height: 40,
                         child: showTextButton(
-                            context, 40, localizedStrings.gBtnNewFormat, () {
+                            context, 40, (localizedStrings?.gBtnNewFormat ?? "gBtnNewFormat"), () {
                           deleteAllElements();
                         },
                             Theme.of(context).colorScheme.onPrimary,
@@ -1979,7 +1979,7 @@ class LabelDesignPageState extends State<LabelDesignPage> {
                         width: btnWidth,
                         height: 40,
                         child: showTextButton(
-                            context, 40, localizedStrings.gBarcodeEdit,
+                            context, 40, (localizedStrings?.gBarcodeEdit ?? "gBarcodeEdit"),
                             () async {
                           showDialog(
                             context: context,
@@ -1999,7 +1999,7 @@ class LabelDesignPageState extends State<LabelDesignPage> {
                         width: btnWidth,
                         height: 40,
                         child: showTextButton(
-                            context, 40, localizedStrings.gOpenJson, () async {
+                            context, 40, (localizedStrings?.gOpenJson ?? "gOpenJson"), () async {
                           String filePath = '';
                           try {
                             String executablePath = Platform.resolvedExecutable;
@@ -2053,7 +2053,7 @@ class LabelDesignPageState extends State<LabelDesignPage> {
                         width: btnWidth,
                         height: 40,
                         child: showTextButton(
-                            context, 40, localizedStrings.gQrcodeEdit,
+                            context, 40, (localizedStrings?.gQrcodeEdit ?? "gQrcodeEdit"),
                             () async {
                           showDialog(
                             context: context,
@@ -2073,7 +2073,7 @@ class LabelDesignPageState extends State<LabelDesignPage> {
                         width: btnWidth,
                         height: 40,
                         child: showTextButton(
-                            context, 40, localizedStrings.gSaveFormat,
+                            context, 40, (localizedStrings?.gSaveFormat ?? "gSaveFormat"),
                             () async {
                           String executablePath = Platform.resolvedExecutable;
                           var directory = p.dirname(executablePath);
@@ -2135,14 +2135,14 @@ class LabelDesignPageState extends State<LabelDesignPage> {
 
   _textproperties(DraggableElement element) {
     return [
-      buildAttributeText(context, localizedStrings.gAttribute),
+      buildAttributeText(context, (localizedStrings?.gAttribute ?? "gAttribute")),
       buildDivider(),
       buildTabOrderAndTyptTextNew(
-          context, localizedStrings.gTipItemType, element.type.name),
-      showRightItemTitleText(context, localizedStrings.gPosition),
+          context, (localizedStrings?.gTipItemType ?? "gTipItemType"), element.type.name),
+      showRightItemTitleText(context, (localizedStrings?.gPosition ?? "gPosition")),
       ...buildXYPosition(),
       ...buildShowHeightWidth(),
-      showRightItemTitleText(context, localizedStrings.gTextContent),
+      showRightItemTitleText(context, (localizedStrings?.gTextContent ?? "gTextContent")),
       buildTextField(
         _textController,
       ),
@@ -2181,7 +2181,7 @@ class LabelDesignPageState extends State<LabelDesignPage> {
   Widget deleteBtnBuild() {
     return SizedBox(
         width: 200,
-        child: showTextButton(context, btnHeight, localizedStrings.gBtnDelete,
+        child: showTextButton(context, btnHeight, (localizedStrings?.gBtnDelete ?? "gBtnDelete"),
             () {
           setState(() {
             deleteSelectedElements();
@@ -2264,7 +2264,7 @@ class LabelDesignPageState extends State<LabelDesignPage> {
         children: [
           SizedBox(
             width: 100,
-            child: Text(localizedStrings.gPageWidth,
+            child: Text((localizedStrings?.gPageWidth ?? "gPageWidth"),
                 textAlign: TextAlign.left,
                 style: Theme.of(context).textTheme.bodySmall),
           ),
@@ -2295,7 +2295,7 @@ class LabelDesignPageState extends State<LabelDesignPage> {
         children: [
           SizedBox(
             width: 100,
-            child: Text(localizedStrings.gPageHeight,
+            child: Text((localizedStrings?.gPageHeight ?? "gPageHeight"),
                 textAlign: TextAlign.left,
                 style: Theme.of(context).textTheme.bodySmall),
           ),
@@ -2327,12 +2327,12 @@ class LabelDesignPageState extends State<LabelDesignPage> {
 
   List<Widget> showFontSize() {
     return [
-      showRightItemTitleText(context, localizedStrings.gFontSize),
+      showRightItemTitleText(context, (localizedStrings?.gFontSize ?? "gFontSize")),
       buildDropdownButton(
         context: context,
         value: lastFontSize.toString(),
         items: fontSizes,
-        hintText: localizedStrings.gFontSize,
+        hintText: (localizedStrings?.gFontSize ?? "gFontSize"),
         onSelect: updateFontSize,
       ),
     ];
@@ -2340,12 +2340,12 @@ class LabelDesignPageState extends State<LabelDesignPage> {
 
   List<Widget> showRotation() {
     return [
-      showRightItemTitleText(context, localizedStrings.gRotation),
+      showRightItemTitleText(context, (localizedStrings?.gRotation ?? "gRotation")),
       buildDropdownButton(
         context: context,
         value: _selectedRotation,
         items: rotations,
-        hintText: localizedStrings.gRotation,
+        hintText: (localizedStrings?.gRotation ?? "gRotation"),
         onSelect: rotateSelectedElement,
       ),
     ];
@@ -2353,12 +2353,12 @@ class LabelDesignPageState extends State<LabelDesignPage> {
 
   List<Widget> showFontBold() {
     return [
-      showRightItemTitleText(context, localizedStrings.gFontBold),
+      showRightItemTitleText(context, (localizedStrings?.gFontBold ?? "gFontBold")),
       buildDropdownButton(
         context: context,
         value: _selectFontBold,
         items: fontBoldReverse,
-        hintText: localizedStrings.gFontBold,
+        hintText: (localizedStrings?.gFontBold ?? "gFontBold"),
         onSelect: fontBoldSelectedElement,
       ),
     ];
@@ -2366,12 +2366,12 @@ class LabelDesignPageState extends State<LabelDesignPage> {
 
   List<Widget> showFontReverse() {
     return [
-      showRightItemTitleText(context, localizedStrings.gFontReverse),
+      showRightItemTitleText(context, (localizedStrings?.gFontReverse ?? "gFontReverse")),
       buildDropdownButton(
         context: context,
         value: _selectFontReverse,
         items: fontBoldReverse,
-        hintText: localizedStrings.gFontReverse,
+        hintText: (localizedStrings?.gFontReverse ?? "gFontReverse"),
         onSelect: fontReverseSelectedElement,
       ),
     ];
@@ -2379,12 +2379,12 @@ class LabelDesignPageState extends State<LabelDesignPage> {
 
   List<Widget> showAlignment() {
     return [
-      showRightItemTitleText(context, localizedStrings.gHrAlignment),
+      showRightItemTitleText(context, (localizedStrings?.gHrAlignment ?? "gHrAlignment")),
       buildDropdownButton(
         context: context,
         value: _selectedAlignment,
         items: alignments,
-        hintText: localizedStrings.gHrAlignment,
+        hintText: (localizedStrings?.gHrAlignment ?? "gHrAlignment"),
         onSelect: alignmentSelectedElement,
       ),
     ];
@@ -2392,17 +2392,17 @@ class LabelDesignPageState extends State<LabelDesignPage> {
 
   _varproperties(DraggableElement element) {
     return [
-      buildAttributeText(context, localizedStrings.gAttribute),
+      buildAttributeText(context, (localizedStrings?.gAttribute ?? "gAttribute")),
       buildDivider(),
       buildTabOrderAndTyptTextNew(
-          context, localizedStrings.l_var_title, element.varName!),
-      showRightItemTitleText(context, localizedStrings.gPosition),
+          context, (localizedStrings?.l_var_title ?? "l_var_title"), element.varName!),
+      showRightItemTitleText(context, (localizedStrings?.gPosition ?? "gPosition")),
       ...buildXYPosition(),
       ...buildShowHeightWidth(),
       const SizedBox(height: 20),
       SizedBox(
         width: 100,
-        child: Text(localizedStrings.gMaxLength,
+        child: Text((localizedStrings?.gMaxLength ?? "gMaxLength"),
             textAlign: TextAlign.left,
             style: Theme.of(context).textTheme.bodySmall),
       ),
@@ -2425,29 +2425,29 @@ class LabelDesignPageState extends State<LabelDesignPage> {
 
   _barCodeproperties(DraggableElement element) {
     return [
-      buildAttributeText(context, localizedStrings.gAttribute),
+      buildAttributeText(context, (localizedStrings?.gAttribute ?? "gAttribute")),
       buildDivider(),
       buildTabOrderAndTyptTextNew(
-          context, localizedStrings.gTipItemType, element.type.name),
-      showRightItemTitleText(context, localizedStrings.gPosition),
+          context, (localizedStrings?.gTipItemType ?? "gTipItemType"), element.type.name),
+      showRightItemTitleText(context, (localizedStrings?.gPosition ?? "gPosition")),
       ...buildXYPosition(),
-      showRightItemTitleText(context, localizedStrings.gBarcode),
+      showRightItemTitleText(context, (localizedStrings?.gBarcode ?? "gBarcode")),
       buildDropdownButton(
         context: context,
         value: _savedBarCodeNames.contains(_selectedBarcode)
             ? _selectedBarcode
             : '--',
         items: _savedBarCodeNames,
-        hintText: localizedStrings.gBarcode,
+        hintText: (localizedStrings?.gBarcode ?? "gBarcode"),
         onSelect: _handleBarcodeSelected,
       ),
       ...buildShowHeightWidth(),
-      showRightItemTitleText(context, localizedStrings.gHrAlignment),
+      showRightItemTitleText(context, (localizedStrings?.gHrAlignment ?? "gHrAlignment")),
       buildDropdownButton(
         context: context,
         value: _selectedHRAlignment,
         items: hralignments,
-        hintText: localizedStrings.gHrAlignment,
+        hintText: (localizedStrings?.gHrAlignment ?? "gHrAlignment"),
         onSelect: hralignmentSelectedElement,
       ),
       ...showRotation(),
@@ -2458,28 +2458,28 @@ class LabelDesignPageState extends State<LabelDesignPage> {
 
   _qrcodeproperties(DraggableElement element) {
     return [
-      buildAttributeText(context, localizedStrings.gAttribute),
+      buildAttributeText(context, (localizedStrings?.gAttribute ?? "gAttribute")),
       buildDivider(),
       buildTabOrderAndTyptTextNew(
-          context, localizedStrings.gTipItemType, element.type.name),
-      showRightItemTitleText(context, localizedStrings.gPosition),
+          context, (localizedStrings?.gTipItemType ?? "gTipItemType"), element.type.name),
+      showRightItemTitleText(context, (localizedStrings?.gPosition ?? "gPosition")),
       ...buildXYPosition(),
-      showRightItemTitleText(context, localizedStrings.gQrcode),
+      showRightItemTitleText(context, (localizedStrings?.gQrcode ?? "gQrcode")),
       buildDropdownButton(
         context: context,
         value: _savedQrcodeNames.contains(_selectedQrcode)
             ? _selectedQrcode
             : '--',
         items: _savedQrcodeNames,
-        hintText: localizedStrings.gQrcode,
+        hintText: (localizedStrings?.gQrcode ?? "gQrcode"),
         onSelect: _handleQrcodeSelected,
       ),
-      showRightItemTitleText(context, localizedStrings.gQrcodeWidth),
+      showRightItemTitleText(context, (localizedStrings?.gQrcodeWidth ?? "gQrcodeWidth")),
       buildDropdownButton(
         context: context,
         value: _selectedQrWidth,
         items: qrWidths,
-        hintText: localizedStrings.gQrcodeWidth,
+        hintText: (localizedStrings?.gQrcodeWidth ?? "gQrcodeWidth"),
         onSelect: _handleQrWidthSelected,
       ),
       const SizedBox(height: 5),
@@ -2489,11 +2489,11 @@ class LabelDesignPageState extends State<LabelDesignPage> {
 
   _lineproperties(DraggableElement element) {
     return [
-      buildAttributeText(context, localizedStrings.gAttribute),
+      buildAttributeText(context, (localizedStrings?.gAttribute ?? "gAttribute")),
       buildDivider(),
       buildTabOrderAndTyptTextNew(
-          context, localizedStrings.gTipItemType, element.type.name),
-      showRightItemTitleText(context, localizedStrings.gPosition),
+          context, (localizedStrings?.gTipItemType ?? "gTipItemType"), element.type.name),
+      showRightItemTitleText(context, (localizedStrings?.gPosition ?? "gPosition")),
       ...buildXYPosition(),
       ...buildShowHeightWidth(),
       const SizedBox(height: 5),
@@ -2503,11 +2503,11 @@ class LabelDesignPageState extends State<LabelDesignPage> {
 
   _imageProperties(DraggableElement element) {
     return [
-      buildAttributeText(context, localizedStrings.gAttribute),
+      buildAttributeText(context, (localizedStrings?.gAttribute ?? "gAttribute")),
       buildDivider(),
       buildTabOrderAndTyptTextNew(
-          context, localizedStrings.gTipItemType, element.type.name),
-      showRightItemTitleText(context, localizedStrings.gPosition),
+          context, (localizedStrings?.gTipItemType ?? "gTipItemType"), element.type.name),
+      showRightItemTitleText(context, (localizedStrings?.gPosition ?? "gPosition")),
       ...buildXYPosition(),
       ...buildShowHeightWidth(),
       const SizedBox(
@@ -2528,7 +2528,7 @@ class LabelDesignPageState extends State<LabelDesignPage> {
         height: 10,
       ),
       Text(
-        localizedStrings.l_var_title,
+        (localizedStrings?.l_var_title ?? "l_var_title"),
         style: Theme.of(context).textTheme.bodySmall!.apply(),
       ),
       showVarSelect(),
@@ -2947,7 +2947,7 @@ class LabelDesignPageState extends State<LabelDesignPage> {
       SizedBox(
         height: 50,
         child: Text(
-          localizedStrings.gMsgNoElement,
+          (localizedStrings?.gMsgNoElement ?? "gMsgNoElement"),
           style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                 color: Theme.of(context).colorScheme.error,
               ),
@@ -2981,8 +2981,8 @@ class LabelDesignPageState extends State<LabelDesignPage> {
                         pageHeadInfo(
                             context,
                             width - headWidthPadding,
-                            localizedStrings.menuLabelDesign,
-                            localizedStrings.gTipLabelDesignPageHelp, () {
+                            (localizedStrings?.menuLabelDesign ?? "menuLabelDesign"),
+                            (localizedStrings?.gTipLabelDesignPageHelp ?? "gTipLabelDesignPageHelp"), () {
                           formAppSetting = false;
                           Future.delayed(Duration.zero, () {
                             widget.onNavigate(widget.lastRouteName);

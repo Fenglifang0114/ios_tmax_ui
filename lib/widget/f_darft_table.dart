@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import 'package:intl/intl.dart';
 import 'package:t_max/data/darf_fma_data_from_db.dart';
@@ -201,7 +201,7 @@ class _DarftFmaTableState extends State<DarftFmaTable> {
               ),
               SizedBox(width: 16),
               Text(
-                localizedStrings.tipJumpPage,
+                (localizedStrings?.tipJumpPage ?? "tipJumpPage"),
                 style: textTheme.bodySmall,
               ),
               SizedBox(width: 8),
@@ -230,7 +230,7 @@ class _DarftFmaTableState extends State<DarftFmaTable> {
             width: regularPadding,
           ),
           Text(
-            '${localizedStrings.tipPageTotal}: ${widget.searchDarfFmaInfoList.length} ${localizedStrings.tipPageItems}',
+            '${(localizedStrings?.tipPageTotal ?? "tipPageTotal")}: ${widget.searchDarfFmaInfoList.length} ${(localizedStrings?.tipPageItems ?? "tipPageItems")}',
             style: textTheme.bodySmall,
           ),
         ],
@@ -435,24 +435,24 @@ class _DarftFmaTableState extends State<DarftFmaTable> {
           ),
         ),
       ),
-      getColumnWidget(150, 'formulaId', localizedStrings.fFmaIdLabel, textTheme,
+      getColumnWidget(150, 'formulaId', (localizedStrings?.fFmaIdLabel ?? "fFmaIdLabel"), textTheme,
           colorScheme),
-      getColumnWidget(200, 'formulaName', localizedStrings.fFmaNameLabel,
+      getColumnWidget(200, 'formulaName', (localizedStrings?.fFmaNameLabel ?? "fFmaNameLabel"),
           textTheme, colorScheme),
       getColumnWidget(
-          200, 'orderId', localizedStrings.fOrderNo, textTheme, colorScheme),
-      getColumnWidget(150, 'confidential', localizedStrings.fConfidential,
+          200, 'orderId', (localizedStrings?.fOrderNo ?? "fOrderNo"), textTheme, colorScheme),
+      getColumnWidget(150, 'confidential', (localizedStrings?.fConfidential ?? "fConfidential"),
           textTheme, colorScheme),
       getColumnWidget(
-          120, 'mode', localizedStrings.fFmaModeCol, textTheme, colorScheme),
+          120, 'mode', (localizedStrings?.fFmaModeCol ?? "fFmaModeCol"), textTheme, colorScheme),
       getColumnWidget(120, 'materialCount',
-          localizedStrings.fIngredientCountLabel, textTheme, colorScheme),
-      getColumnWidget(200, 'createdAt', localizedStrings.fCreatedAtCol,
+          (localizedStrings?.fIngredientCountLabel ?? "fIngredientCountLabel"), textTheme, colorScheme),
+      getColumnWidget(200, 'createdAt', (localizedStrings?.fCreatedAtCol ?? "fCreatedAtCol"),
           textTheme, colorScheme),
       getColumnWidget(
-          500, 'remark', localizedStrings.fRemarkCol, textTheme, colorScheme),
+          500, 'remark', (localizedStrings?.fRemarkCol ?? "fRemarkCol"), textTheme, colorScheme),
       getColumnWidgetNoSort(
-          80, 'delete', localizedStrings.gBtnDelete, textTheme, colorScheme),
+          80, 'delete', (localizedStrings?.gBtnDelete ?? "gBtnDelete"), textTheme, colorScheme),
     ];
   }
 }
@@ -522,14 +522,14 @@ class DarftFmaDataSource extends DataGridSource {
         DataGridCell<String>(
           columnName: 'confidential',
           value: (darftFma.fmaInfo?.header?.isEncrypted ?? false)
-              ? localizedStrings.fConfidential
-              : localizedStrings.fPublic,
+              ? (localizedStrings?.fConfidential ?? "fConfidential")
+              : (localizedStrings?.fPublic ?? "fPublic"),
         ),
         DataGridCell<String>(
           columnName: 'mode',
           value: darftFma.fmaInfo?.header?.formulaMode == 'pct'
-              ? localizedStrings.fPctMode
-              : localizedStrings.fWeightMode,
+              ? (localizedStrings?.fPctMode ?? "fPctMode")
+              : (localizedStrings?.fWeightMode ?? "fWeightMode"),
         ),
         DataGridCell<String>(
           columnName: 'materialCount',
@@ -651,8 +651,8 @@ class DarftFmaDataSource extends DataGridSource {
       barrierDismissible: false,
       builder: (BuildContext context) {
         return ShowNormalTipDialog(
-          title: localizedStrings.fTipTitle,
-          msg: localizedStrings.fConfirmDelete,
+          title: (localizedStrings?.fTipTitle ?? "fTipTitle"),
+          msg: (localizedStrings?.fConfirmDelete ?? "fConfirmDelete"),
         );
       },
     ).then((value) {

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:t_max/data/g_data.dart';
 import 'package:t_max/data/home_page_common_data.dart';
@@ -59,7 +59,7 @@ class ModifyPwdPageState extends State<ModifyPwdPage> {
         child: Column(
           children: [
             ...getCustomDialogTitle(
-                context, localizedStrings.titleChangePassword),
+                context, (localizedStrings?.titleChangePassword ?? "titleChangePassword")),
             Expanded(
                 child: Container(
                     padding: EdgeInsets.all(40),
@@ -70,7 +70,7 @@ class ModifyPwdPageState extends State<ModifyPwdPage> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         showItemNameWithStar(
-                            context, localizedStrings.userNewPassword, true),
+                            context, (localizedStrings?.userNewPassword ?? "userNewPassword"), true),
                         showInputPwdBox(
                           pwd1Controller,
                           '',
@@ -79,7 +79,7 @@ class ModifyPwdPageState extends State<ModifyPwdPage> {
                           height: largePadding,
                         ),
                         showItemNameWithStar(context,
-                            localizedStrings.userConfirmPassword, true),
+                            (localizedStrings?.userConfirmPassword ?? "userConfirmPassword"), true),
                         showInputPwdBox(
                           pwd2Controller,
                           '',
@@ -95,13 +95,13 @@ class ModifyPwdPageState extends State<ModifyPwdPage> {
                 showTextButton(
                     context,
                     btnHeight,
-                    localizedStrings.gBtnConfirm,
+                    (localizedStrings?.gBtnConfirm ?? "gBtnConfirm"),
                     pwd1Controller.text.isEmpty || pwd2Controller.text.isEmpty
                         ? null
                         : () {
                             if (pwd1Controller.text != pwd2Controller.text) {
                               showTipInfo(
-                                  localizedStrings.tipPasswordNotSame, context);
+                                  (localizedStrings?.tipPasswordNotSame ?? "tipPasswordNotSame"), context);
                               return;
                             }
                             ReqModifyPwd reqModifyPwd = ReqModifyPwd(
@@ -117,7 +117,7 @@ class ModifyPwdPageState extends State<ModifyPwdPage> {
                     Theme.of(context).colorScheme.primary,
                     Theme.of(context).colorScheme.primary),
                 const SizedBox(width: regularPadding),
-                showTextButton(context, btnHeight, localizedStrings.gBtnCancel,
+                showTextButton(context, btnHeight, (localizedStrings?.gBtnCancel ?? "gBtnCancel"),
                     () {
                   Navigator.pop(context);
                 },

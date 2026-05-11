@@ -1,4 +1,4 @@
-import 'dart:convert';
+﻿import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:t_max/data/home_page_common_data.dart';
@@ -112,8 +112,8 @@ class SetParameterPageState extends State<SetParameterPage> {
           myRespDataFromScale = event.obj;
           if (myRespDataFromScale.msgBody.isNotEmpty) {
             myRespDataFromScale.msgBody.contains('ok')
-                ? showTipInfo(localizedStrings.gTipDownloadOk, context)
-                : showTipInfo(localizedStrings.gTipDownloadFail, context);
+                ? showTipInfo((localizedStrings?.gTipDownloadOk ?? "gTipDownloadOk"), context)
+                : showTipInfo((localizedStrings?.gTipDownloadFail ?? "gTipDownloadFail"), context);
           }
         });
         groupedData.clear();
@@ -134,10 +134,10 @@ class SetParameterPageState extends State<SetParameterPage> {
     // 在页面构建完成后显示提示
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (myAllScalesList.isEmpty) {
-        showTipInfo(localizedStrings.gTipNoDeviceAddFirst, context);
+        showTipInfo((localizedStrings?.gTipNoDeviceAddFirst ?? "gTipNoDeviceAddFirst"), context);
       } else {
         if (selScaleId == -1) {
-          showTipInfo(localizedStrings.gTipSelectDeviceFirst, context);
+          showTipInfo((localizedStrings?.gTipSelectDeviceFirst ?? "gTipSelectDeviceFirst"), context);
         }
       }
     });
@@ -268,7 +268,7 @@ class SetParameterPageState extends State<SetParameterPage> {
                                         Expanded(
                                           flex: 2,
                                           child: Text(
-                                            localizedStrings.cTipEditable,
+                                            (localizedStrings?.cTipEditable ?? "cTipEditable"),
                                             style: Theme.of(context)
                                                 .textTheme
                                                 .bodySmall!
@@ -284,7 +284,7 @@ class SetParameterPageState extends State<SetParameterPage> {
                                         Expanded(
                                           flex: 2,
                                           child: Text(
-                                            localizedStrings.cTipParameterSize,
+                                            (localizedStrings?.cTipParameterSize ?? "cTipParameterSize"),
                                             style: Theme.of(context)
                                                 .textTheme
                                                 .bodySmall!
@@ -300,7 +300,7 @@ class SetParameterPageState extends State<SetParameterPage> {
                                         Expanded(
                                           flex: 2,
                                           child: Text(
-                                            localizedStrings.cTipParameterTyppe,
+                                            (localizedStrings?.cTipParameterTyppe ?? "cTipParameterTyppe"),
                                             style: Theme.of(context)
                                                 .textTheme
                                                 .bodySmall!
@@ -316,7 +316,7 @@ class SetParameterPageState extends State<SetParameterPage> {
                                         Expanded(
                                           flex: 2,
                                           child: Text(
-                                            localizedStrings.cTipParameterValue,
+                                            (localizedStrings?.cTipParameterValue ?? "cTipParameterValue"),
                                             style: Theme.of(context)
                                                 .textTheme
                                                 .bodySmall!
@@ -332,7 +332,7 @@ class SetParameterPageState extends State<SetParameterPage> {
                                         Expanded(
                                           flex: 2,
                                           child: Text(
-                                            localizedStrings.cTipParameterDesp,
+                                            (localizedStrings?.cTipParameterDesp ?? "cTipParameterDesp"),
                                             style: Theme.of(context)
                                                 .textTheme
                                                 .bodySmall!
@@ -540,14 +540,14 @@ class SetParameterPageState extends State<SetParameterPage> {
                   String checkStr = checkEepromData(changedEepromInfos);
                   if (checkStr != '') {
                     changedEepromInfos.clear();
-                    var title = localizedStrings.cTipCheckValue + '$checkStr!';
+                    var title = (localizedStrings?.cTipCheckValue ?? "cTipCheckValue") + '$checkStr!';
 
                     showDialog(
                       context: context,
                       barrierDismissible: false, // 点击对话框外部不关闭对话框
                       builder: (BuildContext context) {
                         return ShowNormalTipDialog(
-                          title: localizedStrings.fTipTitle,
+                          title: (localizedStrings?.fTipTitle ?? "fTipTitle"),
                           msg: title,
                         );
                       },
@@ -558,8 +558,8 @@ class SetParameterPageState extends State<SetParameterPage> {
                       barrierDismissible: false, // 点击对话框外部不关闭对话框
                       builder: (BuildContext context) {
                         return ShowNormalTipDialog(
-                          title: localizedStrings.fTipTitle,
-                          msg: localizedStrings.cTipConfirmModified,
+                          title: (localizedStrings?.fTipTitle ?? "fTipTitle"),
+                          msg: (localizedStrings?.cTipConfirmModified ?? "cTipConfirmModified"),
                         );
                       },
                     ).then((value) {
@@ -576,10 +576,10 @@ class SetParameterPageState extends State<SetParameterPage> {
                     });
                   }
                 } else {
-                  showTipInfo(localizedStrings.cTipNotModified, context);
+                  showTipInfo((localizedStrings?.cTipNotModified ?? "cTipNotModified"), context);
                 }
               },
-              tooltip: localizedStrings.cBtnCommit,
+              tooltip: (localizedStrings?.cBtnCommit ?? "cBtnCommit"),
               child: const Icon(Icons.upload_file_outlined),
             ),
     );

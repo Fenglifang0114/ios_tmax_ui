@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:t_max/data/formula_common.dart';
 import 'package:t_max/data/formula_from_db_data.dart';
 import 'package:t_max/data/home_page_common_data.dart';
@@ -90,7 +90,7 @@ class PrintRptSelectDialogState extends State<PrintRptSelectDialog> {
             children: [
               // 头部
               ...dialogHeadStyle(
-                  context, localizedStrings.printSettings, false),
+                  context, (localizedStrings?.printSettings ?? "printSettings"), false),
 
               // 中部
               Expanded(
@@ -99,7 +99,7 @@ class PrintRptSelectDialogState extends State<PrintRptSelectDialog> {
                       child: Column(children: [
                         CheckboxListTile(
                           title: Text(
-                            localizedStrings.gSelectAll,
+                            (localizedStrings?.gSelectAll ?? "gSelectAll"),
                             style: TextStyle(overflow: TextOverflow.ellipsis),
                           ),
                           value: isSelectAll,
@@ -207,7 +207,7 @@ class PrintRptSelectDialogState extends State<PrintRptSelectDialog> {
                           Navigator.of(context).pop();
                         },
                         child: Text(
-                          localizedStrings.gBtnConfirm,
+                          (localizedStrings?.gBtnConfirm ?? "gBtnConfirm"),
                           style: getTextStyle(
                             color: Theme.of(context).colorScheme.onPrimary,
                           ),
@@ -233,7 +233,7 @@ class PrintRptSelectDialogState extends State<PrintRptSelectDialog> {
                           Navigator.pop(context);
                         },
                         child: Text(
-                          localizedStrings.gBtnCancel,
+                          (localizedStrings?.gBtnCancel ?? "gBtnCancel"),
                           style: getTextStyle(
                             color: Theme.of(context).colorScheme.onPrimary,
                           ),

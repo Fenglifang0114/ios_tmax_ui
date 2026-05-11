@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 
 import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/data/icons.dart';
@@ -119,10 +119,10 @@ void _showConfirmationDialog(BuildContext context, List<int> scaleList) {
     builder: (BuildContext ctx) {
       return AlertDialog(
         title: Text(
-          localizedStrings.gTitleConfirm,
+          (localizedStrings?.gTitleConfirm ?? "gTitleConfirm"),
           style: TextStyle(color: Theme.of(context).colorScheme.primary),
         ),
-        content: Text(localizedStrings.go_home),
+        content: Text(localizedStrings?.go_home ?? "go_home"),
         actions: <Widget>[
           Row(
             children: [
@@ -130,7 +130,7 @@ void _showConfirmationDialog(BuildContext context, List<int> scaleList) {
                 btnWidth: 100,
                 btnHeight: 40,
                 icon: Icons.check_circle,
-                text: localizedStrings.gBtnConfirm,
+                text: (localizedStrings?.gBtnConfirm ?? "gBtnConfirm"),
                 onPressed: () {
                   Navigator.of(context).pop(true);
                 },
@@ -140,7 +140,7 @@ void _showConfirmationDialog(BuildContext context, List<int> scaleList) {
                 btnWidth: 100,
                 btnHeight: 40,
                 icon: Icons.cancel,
-                text: localizedStrings.gBtnCancel,
+                text: (localizedStrings?.gBtnCancel ?? "gBtnCancel"),
                 onPressed: () {
                   Navigator.of(context).pop(false);
                 },
@@ -417,7 +417,7 @@ class _TopRightIconsState extends State<TopRightIcons> {
     return Row(
       children: [
         PopupMenuButton<String>(
-          tooltip: localizedStrings.menuApplications,
+          tooltip: (localizedStrings?.menuApplications ?? "menuApplications"),
           // icon: TIcons.appsSvgIcon(
           //   width: topIconSize,
           //   height: topIconSize,
@@ -429,7 +429,7 @@ class _TopRightIconsState extends State<TopRightIcons> {
             PopupMenuItem(
               value: '1',
               child: Text(
-                localizedStrings.menuConfiguration,
+                (localizedStrings?.menuConfiguration ?? "menuConfiguration"),
                 style: textTheme.bodySmall!.apply(
                   // 根据选中状态改变颜色
                   color: colorScheme.surface,
@@ -455,7 +455,7 @@ class _TopRightIconsState extends State<TopRightIcons> {
             PopupMenuItem(
               value: '2',
               child: Text(
-                localizedStrings.menuApplications,
+                (localizedStrings?.menuApplications ?? "menuApplications"),
                 style: textTheme.bodySmall!.apply(
                   // 根据选中状态改变颜色
                   color: colorScheme.surface,
@@ -483,7 +483,7 @@ class _TopRightIconsState extends State<TopRightIcons> {
           width: regularPadding,
         ),
         PopupMenuButton<String>(
-          tooltip: localizedStrings.menuLanguageSetting,
+          tooltip: (localizedStrings?.menuLanguageSetting ?? "menuLanguageSetting"),
           // icon: TIcons.settingSvgIcon(
           //   width: topIconSize,
           //   height: topIconSize,
@@ -495,7 +495,7 @@ class _TopRightIconsState extends State<TopRightIcons> {
             PopupMenuItem(
               value: '1',
               child: Text(
-                localizedStrings.menuLanguageSetting,
+                (localizedStrings?.menuLanguageSetting ?? "menuLanguageSetting"),
                 style: textTheme.bodySmall!.apply(
                   // 根据选中状态改变颜色
                   color: colorScheme.surface,
@@ -515,7 +515,7 @@ class _TopRightIconsState extends State<TopRightIcons> {
           width: regularPadding,
         ),
         // Tooltip(
-        //   message: localizedStrings.menuSystemInformation,
+        //   message: (localizedStrings?.menuSystemInformation ?? "menuSystemInformation"),
         //   child: IconButton(
         //     icon: Icons.abc,
         //     //  TIcons.infoSvgIcon(

@@ -1,4 +1,4 @@
-//保密配方 暂存的和正常称重的公用页面  保密的配方不会有修改配方的按钮
+﻿//保密配方 暂存的和正常称重的公用页面  保密的配方不会有修改配方的按钮
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -539,9 +539,9 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
       barrierDismissible: false, // 点击对话框外部不关闭对话框
       builder: (BuildContext context) {
         return ShowUnitTipDialog(
-          title: localizedStrings.fTipTitle,
+          title: (localizedStrings?.fTipTitle ?? "fTipTitle"),
           msg:
-              '${localizedStrings.fWgtUnit} ${myFmaInfo.header!.formulaUnit!},${localizedStrings.fSwitchUnitHint}',
+              '${(localizedStrings?.fWgtUnit ?? "fWgtUnit")} ${myFmaInfo.header!.formulaUnit!},${(localizedStrings?.fSwitchUnitHint ?? "fSwitchUnitHint")}',
         );
       },
     ).then((value) {
@@ -562,8 +562,8 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
       barrierDismissible: false, // 点击对话框外部不关闭对话框
       builder: (BuildContext context) {
         return ShowDeleteTipDialog(
-          title: localizedStrings.fTipTitle,
-          msg: localizedStrings.fClearWeighingDataMsg,
+          title: (localizedStrings?.fTipTitle ?? "fTipTitle"),
+          msg: (localizedStrings?.fClearWeighingDataMsg ?? "fClearWeighingDataMsg"),
         );
       },
     ).then((value) {
@@ -689,7 +689,7 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
             child: showTextButton(
                 context,
                 btnHeight,
-                localizedStrings.fCompleteIngredientsBtn,
+                (localizedStrings?.fCompleteIngredientsBtn ?? "fCompleteIngredientsBtn"),
                 !isFinish
                     ? () {
                         bool isAllOK = checkAllOK();
@@ -699,8 +699,8 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
                             barrierDismissible: false, // 点击对话框外部不关闭对话框
                             builder: (BuildContext context) {
                               return ShowNormalTipDialog(
-                                title: localizedStrings.fTipTitle,
-                                msg: localizedStrings.fFormulaUnqualifiedMsg,
+                                title: (localizedStrings?.fTipTitle ?? "fTipTitle"),
+                                msg: (localizedStrings?.fFormulaUnqualifiedMsg ?? "fFormulaUnqualifiedMsg"),
                               );
                             },
                           ).then((value) {
@@ -736,7 +736,7 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
             child: showTextButton(
                 context,
                 btnHeight,
-                localizedStrings.btnTemporarySave,
+                (localizedStrings?.btnTemporarySave ?? "btnTemporarySave"),
                 !isEnableNext
                     ? null
                     : () {
@@ -753,7 +753,7 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
           ConstrainedBox(
             constraints: BoxConstraints(maxWidth: maxWidth),
             child: showTextButton(
-                context, btnHeight, localizedStrings.fAbandonIngredientsBtn,
+                context, btnHeight, (localizedStrings?.fAbandonIngredientsBtn ?? "fAbandonIngredientsBtn"),
                 () {
               performAbandonFma();
             },
@@ -767,7 +767,7 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
           ConstrainedBox(
             constraints: BoxConstraints(maxWidth: maxWidth),
             child: showTextButton(
-                context, btnHeight, localizedStrings.btnRestart, () {
+                context, btnHeight, (localizedStrings?.btnRestart ?? "btnRestart"), () {
               showDeleteDialog();
             },
                 Theme.of(context).colorScheme.onPrimary,
@@ -785,8 +785,8 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
         barrierDismissible: false, // 点击对话框外部不关闭对话框
         builder: (BuildContext context) {
           return ShowDeleteTipDialog(
-            title: localizedStrings.fTipTitle,
-            msg: localizedStrings.fClearWeighingDataMsg,
+            title: (localizedStrings?.fTipTitle ?? "fTipTitle"),
+            msg: (localizedStrings?.fClearWeighingDataMsg ?? "fClearWeighingDataMsg"),
           );
         },
       ).then((value) {
@@ -813,7 +813,7 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
             child: showTextButton(
                 context,
                 btnHeight,
-                localizedStrings.gBtnStart,
+                (localizedStrings?.gBtnStart ?? "gBtnStart"),
                 isWgtStart
                     ? () {
                         showDialog(
@@ -821,8 +821,8 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
                           barrierDismissible: false, // 点击对话框外部不关闭对话框
                           builder: (BuildContext context) {
                             return ShowNormalTipDialog(
-                              title: localizedStrings.fTipTitle,
-                              msg: localizedStrings.tipEnsureWeightCorrect,
+                              title: (localizedStrings?.fTipTitle ?? "fTipTitle"),
+                              msg: (localizedStrings?.tipEnsureWeightCorrect ?? "tipEnsureWeightCorrect"),
                             );
                           },
                         ).then((value) {
@@ -855,7 +855,7 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
     }
 
     if (!hasRawWeight) {
-      showTipInfo(localizedStrings.tipNoRawMaterialWeightData, context);
+      showTipInfo((localizedStrings?.tipNoRawMaterialWeightData ?? "tipNoRawMaterialWeightData"), context);
       return;
     }
 
@@ -1003,7 +1003,7 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
               child: Text(
                 // 修改显示内容
                 list[index].no == 0
-                    ? localizedStrings.fFmaContainer
+                    ? (localizedStrings?.fFmaContainer ?? "fFmaContainer")
                     : list[index].rawName ?? '',
                 style: TextStyle(
                   color: textColor,
@@ -1060,7 +1060,7 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
         child: Column(
           children: [
             pageHeadInfo(context, width - headWidthPadding,
-                localizedStrings.menuFormulaExecution, '', () {
+                (localizedStrings?.menuFormulaExecution ?? "menuFormulaExecution"), '', () {
               Navigator.pop(context);
             }),
             Expanded(
@@ -1098,7 +1098,7 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
                       width: 17,
                     ),
                     Expanded(
-                      child: Text(localizedStrings.fIngredientOrder),
+                      child: Text(localizedStrings?.fIngredientOrder ?? "fIngredientOrder"),
                     ),
                   ])),
               Expanded(
@@ -1175,7 +1175,7 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
                                   selectedProcessWgt.currentWgt! -
                                   currentRawWgt >
                               500
-                          ? localizedStrings.fHighSpeed
+                          ? (localizedStrings?.fHighSpeed ?? "fHighSpeed")
                           : (selectedProcessWgt.targetWgt! -
                                           selectedProcessWgt.currentWgt! -
                                           currentRawWgt <
@@ -1184,8 +1184,8 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
                                           selectedProcessWgt.currentWgt! -
                                           currentRawWgt >
                                       100)
-                              ? localizedStrings.fMediumSpeed
-                              : localizedStrings.fLowSpeed,
+                              ? (localizedStrings?.fMediumSpeed ?? "fMediumSpeed")
+                              : (localizedStrings?.fLowSpeed ?? "fLowSpeed"),
                       style: TextStyle(
                         color: Colors.black,
                         // 保留文本截断设置，以防空间不足
@@ -1218,7 +1218,7 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
                   child: Row(children: [
                     Expanded(
                       child: btnStyle(
-                          localizedStrings.iBtnZero,
+                          (localizedStrings?.iBtnZero ?? "iBtnZero"),
                           startFormula
                               ? null
                               : () {
@@ -1236,7 +1236,7 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
                   child: Row(children: [
                     Expanded(
                       child: btnStyle(
-                          localizedStrings.gBtnTare,
+                          (localizedStrings?.gBtnTare ?? "gBtnTare"),
                           startFormula
                               ? null
                               : () {
@@ -1289,7 +1289,7 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
                   child: Row(children: [
                     Expanded(
                       child: btnStyle(
-                          localizedStrings.iBtnZero,
+                          (localizedStrings?.iBtnZero ?? "iBtnZero"),
                           startFormula
                               ? null
                               : () {
@@ -1307,7 +1307,7 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
                   child: Row(children: [
                     Expanded(
                       child: btnStyle(
-                          localizedStrings.gBtnTare,
+                          (localizedStrings?.gBtnTare ?? "gBtnTare"),
                           startFormula
                               ? null
                               : () {
@@ -1338,7 +1338,7 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
                   child: showTextButton(
                       context,
                       btnHeight,
-                      localizedStrings.fNextStepBtn,
+                      (localizedStrings?.fNextStepBtn ?? "fNextStepBtn"),
                       isEnableNext
                           ? () {
                               handleNexBtn();
@@ -1382,7 +1382,7 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
                           Container(
                             alignment: Alignment.center,
                             child: Text(
-                              localizedStrings.fFormulaCompletedTip,
+                              (localizedStrings?.fFormulaCompletedTip ?? "fFormulaCompletedTip"),
                               style: TextStyle(
                                 fontSize: 16,
                                 color: Theme.of(context)
@@ -1454,7 +1454,7 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
               },
               columns: [
                 StickyTableColumn(
-                  localizedStrings.gTabOrder,
+                  (localizedStrings?.gTabOrder ?? "gTabOrder"),
                   fixedStart: true,
                   showSort: true,
                   sort: false,
@@ -1482,7 +1482,7 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
                   },
                 ),
                 StickyTableColumn(
-                  localizedStrings.fMaterialIdCol,
+                  (localizedStrings?.fMaterialIdCol ?? "fMaterialIdCol"),
                   showSort: true,
                   sort: false,
                   columnWidth: FixedColumnWidth(columnWidth),
@@ -1499,7 +1499,7 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
                   },
                 ),
                 StickyTableColumn(
-                  localizedStrings.fMaterialNameCol,
+                  (localizedStrings?.fMaterialNameCol ?? "fMaterialNameCol"),
                   columnWidth: FixedColumnWidth(columnWidth),
                   showSort: true,
                   sort: false,
@@ -1516,7 +1516,7 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
                   },
                 ),
                 StickyTableColumn(
-                  localizedStrings.fTargetWeightLabel,
+                  (localizedStrings?.fTargetWeightLabel ?? "fTargetWeightLabel"),
                   showSort: true,
                   sort: false,
                   columnWidth: FixedColumnWidth(columnWidth),
@@ -1534,7 +1534,7 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
                   },
                 ),
                 StickyTableColumn(
-                  localizedStrings.fCurrentWeightLabel,
+                  (localizedStrings?.fCurrentWeightLabel ?? "fCurrentWeightLabel"),
                   showSort: true,
                   sort: false,
                   columnWidth: FixedColumnWidth(columnWidth),
@@ -1663,7 +1663,7 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
                     alignment: Alignment.center,
                     child: Text(
                       selectedProcessWgt.no == 0
-                          ? localizedStrings.fFmaContainer
+                          ? (localizedStrings?.fFmaContainer ?? "fFmaContainer")
                           : selectedProcessWgt.rawName ?? '',
                       style: TextStyle(
                           fontSize: 40,
@@ -1953,7 +1953,7 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
             maxWidth: 200, // 最大宽度为 200
           ),
           child: Text(
-            localizedStrings.fFmaNameLabel + ": ",
+            (localizedStrings?.fFmaNameLabel ?? "fFmaNameLabel") + ": ",
             style: TextStyle(
               fontSize: 14,
               color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -2032,7 +2032,7 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
             // 显示标签部分，设置固定宽度
             Expanded(
               child: Text(
-                localizedStrings.fIngredientsDataLabel,
+                (localizedStrings?.fIngredientsDataLabel ?? "fIngredientsDataLabel"),
                 style: TextStyle(
                   fontSize: 16,
                   color: Theme.of(context).colorScheme.onSurface,
@@ -2140,7 +2140,7 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
                                   padding: const EdgeInsets.only(left: 8.0),
                                   alignment: Alignment.centerLeft,
                                   child: Text(
-                                    localizedStrings.fTargetWeightLabel,
+                                    (localizedStrings?.fTargetWeightLabel ?? "fTargetWeightLabel"),
                                     maxLines: 1,
                                     style: TextStyle(
                                       fontSize: 16,
@@ -2222,7 +2222,7 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
                               padding: const EdgeInsets.only(left: 8.0),
                               alignment: Alignment.centerLeft,
                               child: Text(
-                                localizedStrings.fAllowableError,
+                                (localizedStrings?.fAllowableError ?? "fAllowableError"),
                                 maxLines: 1,
                                 style: TextStyle(
                                   fontSize: 16,
@@ -2334,10 +2334,10 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
               flex: 1,
               child: Column(
                 children: [
-                  showFmaItem(localizedStrings.fOrderNo, recRecNumber),
-                  showFmaItem(localizedStrings.fFmaNameLabel,
+                  showFmaItem((localizedStrings?.fOrderNo ?? "fOrderNo"), recRecNumber),
+                  showFmaItem((localizedStrings?.fFmaNameLabel ?? "fFmaNameLabel"),
                       widget.selectFormula.header!.formulaName!),
-                  showFmaItem(localizedStrings.fFmaIdLabel,
+                  showFmaItem((localizedStrings?.fFmaIdLabel ?? "fFmaIdLabel"),
                       widget.selectFormula.header!.formulaId!),
                 ],
               ),
@@ -2362,7 +2362,7 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
                       height: 42,
                       alignment: Alignment.centerLeft,
                       child: Text(
-                        localizedStrings.fRemarkCol,
+                        (localizedStrings?.fRemarkCol ?? "fRemarkCol"),
                         style: Theme.of(context).textTheme.labelMedium!.apply(
                               color: Theme.of(context).colorScheme.onSurface,
                             ),
@@ -2399,12 +2399,12 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
   void handleNexBtn() {
     //判断为空
     if (myReqWeightCountine.msgBody == null) {
-      showTipInfo(localizedStrings.fDeviceDisconnected, context);
+      showTipInfo((localizedStrings?.fDeviceDisconnected ?? "fDeviceDisconnected"), context);
       return;
     }
     //判断当前是否已经稳定
     if (myReqWeightCountine.msgBody!.isStable == false) {
-      showTipInfo(localizedStrings.fStableOperationHint, context);
+      showTipInfo((localizedStrings?.fStableOperationHint ?? "fStableOperationHint"), context);
       return;
     }
     //判断是否已经开始,开始后就不能再归零扣重了
@@ -2433,8 +2433,8 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
         barrierDismissible: false, // 点击对话框外部不关闭对话框
         builder: (BuildContext context) {
           return ShowLowWgtTipDialog(
-            title: localizedStrings.fTipTitle,
-            msg: localizedStrings.fCurrentMaterialWeightInvalidMsg,
+            title: (localizedStrings?.fTipTitle ?? "fTipTitle"),
+            msg: (localizedStrings?.fCurrentMaterialWeightInvalidMsg ?? "fCurrentMaterialWeightInvalidMsg"),
           );
         },
       ).then((value) {
@@ -2459,8 +2459,8 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
         barrierDismissible: false, // 点击对话框外部不关闭对话框
         builder: (BuildContext context) {
           return ShowHignWgtTipDialog(
-            title: localizedStrings.fTipTitle,
-            msg: localizedStrings.fCurrentMaterialOverweightMsg,
+            title: (localizedStrings?.fTipTitle ?? "fTipTitle"),
+            msg: (localizedStrings?.fCurrentMaterialOverweightMsg ?? "fCurrentMaterialOverweightMsg"),
           );
         },
       ).then((value) {
@@ -2600,7 +2600,7 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
       setState(() {
         isEnableNext = false; // 禁用按钮
       });
-      showTipInfo(localizedStrings.fFormulaCompletionMsg, context);
+      showTipInfo((localizedStrings?.fFormulaCompletionMsg ?? "fFormulaCompletionMsg"), context);
       return;
     }
   }
@@ -2660,7 +2660,7 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
         } else {
           // 处理空值情况
           needTotalWgt = 0.0;
-          showTipInfo(localizedStrings.tipFormulaDataError, context);
+          showTipInfo((localizedStrings?.tipFormulaDataError ?? "tipFormulaDataError"), context);
         }
       } catch (e) {
         return;
@@ -2736,7 +2736,7 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
               SizedBox(
                 width: maxWidth,
                 child: Text(
-                  localizedStrings.titleConfidentialWeighingMode,
+                  (localizedStrings?.titleConfidentialWeighingMode ?? "titleConfidentialWeighingMode"),
                   style: Theme.of(context).textTheme.labelMedium!.apply(
                         color: Theme.of(context).colorScheme.onSurface,
                       ),
@@ -2746,7 +2746,7 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
             ],
           )),
           Text(
-            localizedStrings.gTipAutoNextStep,
+            (localizedStrings?.gTipAutoNextStep ?? "gTipAutoNextStep"),
             style: Theme.of(context)
                 .textTheme
                 .bodySmall!
@@ -2779,7 +2779,7 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
           ),
           if (autoNextStep)
             Text(
-              localizedStrings.gTipStableTime,
+              (localizedStrings?.gTipStableTime ?? "gTipStableTime"),
               style: Theme.of(context)
                   .textTheme
                   .bodySmall!

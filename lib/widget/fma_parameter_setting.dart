@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:t_max/data/g_data.dart';
 import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/data/language.dart';
@@ -76,7 +76,7 @@ class _FmaParameterSettingDialogState extends State<FmaParameterSettingDialog> {
             // 头部
             ...dialogHeadStyle(
               context,
-              localizedStrings.gParameterSettingsTitle,
+              (localizedStrings?.gParameterSettingsTitle ?? "gParameterSettingsTitle"),
               true,
             ),
 
@@ -95,7 +95,7 @@ class _FmaParameterSettingDialogState extends State<FmaParameterSettingDialog> {
                             child: Align(
                               alignment: Alignment.centerRight,
                               child: Text(
-                                localizedStrings.ingredientVerification + ":",
+                                (localizedStrings?.ingredientVerification ?? "ingredientVerification") + ":",
                                 style: getTextStyle(),
                               ),
                             ),
@@ -119,7 +119,7 @@ class _FmaParameterSettingDialogState extends State<FmaParameterSettingDialog> {
                                         checkCode = !checkCode;
                                       } else {
                                         showTipInfo(
-                                            localizedStrings.noPermission,
+                                            (localizedStrings?.noPermission ?? "noPermission"),
                                             context);
                                       }
                                     });
@@ -147,7 +147,7 @@ class _FmaParameterSettingDialogState extends State<FmaParameterSettingDialog> {
                             child: Align(
                               alignment: Alignment.centerRight,
                               child: Text(
-                                "${localizedStrings.gTipAutoTare}:",
+                                "${(localizedStrings?.gTipAutoTare ?? "gTipAutoTare")}:",
                                 style: getTextStyle(),
                               ),
                             ),
@@ -191,7 +191,7 @@ class _FmaParameterSettingDialogState extends State<FmaParameterSettingDialog> {
                             child: Align(
                               alignment: Alignment.centerRight,
                               child: Text(
-                                "${localizedStrings.gTipAutoNextStep}:",
+                                "${(localizedStrings?.gTipAutoNextStep ?? "gTipAutoNextStep")}:",
                                 style: getTextStyle(),
                               ),
                             ),
@@ -240,7 +240,7 @@ class _FmaParameterSettingDialogState extends State<FmaParameterSettingDialog> {
                               child: Align(
                                 alignment: Alignment.centerRight,
                                 child: Text(
-                                  "${localizedStrings.gTipStableTime}:",
+                                  "${(localizedStrings?.gTipStableTime ?? "gTipStableTime")}:",
                                   style: getTextStyle(),
                                 ),
                               ),
@@ -335,7 +335,7 @@ class _FmaParameterSettingDialogState extends State<FmaParameterSettingDialog> {
                                 autoNextStep, autoTare, stableTime, checkCode));
                       },
                       child: Text(
-                        localizedStrings.gBtnConfirm,
+                        (localizedStrings?.gBtnConfirm ?? "gBtnConfirm"),
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.normal,
@@ -363,7 +363,7 @@ class _FmaParameterSettingDialogState extends State<FmaParameterSettingDialog> {
                         Navigator.pop(context, false);
                       },
                       child: Text(
-                        localizedStrings.gBtnCancel,
+                        (localizedStrings?.gBtnCancel ?? "gBtnCancel"),
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.normal,

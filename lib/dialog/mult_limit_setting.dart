@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:t_max/data/language.dart';
 
@@ -57,7 +57,7 @@ class MultLimitSettingDialogState extends State<MultLimitSettingDialog> {
           child: Row(
             children: [
               Icon(Icons.edit, color: Theme.of(context).colorScheme.onPrimary),
-              Text(localizedStrings.iTitleHLSetting,
+              Text((localizedStrings?.iTitleHLSetting ?? "iTitleHLSetting"),
                   style:
                       TextStyle(color: Theme.of(context).colorScheme.onPrimary))
             ],

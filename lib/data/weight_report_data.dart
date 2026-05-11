@@ -1,4 +1,4 @@
-import 'package:t_max/data/language.dart';
+﻿import 'package:t_max/data/language.dart';
 
 class WeightReportData {
   WeightReportData(
@@ -64,7 +64,7 @@ class ReportShowName {
 List<String> mySelFields() {
   List<String> selFields = [];
   for (var item in myReportFeildsMap.keys) {
-    if (myReportFeildsMap[item]!) {
+    if ((myReportFeildsMap[item] ?? false)) {
       selFields.add(item);
     }
   }
@@ -85,39 +85,39 @@ String getRptTitleName(String rptName) {
     case 'Id':
       return 'Id';
     case 'Date Time':
-      return localizedStrings.gRptDateTime;
+      return (localizedStrings?.gRptDateTime ?? "gRptDateTime");
     case 'PLU':
       return 'PLU';
     case 'Product Code':
-      return localizedStrings.gPluPluCode;
+      return (localizedStrings?.gPluPluCode ?? "gPluPluCode");
     case 'Item Code':
-      return localizedStrings.gPluItemCode;
+      return (localizedStrings?.gPluItemCode ?? "gPluItemCode");
     case 'PLU Name':
-      return localizedStrings.gPluPluName;
+      return (localizedStrings?.gPluPluName ?? "gPluPluName");
     case 'Price':
-      return localizedStrings.gPluPrice;
+      return (localizedStrings?.gPluPrice ?? "gPluPrice");
     case 'GeneralUnit':
-      return localizedStrings.gPluWgtUnit;
+      return (localizedStrings?.gPluWgtUnit ?? "gPluWgtUnit");
     case 'TaxType':
-      return localizedStrings.gPluTaxType;
+      return (localizedStrings?.gPluTaxType ?? "gPluTaxType");
     case 'UnitWeight':
-      return localizedStrings.gPluUnitWgt;
+      return (localizedStrings?.gPluUnitWgt ?? "gPluUnitWgt");
     case 'LimitHigh':
-      return localizedStrings.gPluLimitHigh;
+      return (localizedStrings?.gPluLimitHigh ?? "gPluLimitHigh");
     case 'LimitLow':
-      return localizedStrings.gPluLimitLow;
+      return (localizedStrings?.gPluLimitLow ?? "gPluLimitLow");
     case 'Weight':
-      return localizedStrings.gRptWeight;
+      return (localizedStrings?.gRptWeight ?? "gRptWeight");
     case 'Weight Unit':
-      return localizedStrings.gRptWeightUnit;
+      return (localizedStrings?.gRptWeightUnit ?? "gRptWeightUnit");
     case 'Pretare':
-      return localizedStrings.gPluPretare;
+      return (localizedStrings?.gPluPretare ?? "gPluPretare");
     case 'User Name':
-      return localizedStrings.operator;
+      return (localizedStrings?.operator ?? "operator");
     case 'Scale Name':
-      return localizedStrings.gScaleName;
+      return (localizedStrings?.gScaleName ?? "gScaleName");
     case 'Category':
-      return localizedStrings.gPluCategory;
+      return (localizedStrings?.gPluCategory ?? "gPluCategory");
   }
   return rptName;
 }

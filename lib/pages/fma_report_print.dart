@@ -1,4 +1,4 @@
-import 'dart:typed_data';
+﻿import 'dart:typed_data';
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -66,15 +66,15 @@ class _FormulaReportPrintState extends State<FormulaReportPrint> {
 
     if (rptPrintSetting.formulaId ?? true) {
       fields.add(PrintField(
-          label: localizedStrings.fFmaIdLabel, value: _id, show: true));
+          label: (localizedStrings?.fFmaIdLabel ?? "fFmaIdLabel"), value: _id, show: true));
     }
     if (rptPrintSetting.operator ?? true) {
       fields.add(PrintField(
-          label: localizedStrings.operator, value: _operatorName, show: true));
+          label: (localizedStrings?.operator ?? "operator"), value: _operatorName, show: true));
     }
     if (rptPrintSetting.saveTime ?? true) {
       fields.add(PrintField(
-          label: localizedStrings.fCreatedTimeCol,
+          label: (localizedStrings?.fCreatedTimeCol ?? "fCreatedTimeCol"),
           value: _createTime,
           show: true));
     }
@@ -83,14 +83,14 @@ class _FormulaReportPrintState extends State<FormulaReportPrint> {
     }
     if (rptPrintSetting.fmaTotalWgt ?? true) {
       fields.add(PrintField(
-          label: localizedStrings.fFormulaTotalWeight,
+          label: (localizedStrings?.fFormulaTotalWeight ?? "fFormulaTotalWeight"),
           value: _fmaTotalWgt,
           show: true));
     }
 
     if (rptPrintSetting.formulaBarcode ?? true) {
       fields.add(PrintField(
-          label: localizedStrings.fFmaBarcode,
+          label: (localizedStrings?.fFmaBarcode ?? "fFmaBarcode"),
           value: widget.fmaData.header!.formulaBarcode ?? '',
           show: true));
     }
@@ -141,8 +141,8 @@ class _FormulaReportPrintState extends State<FormulaReportPrint> {
         pass: item.sequence == 0
             ? "-"
             : item.isQualified.toString() == "ok"
-                ? localizedStrings.fQualified
-                : localizedStrings.fUnqualified,
+                ? (localizedStrings?.fQualified ?? "fQualified")
+                : (localizedStrings?.fUnqualified ?? "fUnqualified"),
         weight:
             "${item.actualWeight} ${widget.fmaData.header!.totalWeightUnit}",
         deviceName: item.scaleName.toString(),
@@ -284,14 +284,14 @@ class _FormulaReportPrintState extends State<FormulaReportPrint> {
 
     if (showName) {
       columns.add({
-        'title': localizedStrings.fMaterialNameCol,
+        'title': (localizedStrings?.fMaterialNameCol ?? "fMaterialNameCol"),
         'key': 'name',
         'flex': 3
       });
     }
     if (showId) {
       columns.add(
-          {'title': localizedStrings.fMaterialIdCol, 'key': 'id', 'flex': 2});
+          {'title': (localizedStrings?.fMaterialIdCol ?? "fMaterialIdCol"), 'key': 'id', 'flex': 2});
     }
 
     if (showWeight) {
@@ -299,18 +299,18 @@ class _FormulaReportPrintState extends State<FormulaReportPrint> {
     }
     if (showError) {
       columns.add(
-          {'title': localizedStrings.fActualError, 'key': 'error', 'flex': 2});
+          {'title': (localizedStrings?.fActualError ?? "fActualError"), 'key': 'error', 'flex': 2});
     }
     if (showDeviceName) {
       columns.add({
-        'title': localizedStrings.gDeviceName,
+        'title': (localizedStrings?.gDeviceName ?? "gDeviceName"),
         'key': 'deviceName',
         'flex': 2
       });
     }
     if (showPass) {
       columns.add({
-        'title': localizedStrings.fQualificationStatus,
+        'title': (localizedStrings?.fQualificationStatus ?? "fQualificationStatus"),
         'key': 'pass',
         'flex': 1
       });
@@ -379,9 +379,9 @@ class _FormulaReportPrintState extends State<FormulaReportPrint> {
                   child: Text(
                     value,
                     style: getTextStyle(
-                        color: value == localizedStrings.fQualified
+                        color: value == (localizedStrings?.fQualified ?? "fQualified")
                             ? Colors.green
-                            : value == localizedStrings.fUnqualified
+                            : value == (localizedStrings?.fUnqualified ?? "fUnqualified")
                                 ? Colors.red
                                 : null),
                   ),
@@ -409,7 +409,7 @@ class _FormulaReportPrintState extends State<FormulaReportPrint> {
           ),
           child: Column(children: [
             // 头部
-            ...dialogHeadStyle(context, localizedStrings.fPrintFmaBtn, true),
+            ...dialogHeadStyle(context, (localizedStrings?.fPrintFmaBtn ?? "fPrintFmaBtn"), true),
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(20),
@@ -435,7 +435,7 @@ class _FormulaReportPrintState extends State<FormulaReportPrint> {
                             // 顶部内容
                             if (showFmaName)
                               _buildRecipeNameRow(
-                                localizedStrings.fFmaNameLabel,
+                                (localizedStrings?.fFmaNameLabel ?? "fFmaNameLabel"),
                                 widget.fmaData.header!.formulaName ?? '',
                               ),
 
@@ -467,7 +467,7 @@ class _FormulaReportPrintState extends State<FormulaReportPrint> {
                             ),
                             if (showFmaActualWgt)
                               _buildRecipeNameRow(
-                                  localizedStrings.fActualTotalWeight,
+                                  (localizedStrings?.fActualTotalWeight ?? "fActualTotalWeight"),
                                   _fmaActualWgt),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.end,
@@ -554,7 +554,7 @@ class _FormulaReportPrintState extends State<FormulaReportPrint> {
                       ),
                       onPressed: () => _captureAndPrint(context),
                       child: Text(
-                        localizedStrings.gPrint,
+                        (localizedStrings?.gPrint ?? "gPrint"),
                         style: getTextStyle(
                           color: Theme.of(context).colorScheme.onPrimary,
                         ),
@@ -580,7 +580,7 @@ class _FormulaReportPrintState extends State<FormulaReportPrint> {
                         Navigator.pop(context);
                       },
                       child: Text(
-                        localizedStrings.gBtnCancel,
+                        (localizedStrings?.gBtnCancel ?? "gBtnCancel"),
                         style: getTextStyle(
                           color: Theme.of(context).colorScheme.onPrimary,
                         ),

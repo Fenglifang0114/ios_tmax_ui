@@ -1,4 +1,4 @@
-//原料类别管理弹框
+﻿//原料类别管理弹框
 import 'package:flutter/material.dart';
 import 'package:t_max/data/formula_common.dart';
 import 'package:t_max/data/home_page_common_data.dart';
@@ -31,8 +31,8 @@ class RawTypeMgrDialogState extends State<RawTypeMgrDialog> {
       barrierDismissible: false, // 点击对话框外部不关闭对话框
       builder: (BuildContext context) {
         return ShowDeleteTipDialog(
-          title: localizedStrings.fTipTitle,
-          msg: localizedStrings.deleteTypeUnusedConfirm,
+          title: (localizedStrings?.fTipTitle ?? "fTipTitle"),
+          msg: (localizedStrings?.deleteTypeUnusedConfirm ?? "deleteTypeUnusedConfirm"),
         );
       },
     ).then((value) {
@@ -98,7 +98,7 @@ class RawTypeMgrDialogState extends State<RawTypeMgrDialog> {
     _eventbus2 = eventBus.on<EventRespRawTypeAdd>().listen((event) {
       if (mounted) {
         PublicFunctions.getRawTypeList();
-        showTipInfo(localizedStrings.fSuccessMsg, context);
+        showTipInfo((localizedStrings?.fSuccessMsg ?? "fSuccessMsg"), context);
       }
     });
   }
@@ -128,7 +128,7 @@ class RawTypeMgrDialogState extends State<RawTypeMgrDialog> {
             // 头部
             ...dialogHeadStyle(
               context,
-              localizedStrings.fRawCategoryManagement,
+              (localizedStrings?.fRawCategoryManagement ?? "fRawCategoryManagement"),
               true,
               onClose: () {
                 rawDataList.clear();
@@ -187,7 +187,7 @@ class RawTypeMgrDialogState extends State<RawTypeMgrDialog> {
                                           });
                                         },
                                       ),
-                                      hintText: localizedStrings.fSearchHint,
+                                      hintText: (localizedStrings?.fSearchHint ?? "fSearchHint"),
                                       contentPadding:
                                           EdgeInsets.symmetric(vertical: 10),
                                       hintStyle: Theme.of(context)
@@ -219,7 +219,7 @@ class RawTypeMgrDialogState extends State<RawTypeMgrDialog> {
                         showTextButton(
                           context,
                           btnHeight,
-                          localizedStrings.gBtnClear,
+                          (localizedStrings?.gBtnClear ?? "gBtnClear"),
                           () {
                             showDeleteDialog();
                           },
@@ -233,7 +233,7 @@ class RawTypeMgrDialogState extends State<RawTypeMgrDialog> {
                         showTextButton(
                           context,
                           btnHeight,
-                          localizedStrings.gBtnAdd,
+                          (localizedStrings?.gBtnAdd ?? "gBtnAdd"),
                           () {
                             showAddRawTypeDialog();
                           },
@@ -254,7 +254,7 @@ class RawTypeMgrDialogState extends State<RawTypeMgrDialog> {
                       children: [
                         Expanded(
                             child: Text(
-                          localizedStrings.fRawMaterialTypeNameCol,
+                          (localizedStrings?.fRawMaterialTypeNameCol ?? "fRawMaterialTypeNameCol"),
                           style: Theme.of(context).textTheme.bodySmall!.apply(
                                 color: Theme.of(context).colorScheme.onSurface,
                               ),
@@ -262,7 +262,7 @@ class RawTypeMgrDialogState extends State<RawTypeMgrDialog> {
                         )),
                         SizedBox(
                             width: 80,
-                            child: Text(localizedStrings.fTipOperation,
+                            child: Text((localizedStrings?.fTipOperation ?? "fTipOperation"),
                                 style: Theme.of(context)
                                     .textTheme
                                     .bodySmall!
@@ -281,7 +281,7 @@ class RawTypeMgrDialogState extends State<RawTypeMgrDialog> {
                           child: Container(
                           alignment: Alignment.center,
                           child: Text(
-                            localizedStrings.fTipNoData,
+                            (localizedStrings?.fTipNoData ?? "fTipNoData"),
                             style: Theme.of(context).textTheme.bodySmall!.apply(
                                   color:
                                       Theme.of(context).colorScheme.onSurface,
@@ -413,7 +413,7 @@ class AddRawTypeDialogState extends State<AddRawTypeDialog> {
             // 头部
 
             ...dialogHeadStyle(
-                context, localizedStrings.fAddRawMaterialTypeBtn, true),
+                context, (localizedStrings?.fAddRawMaterialTypeBtn ?? "fAddRawMaterialTypeBtn"), true),
             // 中部
             Expanded(
               child: Container(
@@ -428,7 +428,7 @@ class AddRawTypeDialogState extends State<AddRawTypeDialog> {
                         child: Container(
                           alignment: Alignment.centerLeft,
                           child: Text(
-                            localizedStrings.fRawMaterialTypeNameCol,
+                            (localizedStrings?.fRawMaterialTypeNameCol ?? "fRawMaterialTypeNameCol"),
                             style: TextStyle(
                               fontSize: 14,
                               color: Theme.of(context).colorScheme.onSurface,
@@ -460,7 +460,7 @@ class AddRawTypeDialogState extends State<AddRawTypeDialog> {
                               decoration: InputDecoration(
                                 border: InputBorder.none,
                                 hintText:
-                                    localizedStrings.fInputRawMaterialTypeHint,
+                                    (localizedStrings?.fInputRawMaterialTypeHint ?? "fInputRawMaterialTypeHint"),
                                 suffixIconConstraints:
                                     BoxConstraints.tight(Size(40, 40)),
                                 suffixIcon: IconButton(
@@ -523,7 +523,7 @@ class AddRawTypeDialogState extends State<AddRawTypeDialog> {
                               for (var item in rawTypeList) {
                                 if (item.categoryName == rawTypeCtl.text) {
                                   showTipInfo(
-                                      localizedStrings.fTypeExistsMsg, context);
+                                      (localizedStrings?.fTypeExistsMsg ?? "fTypeExistsMsg"), context);
                                   return;
                                 }
                               }
@@ -533,7 +533,7 @@ class AddRawTypeDialogState extends State<AddRawTypeDialog> {
                           : null, // 如果文本框为空，则按钮不可点击
 
                       child: Text(
-                        localizedStrings.gBtnConfirm,
+                        (localizedStrings?.gBtnConfirm ?? "gBtnConfirm"),
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.normal,
@@ -561,7 +561,7 @@ class AddRawTypeDialogState extends State<AddRawTypeDialog> {
                         Navigator.pop(context);
                       },
                       child: Text(
-                        localizedStrings.gBtnCancel,
+                        (localizedStrings?.gBtnCancel ?? "gBtnCancel"),
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.normal,
@@ -614,7 +614,7 @@ class EditRawTypeDialogState extends State<EditRawTypeDialog> {
             // 头部
 
             ...dialogHeadStyle(
-                context, localizedStrings.fEditRawMaterialTypeBtn, true),
+                context, (localizedStrings?.fEditRawMaterialTypeBtn ?? "fEditRawMaterialTypeBtn"), true),
             // 中部
             Expanded(
               child: Container(
@@ -629,7 +629,7 @@ class EditRawTypeDialogState extends State<EditRawTypeDialog> {
                         child: Container(
                           alignment: Alignment.centerLeft,
                           child: Text(
-                            localizedStrings.fRawMaterialTypeNameCol,
+                            (localizedStrings?.fRawMaterialTypeNameCol ?? "fRawMaterialTypeNameCol"),
                             style: TextStyle(
                               fontSize: 14,
                               color: Theme.of(context).colorScheme.onSurface,
@@ -661,7 +661,7 @@ class EditRawTypeDialogState extends State<EditRawTypeDialog> {
                               decoration: InputDecoration(
                                 border: InputBorder.none,
                                 hintText:
-                                    localizedStrings.fInputRawMaterialTypeHint,
+                                    (localizedStrings?.fInputRawMaterialTypeHint ?? "fInputRawMaterialTypeHint"),
                                 suffixIconConstraints:
                                     BoxConstraints.tight(Size(40, 40)),
                                 suffixIcon: IconButton(
@@ -724,7 +724,7 @@ class EditRawTypeDialogState extends State<EditRawTypeDialog> {
                               for (var item in rawTypeList) {
                                 if (item.categoryName == rawTypeCtl.text) {
                                   showTipInfo(
-                                      localizedStrings.fTypeExistsMsg, context);
+                                      (localizedStrings?.fTypeExistsMsg ?? "fTypeExistsMsg"), context);
                                   return;
                                 }
                               }
@@ -734,7 +734,7 @@ class EditRawTypeDialogState extends State<EditRawTypeDialog> {
                             }
                           : null, // 如果文本框为空，则按钮不可点击
                       child: Text(
-                        localizedStrings.gBtnConfirm,
+                        (localizedStrings?.gBtnConfirm ?? "gBtnConfirm"),
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.normal,
@@ -762,7 +762,7 @@ class EditRawTypeDialogState extends State<EditRawTypeDialog> {
                         Navigator.pop(context);
                       },
                       child: Text(
-                        localizedStrings.gBtnCancel,
+                        (localizedStrings?.gBtnCancel ?? "gBtnCancel"),
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.normal,

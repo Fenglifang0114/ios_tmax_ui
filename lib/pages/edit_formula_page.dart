@@ -1,4 +1,4 @@
-import 'dart:convert';
+﻿import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -50,8 +50,8 @@ class EditFormulaPageState extends State<EditFormulaPage> {
   double totalWgt = 0.0; // 总权重
   // 创建一个映射表，将枚举值与翻译关联起来
   Map<FormulaMode, String> formulaModeTranslation = {
-    FormulaMode.wgt: localizedStrings.fWeightMode,
-    FormulaMode.pct: localizedStrings.fPctMode,
+    FormulaMode.wgt: (localizedStrings?.fWeightMode ?? "fWeightMode"),
+    FormulaMode.pct: (localizedStrings?.fPctMode ?? "fPctMode"),
   };
 
   int selectedIndex = -1;
@@ -110,11 +110,11 @@ class EditFormulaPageState extends State<EditFormulaPage> {
             if (dataList.length >= 2) {
               if (dataList[0] == "false" && dataList[1] == "false") {
                 showTipInfo(
-                    localizedStrings.fFormulaIdAndBarcodeDuplicate, context);
+                    (localizedStrings?.fFormulaIdAndBarcodeDuplicate ?? "fFormulaIdAndBarcodeDuplicate"), context);
               } else if (dataList[0] == "false" && dataList[1] == "true") {
-                showTipInfo(localizedStrings.fFormulaIdDuplicate, context);
+                showTipInfo((localizedStrings?.fFormulaIdDuplicate ?? "fFormulaIdDuplicate"), context);
               } else if (dataList[0] == "true" && dataList[1] == "false") {
-                showTipInfo(localizedStrings.fFormulaBarcodeDuplicate, context);
+                showTipInfo((localizedStrings?.fFormulaBarcodeDuplicate ?? "fFormulaBarcodeDuplicate"), context);
               } else if (dataList[0] == "true" && dataList[1] == "true") {
                 saveFormula(1);
               }
@@ -229,8 +229,8 @@ class EditFormulaPageState extends State<EditFormulaPage> {
                     barrierDismissible: false, // 点击对话框外部不关闭对话框
                     builder: (BuildContext context) {
                       return ShowNormalTipDialog(
-                        title: localizedStrings.fTipTitle,
-                        msg: localizedStrings.fSwitchModeClearMsg,
+                        title: (localizedStrings?.fTipTitle ?? "fTipTitle"),
+                        msg: (localizedStrings?.fSwitchModeClearMsg ?? "fSwitchModeClearMsg"),
                       );
                     },
                   ).then((value) {
@@ -321,7 +321,7 @@ class EditFormulaPageState extends State<EditFormulaPage> {
                   DropdownMenuItem<String>(
                     value: null,
                     child: Text(
-                      localizedStrings.fPleaseSelectCategory,
+                      (localizedStrings?.fPleaseSelectCategory ?? "fPleaseSelectCategory"),
                       style: Theme.of(context).textTheme.bodySmall!.apply(
                             color: Theme.of(context)
                                 .colorScheme
@@ -333,7 +333,7 @@ class EditFormulaPageState extends State<EditFormulaPage> {
               : [
                   DropdownMenuItem<String>(
                     value: null,
-                    child: Text(localizedStrings.fPleaseSelectCategory,
+                    child: Text((localizedStrings?.fPleaseSelectCategory ?? "fPleaseSelectCategory"),
                         style: Theme.of(context).textTheme.bodySmall!.apply(
                               color: Theme.of(context)
                                   .colorScheme
@@ -385,7 +385,7 @@ class EditFormulaPageState extends State<EditFormulaPage> {
               ? [
                   DropdownMenuItem<String>(
                     value: null,
-                    child: Text(localizedStrings.fSelectRawMaterialHint,
+                    child: Text((localizedStrings?.fSelectRawMaterialHint ?? "fSelectRawMaterialHint"),
                         style: Theme.of(context).textTheme.bodySmall!.apply(
                               color: Theme.of(context)
                                   .colorScheme
@@ -396,7 +396,7 @@ class EditFormulaPageState extends State<EditFormulaPage> {
               : [
                   DropdownMenuItem<String>(
                     value: null,
-                    child: Text(localizedStrings.fSelectRawMaterialHint,
+                    child: Text((localizedStrings?.fSelectRawMaterialHint ?? "fSelectRawMaterialHint"),
                         style: Theme.of(context).textTheme.bodySmall!.apply(
                               color: Theme.of(context)
                                   .colorScheme
@@ -489,8 +489,8 @@ class EditFormulaPageState extends State<EditFormulaPage> {
           height: 90,
           child: Column(children: [
             showItemNameWithStar(
-                context, localizedStrings.fFmaIdLabel + ' ', true),
-            showInputBox(formulaCodeCtl, localizedStrings.fInputFormulaIdHint,
+                context, (localizedStrings?.fFmaIdLabel ?? "fFmaIdLabel") + ' ', true),
+            showInputBox(formulaCodeCtl, (localizedStrings?.fInputFormulaIdHint ?? "fInputFormulaIdHint"),
                 enable: false),
           ]),
         ),
@@ -501,9 +501,9 @@ class EditFormulaPageState extends State<EditFormulaPage> {
           height: 90,
           child: Column(children: [
             showItemNameWithStar(
-                context, localizedStrings.fFmaModeCol + " ", true),
+                context, (localizedStrings?.fFmaModeCol ?? "fFmaModeCol") + " ", true),
             showModeDropDownButton([FormulaMode.wgt, FormulaMode.pct],
-                localizedStrings.fSelectFormulaModeHint, formulaModeCtl)
+                (localizedStrings?.fSelectFormulaModeHint ?? "fSelectFormulaModeHint"), formulaModeCtl)
           ]),
         ),
       ]),
@@ -519,9 +519,9 @@ class EditFormulaPageState extends State<EditFormulaPage> {
           height: 90,
           child: Column(children: [
             showItemNameWithStar(
-                context, localizedStrings.fFmaNameLabel + " ", true),
+                context, (localizedStrings?.fFmaNameLabel ?? "fFmaNameLabel") + " ", true),
             showInputBox(
-                formulaNameCtl, localizedStrings.fInputFormulaNameHint),
+                formulaNameCtl, (localizedStrings?.fInputFormulaNameHint ?? "fInputFormulaNameHint")),
           ]),
         ),
       ]),
@@ -530,11 +530,11 @@ class EditFormulaPageState extends State<EditFormulaPage> {
           width: width,
           height: 90,
           child: Column(children: [
-            showItemNameWithStar(context, localizedStrings.fWgtUnit, true),
+            showItemNameWithStar(context, (localizedStrings?.fWgtUnit ?? "fWgtUnit"), true),
             formulaModeCtl.text == FormulaMode.wgt.name
                 ? showUnitDropDownButton(
                     [FormulaWgtUnit.g, FormulaWgtUnit.kg, FormulaWgtUnit.lb],
-                    localizedStrings.fSelectUnitHint,
+                    (localizedStrings?.fSelectUnitHint ?? "fSelectUnitHint"),
                     formulaUnitCtl)
                 : Container(
                     height: 48,
@@ -568,18 +568,18 @@ class EditFormulaPageState extends State<EditFormulaPage> {
           height: 90,
           child: Column(children: [
             showItemNameWithStar(
-                context, localizedStrings.fFmaCategoryCol, false),
+                context, (localizedStrings?.fFmaCategoryCol ?? "fFmaCategoryCol"), false),
             Row(
               children: [
                 Expanded(
                   child: showTypeDropDownButton(
-                      localizedStrings.fPleaseSelectCategory, formulaTypeCtl),
+                      (localizedStrings?.fPleaseSelectCategory ?? "fPleaseSelectCategory"), formulaTypeCtl),
                 ),
                 Container(
                   width: 10,
                 ),
                 showTextButton(
-                    context, btnHeight, localizedStrings.fRawCategoryManagement,
+                    context, btnHeight, (localizedStrings?.fRawCategoryManagement ?? "fRawCategoryManagement"),
                     () {
                   showFormulaTypeMgrDialog();
                 },
@@ -597,8 +597,8 @@ class EditFormulaPageState extends State<EditFormulaPage> {
           height: 90,
           child: Column(children: [
             showItemNameWithStar(
-                context, localizedStrings.fFmaBarcode + " ", false),
-            showInputBox(formulaBarcodeCtl, localizedStrings.fFmaBarcode),
+                context, (localizedStrings?.fFmaBarcode ?? "fFmaBarcode") + " ", false),
+            showInputBox(formulaBarcodeCtl, (localizedStrings?.fFmaBarcode ?? "fFmaBarcode")),
           ]),
         ),
         SizedBox(
@@ -618,7 +618,7 @@ class EditFormulaPageState extends State<EditFormulaPage> {
                 ),
                 Expanded(
                   child: Text(
-                    localizedStrings.fConfidential,
+                    (localizedStrings?.fConfidential ?? "fConfidential"),
                     style: Theme.of(context).textTheme.bodySmall!.apply(
                           color: Theme.of(context).colorScheme.onSurface,
                         ),
@@ -647,7 +647,7 @@ class EditFormulaPageState extends State<EditFormulaPage> {
                 ),
                 Expanded(
                   child: Text(
-                    localizedStrings.fNeedContainer,
+                    (localizedStrings?.fNeedContainer ?? "fNeedContainer"),
                     style: Theme.of(context).textTheme.bodySmall!.apply(
                           color: Theme.of(context).colorScheme.onSurface,
                         ),
@@ -766,7 +766,7 @@ class EditFormulaPageState extends State<EditFormulaPage> {
                             text: TextSpan(
                               children: [
                                 TextSpan(
-                                  text: localizedStrings.fFmaNameLabel + ':  ',
+                                  text: (localizedStrings?.fFmaNameLabel ?? "fFmaNameLabel") + ':  ',
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodySmall!
@@ -800,8 +800,8 @@ class EditFormulaPageState extends State<EditFormulaPage> {
                                 TextSpan(
                                   text: formulaModeCtl.text ==
                                           FormulaMode.wgt.name
-                                      ? localizedStrings.fWeightMode + ":"
-                                      : localizedStrings.fPctMode + ":",
+                                      ? (localizedStrings?.fWeightMode ?? "fWeightMode") + ":"
+                                      : (localizedStrings?.fPctMode ?? "fPctMode") + ":",
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodySmall!
@@ -833,7 +833,7 @@ class EditFormulaPageState extends State<EditFormulaPage> {
                                 ),
                                 TextSpan(text: '    '),
                                 TextSpan(
-                                  text: localizedStrings.fAllowableError + ':',
+                                  text: (localizedStrings?.fAllowableError ?? "fAllowableError") + ':',
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodySmall!
@@ -866,7 +866,7 @@ class EditFormulaPageState extends State<EditFormulaPage> {
                                 TextSpan(text: '    '),
                                 TextSpan(
                                   text:
-                                      localizedStrings.fIngredientRemark + ": ",
+                                      (localizedStrings?.fIngredientRemark ?? "fIngredientRemark") + ": ",
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodySmall!
@@ -1011,7 +1011,7 @@ class EditFormulaPageState extends State<EditFormulaPage> {
                       text: TextSpan(
                         children: [
                           TextSpan(
-                            text: localizedStrings.fFmaContainer,
+                            text: (localizedStrings?.fFmaContainer ?? "fFmaContainer"),
                             style: Theme.of(context).textTheme.bodySmall!.apply(
                                   color: Theme.of(context)
                                       .colorScheme
@@ -1067,7 +1067,7 @@ class EditFormulaPageState extends State<EditFormulaPage> {
                     child: Container(
                   alignment: Alignment.centerLeft,
                   child: Text(
-                    localizedStrings.fSetRawMaterialBtn,
+                    (localizedStrings?.fSetRawMaterialBtn ?? "fSetRawMaterialBtn"),
                     style: Theme.of(context).textTheme.labelMedium!.apply(
                           color: Theme.of(context).colorScheme.onSurface,
                         ),
@@ -1077,7 +1077,7 @@ class EditFormulaPageState extends State<EditFormulaPage> {
                   onPressed: () {
                     showAddRawInfoDialog();
                   },
-                  child: Text(localizedStrings.fAddRawMaterialBtn,
+                  child: Text((localizedStrings?.fAddRawMaterialBtn ?? "fAddRawMaterialBtn"),
                       style: Theme.of(context).textTheme.bodySmall!.apply(
                             color: Theme.of(context).colorScheme.primary,
                           )),
@@ -1093,9 +1093,9 @@ class EditFormulaPageState extends State<EditFormulaPage> {
                   flex: 1,
                   child: Column(children: [
                     showItemNameWithStar(
-                        context, localizedStrings.fSelectRawMaterialHint, true),
+                        context, (localizedStrings?.fSelectRawMaterialHint ?? "fSelectRawMaterialHint"), true),
                     showRawDropDownBtn(
-                      localizedStrings.fSelectRawMaterialHint,
+                      (localizedStrings?.fSelectRawMaterialHint ?? "fSelectRawMaterialHint"),
                     )
                   ]),
                 ),
@@ -1108,8 +1108,8 @@ class EditFormulaPageState extends State<EditFormulaPage> {
                       showItemNameWithStar(
                           context,
                           formulaModeCtl.text == FormulaMode.wgt.name
-                              ? localizedStrings.fWeightMode + ':'
-                              : localizedStrings.fPctMode + ':',
+                              ? (localizedStrings?.fWeightMode ?? "fWeightMode") + ':'
+                              : (localizedStrings?.fPctMode ?? "fPctMode") + ':',
                           true),
                       SizedBox(
                           height: 48,
@@ -1132,8 +1132,8 @@ class EditFormulaPageState extends State<EditFormulaPage> {
                                             Radius.circular(0.0))),
                                     hintText: formulaModeCtl.text ==
                                             FormulaMode.wgt.name
-                                        ? localizedStrings.fInputWeightHint
-                                        : localizedStrings.fInputPercentageHint,
+                                        ? (localizedStrings?.fInputWeightHint ?? "fInputWeightHint")
+                                        : (localizedStrings?.fInputPercentageHint ?? "fInputPercentageHint"),
                                     hintStyle: Theme.of(context)
                                         .textTheme
                                         .bodySmall!
@@ -1184,7 +1184,7 @@ class EditFormulaPageState extends State<EditFormulaPage> {
                   flex: 1,
                   child: Column(children: [
                     showItemNameWithStar(
-                        context, localizedStrings.fAllowableError, true),
+                        context, (localizedStrings?.fAllowableError ?? "fAllowableError"), true),
                     SizedBox(
                         height: 48,
                         child: Row(children: [
@@ -1203,7 +1203,7 @@ class EditFormulaPageState extends State<EditFormulaPage> {
                                 border: OutlineInputBorder(
                                     borderRadius:
                                         BorderRadius.all(Radius.circular(0.0))),
-                                hintText: localizedStrings.fInputErrorHint,
+                                hintText: (localizedStrings?.fInputErrorHint ?? "fInputErrorHint"),
                                 hintStyle: Theme.of(context)
                                     .textTheme
                                     .bodySmall!
@@ -1274,7 +1274,7 @@ class EditFormulaPageState extends State<EditFormulaPage> {
                               child: showTextButton(
                                   context,
                                   btnHeight,
-                                  localizedStrings.gBtnAdd,
+                                  (localizedStrings?.gBtnAdd ?? "gBtnAdd"),
                                   (selectedRawDataInfo == null ||
                                           wgtCtl.text == '' ||
                                           errorCtl.text == '')
@@ -1290,7 +1290,7 @@ class EditFormulaPageState extends State<EditFormulaPage> {
                               child: showTextButton(
                                   context,
                                   btnHeight,
-                                  localizedStrings.gBtnModify,
+                                  (localizedStrings?.gBtnModify ?? "gBtnModify"),
                                   (selectedRawDataInfo == null ||
                                           wgtCtl.text == '' ||
                                           errorCtl.text == '')
@@ -1308,7 +1308,7 @@ class EditFormulaPageState extends State<EditFormulaPage> {
                         if (selectedIndex != -1)
                           Expanded(
                               child: showTextButton(context, btnHeight,
-                                  localizedStrings.gBtnCancel, () {
+                                  (localizedStrings?.gBtnCancel ?? "gBtnCancel"), () {
                             setState(() {
                               wgtCtl.text = '';
                               errorCtl.text = '';
@@ -1504,7 +1504,7 @@ class EditFormulaPageState extends State<EditFormulaPage> {
                     child: Container(
                   alignment: Alignment.centerLeft,
                   child: Text(
-                    localizedStrings.fIngredientOrder,
+                    (localizedStrings?.fIngredientOrder ?? "fIngredientOrder"),
                     style: Theme.of(context).textTheme.labelMedium!.apply(
                           color: Theme.of(context).colorScheme.onSurface,
                         ),
@@ -1518,8 +1518,8 @@ class EditFormulaPageState extends State<EditFormulaPage> {
                   alignment: Alignment.centerRight,
                   child: Text(
                     formulaModeCtl.text == FormulaMode.wgt.name
-                        ? '${localizedStrings.fTotalWeightLabel} :  ${totalWgt.toString()} ${formulaUnitCtl.text}'
-                        : '${localizedStrings.fTotalWeightLabel} :  ${totalWgt.toString()} %',
+                        ? '${(localizedStrings?.fTotalWeightLabel ?? "fTotalWeightLabel")} :  ${totalWgt.toString()} ${formulaUnitCtl.text}'
+                        : '${(localizedStrings?.fTotalWeightLabel ?? "fTotalWeightLabel")} :  ${totalWgt.toString()} %',
                     style: Theme.of(context).textTheme.labelMedium!.apply(
                           color: Theme.of(context).colorScheme.onSurface,
                         ),
@@ -1553,7 +1553,7 @@ class EditFormulaPageState extends State<EditFormulaPage> {
                       });
                     },
                     child: Text(
-                      localizedStrings.fClearBtn,
+                      (localizedStrings?.fClearBtn ?? "fClearBtn"),
                       style: Theme.of(context).textTheme.bodySmall!.apply(
                             color: Theme.of(context).colorScheme.onSurface,
                           ),
@@ -1610,7 +1610,7 @@ class EditFormulaPageState extends State<EditFormulaPage> {
                             // saveFormula(1);
                           },
                 child: Text(
-                  localizedStrings.gBtnSave,
+                  (localizedStrings?.gBtnSave ?? "gBtnSave"),
                   style: Theme.of(context).textTheme.bodySmall!.apply(
                         color: Theme.of(context).colorScheme.onPrimary,
                       ),
@@ -1636,7 +1636,7 @@ class EditFormulaPageState extends State<EditFormulaPage> {
                   Navigator.pop(context);
                 },
                 child: Text(
-                  localizedStrings.fBackBtn,
+                  (localizedStrings?.fBackBtn ?? "fBackBtn"),
                   style: Theme.of(context).textTheme.bodySmall!.apply(
                         color: Theme.of(context).colorScheme.onSurface,
                       ),
@@ -1661,7 +1661,7 @@ class EditFormulaPageState extends State<EditFormulaPage> {
                     child: Container(
                   alignment: Alignment.centerLeft,
                   child: Text(
-                    localizedStrings.fRemarkCol,
+                    (localizedStrings?.fRemarkCol ?? "fRemarkCol"),
                     style: Theme.of(context).textTheme.labelMedium!.apply(
                           color: Theme.of(context).colorScheme.onSurface,
                         ),
@@ -1683,7 +1683,7 @@ class EditFormulaPageState extends State<EditFormulaPage> {
                     decoration: InputDecoration(
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.all(Radius.circular(0.0))),
-                      hintText: localizedStrings.fInputRemarkHint,
+                      hintText: (localizedStrings?.fInputRemarkHint ?? "fInputRemarkHint"),
                       hintStyle: TextStyle(
                         color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
@@ -1708,7 +1708,7 @@ class EditFormulaPageState extends State<EditFormulaPage> {
             children: [
               ...dialogHeadStyle(
                 context,
-                localizedStrings.fEditFmaBtn,
+                (localizedStrings?.fEditFmaBtn ?? "fEditFmaBtn"),
                 false,
               ),
               Expanded(

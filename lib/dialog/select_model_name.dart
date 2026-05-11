@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:t_max/data/custom_model_info.dart';
 import 'package:t_max/data/home_page_common_data.dart';
@@ -73,7 +73,7 @@ class ModelSelectionScreenState extends State<ModelSelectionScreen> {
         ),
         child: Column(
           children: [
-            ...dialogHeadStyle(context, localizedStrings.gModelName, true),
+            ...dialogHeadStyle(context, (localizedStrings?.gModelName ?? "gModelName"), true),
             Expanded(
               child: Row(children: [
                 Expanded(
@@ -87,7 +87,7 @@ class ModelSelectionScreenState extends State<ModelSelectionScreen> {
                           height: 40,
                           child: TextField(
                             decoration: InputDecoration(
-                              hintText: localizedStrings.gModelName,
+                              hintText: (localizedStrings?.gModelName ?? "gModelName"),
                               hintStyle: Theme.of(context)
                                   .textTheme
                                   .bodySmall!
@@ -233,7 +233,7 @@ class ModelSelectionScreenState extends State<ModelSelectionScreen> {
                         Navigator.pop(context, _selModel);
                       },
                       child: Text(
-                        localizedStrings.gBtnConfirm,
+                        (localizedStrings?.gBtnConfirm ?? "gBtnConfirm"),
                         style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                               color: Theme.of(context).colorScheme.onPrimary,
                             ),
@@ -259,7 +259,7 @@ class ModelSelectionScreenState extends State<ModelSelectionScreen> {
                         Navigator.pop(context);
                       },
                       child: Text(
-                        localizedStrings.gBtnCancel,
+                        (localizedStrings?.gBtnCancel ?? "gBtnCancel"),
                         style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                               color: Theme.of(context).colorScheme.surface,
                             ),

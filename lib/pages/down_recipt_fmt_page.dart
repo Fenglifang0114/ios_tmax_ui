@@ -1,4 +1,4 @@
-import 'dart:async';
+﻿import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
@@ -86,8 +86,8 @@ class _DownReciptPageState extends State<DownReciptPage> {
                   // pageHeadInfo(
                   //     context,
                   //     width - headWidthPadding,
-                  //     localizedStrings.menuReceiptFormatDownload,
-                  //     localizedStrings.gTipReceiptFmtDownPageHelp),
+                  //     (localizedStrings?.menuReceiptFormatDownload ?? "menuReceiptFormatDownload"),
+                  //     (localizedStrings?.gTipReceiptFmtDownPageHelp ?? "gTipReceiptFmtDownPageHelp")),
                   Expanded(
                       child: Container(
                     color: Theme.of(context).colorScheme.surfaceTint,
@@ -136,7 +136,7 @@ class _DownReciptPageState extends State<DownReciptPage> {
                         SizedBox(
                           width: 200,
                           child: Text(
-                            localizedStrings.gReceiptFormat + " 1:",
+                            (localizedStrings?.gReceiptFormat ?? "gReceiptFormat") + " 1:",
                             textAlign: TextAlign.right,
                           ),
                         ),
@@ -166,7 +166,7 @@ class _DownReciptPageState extends State<DownReciptPage> {
                           btnWidth: 150,
                           btnHeight: 40,
                           icon: Icons.file_open_outlined,
-                          text: localizedStrings.button_select_format,
+                          text: (localizedStrings?.button_select_format ?? "button_select_format"),
                           onPressed: () async {
                             weightModeController.text = '';
                             pickFiles(weightModeController);
@@ -184,7 +184,7 @@ class _DownReciptPageState extends State<DownReciptPage> {
                         SizedBox(
                           width: 200,
                           child: Text(
-                            localizedStrings.gReceiptFormat + " 2:",
+                            (localizedStrings?.gReceiptFormat ?? "gReceiptFormat") + " 2:",
                             textAlign: TextAlign.right,
                           ),
                         ),
@@ -213,7 +213,7 @@ class _DownReciptPageState extends State<DownReciptPage> {
                           btnWidth: 150,
                           btnHeight: 40,
                           icon: Icons.file_open_outlined,
-                          text: localizedStrings.button_select_format,
+                          text: (localizedStrings?.button_select_format ?? "button_select_format"),
                           onPressed: () async {
                             accModeController.text = '';
                             pickFiles(accModeController);
@@ -231,7 +231,7 @@ class _DownReciptPageState extends State<DownReciptPage> {
                         SizedBox(
                           width: 200,
                           child: Text(
-                            localizedStrings.gReceiptFormat + " 3:",
+                            (localizedStrings?.gReceiptFormat ?? "gReceiptFormat") + " 3:",
                             textAlign: TextAlign.right,
                           ),
                         ),
@@ -260,7 +260,7 @@ class _DownReciptPageState extends State<DownReciptPage> {
                           btnWidth: 150,
                           btnHeight: 40,
                           icon: Icons.file_open_outlined,
-                          text: localizedStrings.button_select_format,
+                          text: (localizedStrings?.button_select_format ?? "button_select_format"),
                           onPressed: () async {
                             pcsModeController.text = '';
                             pickFiles(pcsModeController);
@@ -306,7 +306,7 @@ class _DownReciptPageState extends State<DownReciptPage> {
           btnWidth: 150,
           btnHeight: 50,
           icon: Icons.download_outlined,
-          text: localizedStrings.gBtnDownload,
+          text: (localizedStrings?.gBtnDownload ?? "gBtnDownload"),
           onPressed: (!isDownloadClicked) &&
                   (weightModeController.text.isNotEmpty ||
                       accModeController.text.isNotEmpty ||
@@ -360,7 +360,7 @@ class _DownReciptPageState extends State<DownReciptPage> {
   //     _stopTimer();
 
   //     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-  //         content: Text(localizedStrings.gBtnDownload_result_fail,
+  //         content: Text((localizedStrings?.gBtnDownload_result_fail ?? "gBtnDownload_result_fail"),
   //             style: const TextStyle(
   //                 fontSize: 20, fontWeight: FontWeight.normal)), ////此处需要秤回复
   //         duration: const Duration(seconds: 3),
@@ -378,19 +378,19 @@ class _DownReciptPageState extends State<DownReciptPage> {
       builder: (BuildContext ctx) {
         return AlertDialog(
           title: Text(
-            localizedStrings.gTitleConfirm,
+            (localizedStrings?.gTitleConfirm ?? "gTitleConfirm"),
             style: TextStyle(color: Theme.of(context).colorScheme.primary),
           ),
-          content: Text(localizedStrings.gConfirmPrnFmtOrderTip),
+          content: Text(localizedStrings?.gConfirmPrnFmtOrderTip ?? "gConfirmPrnFmtOrderTip"),
           actions: <Widget>[
             OutlinedButton(
-              child: Text(localizedStrings.gBtnCancel),
+              child: Text(localizedStrings?.gBtnCancel ?? "gBtnCancel"),
               onPressed: () {
                 Navigator.of(ctx).pop(false); // 不跳转
               },
             ),
             OutlinedButton(
-              child: Text(localizedStrings.gBtnConfirm),
+              child: Text(localizedStrings?.gBtnConfirm ?? "gBtnConfirm"),
               onPressed: () {
                 Navigator.of(ctx).pop(true); // 跳转
               },

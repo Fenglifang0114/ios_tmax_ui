@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:t_max/data/formula_from_db_data.dart';
 import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/data/language.dart';
@@ -42,14 +42,14 @@ class _SearchFmaBarcodeDialogState extends State<SearchFmaBarcodeDialog> {
             }
           } catch (e) {
             setState(() {
-              errString = localizedStrings.fNoFmaFound;
+              errString = (localizedStrings?.fNoFmaFound ?? "fNoFmaFound");
               checkCodeFocusNode.requestFocus();
               fmaBarcodeCtl.text = '';
             });
           }
         } else {
           setState(() {
-            errString = localizedStrings.fNoFmaFound;
+            errString = (localizedStrings?.fNoFmaFound ?? "fNoFmaFound");
             checkCodeFocusNode.requestFocus();
             fmaBarcodeCtl.text = '';
           });
@@ -90,7 +90,7 @@ class _SearchFmaBarcodeDialogState extends State<SearchFmaBarcodeDialog> {
             // 头部
             ...dialogHeadStyle(
               context,
-              localizedStrings.fFmaBarcode,
+              (localizedStrings?.fFmaBarcode ?? "fFmaBarcode"),
               true,
               onClose: () {
                 Navigator.of(context).pop();
@@ -122,7 +122,7 @@ class _SearchFmaBarcodeDialogState extends State<SearchFmaBarcodeDialog> {
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(0.0)),
                               ),
-                              hintText: localizedStrings.fFmaBarcode,
+                              hintText: (localizedStrings?.fFmaBarcode ?? "fFmaBarcode"),
                               hintStyle: TextStyle(
                                 color: Theme.of(context)
                                     .colorScheme
@@ -188,7 +188,7 @@ class _SearchFmaBarcodeDialogState extends State<SearchFmaBarcodeDialog> {
                                   fmaBarcodeCtl.text);
                             },
                       child: Text(
-                        localizedStrings.gBtnConfirm,
+                        (localizedStrings?.gBtnConfirm ?? "gBtnConfirm"),
                         style: Theme.of(context).textTheme.bodySmall!.apply(
                               color: Theme.of(context).colorScheme.onPrimary,
                               overflow: TextOverflow.ellipsis,
@@ -214,7 +214,7 @@ class _SearchFmaBarcodeDialogState extends State<SearchFmaBarcodeDialog> {
                         Navigator.of(context).pop();
                       },
                       child: Text(
-                        localizedStrings.gBtnCancel,
+                        (localizedStrings?.gBtnCancel ?? "gBtnCancel"),
                         style: Theme.of(context).textTheme.bodySmall!.apply(
                               color: Theme.of(context).colorScheme.onPrimary,
                               overflow: TextOverflow.ellipsis,

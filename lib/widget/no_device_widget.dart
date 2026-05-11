@@ -1,4 +1,4 @@
-// 显示没有设备的提示
+﻿// 显示没有设备的提示
 
 import 'package:flutter/material.dart';
 
@@ -22,7 +22,7 @@ Widget showNoDeviceWidget(BuildContext context) {
           Container(
             padding: EdgeInsets.all(largePadding),
             child: Text(
-              localizedStrings.gTipNoDevice,
+              (localizedStrings?.gTipNoDevice ?? "gTipNoDevice"),
               style: Theme.of(context).textTheme.bodyMedium!.apply(
                   color: Theme.of(context).colorScheme.surfaceContainerHighest),
             ),

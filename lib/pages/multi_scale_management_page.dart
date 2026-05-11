@@ -1,4 +1,4 @@
-import 'dart:async';
+﻿import 'dart:async';
 import 'dart:convert';
 import 'package:t_max/bluetooth/bluetooth_manager.dart';
 import 'package:flutter/material.dart';
@@ -157,12 +157,12 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
           if (dataStr.isNotEmpty) {
             if (dataStr.contains('ok')) {
               selScaleId = -1;
-              showTipInfo(localizedStrings.gTipDeleteOk, context);
+              showTipInfo((localizedStrings?.gTipDeleteOk ?? "gTipDeleteOk"), context);
               PublicFunctions.getScaleList();
               return;
             }
             if (dataStr.contains('fail') && dataStr.contains('formula')) {
-              showTipInfo(localizedStrings.fRawInUseDeleteErrorMsg, context);
+              showTipInfo((localizedStrings?.fRawInUseDeleteErrorMsg ?? "fRawInUseDeleteErrorMsg"), context);
               return;
             }
 
@@ -191,7 +191,7 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
               return;
             }
             dataStr.contains('ok')
-                ? showTipInfo(localizedStrings.gTipGetIpOk, context)
+                ? showTipInfo((localizedStrings?.gTipGetIpOk ?? "gTipGetIpOk"), context)
                 : showTipInfo(dataStr, context);
           }
         });
@@ -206,12 +206,12 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
           if (myFactoryInfoFromScale.modelName != '') {
             setScaleStatus(myOnlineInfo.scaleId!, true);
             if (isTesting) {
-              showTipInfo(localizedStrings.gTipGetIpOk, context);
+              showTipInfo((localizedStrings?.gTipGetIpOk ?? "gTipGetIpOk"), context);
             }
           } else {
             setScaleStatus(myOnlineInfo.scaleId!, false);
             if (isTesting) {
-              showTipInfo(localizedStrings.gTipConnectFail, context);
+              showTipInfo((localizedStrings?.gTipConnectFail ?? "gTipConnectFail"), context);
             }
           }
           if (isTesting) {
@@ -233,7 +233,7 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
 
           if (myComScaleInfo.isOnline) {
             myComScaleInfo.isOnline = false;
-            showTipInfo(localizedStrings.gTipSerialPortDisconnected, context);
+            showTipInfo((localizedStrings?.gTipSerialPortDisconnected ?? "gTipSerialPortDisconnected"), context);
           }
           myComScaleInfo.isOnline = false;
           myComScaleSn.modelName = '';
@@ -503,7 +503,7 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
         final netConfig = scale.mediaConfig as NetworkMediaConfig;
         if (netConfig.ipAddress == ipCtl.text &&
             netConfig.port.toString() == portCtl.text) {
-          showTipInfo(localizedStrings.ipAddressAndPortIsAlreadyInUse, context);
+          showTipInfo((localizedStrings?.ipAddressAndPortIsAlreadyInUse ?? "ipAddressAndPortIsAlreadyInUse"), context);
           return;
         }
       }

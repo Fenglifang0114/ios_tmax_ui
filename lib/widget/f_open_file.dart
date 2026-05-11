@@ -1,4 +1,4 @@
-import 'dart:io';
+﻿import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:t_max/data/home_page_common_data.dart';
@@ -30,7 +30,7 @@ void showExportDialog(String filePath, BuildContext context) {
               children: [
                 // 头部
                 ...dialogHeadStyle(
-                    context, localizedStrings.gTipExportSuccess, true),
+                    context, (localizedStrings?.gTipExportSuccess ?? "gTipExportSuccess"), true),
 
                 Container(
                   padding: EdgeInsets.only(top: 20),
@@ -75,7 +75,7 @@ void showExportDialog(String filePath, BuildContext context) {
                         width: 20,
                       ),
                       showTextButton(
-                          context, btnHeight, localizedStrings.gBtnCancel, () {
+                          context, btnHeight, (localizedStrings?.gBtnCancel ?? "gBtnCancel"), () {
                         Navigator.pop(context);
                       }, colorScheme.onPrimary, colorScheme.error,
                           colorScheme.onPrimary),
@@ -83,7 +83,7 @@ void showExportDialog(String filePath, BuildContext context) {
                         width: 20,
                       ),
                       showTextButton(context, btnHeight,
-                          localizedStrings.gBtnOpenFileLocation, () async {
+                          (localizedStrings?.gBtnOpenFileLocation ?? "gBtnOpenFileLocation"), () async {
                         // 打开文件所在文件夹或直接打开文件
                         if (Platform.isWindows) {
                           // Windows: 打开文件所在文件夹并选中文件
@@ -106,7 +106,7 @@ void showExportDialog(String filePath, BuildContext context) {
                         width: 20,
                       ),
                       showTextButton(
-                          context, btnHeight, localizedStrings.gBtnOpenFile,
+                          context, btnHeight, (localizedStrings?.gBtnOpenFile ?? "gBtnOpenFile"),
                           () async {
                         // 直接打开文件
                         final Uri fileUri = Uri.file(filePath);

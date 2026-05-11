@@ -1,4 +1,4 @@
-import 'dart:convert';
+﻿import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
@@ -60,7 +60,7 @@ class _ProductDownloadPageState extends State<ProductDownloadPage> {
           preferredSize: const Size.fromHeight(50),
           child: pageHeadDesign(
             context,
-            localizedStrings.gTitlePluDownload,
+            (localizedStrings?.gTitlePluDownload ?? "gTitlePluDownload"),
             [myDefScaleInfo.defScaleId!],
             '',
           ),
@@ -104,7 +104,7 @@ class _ProductDownloadPageState extends State<ProductDownloadPage> {
                     children: [
                       SizedBox(
                         child: Text(
-                          '${localizedStrings.gPluNameLength}   30',
+                          '${(localizedStrings?.gPluNameLength ?? "gPluNameLength")}   30',
                           textAlign: TextAlign.right,
                         ),
                       ),
@@ -119,7 +119,7 @@ class _ProductDownloadPageState extends State<ProductDownloadPage> {
                       SizedBox(
                         width: 200,
                         child: Text(
-                          localizedStrings.gTipDownloadAllPlu,
+                          (localizedStrings?.gTipDownloadAllPlu ?? "gTipDownloadAllPlu"),
                           textAlign: TextAlign.right,
                         ),
                       ),
@@ -149,7 +149,7 @@ class _ProductDownloadPageState extends State<ProductDownloadPage> {
                         btnWidth: 150,
                         btnHeight: 40,
                         icon: Icons.file_open_outlined,
-                        text: localizedStrings.gBtnSelectPluFile,
+                        text: (localizedStrings?.gBtnSelectPluFile ?? "gBtnSelectPluFile"),
                         onPressed: () async {
                           pluAllCtl.text = '';
                           pickFiles(pluAllCtl);
@@ -162,7 +162,7 @@ class _ProductDownloadPageState extends State<ProductDownloadPage> {
                         btnWidth: 100,
                         btnHeight: 40,
                         icon: Icons.cleaning_services,
-                        text: localizedStrings.gBtnClear,
+                        text: (localizedStrings?.gBtnClear ?? "gBtnClear"),
                         onPressed: () {
                           setState(() {
                             pluAllCtl.text = '';
@@ -180,7 +180,7 @@ class _ProductDownloadPageState extends State<ProductDownloadPage> {
                       SizedBox(
                         width: 200,
                         child: Text(
-                          localizedStrings.gTipUpdatePlu,
+                          (localizedStrings?.gTipUpdatePlu ?? "gTipUpdatePlu"),
                           textAlign: TextAlign.right,
                         ),
                       ),
@@ -210,7 +210,7 @@ class _ProductDownloadPageState extends State<ProductDownloadPage> {
                         btnWidth: 150,
                         btnHeight: 40,
                         icon: Icons.file_open_outlined,
-                        text: localizedStrings.gBtnSelectPluFile,
+                        text: (localizedStrings?.gBtnSelectPluFile ?? "gBtnSelectPluFile"),
                         onPressed: () async {
                           pluPartCtl.text = '';
                           pickFiles(pluPartCtl);
@@ -223,7 +223,7 @@ class _ProductDownloadPageState extends State<ProductDownloadPage> {
                         btnWidth: 100,
                         btnHeight: 40,
                         icon: Icons.cleaning_services,
-                        text: localizedStrings.gBtnClear,
+                        text: (localizedStrings?.gBtnClear ?? "gBtnClear"),
                         onPressed: () {
                           setState(() {
                             pluPartCtl.text = '';
@@ -274,7 +274,7 @@ class _ProductDownloadPageState extends State<ProductDownloadPage> {
           btnWidth: 150,
           btnHeight: 50,
           icon: Icons.file_copy,
-          text: localizedStrings.gBtnGetPluTemplate,
+          text: (localizedStrings?.gBtnGetPluTemplate ?? "gBtnGetPluTemplate"),
           onPressed: () {
             downloadTemplate();
           },
@@ -283,7 +283,7 @@ class _ProductDownloadPageState extends State<ProductDownloadPage> {
           btnWidth: 150,
           btnHeight: 50,
           icon: Icons.download_rounded,
-          text: localizedStrings.gBtnDownload,
+          text: (localizedStrings?.gBtnDownload ?? "gBtnDownload"),
           onPressed: _isShowDownload
               ? () {
                   _showConfirmationDialog(context);
@@ -300,7 +300,7 @@ class _ProductDownloadPageState extends State<ProductDownloadPage> {
       builder: (BuildContext ctx) {
         return AlertDialog(
           title: Text(
-            localizedStrings.gTitleConfirm,
+            (localizedStrings?.gTitleConfirm ?? "gTitleConfirm"),
             style: TextStyle(color: Theme.of(context).colorScheme.primary),
           ),
           content: SizedBox(
@@ -318,7 +318,7 @@ class _ProductDownloadPageState extends State<ProductDownloadPage> {
               btnWidth: 120,
               btnHeight: 40,
               icon: Icons.check_circle,
-              text: localizedStrings.gBtnConfirm,
+              text: (localizedStrings?.gBtnConfirm ?? "gBtnConfirm"),
               onPressed: () {
                 Navigator.of(context).pop(false);
               },
@@ -335,12 +335,12 @@ class _ProductDownloadPageState extends State<ProductDownloadPage> {
       builder: (BuildContext ctx) {
         return AlertDialog(
           title: Text(
-            localizedStrings.gTitleConfirm,
+            (localizedStrings?.gTitleConfirm ?? "gTitleConfirm"),
             style: TextStyle(color: Theme.of(context).colorScheme.primary),
           ),
           content: isOneModeDown()
-              ? Text(localizedStrings.gConfirmFileTip)
-              : Text(localizedStrings.gTipSelectOnePluFile),
+              ? Text(localizedStrings?.gConfirmFileTip ?? "gConfirmFileTip")
+              : Text(localizedStrings?.gTipSelectOnePluFile ?? "gTipSelectOnePluFile"),
           actions: <Widget>[
             Row(
               children: [
@@ -349,7 +349,7 @@ class _ProductDownloadPageState extends State<ProductDownloadPage> {
                         btnWidth: 120,
                         btnHeight: 40,
                         icon: Icons.check_circle,
-                        text: localizedStrings.gBtnConfirm,
+                        text: (localizedStrings?.gBtnConfirm ?? "gBtnConfirm"),
                         onPressed: () {
                           Navigator.of(context).pop(true);
                         },
@@ -362,7 +362,7 @@ class _ProductDownloadPageState extends State<ProductDownloadPage> {
                   btnWidth: 120,
                   btnHeight: 40,
                   icon: Icons.cancel,
-                  text: localizedStrings.gBtnCancel,
+                  text: (localizedStrings?.gBtnCancel ?? "gBtnCancel"),
                   onPressed: () {
                     Navigator.of(context).pop(false);
                   },

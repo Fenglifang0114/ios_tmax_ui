@@ -1,4 +1,4 @@
-//百分比模式时，需要添加的配方总重量
+﻿//百分比模式时，需要添加的配方总重量
 
 // 定义新增配方重量弹框组件
 import 'package:flutter/material.dart';
@@ -104,7 +104,7 @@ class FmaServerSettingDialogState extends State<FmaServerSettingDialog> {
         child: Column(
           children: [
             // 头部
-            ...dialogHeadStyle(context, localizedStrings.autoSync, true),
+            ...dialogHeadStyle(context, (localizedStrings?.autoSync ?? "autoSync"), true),
             // 中部
             Expanded(
               child: Container(
@@ -146,7 +146,7 @@ class FmaServerSettingDialogState extends State<FmaServerSettingDialog> {
                                   child: Container(
                                     alignment: Alignment.centerLeft,
                                     child: Text(
-                                      localizedStrings.enableRecordAutoSync,
+                                      (localizedStrings?.enableRecordAutoSync ?? "enableRecordAutoSync"),
                                       style: Theme.of(context)
                                           .textTheme
                                           .bodyMedium
@@ -174,7 +174,7 @@ class FmaServerSettingDialogState extends State<FmaServerSettingDialog> {
                                   child: Container(
                                     alignment: Alignment.centerLeft,
                                     child: Text(
-                                      localizedStrings.userUsername + ":",
+                                      (localizedStrings?.userUsername ?? "userUsername") + ":",
                                       style: Theme.of(context)
                                           .textTheme
                                           .bodyMedium
@@ -247,7 +247,7 @@ class FmaServerSettingDialogState extends State<FmaServerSettingDialog> {
                                   child: Container(
                                     alignment: Alignment.centerLeft,
                                     child: Text(
-                                      localizedStrings.userPassword + ":",
+                                      (localizedStrings?.userPassword ?? "userPassword") + ":",
                                       style: TextStyle(
                                         fontSize: 14,
                                         color: Theme.of(context)
@@ -334,7 +334,7 @@ class FmaServerSettingDialogState extends State<FmaServerSettingDialog> {
                                   child: Container(
                                     alignment: Alignment.centerLeft,
                                     child: Text(
-                                      localizedStrings.sharedFolderPath + ":",
+                                      (localizedStrings?.sharedFolderPath ?? "sharedFolderPath") + ":",
                                       style: TextStyle(
                                         fontSize: 14,
                                         color: Theme.of(context)
@@ -483,7 +483,7 @@ class FmaServerSettingDialogState extends State<FmaServerSettingDialog> {
                                 }
                               : null,
                       child: Text(
-                        localizedStrings.gBtnConfirm,
+                        (localizedStrings?.gBtnConfirm ?? "gBtnConfirm"),
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.normal,
@@ -511,7 +511,7 @@ class FmaServerSettingDialogState extends State<FmaServerSettingDialog> {
                         Navigator.pop(context);
                       },
                       child: Text(
-                        localizedStrings.gBtnCancel,
+                        (localizedStrings?.gBtnCancel ?? "gBtnCancel"),
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.normal,

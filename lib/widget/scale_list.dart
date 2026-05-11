@@ -1,4 +1,4 @@
-// 鍏辩敤鐨勭Г鍒楄〃 widget
+﻿// 鍏辩敤鐨勭Г鍒楄〃 widget
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -113,8 +113,8 @@ class _ScaleListWidgetState extends State<ScaleListWidget> {
                                   ),
                                   Text(
                                     scale.isOnline!
-                                        ? localizedStrings.gTipOnline
-                                        : localizedStrings.gTipOffline,
+                                        ? (localizedStrings?.gTipOnline ?? "gTipOnline")
+                                        : (localizedStrings?.gTipOffline ?? "gTipOffline"),
                                     style: Theme.of(context)
                                         .textTheme
                                         .bodySmall!
@@ -208,8 +208,8 @@ showComScale(BuildContext context, int selScaleId, Function()? onTap) {
                     ),
                     Text(
                       myComScaleInfo.isOnline
-                          ? localizedStrings.gTipOnline
-                          : localizedStrings.gTipOffline,
+                          ? (localizedStrings?.gTipOnline ?? "gTipOnline")
+                          : (localizedStrings?.gTipOffline ?? "gTipOffline"),
                       style: TextStyle(
                         color: (selScaleId == 1)
                             ? Theme.of(context).colorScheme.onPrimary
@@ -374,8 +374,8 @@ class _MutiScaleListWidgetState extends State<MutiScaleListWidget> {
                                   ),
                                   Text(
                                     scale.isOnline!
-                                        ? localizedStrings.gTipOnline
-                                        : localizedStrings.gTipOffline,
+                                        ? (localizedStrings?.gTipOnline ?? "gTipOnline")
+                                        : (localizedStrings?.gTipOffline ?? "gTipOffline"),
                                     style: Theme.of(context)
                                         .textTheme
                                         .bodySmall!
@@ -470,8 +470,8 @@ showMutiComScale(
                     ),
                     Text(
                       myComScaleInfo.isOnline
-                          ? localizedStrings.gTipOnline
-                          : localizedStrings.gTipOffline,
+                          ? (localizedStrings?.gTipOnline ?? "gTipOnline")
+                          : (localizedStrings?.gTipOffline ?? "gTipOffline"),
                       style: TextStyle(
                         color: (selScaleList.contains(1))
                             ? Theme.of(context).colorScheme.onPrimary
@@ -649,7 +649,7 @@ class _NewAllScaleListWidgetState extends State<NewAllScaleListWidget> {
                                             ),
                                             Text(
                                               scale.isOnline
-                                                  ? localizedStrings.gTipOnline
+                                                  ? (localizedStrings?.gTipOnline ?? "gTipOnline")
                                                   : localizedStrings
                                                       .gTipOffline,
                                               style: Theme.of(context)
@@ -848,7 +848,7 @@ class _NewComScaleListWidgetState extends State<NewComScaleListWidget> {
                                             ),
                                             Text(
                                               scale.isOnline
-                                                  ? localizedStrings.gTipOnline
+                                                  ? (localizedStrings?.gTipOnline ?? "gTipOnline")
                                                   : localizedStrings
                                                       .gTipOffline,
                                               style: Theme.of(context)
@@ -1076,7 +1076,7 @@ class _NewMutiScaleListWidgetState extends State<NewMutiScaleListWidget> {
                                               children: [
                                                 Expanded(
                                                   child: Text(
-                                                    detailInfo.isNotEmpty ? detailInfo : (scale.isOnline ? localizedStrings.gTipOnline : localizedStrings.gTipOffline),
+                                                    detailInfo.isNotEmpty ? detailInfo : (scale.isOnline ? (localizedStrings?.gTipOnline ?? "gTipOnline") : (localizedStrings?.gTipOffline ?? "gTipOffline")),
                                                     style: Theme.of(context).textTheme.bodySmall!.apply(
                                                       color: isSelect ? Theme.of(context).colorScheme.onPrimary : scale.isOnline ? Theme.of(context).colorScheme.onTertiaryFixedVariant : Theme.of(context).colorScheme.error,
                                                     ),

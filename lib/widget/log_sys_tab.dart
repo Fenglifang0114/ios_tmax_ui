@@ -1,4 +1,4 @@
-import 'dart:convert';
+﻿import 'dart:convert';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -112,7 +112,7 @@ class _SysLogTabPageState extends State<SysLogTabPage> {
         String josnData = event.obj;
         try {
           if (josnData.isEmpty) {
-            showTipInfo(localizedStrings.gTipExportFail, context);
+            showTipInfo((localizedStrings?.gTipExportFail ?? "gTipExportFail"), context);
             return;
           }
           if (josnData.contains('ok')) {
@@ -339,7 +339,7 @@ class _SysLogTabPageState extends State<SysLogTabPage> {
               ),
               SizedBox(width: 16),
               Text(
-                localizedStrings.tipJumpPage,
+                (localizedStrings?.tipJumpPage ?? "tipJumpPage"),
                 style: textTheme.bodySmall,
               ),
               SizedBox(width: 8),
@@ -368,13 +368,13 @@ class _SysLogTabPageState extends State<SysLogTabPage> {
             width: regularPadding,
           ),
           Text(
-            '${localizedStrings.tipPageTotal} $totalCount ${localizedStrings.tipPageItems}',
+            '${(localizedStrings?.tipPageTotal ?? "tipPageTotal")} $totalCount ${(localizedStrings?.tipPageItems ?? "tipPageItems")}',
             style: textTheme.bodySmall,
           ),
           SizedBox(width: 16),
           // 显示选中的记录数量
           Text(
-            '${localizedStrings.selected} ${allSelectedRecIds.length} ${localizedStrings.tipPageItems}',
+            '${(localizedStrings?.selected ?? "selected")} ${allSelectedRecIds.length} ${(localizedStrings?.tipPageItems ?? "tipPageItems")}',
             style: textTheme.bodySmall!.copyWith(
               color: colorScheme.primary,
             ),
@@ -543,23 +543,23 @@ class _SysLogTabPageState extends State<SysLogTabPage> {
         ),
       ),
       getColumnWidget(80, 'recId', 'ID', textTheme, colorScheme),
-      getColumnWidget(columnWidth, 'operator', localizedStrings.operator,
+      getColumnWidget(columnWidth, 'operator', (localizedStrings?.operator ?? "operator"),
           textTheme, colorScheme),
-      getColumnWidget(columnWidth, 'roleId', localizedStrings.userRole,
+      getColumnWidget(columnWidth, 'roleId', (localizedStrings?.userRole ?? "userRole"),
           textTheme, colorScheme),
       getColumnWidget(
-          200, 'module', localizedStrings.module, textTheme, colorScheme),
-      getColumnWidget(columnWidth, 'funcName', localizedStrings.funcName,
+          200, 'module', (localizedStrings?.module ?? "module"), textTheme, colorScheme),
+      getColumnWidget(columnWidth, 'funcName', (localizedStrings?.funcName ?? "funcName"),
           textTheme, colorScheme),
       getColumnWidget(columnWidth, 'operationType',
-          localizedStrings.operationType, textTheme, colorScheme),
-      getColumnWidget(columnWidth, 'operation', localizedStrings.operation,
+          (localizedStrings?.operationType ?? "operationType"), textTheme, colorScheme),
+      getColumnWidget(columnWidth, 'operation', (localizedStrings?.operation ?? "operation"),
           textTheme, colorScheme),
-      getColumnWidget(columnWidth, 'result', localizedStrings.operationResult,
+      getColumnWidget(columnWidth, 'result', (localizedStrings?.operationResult ?? "operationResult"),
           textTheme, colorScheme),
-      getColumnWidget(200, 'createTime', localizedStrings.fCreatedAtCol,
+      getColumnWidget(200, 'createTime', (localizedStrings?.fCreatedAtCol ?? "fCreatedAtCol"),
           textTheme, colorScheme),
-      // getColumnWidgetNoSort(120, 'operate', localizedStrings.fTipOperation,
+      // getColumnWidgetNoSort(120, 'operate', (localizedStrings?.fTipOperation ?? "fTipOperation"),
       //     textTheme, colorScheme),
     ];
   }
@@ -598,7 +598,7 @@ class _SysLogTabPageState extends State<SysLogTabPage> {
                         });
                       },
                     ),
-                    hintText: localizedStrings.operator,
+                    hintText: (localizedStrings?.operator ?? "operator"),
                     contentPadding: EdgeInsets.symmetric(vertical: 10),
                     hintStyle: Theme.of(context).textTheme.bodySmall!.copyWith(
                           // 设置提示文本样式
@@ -640,7 +640,7 @@ class _SysLogTabPageState extends State<SysLogTabPage> {
               DropdownMenuItem<String>(
                 value: null,
                 child: Text(
-                  localizedStrings.userRole,
+                  (localizedStrings?.userRole ?? "userRole"),
                   style: Theme.of(context).textTheme.bodySmall!.copyWith(
                         fontSize: 12,
                         color: Theme.of(context)
@@ -652,7 +652,7 @@ class _SysLogTabPageState extends State<SysLogTabPage> {
               DropdownMenuItem<String>(
                 value: "1",
                 child: Text(
-                  localizedStrings.superAdmin,
+                  (localizedStrings?.superAdmin ?? "superAdmin"),
                   style: Theme.of(context).textTheme.bodySmall!.copyWith(
                         color: Theme.of(context).colorScheme.onSurface,
                       ),
@@ -661,7 +661,7 @@ class _SysLogTabPageState extends State<SysLogTabPage> {
               DropdownMenuItem<String>(
                 value: "2",
                 child: Text(
-                  localizedStrings.admin,
+                  (localizedStrings?.admin ?? "admin"),
                   style: Theme.of(context).textTheme.bodySmall!.copyWith(
                         color: Theme.of(context).colorScheme.onSurface,
                       ),
@@ -670,7 +670,7 @@ class _SysLogTabPageState extends State<SysLogTabPage> {
               DropdownMenuItem<String>(
                 value: "3",
                 child: Text(
-                  localizedStrings.operator,
+                  (localizedStrings?.operator ?? "operator"),
                   style: Theme.of(context).textTheme.bodySmall!.copyWith(
                         color: Theme.of(context).colorScheme.onSurface,
                       ),
@@ -706,7 +706,7 @@ class _SysLogTabPageState extends State<SysLogTabPage> {
             controller: dateCtl,
             readOnly: true,
             decoration: InputDecoration(
-              hintText: localizedStrings.gBtnSelectDate,
+              hintText: (localizedStrings?.gBtnSelectDate ?? "gBtnSelectDate"),
               hintStyle: Theme.of(context).textTheme.bodySmall!.copyWith(
                     fontSize: 12,
                     color:
@@ -737,7 +737,7 @@ class _SysLogTabPageState extends State<SysLogTabPage> {
           width: 14,
         ),
         Tooltip(
-            message: localizedStrings.search, // 翻译
+            message: (localizedStrings?.search ?? "search"), // 翻译
             child: IconButton(
               icon: Icon(
                 Icons.search_rounded,
@@ -754,7 +754,7 @@ class _SysLogTabPageState extends State<SysLogTabPage> {
           width: 14,
         ),
         Tooltip(
-            message: localizedStrings.fClearSearchConditionBtn, // 提示信息
+            message: (localizedStrings?.fClearSearchConditionBtn ?? "fClearSearchConditionBtn"), // 提示信息
             child: IconButton(
               icon: Icon(
                 Icons.cleaning_services_outlined,
@@ -776,7 +776,7 @@ class _SysLogTabPageState extends State<SysLogTabPage> {
         SizedBox(
           width: 12,
         ),
-        showTextButton(context, btnHeight, localizedStrings.gBtnExport,
+        showTextButton(context, btnHeight, (localizedStrings?.gBtnExport ?? "gBtnExport"),
             () async {
           final directory = Directory.current.path;
           String? outputFile = (await FilePicker.platform.saveFile(
@@ -812,14 +812,14 @@ class _SysLogTabPageState extends State<SysLogTabPage> {
             translation: SysLogTranslator.getLanguageMap(),
             headers: [
               'ID',
-              localizedStrings.operator,
-              localizedStrings.userRole,
-              localizedStrings.module,
-              localizedStrings.funcName,
-              localizedStrings.operationType,
-              localizedStrings.operation,
-              localizedStrings.operationResult,
-              localizedStrings.fCreatedAtCol,
+              (localizedStrings?.operator ?? "operator"),
+              (localizedStrings?.userRole ?? "userRole"),
+              (localizedStrings?.module ?? "module"),
+              (localizedStrings?.funcName ?? "funcName"),
+              (localizedStrings?.operationType ?? "operationType"),
+              (localizedStrings?.operation ?? "operation"),
+              (localizedStrings?.operationResult ?? "operationResult"),
+              (localizedStrings?.fCreatedAtCol ?? "fCreatedAtCol"),
             ],
           );
           String jsonStr = json.encode(exportLog.toJson());
@@ -832,11 +832,11 @@ class _SysLogTabPageState extends State<SysLogTabPage> {
         // SizedBox(
         //   width: 12,
         // ),
-        // showTextButton(context, btnHeight, localizedStrings.fClearBtn, () {
+        // showTextButton(context, btnHeight, (localizedStrings?.fClearBtn ?? "fClearBtn"), () {
         //   _clearSelection();
         //   showDeleteDialog(() {
         //     PublicFunctions.deleteAllSysLog();
-        //   }, localizedStrings.data_delete_confirm, context);
+        //   }, (localizedStrings?.data_delete_confirm ?? "data_delete_confirm"), context);
         // },
         //     Theme.of(context).colorScheme.onPrimary,
         //     Theme.of(context).colorScheme.error,
@@ -847,7 +847,7 @@ class _SysLogTabPageState extends State<SysLogTabPage> {
         // showTextButton(
         //     context,
         //     btnHeight,
-        //     localizedStrings.gBtnDelete,
+        //     (localizedStrings?.gBtnDelete ?? "gBtnDelete"),
         //     allSelectedRecIds.isEmpty
         //         ? null
         //         : () {
@@ -856,7 +856,7 @@ class _SysLogTabPageState extends State<SysLogTabPage> {
         //                 reqDelLogsToJson(ReqDelLogs(recId: selRecIds));
         //             showDeleteDialog(() {
         //               PublicFunctions.deleteSysLog(jsonStr);
-        //             }, localizedStrings.fConfirmDelete, context);
+        //             }, (localizedStrings?.fConfirmDelete ?? "fConfirmDelete"), context);
         //           },
         //     Theme.of(context).colorScheme.onPrimary,
         //     Theme.of(context).colorScheme.error,
@@ -1057,7 +1057,7 @@ class SyslogDataSource extends DataGridSource {
 
       //       showDeleteDialog(() {
       //         PublicFunctions.deleteSysLog(jsonStr);
-      //       }, localizedStrings.fConfirmDelete, context);
+      //       }, (localizedStrings?.fConfirmDelete ?? "fConfirmDelete"), context);
       //     },
       //   );
 

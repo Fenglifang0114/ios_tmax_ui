@@ -1,4 +1,4 @@
-import 'dart:async';
+﻿import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -93,7 +93,7 @@ class LoginPageState extends State<LoginPage> with WindowLifecycleMixin {
                 _passwordController.text, _rememberController.text == "true");
           } else {
             _isLoading = false;
-            showTipInfo(localizedStrings.tipLoginError, context);
+            showTipInfo((localizedStrings?.tipLoginError ?? "tipLoginError"), context);
           }
         });
       }
@@ -111,12 +111,12 @@ class LoginPageState extends State<LoginPage> with WindowLifecycleMixin {
               mySysUser.pageIdList = allPageIdList;
             }
           } catch (e) {
-            showTipInfo(localizedStrings.tipLoginError, context);
+            showTipInfo((localizedStrings?.tipLoginError ?? "tipLoginError"), context);
           }
           if (mySysUser.initialPageId != null) {
             Navigator.pushReplacementNamed(context, '/home');
           } else {
-            showTipInfo(localizedStrings.tipLoginError, context);
+            showTipInfo((localizedStrings?.tipLoginError ?? "tipLoginError"), context);
           }
         });
       }
@@ -124,8 +124,8 @@ class LoginPageState extends State<LoginPage> with WindowLifecycleMixin {
 
     _eventbus3 = eventBus.on<EventServiceOff>().listen((event) {
       setState(() {
-        showServiceErrorDialog(context, localizedStrings.gTipServiceOff,
-            localizedStrings.gTitleConfirm);
+        showServiceErrorDialog(context, (localizedStrings?.gTipServiceOff ?? "gTipServiceOff"),
+            (localizedStrings?.gTitleConfirm ?? "gTitleConfirm"));
       });
     });
     _eventbus4 = eventBus.on<EventRespGetAllUsers>().listen((event) {
@@ -402,7 +402,7 @@ class LoginPageState extends State<LoginPage> with WindowLifecycleMixin {
                                           },
                                         ),
                                         Text(
-                                          localizedStrings.tipLoginRemember,
+                                          (localizedStrings?.tipLoginRemember ?? "tipLoginRemember"),
                                           style: textTheme.bodySmall!.apply(
                                             color: colorScheme.surface,
                                           ),
@@ -428,7 +428,7 @@ class LoginPageState extends State<LoginPage> with WindowLifecycleMixin {
                                     child: _isLoading
                                         ? const CircularProgressIndicator()
                                         : Text(
-                                            localizedStrings.btnLogin,
+                                            (localizedStrings?.btnLogin ?? "btnLogin"),
                                             style: textTheme.bodySmall!.apply(
                                               color: colorScheme.surface,
                                             ),
@@ -582,7 +582,7 @@ class _WindowButtonsState extends State<WindowButtons> with WindowListener {
             barrierDismissible: false, // 允许点击空白处关闭对话框
             builder: (context) {
               return CustomAlertDialog(
-                titleText: localizedStrings.gTipExitApp,
+                titleText: (localizedStrings?.gTipExitApp ?? "gTipExitApp"),
                 onNoPressed: () {
                   Navigator.of(context).pop();
                 },

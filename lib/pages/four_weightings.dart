@@ -1,4 +1,4 @@
-import 'dart:async';
+﻿import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -242,7 +242,7 @@ class FourWeightsPageState extends State<FourWeightsPage> {
         preferredSize: const Size.fromHeight(50),
         child: pageHeadDesign(
           context,
-          localizedStrings.menuWeighing,
+          (localizedStrings?.menuWeighing ?? "menuWeighing"),
           scaleList,
           '',
         ),
@@ -377,7 +377,7 @@ class FourWeightsPageState extends State<FourWeightsPage> {
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
                               buildTextAndImage(
-                                  localizedStrings.iStable,
+                                  (localizedStrings?.iStable ?? "iStable"),
                                   (reqWgt.msgBody == null)
                                       ? ("assets/images/gray.png")
                                       : (reqWgt.msgBody!.isStable &&
@@ -386,7 +386,7 @@ class FourWeightsPageState extends State<FourWeightsPage> {
                                           : ("assets/images/gray.png"),
                                   constraints),
                               buildTextAndImage(
-                                  localizedStrings.iTextNet,
+                                  (localizedStrings?.iTextNet ?? "iTextNet"),
                                   (reqWgt.msgBody == null)
                                       ? ("assets/images/gray.png")
                                       : (reqWgt.msgBody!.isNet &&
@@ -395,7 +395,7 @@ class FourWeightsPageState extends State<FourWeightsPage> {
                                           : ("assets/images/gray.png"),
                                   constraints),
                               buildTextAndImage(
-                                  localizedStrings.iTextZero,
+                                  (localizedStrings?.iTextZero ?? "iTextZero"),
                                   (reqWgt.msgBody == null)
                                       ? ("assets/images/gray.png")
                                       : (reqWgt.msgBody!.isZero &&
@@ -443,13 +443,13 @@ class FourWeightsPageState extends State<FourWeightsPage> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     _buildFlexibleButtonAndTextT(
-                        buttonText: localizedStrings.gBtnTare,
+                        buttonText: (localizedStrings?.gBtnTare ?? "gBtnTare"),
                         scaleId: scaleId,
                         constraints: constraints,
                         isTrue: isStartList[scaleNo],
                         icon: Icons.title),
                     _buildFlexibleButtonAndTextZ(
-                        buttonText: localizedStrings.iBtnZero,
+                        buttonText: (localizedStrings?.iBtnZero ?? "iBtnZero"),
                         scaleId: scaleId,
                         constraints: constraints,
                         isTrue: isStartList[scaleNo],

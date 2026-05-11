@@ -1,4 +1,4 @@
-import 'dart:convert';
+﻿import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -119,7 +119,7 @@ class MyBarCodeDialogState extends State<MyBarCodeDialog> {
             // 头部
             ...dialogHeadStyle(
               context,
-              localizedStrings.gBarcodeMgr,
+              (localizedStrings?.gBarcodeMgr ?? "gBarcodeMgr"),
               true,
               onClose: () => Navigator.pop(context),
             ),
@@ -176,7 +176,7 @@ class MyBarCodeDialogState extends State<MyBarCodeDialog> {
                           },
                         )
                       : null,
-                  hintText: localizedStrings.searchName,
+                  hintText: (localizedStrings?.searchName ?? "searchName"),
                   hintStyle: theme.textTheme.bodyMedium?.copyWith(
                     color: colorScheme.onSurface.withAlpha(128),
                   ),
@@ -214,7 +214,7 @@ class MyBarCodeDialogState extends State<MyBarCodeDialog> {
         showTextButton(
           context,
           btnHeight,
-          localizedStrings.fClearBtn,
+          (localizedStrings?.fClearBtn ?? "fClearBtn"),
           _displayedData.isEmpty ? null : _showClearConfirmationDialog,
           colorScheme.onPrimary,
           colorScheme.error,
@@ -227,7 +227,7 @@ class MyBarCodeDialogState extends State<MyBarCodeDialog> {
         showTextButton(
           context,
           btnHeight,
-          localizedStrings.gBtnAdd,
+          (localizedStrings?.gBtnAdd ?? "gBtnAdd"),
           _showAddBarCodeDialog,
           colorScheme.onPrimary,
           colorScheme.primary,
@@ -246,7 +246,7 @@ class MyBarCodeDialogState extends State<MyBarCodeDialog> {
               theme.colorScheme.onSurface.withAlpha(128)),
           const SizedBox(height: 16),
           Text(
-            localizedStrings.noBarCodeDataTip,
+            (localizedStrings?.noBarCodeDataTip ?? "noBarCodeDataTip"),
             style: theme.textTheme.headlineSmall?.copyWith(
               color: theme.colorScheme.onSurface.withAlpha(128),
             ),
@@ -295,21 +295,21 @@ class MyBarCodeDialogState extends State<MyBarCodeDialog> {
       child: Row(
         children: [
           _buildHeaderCell(
-              localizedStrings.gBarcodeName, _columnWidths['barCodeName']!),
+              (localizedStrings?.gBarcodeName ?? "gBarcodeName"), _columnWidths['barCodeName']!),
           _buildHeaderCell(
-              localizedStrings.gBarcodeType, _columnWidths['barCodeType']!),
+              (localizedStrings?.gBarcodeType ?? "gBarcodeType"), _columnWidths['barCodeType']!),
           _buildHeaderCell(
-              localizedStrings.gBarCodeDataType, _columnWidths['type']!),
+              (localizedStrings?.gBarCodeDataType ?? "gBarCodeDataType"), _columnWidths['type']!),
           _buildHeaderCell(
-              localizedStrings.gBarCodeContent, _columnWidths['content']!),
-          _buildHeaderCell(localizedStrings.gBarCodeDefValue,
+              (localizedStrings?.gBarCodeContent ?? "gBarCodeContent"), _columnWidths['content']!),
+          _buildHeaderCell((localizedStrings?.gBarCodeDefValue ?? "gBarCodeDefValue"),
               _columnWidths['defaultValue']!),
           _buildHeaderCell(
-              localizedStrings.gBarCodeAlignment, _columnWidths['alignment']!),
+              (localizedStrings?.gBarCodeAlignment ?? "gBarCodeAlignment"), _columnWidths['alignment']!),
           _buildHeaderCell(
-              localizedStrings.gBarCodeMaxLength, _columnWidths['maxLength']!),
+              (localizedStrings?.gBarCodeMaxLength ?? "gBarCodeMaxLength"), _columnWidths['maxLength']!),
           _buildHeaderCell(
-              localizedStrings.fTipOperation, _columnWidths['operations']!),
+              (localizedStrings?.fTipOperation ?? "fTipOperation"), _columnWidths['operations']!),
         ],
       ),
     );
@@ -386,7 +386,7 @@ class MyBarCodeDialogState extends State<MyBarCodeDialog> {
                         },
                         color: Theme.of(context).colorScheme.primary,
                         padding: EdgeInsets.zero,
-                        tooltip: localizedStrings.gBtnEdit,
+                        tooltip: (localizedStrings?.gBtnEdit ?? "gBtnEdit"),
                       ),
                       IconButton(
                         icon: const Icon(Icons.delete_outline, size: 18),
@@ -395,7 +395,7 @@ class MyBarCodeDialogState extends State<MyBarCodeDialog> {
                         },
                         color: Theme.of(context).colorScheme.error,
                         padding: EdgeInsets.zero,
-                        tooltip: localizedStrings.gBtnDelete,
+                        tooltip: (localizedStrings?.gBtnDelete ?? "gBtnDelete"),
                       ),
                       IconButton(
                         icon: Icon(
@@ -429,8 +429,8 @@ class MyBarCodeDialogState extends State<MyBarCodeDialog> {
         context: context,
         builder: (BuildContext context) {
           return ShowDeleteTipDialog(
-              title: localizedStrings.fTipTitle,
-              msg: localizedStrings.fConfirmDelete);
+              title: (localizedStrings?.fTipTitle ?? "fTipTitle"),
+              msg: (localizedStrings?.fConfirmDelete ?? "fConfirmDelete"));
         }).then((value) {
       if (value == true) {
         // 确认删除，执行删除操作
@@ -560,8 +560,8 @@ class MyBarCodeDialogState extends State<MyBarCodeDialog> {
     showDialog(
       context: context,
       builder: (context) => ShowDeleteTipDialog(
-          title: localizedStrings.fTipTitle,
-          msg: localizedStrings.fClearDataBtn),
+          title: (localizedStrings?.fTipTitle ?? "fTipTitle"),
+          msg: (localizedStrings?.fClearDataBtn ?? "fClearDataBtn")),
     ).then((value) {
       if (value == true) {
         // 确认清空，执行清空操作
@@ -703,7 +703,7 @@ class EditBarCodeDialogState extends State<EditBarCodeDialog> {
             // 头部
             ...dialogHeadStyle(
               context,
-              localizedStrings.gBarcodeEdit,
+              (localizedStrings?.gBarcodeEdit ?? "gBarcodeEdit"),
               true,
               onClose: () => Navigator.pop(context),
             ),
@@ -720,7 +720,7 @@ class EditBarCodeDialogState extends State<EditBarCodeDialog> {
                       child: Row(
                         children: [
                           Text(
-                            localizedStrings.gBarcodeType,
+                            (localizedStrings?.gBarcodeType ?? "gBarcodeType"),
                             style: TextStyle(
                                 fontSize: 14, fontWeight: FontWeight.bold),
                           ),
@@ -740,7 +740,7 @@ class EditBarCodeDialogState extends State<EditBarCodeDialog> {
                           ),
                           SizedBox(
                             child: Text(
-                              localizedStrings.gBarcodeName,
+                              (localizedStrings?.gBarcodeName ?? "gBarcodeName"),
                               textAlign: TextAlign.right,
                               style: TextStyle(
                                   fontSize: 14,
@@ -761,7 +761,7 @@ class EditBarCodeDialogState extends State<EditBarCodeDialog> {
                           showTextButton(
                             context,
                             btnHeight,
-                            localizedStrings.gBtnAdd,
+                            (localizedStrings?.gBtnAdd ?? "gBtnAdd"),
                             _addRowData,
                             colorScheme.onPrimary,
                             colorScheme.primary,
@@ -773,7 +773,7 @@ class EditBarCodeDialogState extends State<EditBarCodeDialog> {
                           showTextButton(
                             context,
                             btnHeight,
-                            localizedStrings.gBtnSave,
+                            (localizedStrings?.gBtnSave ?? "gBtnSave"),
                             _saveRowData,
                             colorScheme.onPrimary,
                             colorScheme.onTertiaryFixedVariant,
@@ -785,7 +785,7 @@ class EditBarCodeDialogState extends State<EditBarCodeDialog> {
                           showTextButton(
                             context,
                             btnHeight,
-                            localizedStrings.gBtnDelete,
+                            (localizedStrings?.gBtnDelete ?? "gBtnDelete"),
                             _deleteRowData,
                             colorScheme.onPrimary,
                             colorScheme.error,
@@ -804,23 +804,23 @@ class EditBarCodeDialogState extends State<EditBarCodeDialog> {
                       child: Row(mainAxisSize: MainAxisSize.max, children: [
                         Expanded(
                             child:
-                                _buildTitle(localizedStrings.gBarCodeDataType)),
+                                _buildTitle(localizedStrings?.gBarCodeDataType ?? "gBarCodeDataType")),
                         Expanded(
                             child:
-                                _buildTitle(localizedStrings.gBarCodeContent)),
+                                _buildTitle(localizedStrings?.gBarCodeContent ?? "gBarCodeContent")),
                         Expanded(
                             child:
-                                _buildTitle(localizedStrings.gBarCodeDefValue)),
+                                _buildTitle(localizedStrings?.gBarCodeDefValue ?? "gBarCodeDefValue")),
                         Expanded(
                             child: _buildTitle(
-                                localizedStrings.gBarCodeAlignment)),
+                                (localizedStrings?.gBarCodeAlignment ?? "gBarCodeAlignment"))),
                         Expanded(
                             child: _buildTitle(
-                                localizedStrings.gBarCodeMaxLength)),
+                                (localizedStrings?.gBarCodeMaxLength ?? "gBarCodeMaxLength"))),
                         SizedBox(
                             width: 50,
                             child:
-                                _buildTitle(localizedStrings.gBarCodeDelete)),
+                                _buildTitle(localizedStrings?.gBarCodeDelete ?? "gBarCodeDelete")),
                       ]),
                     ),
                     Expanded(
@@ -929,7 +929,7 @@ class EditBarCodeDialogState extends State<EditBarCodeDialog> {
       });
     } else {
       showTipInfo(
-          localizedStrings.invalidName, context);
+          (localizedStrings?.invalidName ?? "invalidName"), context);
     }
   }
 
@@ -940,7 +940,7 @@ class EditBarCodeDialogState extends State<EditBarCodeDialog> {
       for (var i = 0; i < editRowList.length; i++) {
         if (editRowList[i].type == 'TEXT') {
           if (editRowList[i].content.isEmpty) {
-            showTipInfo(localizedStrings.contentMissing, context);
+            showTipInfo((localizedStrings?.contentMissing ?? "contentMissing"), context);
             res = false;
             return res;
           }
@@ -948,7 +948,7 @@ class EditBarCodeDialogState extends State<EditBarCodeDialog> {
           if (editRowList[i].alignment == '--' ||
               editRowList[i].maxlength == 0) {
             showTipInfo(
-                localizedStrings.variableAlignmentEmpty,
+                (localizedStrings?.variableAlignmentEmpty ?? "variableAlignmentEmpty"),
                 context);
             res = false;
             return res;
@@ -962,14 +962,14 @@ class EditBarCodeDialogState extends State<EditBarCodeDialog> {
                   _barCodeNameCtl.text &&
               myBarCodeListList.barCodeListList[i].barCodeType != 'Qrcode') {
             showTipInfo(
-                localizedStrings.nameAlreadyExists, context);
+                (localizedStrings?.nameAlreadyExists ?? "nameAlreadyExists"), context);
             res = false;
             return res;
           }
         }
       }
     } else {
-      showTipInfo( localizedStrings.nameNotEntered,
+      showTipInfo( (localizedStrings?.nameNotEntered ?? "nameNotEntered"),
           context);
       res = false;
       return res;
@@ -1025,7 +1025,7 @@ class EditBarCodeDialogState extends State<EditBarCodeDialog> {
         isLegal = regex.hasMatch(editRowList[i].content);
         if (!isLegal) {
           showTipInfo(
-              localizedStrings.contentNotMeetBarcode, context);
+              (localizedStrings?.contentNotMeetBarcode ?? "contentNotMeetBarcode"), context);
           res = false;
           return res;
         }
@@ -1034,7 +1034,7 @@ class EditBarCodeDialogState extends State<EditBarCodeDialog> {
         if (editRowList[i].defaultvalue.isNotEmpty) {
           isLegal = regex.hasMatch(editRowList[i].defaultvalue);
           if (!isLegal) {
-            showTipInfo(localizedStrings.defaultValueNotMeetBarcode,
+            showTipInfo((localizedStrings?.defaultValueNotMeetBarcode ?? "defaultValueNotMeetBarcode"),
                 context);
             res = false;
             return res;
@@ -1053,7 +1053,7 @@ class EditBarCodeDialogState extends State<EditBarCodeDialog> {
     }
     if (count > 128) {
       res = false;
-      showTipInfo(localizedStrings.barcodeExceedsMaxLengthShort+ " 128", context);
+      showTipInfo((localizedStrings?.barcodeExceedsMaxLengthShort ?? "barcodeExceedsMaxLengthShort")+ " 128", context);
       return res;
     }
 
@@ -1072,7 +1072,7 @@ class EditBarCodeDialogState extends State<EditBarCodeDialog> {
         isLegal = regex.hasMatch(editRowList[i].content);
         if (!isLegal) {
           showTipInfo(
-              localizedStrings.contentNotMeetBarcode, context);
+              (localizedStrings?.contentNotMeetBarcode ?? "contentNotMeetBarcode"), context);
           res = false;
           return res;
         }
@@ -1081,7 +1081,7 @@ class EditBarCodeDialogState extends State<EditBarCodeDialog> {
         if (editRowList[i].defaultvalue.isNotEmpty) {
           isLegal = regex.hasMatch(editRowList[i].defaultvalue);
           if (!isLegal) {
-            showTipInfo( localizedStrings.defaultValueNotMeetBarcode,
+            showTipInfo( (localizedStrings?.defaultValueNotMeetBarcode ?? "defaultValueNotMeetBarcode"),
                 context);
             res = false;
             return res;
@@ -1100,7 +1100,7 @@ class EditBarCodeDialogState extends State<EditBarCodeDialog> {
     }
     if (count > 39) {
       res = false;
-      showTipInfo(localizedStrings.barcodeExceedsMaxLengthShort+ " 39", context);
+      showTipInfo((localizedStrings?.barcodeExceedsMaxLengthShort ?? "barcodeExceedsMaxLengthShort")+ " 39", context);
       return res;
     }
 
@@ -1119,7 +1119,7 @@ class EditBarCodeDialogState extends State<EditBarCodeDialog> {
         isLegal = regex.hasMatch(editRowList[i].content);
         if (!isLegal) {
           showTipInfo(
-              localizedStrings.contentNotMeetBarcode, context);
+              (localizedStrings?.contentNotMeetBarcode ?? "contentNotMeetBarcode"), context);
           res = false;
           return res;
         }
@@ -1128,7 +1128,7 @@ class EditBarCodeDialogState extends State<EditBarCodeDialog> {
         if (editRowList[i].defaultvalue.isNotEmpty) {
           isLegal = regex.hasMatch(editRowList[i].defaultvalue);
           if (!isLegal) {
-            showTipInfo(localizedStrings.defaultValueNotMeetBarcode,
+            showTipInfo((localizedStrings?.defaultValueNotMeetBarcode ?? "defaultValueNotMeetBarcode"),
                 context);
             res = false;
             return res;
@@ -1147,7 +1147,7 @@ class EditBarCodeDialogState extends State<EditBarCodeDialog> {
     }
     if (count != 12) {
       res = false;
-      showTipInfo(localizedStrings.barcodeLengthShouldBe+ " 12", context);
+      showTipInfo((localizedStrings?.barcodeLengthShouldBe ?? "barcodeLengthShouldBe")+ " 12", context);
       return res;
     }
 
@@ -1166,7 +1166,7 @@ class EditBarCodeDialogState extends State<EditBarCodeDialog> {
         isLegal = regex.hasMatch(editRowList[i].content);
         if (!isLegal) {
           showTipInfo(
-              localizedStrings.contentNotMeetBarcode, context);
+              (localizedStrings?.contentNotMeetBarcode ?? "contentNotMeetBarcode"), context);
           res = false;
           break;
         }
@@ -1175,7 +1175,7 @@ class EditBarCodeDialogState extends State<EditBarCodeDialog> {
         if (editRowList[i].defaultvalue.isNotEmpty) {
           isLegal = regex.hasMatch(editRowList[i].defaultvalue);
           if (!isLegal) {
-            showTipInfo(localizedStrings.defaultValueNotMeetBarcode,
+            showTipInfo((localizedStrings?.defaultValueNotMeetBarcode ?? "defaultValueNotMeetBarcode"),
                 context);
             res = false;
             break;
@@ -1194,7 +1194,7 @@ class EditBarCodeDialogState extends State<EditBarCodeDialog> {
     }
     if (count != 7) {
       res = false;
-      showTipInfo(localizedStrings.barcodeLengthShouldBe+ " 7", context);
+      showTipInfo((localizedStrings?.barcodeLengthShouldBe ?? "barcodeLengthShouldBe")+ " 7", context);
     }
 
     return res;
@@ -1212,7 +1212,7 @@ class EditBarCodeDialogState extends State<EditBarCodeDialog> {
         isLegal = regex.hasMatch(editRowList[i].content);
         if (!isLegal) {
           showTipInfo(
-              localizedStrings.contentNotMeetBarcode, context);
+              (localizedStrings?.contentNotMeetBarcode ?? "contentNotMeetBarcode"), context);
           res = false;
           break;
         }
@@ -1221,7 +1221,7 @@ class EditBarCodeDialogState extends State<EditBarCodeDialog> {
         if (editRowList[i].defaultvalue.isNotEmpty) {
           isLegal = regex.hasMatch(editRowList[i].defaultvalue);
           if (!isLegal) {
-            showTipInfo(localizedStrings.defaultValueNotMeetBarcode,
+            showTipInfo((localizedStrings?.defaultValueNotMeetBarcode ?? "defaultValueNotMeetBarcode"),
                 context);
             res = false;
             break;
@@ -1240,7 +1240,7 @@ class EditBarCodeDialogState extends State<EditBarCodeDialog> {
     }
     if (count != 6) {
       res = false;
-      showTipInfo(localizedStrings.barcodeLengthShouldBe+ " 6", context);
+      showTipInfo((localizedStrings?.barcodeLengthShouldBe ?? "barcodeLengthShouldBe")+ " 6", context);
     }
 
     return res;
@@ -1258,7 +1258,7 @@ class EditBarCodeDialogState extends State<EditBarCodeDialog> {
         isLegal = regex.hasMatch(editRowList[i].content);
         if (!isLegal) {
           showTipInfo(
-              localizedStrings.contentNotMeetBarcode, context);
+              (localizedStrings?.contentNotMeetBarcode ?? "contentNotMeetBarcode"), context);
           res = false;
           break;
         }
@@ -1267,7 +1267,7 @@ class EditBarCodeDialogState extends State<EditBarCodeDialog> {
         if (editRowList[i].defaultvalue.isNotEmpty) {
           isLegal = regex.hasMatch(editRowList[i].defaultvalue);
           if (!isLegal) {
-            showTipInfo(localizedStrings.defaultValueNotMeetBarcode,
+            showTipInfo((localizedStrings?.defaultValueNotMeetBarcode ?? "defaultValueNotMeetBarcode"),
                 context);
             res = false;
             break;
@@ -1286,7 +1286,7 @@ class EditBarCodeDialogState extends State<EditBarCodeDialog> {
     }
     if (count != 11) {
       res = false;
-      showTipInfo(localizedStrings.barcodeLengthShouldBe+ " 11", context);
+      showTipInfo((localizedStrings?.barcodeLengthShouldBe ?? "barcodeLengthShouldBe")+ " 11", context);
     }
 
     return res;
@@ -1347,7 +1347,7 @@ class EditBarCodeDialogState extends State<EditBarCodeDialog> {
       _barCodeNameCtl.text,
       selBarcodeType.text,
     ));
-    showTipInfo(localizedStrings.savedSuccessfully+ " ($tempName)", context);
+    showTipInfo((localizedStrings?.savedSuccessfully ?? "savedSuccessfully")+ " ($tempName)", context);
     _saveBarCodeNameToList();
     _saveDataToJson();
   }

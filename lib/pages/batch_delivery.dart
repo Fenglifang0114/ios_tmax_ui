@@ -1,4 +1,4 @@
-import 'dart:async';
+﻿import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:crypto/crypto.dart';
@@ -577,7 +577,7 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
                                     });
                                   },
                                 ),
-                                textStyle(localizedStrings.firmware_update,
+                                textStyle((localizedStrings?.firmware_update ?? "firmware_update"),
                                     constraints),
                                 // 省略部分代码
                               ],
@@ -595,7 +595,7 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
                                     });
                                   },
                                 ),
-                                textStyle(localizedStrings.menuWifiSetting,
+                                textStyle((localizedStrings?.menuWifiSetting ?? "menuWifiSetting"),
                                     constraints),
                                 // 省略部分代码
                               ],
@@ -613,7 +613,7 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
                                     });
                                   },
                                 ),
-                                textStyle(localizedStrings.bt_setting_title,
+                                textStyle((localizedStrings?.bt_setting_title ?? "bt_setting_title"),
                                     constraints),
                                 // 省略部分代码
                               ],
@@ -629,7 +629,7 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
                                   },
                                 ),
                                 textStyle(
-                                    localizedStrings.menuLabelFormatDownload,
+                                    (localizedStrings?.menuLabelFormatDownload ?? "menuLabelFormatDownload"),
                                     constraints),
                                 // 省略部分代码
                               ],
@@ -645,7 +645,7 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
                                   },
                                 ),
                                 textStyle(
-                                    localizedStrings.gTitleSerialOutputDownload,
+                                    (localizedStrings?.gTitleSerialOutputDownload ?? "gTitleSerialOutputDownload"),
                                     constraints),
                               ],
                             ),
@@ -666,7 +666,7 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
                               btnWidth: 120,
                               btnHeight: 50,
                               icon: Icons.download_outlined,
-                              text: localizedStrings.gBtnDownload,
+                              text: (localizedStrings?.gBtnDownload ?? "gBtnDownload"),
                               onPressed: isDownloading
                                   ? null
                                   : () {
@@ -688,7 +688,7 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
                               btnWidth: 120,
                               btnHeight: 50,
                               icon: Icons.drive_file_move_outlined,
-                              text: localizedStrings.batch_down_export,
+                              text: (localizedStrings?.batch_down_export ?? "batch_down_export"),
                               onPressed: () async {
                                 await wirteRecordsName();
                                 final selectedFolderPath = await pickFolder();
@@ -705,7 +705,7 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
                               btnWidth: 120,
                               btnHeight: 50,
                               icon: Icons.drive_file_move_rtl_outlined,
-                              text: localizedStrings.gBtnImport,
+                              text: (localizedStrings?.gBtnImport ?? "gBtnImport"),
                               onPressed: () async {
                                 String str = await pickZipFiles();
                                 bool res;
@@ -929,7 +929,7 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               title2ndStyle(
-                                  localizedStrings.gTipFreeFormat + " 1:"),
+                                  (localizedStrings?.gTipFreeFormat ?? "gTipFreeFormat") + " 1:"),
                               buildSelectBtn(prnFmt1Ctl),
                             ],
                           ),
@@ -947,7 +947,7 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
                                       MainAxisAlignment.spaceBetween,
                                   children: [
                                     title2ndStyle(
-                                        localizedStrings.gTipFreeFormat +
+                                        (localizedStrings?.gTipFreeFormat ?? "gTipFreeFormat") +
                                             " 2:"),
                                     buildSelectBtn(prnFmt2Ctl),
                                   ],
@@ -962,7 +962,7 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
                                       MainAxisAlignment.spaceBetween,
                                   children: [
                                     title2ndStyle(
-                                        localizedStrings.gTipFreeFormat +
+                                        (localizedStrings?.gTipFreeFormat ?? "gTipFreeFormat") +
                                             " 3:"),
                                     buildSelectBtn(prnFmt3Ctl),
                                   ],
@@ -976,7 +976,7 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: [
-                                    title2ndStyle(localizedStrings.gTotalFmt),
+                                    title2ndStyle(localizedStrings?.gTotalFmt ?? "gTotalFmt"),
                                     buildSelectBtn(prnFmt4Ctl),
                                   ],
                                 ),
@@ -1297,7 +1297,7 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
         btnWidth: 150,
         btnHeight: 30,
         icon: Icons.file_open_outlined,
-        text: localizedStrings.button_select_format,
+        text: (localizedStrings?.button_select_format ?? "button_select_format"),
         onPressed: isDownloading
             ? null
             : () async {
@@ -1310,7 +1310,7 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
         btnWidth: 150,
         btnHeight: 30,
         icon: Icons.file_open_outlined,
-        text: localizedStrings.select_firmware_btn,
+        text: (localizedStrings?.select_firmware_btn ?? "select_firmware_btn"),
         onPressed: isDownloading
             ? null
             : () async {
@@ -1323,7 +1323,7 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
         btnWidth: 150,
         btnHeight: 30,
         icon: Icons.folder_sharp,
-        text: localizedStrings.batch_down_slt_folder,
+        text: (localizedStrings?.batch_down_slt_folder ?? "batch_down_slt_folder"),
         onPressed: isDownloading
             ? null
             : () async {
@@ -1676,7 +1676,7 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
       builder: (BuildContext ctx) {
         return AlertDialog(
           title: Text(
-            localizedStrings.gTitleConfirm,
+            (localizedStrings?.gTitleConfirm ?? "gTitleConfirm"),
             style: TextStyle(color: Theme.of(context).colorScheme.primary),
           ),
           content: SizedBox(
@@ -1692,7 +1692,7 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
             SizedBox(
               height: 30,
               child: OutlinedButton(
-                child: Text(localizedStrings.gBtnConfirm),
+                child: Text(localizedStrings?.gBtnConfirm ?? "gBtnConfirm"),
                 onPressed: () {
                   Navigator.of(context).pop(true); // 跳转
                 },
@@ -1740,7 +1740,7 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
               )),
           actions: <Widget>[
             OutlinedButton(
-              child: Text(localizedStrings.gBtnCancel),
+              child: Text(localizedStrings?.gBtnCancel ?? "gBtnCancel"),
               onPressed: () {
                 setState(() {
                   isIpListSelect = false;
@@ -1750,7 +1750,7 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
               },
             ),
             OutlinedButton(
-              child: Text(localizedStrings.gBtnConfirm),
+              child: Text(localizedStrings?.gBtnConfirm ?? "gBtnConfirm"),
               onPressed: () {
                 if (generateIpList()) {
                   Navigator.of(context).pop(true);
@@ -1890,13 +1890,13 @@ class _BatchDeliveryPageState extends State<BatchDeliveryPage> {
     PublicFunctions.sendMsg(myDefScaleInfo.defScaleId!, jsonEncode(myScaleCmd));
     writelog(jsonEncode(myScaleCmd));
     setState(() {
-      outputData.add(localizedStrings.gTipWait);
+      outputData.add(localizedStrings?.gTipWait ?? "gTipWait");
       scrollToBottom();
     });
     Timer(const Duration(seconds: 5), () {
       if (!(updateProcess > 0)) {
         setState(() {
-          outputData.add(localizedStrings.gTipRebootForUpdate);
+          outputData.add(localizedStrings?.gTipRebootForUpdate ?? "gTipRebootForUpdate");
         });
       }
     });

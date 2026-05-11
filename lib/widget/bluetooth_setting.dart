@@ -1,4 +1,4 @@
-import 'dart:async';
+﻿import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../data/downloadresponse.dart';
@@ -32,9 +32,9 @@ class BluetoothDialogState extends State<BluetoothDialog> {
   void initState() {
     super.initState();
     emissionPowerMap = {
-      "Strong": localizedStrings.gEPStrong,
-      "Normal": localizedStrings.gEPNormal,
-      "Weak": localizedStrings.gEPWeak,
+      "Strong": (localizedStrings?.gEPStrong ?? "gEPStrong"),
+      "Normal": (localizedStrings?.gEPNormal ?? "gEPNormal"),
+      "Weak": (localizedStrings?.gEPWeak ?? "gEPWeak"),
     };
     _deviceNameController.text = '';
     emissionPowerVale = 'Strong';
@@ -90,7 +90,7 @@ class BluetoothDialogState extends State<BluetoothDialog> {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: getDialogTitle(
-          context, localizedStrings.menuBluetoothSetting, Icons.bluetooth, 400),
+          context, (localizedStrings?.menuBluetoothSetting ?? "menuBluetoothSetting"), Icons.bluetooth, 400),
       content: Container(
         height: 310,
         decoration:
@@ -110,7 +110,7 @@ class BluetoothDialogState extends State<BluetoothDialog> {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(localizedStrings.gDeviceName),
+                          Text(localizedStrings?.gDeviceName ?? "gDeviceName"),
                           const SizedBox(height: 10),
                           SizedBox(
                             width: 400,
@@ -143,7 +143,7 @@ class BluetoothDialogState extends State<BluetoothDialog> {
                                   btnWidth: 120,
                                   btnHeight: 40,
                                   icon: Icons.bluetooth_audio,
-                                  text: localizedStrings.get_bt_name,
+                                  text: (localizedStrings?.get_bt_name ?? "get_bt_name"),
                                   onPressed: isSetting
                                       ? null
                                       : () {
@@ -160,7 +160,7 @@ class BluetoothDialogState extends State<BluetoothDialog> {
                                   btnWidth: 120,
                                   btnHeight: 40,
                                   icon: Icons.mode_edit,
-                                  text: localizedStrings.modify_bt_name,
+                                  text: (localizedStrings?.modify_bt_name ?? "modify_bt_name"),
                                   onPressed: isSetting
                                       ? null
                                       : () {
@@ -179,7 +179,7 @@ class BluetoothDialogState extends State<BluetoothDialog> {
                             ],
                           ),
                           const SizedBox(height: 10),
-                          Text(localizedStrings.bt_emission_power),
+                          Text(localizedStrings?.bt_emission_power ?? "bt_emission_power"),
                           const SizedBox(height: 10),
                           SizedBox(
                             width: 400,
@@ -211,7 +211,7 @@ class BluetoothDialogState extends State<BluetoothDialog> {
                               btnWidth: 340,
                               btnHeight: 40,
                               icon: Icons.settings_bluetooth_outlined,
-                              text: localizedStrings.bt_modify_emission,
+                              text: (localizedStrings?.bt_modify_emission ?? "bt_modify_emission"),
                               onPressed: isSetting
                                   ? null
                                   : () {
@@ -285,7 +285,7 @@ class BluetoothDialogState extends State<BluetoothDialog> {
               btnWidth: 120,
               btnHeight: 40,
               icon: Icons.exit_to_app,
-              text: localizedStrings.gBtnExit,
+              text: (localizedStrings?.gBtnExit ?? "gBtnExit"),
               onPressed: () {
                 myScreenMgr.isMainScreen = true;
                 Navigator.of(context).pop();
@@ -306,7 +306,7 @@ class BluetoothDialogState extends State<BluetoothDialog> {
       _startTimer(15);
     } else {
       setState(() {
-        _errorMessage = localizedStrings.gTipDeviceNameEmpty;
+        _errorMessage = (localizedStrings?.gTipDeviceNameEmpty ?? "gTipDeviceNameEmpty");
       });
     }
   }
@@ -320,7 +320,7 @@ class BluetoothDialogState extends State<BluetoothDialog> {
     _timer = Timer(Duration(seconds: time), () {
       setState(() {
         isSetting = false;
-        _errorMessage = localizedStrings.gTipTimeOut;
+        _errorMessage = (localizedStrings?.gTipTimeOut ?? "gTipTimeOut");
       });
     });
   }

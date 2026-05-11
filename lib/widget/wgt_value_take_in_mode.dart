@@ -1,4 +1,4 @@
-//称重共用的重量显示界面 20250521
+﻿//称重共用的重量显示界面 20250521
 
 import 'dart:async';
 import 'package:flutter/material.dart';
@@ -468,19 +468,19 @@ class _ScaleWgtTakeInWidgetState extends State<ScaleWgtTakeInWidget> {
                             children: [
                               _buildIconAndText(
                                 context,
-                                localizedStrings.iStable,
+                                (localizedStrings?.iStable ?? "iStable"),
                                 weightInfo?.isStable,
                                 1,
                               ),
                               _buildIconAndText(
                                 context,
-                                localizedStrings.iTextNet,
+                                (localizedStrings?.iTextNet ?? "iTextNet"),
                                 weightInfo?.isNet,
                                 2,
                               ),
                               _buildIconAndText(
                                 context,
-                                localizedStrings.iTextZero,
+                                (localizedStrings?.iTextZero ?? "iTextZero"),
                                 weightInfo?.isZero,
                                 3,
                               ),
@@ -598,7 +598,7 @@ class _ScaleWgtTakeInWidgetState extends State<ScaleWgtTakeInWidget> {
         children: [
           showPerformIconBtn(
               performTareSvgIcon(),
-              localizedStrings.gBtnTare,
+              (localizedStrings?.gBtnTare ?? "gBtnTare"),
               isStart
                   ? () {
                       PublicFunctions.performTareWithScaleId(widget.scaleId);
@@ -610,7 +610,7 @@ class _ScaleWgtTakeInWidgetState extends State<ScaleWgtTakeInWidget> {
           ),
           showPerformIconBtn(
               performZeroSvgIcon(),
-              localizedStrings.iBtnZero,
+              (localizedStrings?.iBtnZero ?? "iBtnZero"),
               isStart
                   ? () {
                       PublicFunctions.performZeroWithScaleId(widget.scaleId);
@@ -623,7 +623,7 @@ class _ScaleWgtTakeInWidgetState extends State<ScaleWgtTakeInWidget> {
           if (!startTakeIn)
             showPerformIconBtn(
                 startWgtSvgIcon(),
-                localizedStrings.gBtnStart,
+                (localizedStrings?.gBtnStart ?? "gBtnStart"),
                 isStart
                     ? () {
                         setState(() {
@@ -638,7 +638,7 @@ class _ScaleWgtTakeInWidgetState extends State<ScaleWgtTakeInWidget> {
           if (startTakeIn)
             showPerformIconBtn(
                 endWgtSvgIcon(),
-                localizedStrings.gBtnEnd,
+                (localizedStrings?.gBtnEnd ?? "gBtnEnd"),
                 isStart
                     ? () {
                         setState(() {
@@ -654,7 +654,7 @@ class _ScaleWgtTakeInWidgetState extends State<ScaleWgtTakeInWidget> {
             ),
           if (mySettingParam.wgtMode == 0)
             Tooltip(
-              message: localizedStrings.gBtnSave,
+              message: (localizedStrings?.gBtnSave ?? "gBtnSave"),
               child: IconButton(
                 iconSize: 28,
                 color: Theme.of(context).colorScheme.primary,
@@ -731,18 +731,18 @@ class _ScaleWgtTakeInWidgetState extends State<ScaleWgtTakeInWidget> {
     setState(() {
       String wgtValue = '';
       if (weightInfo!.weightVal!.contains('-')) {
-        showTipInfo(localizedStrings.gTipInvalidWeightData, context);
+        showTipInfo((localizedStrings?.gTipInvalidWeightData ?? "gTipInvalidWeightData"), context);
         return;
       }
       if (startTakeIn && takeInWgtvalue <= 0) {
-        showTipInfo(localizedStrings.gTipInvalidWeightData, context);
+        showTipInfo((localizedStrings?.gTipInvalidWeightData ?? "gTipInvalidWeightData"), context);
         return;
       }
       if (!startTakeIn) {
         wgtValue = weightInfo!.weightVal!;
         double temp = double.tryParse(wgtValue) ?? 0.0;
         if (temp <= 0) {
-          showTipInfo(localizedStrings.gTipInvalidWeightData, context);
+          showTipInfo((localizedStrings?.gTipInvalidWeightData ?? "gTipInvalidWeightData"), context);
           return;
         }
       } else {

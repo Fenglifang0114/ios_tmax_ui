@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/data/license_data.dart';
 import 'package:t_max/dialog/custom_dialog_tip.dart';
@@ -49,7 +49,7 @@ class PageHelpInfoDialogState extends State<PageHelpInfoDialog> {
             borderRadius: BorderRadius.circular(0),
           ),
           child: Column(children: [
-            ...getCustomDialogTitle(context, localizedStrings.gTipHelp),
+            ...getCustomDialogTitle(context, (localizedStrings?.gTipHelp ?? "gTipHelp")),
             Expanded(
                 child: Container(
               padding: const EdgeInsets.only(

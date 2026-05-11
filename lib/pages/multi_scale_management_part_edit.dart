@@ -1,11 +1,11 @@
-// ignore_for_file: invalid_use_of_protected_member
+﻿// ignore_for_file: invalid_use_of_protected_member
 part of 'multi_scale_management_page.dart';
 
 extension MultiScaleManagementEditExt on MultiScaleManagementState {
   showEditWifiInfo(double maxWidth) {
     return Column(children: [
       subTitleInfo(context, (maxWidth - (maxWidth < 600 ? 60 : headWidthPadding)).clamp(100.0, maxWidth),
-          localizedStrings.gBtnModify, localizedStrings.gTipScaleMgrPageHelp),
+          (localizedStrings?.gBtnModify ?? "gBtnModify"), (localizedStrings?.gTipScaleMgrPageHelp ?? "gTipScaleMgrPageHelp")),
       Expanded(
         child: showEditNetScaleInfo(),
       ),
@@ -19,11 +19,11 @@ extension MultiScaleManagementEditExt on MultiScaleManagementState {
           height: regularPadding,
         ),
         buildItemInfo(
-            showItemNameWithStar(context, localizedStrings.gIpAddress, false),
+            showItemNameWithStar(context, (localizedStrings?.gIpAddress ?? "gIpAddress"), false),
             showInputBox(context, ipCtl, '', (value) {
               setState(() {});
             }, true),
-            showItemNameWithStar(context, localizedStrings.gTipPort, false),
+            showItemNameWithStar(context, (localizedStrings?.gTipPort ?? "gTipPort"), false),
             Container(
               height: inputHeight,
               padding: const EdgeInsets.only(left: 16, right: 20),
@@ -73,7 +73,7 @@ extension MultiScaleManagementEditExt on MultiScaleManagementState {
             showTextButton(
                 context,
                 btnHeight,
-                localizedStrings.gBtnConfirm,
+                (localizedStrings?.gBtnConfirm ?? "gBtnConfirm"),
                 portCtl.text.isNotEmpty && _isValidIP
                     ? () {
                         editNetScale();
@@ -83,7 +83,7 @@ extension MultiScaleManagementEditExt on MultiScaleManagementState {
                 Theme.of(context).colorScheme.primary,
                 Theme.of(context).colorScheme.onPrimary),
             const SizedBox(width: regularPadding),
-            showTextButton(context, btnHeight, localizedStrings.gBtnCancel, () {
+            showTextButton(context, btnHeight, (localizedStrings?.gBtnCancel ?? "gBtnCancel"), () {
               setState(() {
                 editWifiInfo = false;
               });

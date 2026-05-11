@@ -1,4 +1,4 @@
-//流速测试页面
+﻿//流速测试页面
 import 'dart:async';
 import 'dart:io';
 import 'package:csv/csv.dart';
@@ -199,7 +199,7 @@ class FlowRatePageState extends State<FlowRatePage>
     eventbus1 = eventBus.on<EventRespFlowRateAdd>().listen((event) {
       if (mounted) {
         PublicFunctions.getFlowRateData();
-        showTipInfo(localizedStrings.fSaveSuccess, context);
+        showTipInfo((localizedStrings?.fSaveSuccess ?? "fSaveSuccess"), context);
       }
     });
 
@@ -253,8 +253,8 @@ class FlowRatePageState extends State<FlowRatePage>
                   myReqWeightCountine.msgBody!.weightVal;
 
               double newWgt =
-                  double.parse(myReqWeightCountine.msgBody!.weightVal);
-              newWgt = double.parse(newWgt.toStringAsFixed(3));
+                  (double.tryParse(myReqWeightCountine.msgBody!.weightVal) ?? 0.0);
+              newWgt = (double.tryParse(newWgt.toStringAsFixed(3)) ?? 0.0);
               // 添加日志，查看每次接收到的重量数据
               // 调用保存函数
               // saveWeightRecord(newWgt);
@@ -509,7 +509,7 @@ class FlowRatePageState extends State<FlowRatePage>
           },
           columns: [
             StickyTableColumn(
-              localizedStrings.fNo,
+              (localizedStrings?.fNo ?? "fNo"),
               fixedStart: true,
               showSort: true,
               sort: sort,
@@ -540,7 +540,7 @@ class FlowRatePageState extends State<FlowRatePage>
               },
             ),
             StickyTableColumn(
-              localizedStrings.fTotalWeight,
+              (localizedStrings?.fTotalWeight ?? "fTotalWeight"),
               showSort: true,
               sort: false,
               columnWidth: FixedColumnWidth(columnWidth),
@@ -562,7 +562,7 @@ class FlowRatePageState extends State<FlowRatePage>
               },
             ),
             StickyTableColumn(
-              localizedStrings.fTotalTime,
+              (localizedStrings?.fTotalTime ?? "fTotalTime"),
               columnWidth: FixedColumnWidth(columnWidth),
               showSort: true,
               sort: false,
@@ -582,7 +582,7 @@ class FlowRatePageState extends State<FlowRatePage>
               },
             ),
             StickyTableColumn(
-              localizedStrings.fAverageSpeed,
+              (localizedStrings?.fAverageSpeed ?? "fAverageSpeed"),
               columnWidth: FixedColumnWidth(columnWidth),
               showSort: true,
               sort: false,
@@ -606,7 +606,7 @@ class FlowRatePageState extends State<FlowRatePage>
               },
             ),
             StickyTableColumn(
-              localizedStrings.fMaxSpeed,
+              (localizedStrings?.fMaxSpeed ?? "fMaxSpeed"),
               showSort: true,
               sort: false,
               columnWidth: FixedColumnWidth(columnWidth),
@@ -626,7 +626,7 @@ class FlowRatePageState extends State<FlowRatePage>
               },
             ),
             StickyTableColumn(
-              localizedStrings.fMinSpeed,
+              (localizedStrings?.fMinSpeed ?? "fMinSpeed"),
               showSort: true,
               sort: false,
               columnWidth: FixedColumnWidth(columnWidth),
@@ -712,7 +712,7 @@ class FlowRatePageState extends State<FlowRatePage>
           },
           columns: [
             StickyTableColumn(
-              localizedStrings.fNo,
+              (localizedStrings?.fNo ?? "fNo"),
               fixedStart: true,
               showSort: true,
               sort: sort,
@@ -738,7 +738,7 @@ class FlowRatePageState extends State<FlowRatePage>
               },
             ),
             StickyTableColumn(
-              localizedStrings.fTime,
+              (localizedStrings?.fTime ?? "fTime"),
               showSort: true,
               sort: false,
               columnWidth: FixedColumnWidth(columnWidth),
@@ -756,7 +756,7 @@ class FlowRatePageState extends State<FlowRatePage>
               },
             ),
             StickyTableColumn(
-              localizedStrings.fSpeed,
+              (localizedStrings?.fSpeed ?? "fSpeed"),
               columnWidth: FixedColumnWidth(columnWidth),
               showSort: true,
               sort: false,
@@ -876,7 +876,7 @@ class FlowRatePageState extends State<FlowRatePage>
             if (rate < 0) {
               rate = 0;
             }
-            rate = double.parse(rate.toStringAsFixed(3));
+            rate = (double.tryParse(rate.toStringAsFixed(3)) ?? 0.0);
           }
           rateDataList.add(RateInfo(
             id: i,
@@ -905,7 +905,7 @@ class FlowRatePageState extends State<FlowRatePage>
       //数据太少就返回
       if (rateDataList.length < 3) {
         rateDataList.clear();
-        showTipInfo(localizedStrings.fDataTooLittle, context);
+        showTipInfo((localizedStrings?.fDataTooLittle ?? "fDataTooLittle"), context);
         return;
       }
 
@@ -921,9 +921,9 @@ class FlowRatePageState extends State<FlowRatePage>
           }
         }
         avgSpeed = avgSpeed / (rateDataList.length - 1);
-        avgSpeed = double.parse(avgSpeed.toStringAsFixed(3));
-        maxRate = double.parse(maxRate.toStringAsFixed(3));
-        minRate = double.parse(minRate.toStringAsFixed(3));
+        avgSpeed = (double.tryParse(avgSpeed.toStringAsFixed(3)) ?? 0.0);
+        maxRate = (double.tryParse(maxRate.toStringAsFixed(3)) ?? 0.0);
+        minRate = (double.tryParse(minRate.toStringAsFixed(3)) ?? 0.0);
       }
       if (rateDataList.isNotEmpty) {
         totalTime = rateDataList[rateDataList.length - 1].time!;
@@ -934,7 +934,7 @@ class FlowRatePageState extends State<FlowRatePage>
         } else if (wgtDataList.length == 1) {
           totalWgt = wgtDataList[0].wgt!;
         }
-        totalWgt = double.parse(totalWgt.toStringAsFixed(3));
+        totalWgt = (double.tryParse(totalWgt.toStringAsFixed(3)) ?? 0.0);
       }
       //添加到processWgtList中
       currRateHeader = RateDataInfo(
@@ -1003,7 +1003,7 @@ class FlowRatePageState extends State<FlowRatePage>
 
   Widget _buildPageHeadInfo(BuildContext context, double width) {
     return pageHeadInfo(context, width - headWidthPadding,
-        localizedStrings.fFlowRate, localizedStrings.gTipFlowRatePageHelp, () {
+        (localizedStrings?.fFlowRate ?? "fFlowRate"), (localizedStrings?.gTipFlowRatePageHelp ?? "gTipFlowRatePageHelp"), () {
       formAppSetting = false;
       Future.delayed(Duration.zero, () {
         widget.onNavigate(widget.lastRouteName);
@@ -1055,7 +1055,7 @@ class FlowRatePageState extends State<FlowRatePage>
       padding: const EdgeInsets.only(left: 10),
       alignment: Alignment.centerLeft,
       child: Text(
-        localizedStrings.fCurrentWeightLabel,
+        (localizedStrings?.fCurrentWeightLabel ?? "fCurrentWeightLabel"),
         textAlign: TextAlign.left,
       ),
     );
@@ -1109,7 +1109,7 @@ class FlowRatePageState extends State<FlowRatePage>
                   ? null
                   : () => PublicFunctions.performZeroWithScaleId(selScaleId),
               child: showNormalText(
-                localizedStrings.iBtnZero,
+                (localizedStrings?.iBtnZero ?? "iBtnZero"),
                 colorScheme.primary,
               ),
             ),
@@ -1137,7 +1137,7 @@ class FlowRatePageState extends State<FlowRatePage>
                   ? null
                   : () => PublicFunctions.performTareWithScaleId(selScaleId),
               child: showNormalText(
-                localizedStrings.gBtnTare,
+                (localizedStrings?.gBtnTare ?? "gBtnTare"),
                 colorScheme.primary,
               ),
             ),
@@ -1170,7 +1170,7 @@ class FlowRatePageState extends State<FlowRatePage>
           });
         },
         child: showNormalText(
-          isStart ? localizedStrings.gBtnEnd : localizedStrings.gBtnStart,
+          isStart ? (localizedStrings?.gBtnEnd ?? "gBtnEnd") : (localizedStrings?.gBtnStart ?? "gBtnStart"),
           colorScheme.onPrimary,
         ),
       ),
@@ -1241,7 +1241,7 @@ class FlowRatePageState extends State<FlowRatePage>
         children: [
           const SizedBox(width: 10),
           Expanded(
-            child: Text(localizedStrings.fHistoricalWeighingRecordsBtn),
+            child: Text(localizedStrings?.fHistoricalWeighingRecordsBtn ?? "fHistoricalWeighingRecordsBtn"),
           ),
           Expanded(
             flex: 1,
@@ -1319,7 +1319,7 @@ class FlowRatePageState extends State<FlowRatePage>
                 return;
               }
 
-              showTipInfo(localizedStrings.fSaveSuccess, context);
+              showTipInfo((localizedStrings?.fSaveSuccess ?? "fSaveSuccess"), context);
             } catch (e) {
               if (!context.mounted) {
                 return;
@@ -1329,7 +1329,7 @@ class FlowRatePageState extends State<FlowRatePage>
           }
         },
         child: showNormalText(
-          localizedStrings.gBtnExport,
+          (localizedStrings?.gBtnExport ?? "gBtnExport"),
           colorScheme.onPrimary,
         ),
       ),
@@ -1355,7 +1355,7 @@ class FlowRatePageState extends State<FlowRatePage>
         padding: const EdgeInsets.only(left: 10),
         alignment: Alignment.centerLeft,
         child: Text(
-          localizedStrings.fFlowRate,
+          (localizedStrings?.fFlowRate ?? "fFlowRate"),
           textAlign: TextAlign.left,
         ),
       ),
@@ -1385,8 +1385,8 @@ class FlowRatePageState extends State<FlowRatePage>
             },
             child: showNormalText(
               showDataTable
-                  ? localizedStrings.fShowCurveChart
-                  : localizedStrings.fShowDataTable,
+                  ? (localizedStrings?.fShowCurveChart ?? "fShowCurveChart")
+                  : (localizedStrings?.fShowDataTable ?? "fShowDataTable"),
               colorScheme.onPrimary,
             ),
           ),
@@ -1469,21 +1469,21 @@ class FlowRatePageState extends State<FlowRatePage>
         children: [
           _buildTotalInfoItem(
             context,
-            localizedStrings.fTotalWeight,
+            (localizedStrings?.fTotalWeight ?? "fTotalWeight"),
             selectedProcessWgt.flowRateHeader?.totalWeight?.toString() ?? "",
             selectedProcessWgt.flowRateHeader?.wgtUnit ?? "",
           ),
           const SizedBox(width: 8),
           _buildTotalInfoItem(
             context,
-            localizedStrings.fTotalTime,
+            (localizedStrings?.fTotalTime ?? "fTotalTime"),
             selectedProcessWgt.flowRateHeader?.totalTime?.toString() ?? "",
             's',
           ),
           const SizedBox(width: 8),
           _buildTotalInfoItem(
             context,
-            localizedStrings.fAverageSpeed,
+            (localizedStrings?.fAverageSpeed ?? "fAverageSpeed"),
             selectedProcessWgt.flowRateHeader?.averageFlowRate?.toString() ??
                 "",
             '${selectedProcessWgt.flowRateHeader?.wgtUnit ?? ""}/s',
@@ -1491,14 +1491,14 @@ class FlowRatePageState extends State<FlowRatePage>
           const SizedBox(width: 8),
           _buildTotalInfoItem(
             context,
-            localizedStrings.fMaxSpeed,
+            (localizedStrings?.fMaxSpeed ?? "fMaxSpeed"),
             selectedProcessWgt.flowRateHeader?.maxFlowRate?.toString() ?? "",
             '${selectedProcessWgt.flowRateHeader?.wgtUnit ?? ""}/s',
           ),
           const SizedBox(width: 8),
           _buildTotalInfoItem(
             context,
-            localizedStrings.fMinSpeed,
+            (localizedStrings?.fMinSpeed ?? "fMinSpeed"),
             selectedProcessWgt.flowRateHeader?.minFlowRate?.toString() ?? "",
             '${selectedProcessWgt.flowRateHeader?.wgtUnit ?? ""}/s',
           ),
@@ -1578,7 +1578,7 @@ class FlowRatePageState extends State<FlowRatePage>
           _isLeftPanelExpanded
               ? Expanded(
                   child: Text(
-                  localizedStrings.fScaleList,
+                  (localizedStrings?.fScaleList ?? "fScaleList"),
                   style: TextStyle(color: colorScheme.onSurface, fontSize: 16),
                 ))
               : SizedBox(
@@ -1705,7 +1705,7 @@ class _LineChartSample5State extends State<LineChartSample5> {
     double maxYValue = widget.rateDataList
         .map((e) => e.rate)
         .reduce((a, b) => a! > b! ? a : b)!;
-    maxYValue = double.parse(maxYValue.toStringAsFixed(3));
+    maxYValue = (double.tryParse(maxYValue.toStringAsFixed(3)) ?? 0.0);
     final lineBarsData = [
       LineChartBarData(
         showingIndicators: showingTooltipOnSpots,
@@ -1772,7 +1772,7 @@ class _LineChartSample5State extends State<LineChartSample5> {
 
     maxYValue = yInterval * (maxYValue / yInterval).ceilToDouble();
 //最多保留三位小数
-    maxYValue = double.parse(maxYValue.toStringAsFixed(2));
+    maxYValue = (double.tryParse(maxYValue.toStringAsFixed(3)) ?? 0.0);
 
     double xInterval = max(
       1,

@@ -1,4 +1,4 @@
-// 包装类，用于在DataGrid中显示
+﻿// 包装类，用于在DataGrid中显示
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
@@ -154,8 +154,8 @@ class OrderDataSource extends DataGridSource {
             columnName: 'mode',
             value: orderData.isHeader
                 ? header.formulaMode! == 'wgt'
-                    ? localizedStrings.fWeightMode
-                    : localizedStrings.fPctMode
+                    ? (localizedStrings?.fWeightMode ?? "fWeightMode")
+                    : (localizedStrings?.fPctMode ?? "fPctMode")
                 : '',
           ),
 
@@ -164,8 +164,8 @@ class OrderDataSource extends DataGridSource {
             columnName: 'confidential ',
             value: orderData.isHeader
                 ? header.isEncrypted!
-                    ? localizedStrings.fConfidential
-                    : localizedStrings.fPublic
+                    ? (localizedStrings?.fConfidential ?? "fConfidential")
+                    : (localizedStrings?.fPublic ?? "fPublic")
                 : '',
           ),
 
@@ -224,14 +224,14 @@ class OrderDataSource extends DataGridSource {
             columnName: 'pass',
             value: orderData.isHeader
                 ? header.isQualified.toString() == "yes"
-                    ? localizedStrings.fQualified
-                    : localizedStrings.fUnqualified
+                    ? (localizedStrings?.fQualified ?? "fQualified")
+                    : (localizedStrings?.fUnqualified ?? "fUnqualified")
                 : detail!.sequence! == 0 ||
                         header.isEncrypted.toString() == "true"
                     ? '-'
                     : detail.isQualified.toString() == "ok"
-                        ? localizedStrings.fQualified
-                        : localizedStrings.fUnqualified,
+                        ? (localizedStrings?.fQualified ?? "fQualified")
+                        : (localizedStrings?.fUnqualified ?? "fUnqualified"),
           ),
           DataGridCell<String>(
             columnName: 'device',
@@ -349,16 +349,16 @@ class OrderDataSource extends DataGridSource {
                 color: () {
                   // 如果是表头
 
-                  if (cellValue == localizedStrings.fUnqualified) {
+                  if (cellValue == (localizedStrings?.fUnqualified ?? "fUnqualified")) {
                     return _colorsInfo['error']!; // 保密显示红色
-                  } else if (cellValue == localizedStrings.fQualified) {
+                  } else if (cellValue == (localizedStrings?.fQualified ?? "fQualified")) {
                     return _colorsInfo['success']!; // 公开显示绿色
                   }
 
                   if (orderData.isHeader) {
-                    if (cellValue == localizedStrings.fConfidential) {
+                    if (cellValue == (localizedStrings?.fConfidential ?? "fConfidential")) {
                       return _colorsInfo['error']!; // 保密显示红色
-                    } else if (cellValue == localizedStrings.fPublic) {
+                    } else if (cellValue == (localizedStrings?.fPublic ?? "fPublic")) {
                       return _colorsInfo['success']!; // 公开显示绿色
                     }
 

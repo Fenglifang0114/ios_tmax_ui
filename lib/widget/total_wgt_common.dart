@@ -1,4 +1,4 @@
-//汇总称重之后共用的widget
+﻿//汇总称重之后共用的widget
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -181,7 +181,7 @@ class _WgtDataTableState extends State<WgtDataTable> {
                                                         : Theme.of(context).colorScheme.surface,
                                                     boxShadow: [
                                                       BoxShadow(
-                                                        color: Colors.black.withValues(alpha: 0.05),
+                                                        color: Colors.black.withOpacity(0.05),
                                                         blurRadius: 2,
                                                         offset: const Offset(-2, 0),
                                                       ),
@@ -249,7 +249,7 @@ class _WgtDataTableState extends State<WgtDataTable> {
                         onPressed: tableState.previousPage,
                       ),
                       Text(
-                        '${localizedStrings.tipPageSequnce} ${tableState.currentPage}   /  ${(tableState._totalCount / tableState._itemsPerPage).ceil()} ${localizedStrings.tipPage}  ',
+                        '${(localizedStrings?.tipPageSequnce ?? "Page:")} ${tableState.currentPage}   /  ${(tableState._totalCount / tableState._itemsPerPage).ceil()} ${localizedStrings?.tipPage ?? ""}  ',
                       ),
                       IconButton(
                         icon: Icon(Icons.chevron_right),
@@ -263,7 +263,7 @@ class _WgtDataTableState extends State<WgtDataTable> {
                         ),
                       ),
                       Text(
-                        '  ${localizedStrings.tipPageTotal} ${tableState._totalCount}  ',
+                        '  ${(localizedStrings?.tipPageTotal ?? "Total:")} ${tableState._totalCount}  ',
                       ),
                     ],
                   ),
@@ -895,28 +895,31 @@ class DataItem {
 
 // 表格状态管理
 class TableState with ChangeNotifier {
-  // 可显示的列配置
-  final Map<String, ReportShowName> _visibleColumns = {
-    'Id': ReportShowName('NO.', true),
-    'Date Time': ReportShowName(localizedStrings.gRptDateTime, true),
-    'PLU': ReportShowName('PLU', true),
-    'Product Code': ReportShowName(localizedStrings.gPluPluCode, false),
-    'Item Code': ReportShowName(localizedStrings.gPluItemCode, false),
-    'PLU Name': ReportShowName(localizedStrings.gPluPluName, true),
-    'Price': ReportShowName(localizedStrings.gPluPrice, false),
-    'GeneralUnit': ReportShowName(localizedStrings.gPluWgtUnit, false),
-    'TaxType': ReportShowName(localizedStrings.gPluTaxType, false),
-    'UnitWeight': ReportShowName(localizedStrings.gPluUnitWgt, false),
-    'LimitHigh': ReportShowName(localizedStrings.gPluLimitHigh, false),
-    'LimitLow': ReportShowName(localizedStrings.gPluLimitLow, false),
-    'Weight': ReportShowName(localizedStrings.gRptWeight, true),
-    'Weight Unit': ReportShowName(localizedStrings.gRptWeightUnit, true),
-    'Pretare': ReportShowName(localizedStrings.gPluPretare, false),
-    // 'User NO.': ReportShowName('User NO.', false),
-    'User Name': ReportShowName(localizedStrings.operator, true),
-    'Scale Name': ReportShowName(localizedStrings.gScaleName, true),
-  };
-  Map<String, ReportShowName> get visibleColumns => _visibleColumns;
+  Map<String, ReportShowName>? _visibleColumns;
+  Map<String, ReportShowName> get visibleColumns {
+    if (_visibleColumns == null) {
+      _visibleColumns = {
+        'Id': ReportShowName('NO.', true),
+        'Date Time': ReportShowName(localizedStrings?.gRptDateTime ?? 'Date Time', true),
+        'PLU': ReportShowName('PLU', true),
+        'Product Code': ReportShowName(localizedStrings?.gPluPluCode ?? 'Product Code', false),
+        'Item Code': ReportShowName(localizedStrings?.gPluItemCode ?? 'Item Code', false),
+        'PLU Name': ReportShowName(localizedStrings?.gPluPluName ?? 'PLU Name', true),
+        'Price': ReportShowName(localizedStrings?.gPluPrice ?? 'Price', false),
+        'GeneralUnit': ReportShowName(localizedStrings?.gPluWgtUnit ?? 'Unit', false),
+        'TaxType': ReportShowName(localizedStrings?.gPluTaxType ?? 'Tax Type', false),
+        'UnitWeight': ReportShowName(localizedStrings?.gPluUnitWgt ?? 'Unit Weight', false),
+        'LimitHigh': ReportShowName(localizedStrings?.gPluLimitHigh ?? 'Limit High', false),
+        'LimitLow': ReportShowName(localizedStrings?.gPluLimitLow ?? 'Limit Low', false),
+        'Weight': ReportShowName(localizedStrings?.gRptWeight ?? 'Weight', true),
+        'Weight Unit': ReportShowName(localizedStrings?.gRptWeightUnit ?? 'Weight Unit', true),
+        'Pretare': ReportShowName(localizedStrings?.gPluPretare ?? 'Pretare', false),
+        'User Name': ReportShowName(localizedStrings?.operator ?? 'Operator', true),
+        'Scale Name': ReportShowName(localizedStrings?.gScaleName ?? 'Scale Name', true),
+      };
+    }
+    return _visibleColumns!;
+  }
 
   // 分页状态
   int _currentPage = 1;
@@ -985,9 +988,9 @@ class TableState with ChangeNotifier {
 
   // 切换列显示状态
   void toggleColumnVisibility(String columnKey) {
-    if (_visibleColumns.containsKey(columnKey)) {
-      _visibleColumns[columnKey]!.isSelect =
-          !_visibleColumns[columnKey]!.isSelect;
+    if (visibleColumns.containsKey(columnKey)) {
+      visibleColumns[columnKey]!.isSelect =
+          !visibleColumns[columnKey]!.isSelect;
       notifyListeners();
     }
   }

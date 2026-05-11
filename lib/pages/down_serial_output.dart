@@ -1,4 +1,4 @@
-import 'dart:async';
+﻿import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
@@ -99,7 +99,7 @@ class _DownReciptPageState extends State<DownSerialOutputPage> {
           child: Container(
             child: pageHeadDefScale(
               context,
-              localizedStrings.gTitleSerialOutputDownload,
+              (localizedStrings?.gTitleSerialOutputDownload ?? "gTitleSerialOutputDownload"),
               '',
             ),
           ),
@@ -143,7 +143,7 @@ class _DownReciptPageState extends State<DownSerialOutputPage> {
                       SizedBox(
                         width: 200,
                         child: Text(
-                          localizedStrings.output_res_folder,
+                          (localizedStrings?.output_res_folder ?? "output_res_folder"),
                           textAlign: TextAlign.right,
                         ),
                       ),
@@ -173,7 +173,7 @@ class _DownReciptPageState extends State<DownSerialOutputPage> {
                         btnWidth: 150,
                         btnHeight: 40,
                         icon: Icons.folder_open_outlined,
-                        text: localizedStrings.output_select_folder,
+                        text: (localizedStrings?.output_select_folder ?? "output_select_folder"),
                         onPressed: () async {
                           jsonFilesList.clear();
                           folderCtl.text = '';
@@ -219,19 +219,19 @@ class _DownReciptPageState extends State<DownSerialOutputPage> {
           btnWidth: 150,
           btnHeight: 50,
           icon: Icons.download_outlined,
-          text: localizedStrings.gBtnDownload,
+          text: (localizedStrings?.gBtnDownload ?? "gBtnDownload"),
           onPressed: (!isDownloadClicked) && (folderCtl.text.isNotEmpty)
               ? () async {
                   await generateFileList(folderCtl.text);
                   if (jsonFilesList.isEmpty) {
                     if (mounted && context.mounted) {
                       _showConfirmationDialog(
-                          context, localizedStrings.output_no_file);
+                          context, (localizedStrings?.output_no_file ?? "output_no_file"));
                     }
                   } else {
                     if (mounted && context.mounted) {
                       _showConfirmationDialog(
-                          context, localizedStrings.output_confirm_info);
+                          context, (localizedStrings?.output_confirm_info ?? "output_confirm_info"));
                     }
                   }
                 }
@@ -251,7 +251,7 @@ class _DownReciptPageState extends State<DownSerialOutputPage> {
       _stopTimer();
 
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(localizedStrings.gTipDownloadFail,
+          content: Text((localizedStrings?.gTipDownloadFail ?? "gTipDownloadFail"),
               style: const TextStyle(
                   fontSize: 20, fontWeight: FontWeight.normal)), ////此处需要秤回复
           duration: const Duration(seconds: 3),
@@ -269,7 +269,7 @@ class _DownReciptPageState extends State<DownSerialOutputPage> {
       builder: (BuildContext ctx) {
         return AlertDialog(
           title: Text(
-            localizedStrings.gTitleConfirm,
+            (localizedStrings?.gTitleConfirm ?? "gTitleConfirm"),
             style: TextStyle(color: Theme.of(context).colorScheme.primary),
           ),
           content: Text(msg),
@@ -281,7 +281,7 @@ class _DownReciptPageState extends State<DownSerialOutputPage> {
                         btnWidth: 100,
                         btnHeight: 40,
                         icon: Icons.check_circle,
-                        text: localizedStrings.gBtnConfirm,
+                        text: (localizedStrings?.gBtnConfirm ?? "gBtnConfirm"),
                         onPressed: () {
                           Navigator.of(context).pop(true);
                         },
@@ -294,7 +294,7 @@ class _DownReciptPageState extends State<DownSerialOutputPage> {
                   btnWidth: 100,
                   btnHeight: 40,
                   icon: Icons.cancel,
-                  text: localizedStrings.gBtnCancel,
+                  text: (localizedStrings?.gBtnCancel ?? "gBtnCancel"),
                   onPressed: () {
                     Navigator.of(context).pop(false);
                   },

@@ -1,4 +1,4 @@
-import 'dart:convert';
+﻿import 'dart:convert';
 import 'dart:io';
 import 'dart:ui';
 import 'package:csv/csv.dart';
@@ -452,8 +452,8 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
                   pageHeadInfo(
                       context,
                       width - headWidthPadding,
-                      localizedStrings.menuReceiptDesign,
-                      localizedStrings.gTipReceiptDesignPageHelp, () {
+                      (localizedStrings?.menuReceiptDesign ?? "menuReceiptDesign"),
+                      (localizedStrings?.gTipReceiptDesignPageHelp ?? "gTipReceiptDesignPageHelp"), () {
                     formAppSetting = false;
                     Future.delayed(Duration.zero, () {
                       widget.onNavigate(widget.lastRouteName);
@@ -610,7 +610,7 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
                             SizedBox(
                               width: 150,
                               child: Text(
-                                localizedStrings.gPrinter,
+                                (localizedStrings?.gPrinter ?? "gPrinter"),
                                 textAlign: TextAlign.right,
                                 style: Theme.of(context)
                                     .textTheme
@@ -649,7 +649,7 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
                             SizedBox(
                               width: 150,
                               child: Text(
-                                localizedStrings.gPrintDirection,
+                                (localizedStrings?.gPrintDirection ?? "gPrintDirection"),
                                 textAlign: TextAlign.right,
                                 style: Theme.of(context)
                                     .textTheme
@@ -695,7 +695,7 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
                         height: 40,
                         child: Row(
                           children: [
-                            buildBtnText(localizedStrings.gPageWidth + '(mm):'),
+                            buildBtnText((localizedStrings?.gPageWidth ?? "gPageWidth") + '(mm):'),
                             const SizedBox(
                               width: 10,
                             ),
@@ -718,7 +718,7 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
                         child: Row(
                           children: [
                             buildBtnText(
-                                localizedStrings.gPageHeight + '(mm):'),
+                                (localizedStrings?.gPageHeight ?? "gPageHeight") + '(mm):'),
                             const SizedBox(
                               width: 10,
                             ),
@@ -750,7 +750,7 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
                         width: btnWidth,
                         height: 40,
                         child: showTextButton(context, 40,
-                            localizedStrings.menuVariableValueSetting, () {
+                            (localizedStrings?.menuVariableValueSetting ?? "menuVariableValueSetting"), () {
                           HeaderFooterPage.show(context);
                         },
                             Theme.of(context).colorScheme.onPrimary,
@@ -760,7 +760,7 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
                         width: btnWidth,
                         height: 40,
                         child: showTextButton(
-                            context, 40, localizedStrings.gBtnNewFormat, () {
+                            context, 40, (localizedStrings?.gBtnNewFormat ?? "gBtnNewFormat"), () {
                           deleteAllItem();
                         },
                             Theme.of(context).colorScheme.onPrimary,
@@ -778,7 +778,7 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
                         width: btnWidth,
                         height: 40,
                         child: showTextButton(
-                            context, 40, localizedStrings.gSaveFormat,
+                            context, 40, (localizedStrings?.gSaveFormat ?? "gSaveFormat"),
                             () async {
                           String executablePath = Platform.resolvedExecutable;
                           var directory = p.dirname(executablePath);
@@ -820,7 +820,7 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
                         width: btnWidth,
                         height: 40,
                         child: showTextButton(
-                            context, 40, localizedStrings.gOpenJson, () async {
+                            context, 40, (localizedStrings?.gOpenJson ?? "gOpenJson"), () async {
                           String filePath = '';
                           try {
                             String executablePath = Platform.resolvedExecutable;
@@ -2194,7 +2194,7 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
       SizedBox(
         height: 50,
         child: Text(
-          localizedStrings.gMsgNoElement,
+          (localizedStrings?.gMsgNoElement ?? "gMsgNoElement"),
           style: Theme.of(context).textTheme.bodySmall!.apply(
                 color: Theme.of(context).colorScheme.error,
               ),
@@ -2375,41 +2375,41 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
 
   List<Widget> _textproperties() {
     return [
-      buildAttitudeText(context, localizedStrings.gAttribute),
+      buildAttitudeText(context, (localizedStrings?.gAttribute ?? "gAttribute")),
       buildDivider(),
-      buildTabOrderAndTyptText(context, localizedStrings.gTabOrder,
+      buildTabOrderAndTyptText(context, (localizedStrings?.gTabOrder ?? "gTabOrder"),
           myReceiptItemData.tabOrder.toString()),
       buildTabOrderAndTyptText(
-          context, localizedStrings.gTipItemType, myReceiptItemData.varName),
-      showRightItemTitleText(context, localizedStrings.gPosition),
+          context, (localizedStrings?.gTipItemType ?? "gTipItemType"), myReceiptItemData.varName),
+      showRightItemTitleText(context, (localizedStrings?.gPosition ?? "gPosition")),
       ...buildXYPosition(),
-      showRightItemTitleText(context, localizedStrings.gTextContent),
+      showRightItemTitleText(context, (localizedStrings?.gTextContent ?? "gTextContent")),
       buildTextField(textvariable, "", myReceiptItemData.content.toString(), 0),
-      showRightItemTitleText(context, localizedStrings.gFontSize),
+      showRightItemTitleText(context, (localizedStrings?.gFontSize ?? "gFontSize")),
       showDropDownButtonValue(context, _selectFontsize, _fontSizes,
-          localizedStrings.gFontSize, _handleFontSizeSelected),
-      showRightItemTitleText(context, localizedStrings.gRotation),
+          (localizedStrings?.gFontSize ?? "gFontSize"), _handleFontSizeSelected),
+      showRightItemTitleText(context, (localizedStrings?.gRotation ?? "gRotation")),
       showDropDownButtonValue(
         context,
         _selectedRotation,
         _rotations,
-        localizedStrings.gRotation,
+        (localizedStrings?.gRotation ?? "gRotation"),
         _handleRotationSelected,
       ),
-      showRightItemTitleText(context, localizedStrings.gFontBold),
+      showRightItemTitleText(context, (localizedStrings?.gFontBold ?? "gFontBold")),
       showDropDownButtonValue(
         context,
         _selectFontBold,
         _fontBoldReverse,
-        localizedStrings.gFontBold,
+        (localizedStrings?.gFontBold ?? "gFontBold"),
         _handleFontBoldSelected,
       ),
-      showRightItemTitleText(context, localizedStrings.gFontReverse),
+      showRightItemTitleText(context, (localizedStrings?.gFontReverse ?? "gFontReverse")),
       showDropDownButtonValue(
         context,
         _selectFontReverse,
         _fontBoldReverse,
-        localizedStrings.gFontReverse,
+        (localizedStrings?.gFontReverse ?? "gFontReverse"),
         _handleFontReverseSelected,
       ),
       SizedBox(
@@ -2488,55 +2488,55 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
 
   List<Widget> _varproperties() {
     return [
-      buildAttitudeText(context, localizedStrings.gAttribute),
+      buildAttitudeText(context, (localizedStrings?.gAttribute ?? "gAttribute")),
       buildDivider(),
-      buildTabOrderAndTyptText(context, localizedStrings.gTabOrder,
+      buildTabOrderAndTyptText(context, (localizedStrings?.gTabOrder ?? "gTabOrder"),
           myReceiptItemData.tabOrder.toString()),
       buildTabOrderAndTyptText(
-          context, localizedStrings.gTipItemType, myReceiptItemData.varName),
-      showRightItemTitleText(context, localizedStrings.gPosition),
+          context, (localizedStrings?.gTipItemType ?? "gTipItemType"), myReceiptItemData.varName),
+      showRightItemTitleText(context, (localizedStrings?.gPosition ?? "gPosition")),
       ...buildXYPosition(),
-      showRightItemTitleText(context, localizedStrings.gMaxLength),
+      showRightItemTitleText(context, (localizedStrings?.gMaxLength ?? "gMaxLength")),
       buildTextField(
           maxLenthvar, "", myReceiptItemData.maxLength.toString(), 4),
-      showRightItemTitleText(context, localizedStrings.gAlignment),
+      showRightItemTitleText(context, (localizedStrings?.gAlignment ?? "gAlignment")),
       showDropDownButtonValue(
         context,
         _selectedAlignment,
         _alignments,
-        localizedStrings.gAlignment,
+        (localizedStrings?.gAlignment ?? "gAlignment"),
         _handleAlignmentSelected,
       ),
-      showRightItemTitleText(context, localizedStrings.gRotation),
+      showRightItemTitleText(context, (localizedStrings?.gRotation ?? "gRotation")),
       showDropDownButtonValue(
         context,
         _selectedRotation,
         _rotations,
-        localizedStrings.gRotation,
+        (localizedStrings?.gRotation ?? "gRotation"),
         _handleRotationSelected,
       ),
-      showRightItemTitleText(context, localizedStrings.gFontSize),
+      showRightItemTitleText(context, (localizedStrings?.gFontSize ?? "gFontSize")),
       showDropDownButtonValue(
         context,
         _selectFontsize,
         _fontSizes,
-        localizedStrings.gFontSize,
+        (localizedStrings?.gFontSize ?? "gFontSize"),
         _handleFontSizeSelected,
       ),
-      showRightItemTitleText(context, localizedStrings.gFontBold),
+      showRightItemTitleText(context, (localizedStrings?.gFontBold ?? "gFontBold")),
       showDropDownButtonValue(
         context,
         _selectFontBold,
         _fontBoldReverse,
-        localizedStrings.gFontBold,
+        (localizedStrings?.gFontBold ?? "gFontBold"),
         _handleFontBoldSelected,
       ),
-      showRightItemTitleText(context, localizedStrings.gFontReverse),
+      showRightItemTitleText(context, (localizedStrings?.gFontReverse ?? "gFontReverse")),
       showDropDownButtonValue(
         context,
         _selectFontReverse,
         _fontBoldReverse,
-        localizedStrings.gFontReverse,
+        (localizedStrings?.gFontReverse ?? "gFontReverse"),
         _handleFontReverseSelected,
       ),
       SizedBox(
@@ -2549,7 +2549,7 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
   Widget deleteBtnBuild() {
     return SizedBox(
         width: 200,
-        child: showTextButton(context, btnHeight, localizedStrings.gBtnDelete,
+        child: showTextButton(context, btnHeight, (localizedStrings?.gBtnDelete ?? "gBtnDelete"),
             () {
           setState(() {
             _deleteReceiptItem(myReceiptItemData.tabOrder);
@@ -2562,13 +2562,13 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
 
   List<Widget> _lineproperties() {
     return [
-      buildAttitudeText(context, localizedStrings.gAttribute),
+      buildAttitudeText(context, (localizedStrings?.gAttribute ?? "gAttribute")),
       buildDivider(),
-      buildTabOrderAndTyptText(context, localizedStrings.gTabOrder,
+      buildTabOrderAndTyptText(context, (localizedStrings?.gTabOrder ?? "gTabOrder"),
           myReceiptItemData.tabOrder.toString()),
       buildTabOrderAndTyptText(
-          context, localizedStrings.gTipItemType, myReceiptItemData.varName),
-      showRightItemTitleText(context, localizedStrings.gPosition),
+          context, (localizedStrings?.gTipItemType ?? "gTipItemType"), myReceiptItemData.varName),
+      showRightItemTitleText(context, (localizedStrings?.gPosition ?? "gPosition")),
       buildTextField(xPosvar, "X1", myReceiptItemData.xPos.toString(), 2),
       buildTextField(yPosvar, "Y1", myReceiptItemData.yPos.toString(), 3),
       buildTextField(
@@ -2587,127 +2587,127 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
       return;
     }
     languageVarMap = {
-      "Weight Variable": localizedStrings.l_var_title,
-      "Text": localizedStrings.p_text_var,
-      "Line": localizedStrings.p_div_line_var,
-      "NO._P": localizedStrings.p_no_var,
-      "Header1_P": localizedStrings.p_header1_var,
-      "Header2_P": localizedStrings.p_Header2_var,
-      "Header3_P": localizedStrings.p_header3_var,
-      "Footer1_P": localizedStrings.p_footer1_var,
-      "Footer2_P": localizedStrings.p_footer2_var,
-      "Footer3_P": localizedStrings.p_footer3_var,
-      "PLU_ID_P": localizedStrings.p_plu_id_var,
-      "PLU_Name_P": localizedStrings.p_plu_name_var,
-      "OrderNumber_P": localizedStrings.p_order_number_var,
-      "UnitPrice_P": localizedStrings.p_unit_price_var,
-      "PriceUnit_P": localizedStrings.p_price_unit_var,
-      "Price_P": localizedStrings.p_price_var,
-      // "PreTare_P": localizedStrings.p_pre_tare_var,
+      "Weight Variable": (localizedStrings?.l_var_title ?? "l_var_title"),
+      "Text": (localizedStrings?.p_text_var ?? "p_text_var"),
+      "Line": (localizedStrings?.p_div_line_var ?? "p_div_line_var"),
+      "NO._P": (localizedStrings?.p_no_var ?? "p_no_var"),
+      "Header1_P": (localizedStrings?.p_header1_var ?? "p_header1_var"),
+      "Header2_P": (localizedStrings?.p_Header2_var ?? "p_Header2_var"),
+      "Header3_P": (localizedStrings?.p_header3_var ?? "p_header3_var"),
+      "Footer1_P": (localizedStrings?.p_footer1_var ?? "p_footer1_var"),
+      "Footer2_P": (localizedStrings?.p_footer2_var ?? "p_footer2_var"),
+      "Footer3_P": (localizedStrings?.p_footer3_var ?? "p_footer3_var"),
+      "PLU_ID_P": (localizedStrings?.p_plu_id_var ?? "p_plu_id_var"),
+      "PLU_Name_P": (localizedStrings?.p_plu_name_var ?? "p_plu_name_var"),
+      "OrderNumber_P": (localizedStrings?.p_order_number_var ?? "p_order_number_var"),
+      "UnitPrice_P": (localizedStrings?.p_unit_price_var ?? "p_unit_price_var"),
+      "PriceUnit_P": (localizedStrings?.p_price_unit_var ?? "p_price_unit_var"),
+      "Price_P": (localizedStrings?.p_price_var ?? "p_price_var"),
+      // "PreTare_P": (localizedStrings?.p_pre_tare_var ?? "p_pre_tare_var"),
       ////屏蔽原因：秤上只认pretare ，测试要求显示tare ，没办法只能tare当pretare用。json文件中tare_p的值改成了Pretare_P的值了。
-      "Weight_Pcs_P": localizedStrings.p_weight_pcs_var,
-      "Unit_P": localizedStrings.p_unit_var,
-      "Tare_P": localizedStrings.p_tare_var,
-      "DATE": localizedStrings.p_date_var,
-      "TIME": localizedStrings.p_time_var,
-      "TaxType1_P": localizedStrings.p_tax_type1_var,
-      "TaxType2_P": localizedStrings.p_tax_type2_var,
-      "TaxType3_P": localizedStrings.p_tax_type3_var,
-      "TaxBase1_P": localizedStrings.p_tax_base1_var,
-      "TaxBase2_P": localizedStrings.p_tax_base2_var,
-      "TaxBase3_P": localizedStrings.p_tax_base3_var,
-      "TaxAmount1_P": localizedStrings.p_tax_amount1_var,
-      "TaxAmount2_P": localizedStrings.p_tax_amount2_var,
-      "TaxAmount3_P": localizedStrings.p_tax_amount3_var,
-      "TaxModel_P": localizedStrings.p_tax_model_var,
-      "TotalTaxAmount_P": localizedStrings.p_total_tax_amount_var,
-      "PaymentAmount_P": localizedStrings.p_payment_amount_P_var,
-      "ChangeAmount_P": localizedStrings.p_change_amount_var,
-      "Subtotal_P": localizedStrings.p_subtotal_var,
-      "Currency_P": localizedStrings.p_currency_var,
-      "CopyTimes_P": localizedStrings.p_copy_times_var,
-      "ModelName_P": localizedStrings.p_model_name_var,
-      "ScaleName_P": localizedStrings.p_scale_name_var,
-      "TaxName_P": localizedStrings.p_tax_name_var,
-      "SettleAccountTimes_P": localizedStrings.p_settle_account_times_var,
-      "PLU_Tax_P": localizedStrings.p_plu_tax_var,
-      "TotalNoTax_P": localizedStrings.p_total_no_tax_var,
-      "Free Text": localizedStrings.p_text_title,
-      "Dividing Line": localizedStrings.p_line_title,
-      "Price Variable": localizedStrings.p_price_title,
-      "NO.": localizedStrings.l_no_var,
-      "Gross": localizedStrings.l_gross_var,
-      "Tare": localizedStrings.l_tare_var,
-      "Net": localizedStrings.l_net_var,
-      "PCS": localizedStrings.l_pcs_var,
-      "WeightUnit": localizedStrings.l_wgt_unit_var,
-      "U.WGT": localizedStrings.l_uwgt_var,
-      "U.WU": localizedStrings.l_uwu_var,
-      "UnitWeight": localizedStrings.l_unit_wgt_var,
-      "Percent": localizedStrings.l_percent_var,
-      "TotalWeight": localizedStrings.l_total_wgt_var,
-      "TotalCount": localizedStrings.l_total_cnt_var,
+      "Weight_Pcs_P": (localizedStrings?.p_weight_pcs_var ?? "p_weight_pcs_var"),
+      "Unit_P": (localizedStrings?.p_unit_var ?? "p_unit_var"),
+      "Tare_P": (localizedStrings?.p_tare_var ?? "p_tare_var"),
+      "DATE": (localizedStrings?.p_date_var ?? "p_date_var"),
+      "TIME": (localizedStrings?.p_time_var ?? "p_time_var"),
+      "TaxType1_P": (localizedStrings?.p_tax_type1_var ?? "p_tax_type1_var"),
+      "TaxType2_P": (localizedStrings?.p_tax_type2_var ?? "p_tax_type2_var"),
+      "TaxType3_P": (localizedStrings?.p_tax_type3_var ?? "p_tax_type3_var"),
+      "TaxBase1_P": (localizedStrings?.p_tax_base1_var ?? "p_tax_base1_var"),
+      "TaxBase2_P": (localizedStrings?.p_tax_base2_var ?? "p_tax_base2_var"),
+      "TaxBase3_P": (localizedStrings?.p_tax_base3_var ?? "p_tax_base3_var"),
+      "TaxAmount1_P": (localizedStrings?.p_tax_amount1_var ?? "p_tax_amount1_var"),
+      "TaxAmount2_P": (localizedStrings?.p_tax_amount2_var ?? "p_tax_amount2_var"),
+      "TaxAmount3_P": (localizedStrings?.p_tax_amount3_var ?? "p_tax_amount3_var"),
+      "TaxModel_P": (localizedStrings?.p_tax_model_var ?? "p_tax_model_var"),
+      "TotalTaxAmount_P": (localizedStrings?.p_total_tax_amount_var ?? "p_total_tax_amount_var"),
+      "PaymentAmount_P": (localizedStrings?.p_payment_amount_P_var ?? "p_payment_amount_P_var"),
+      "ChangeAmount_P": (localizedStrings?.p_change_amount_var ?? "p_change_amount_var"),
+      "Subtotal_P": (localizedStrings?.p_subtotal_var ?? "p_subtotal_var"),
+      "Currency_P": (localizedStrings?.p_currency_var ?? "p_currency_var"),
+      "CopyTimes_P": (localizedStrings?.p_copy_times_var ?? "p_copy_times_var"),
+      "ModelName_P": (localizedStrings?.p_model_name_var ?? "p_model_name_var"),
+      "ScaleName_P": (localizedStrings?.p_scale_name_var ?? "p_scale_name_var"),
+      "TaxName_P": (localizedStrings?.p_tax_name_var ?? "p_tax_name_var"),
+      "SettleAccountTimes_P": (localizedStrings?.p_settle_account_times_var ?? "p_settle_account_times_var"),
+      "PLU_Tax_P": (localizedStrings?.p_plu_tax_var ?? "p_plu_tax_var"),
+      "TotalNoTax_P": (localizedStrings?.p_total_no_tax_var ?? "p_total_no_tax_var"),
+      "Free Text": (localizedStrings?.p_text_title ?? "p_text_title"),
+      "Dividing Line": (localizedStrings?.p_line_title ?? "p_line_title"),
+      "Price Variable": (localizedStrings?.p_price_title ?? "p_price_title"),
+      "NO.": (localizedStrings?.l_no_var ?? "l_no_var"),
+      "Gross": (localizedStrings?.l_gross_var ?? "l_gross_var"),
+      "Tare": (localizedStrings?.l_tare_var ?? "l_tare_var"),
+      "Net": (localizedStrings?.l_net_var ?? "l_net_var"),
+      "PCS": (localizedStrings?.l_pcs_var ?? "l_pcs_var"),
+      "WeightUnit": (localizedStrings?.l_wgt_unit_var ?? "l_wgt_unit_var"),
+      "U.WGT": (localizedStrings?.l_uwgt_var ?? "l_uwgt_var"),
+      "U.WU": (localizedStrings?.l_uwu_var ?? "l_uwu_var"),
+      "UnitWeight": (localizedStrings?.l_unit_wgt_var ?? "l_unit_wgt_var"),
+      "Percent": (localizedStrings?.l_percent_var ?? "l_percent_var"),
+      "TotalWeight": (localizedStrings?.l_total_wgt_var ?? "l_total_wgt_var"),
+      "TotalCount": (localizedStrings?.l_total_cnt_var ?? "l_total_cnt_var"),
     };
 
     languageVarExplMap = {
-      "Text": localizedStrings.p_text_expl,
-      "Line": localizedStrings.p_div_line_expl,
-      "NO._P": localizedStrings.p_no_expl,
-      "Header1_P": localizedStrings.p_header1_expl,
-      "Header2_P": localizedStrings.p_Header2_expl,
-      "Header3_P": localizedStrings.p_header3_expl,
-      "Footer1_P": localizedStrings.p_footer1_expl,
-      "Footer2_P": localizedStrings.p_footer2_expl,
-      "Footer3_P": localizedStrings.p_footer3_expl,
-      "PLU_ID_P": localizedStrings.p_plu_id_expl,
-      "PLU_Name_P": localizedStrings.p_plu_name_expl,
-      "OrderNumber_P": localizedStrings.p_order_number_expl,
-      "UnitPrice_P": localizedStrings.p_unit_price_expl,
-      "PriceUnit_P": localizedStrings.p_price_unit_expl,
-      "Price_P": localizedStrings.p_price_expl,
-      // "PreTare_P": localizedStrings.p_pre_tare_expl,
-      "Weight_Pcs_P": localizedStrings.p_weight_pcs_expl,
-      "Unit_P": localizedStrings.p_unit_expl,
-      "Tare_P": localizedStrings.p_tare_expl,
-      "DATE": localizedStrings.p_date_expl,
-      "TIME": localizedStrings.p_time_expl,
-      "TaxType1_P": localizedStrings.p_tax_type1_expl,
-      "TaxType2_P": localizedStrings.p_tax_type2_expl,
-      "TaxType3_P": localizedStrings.p_tax_type3_expl,
-      "TaxBase1_P": localizedStrings.p_tax_base1_expl,
-      "TaxBase2_P": localizedStrings.p_tax_base2_expl,
-      "TaxBase3_P": localizedStrings.p_tax_base3_expl,
-      "TaxAmount1_P": localizedStrings.p_tax_amount1_expl,
-      "TaxAmount2_P": localizedStrings.p_tax_amount2_expl,
-      "TaxAmount3_P": localizedStrings.p_tax_amount3_expl,
-      "TaxModel_P": localizedStrings.p_tax_model_expl,
-      "TotalTaxAmount_P": localizedStrings.p_total_tax_amount_expl,
-      "PaymentAmount_P": localizedStrings.p_payment_amount_P_expl,
-      "ChangeAmount_P": localizedStrings.p_change_amount_expl,
-      "Subtotal_P": localizedStrings.p_subtotal_expl,
-      "Currency_P": localizedStrings.p_currency_expl,
-      "CopyTimes_P": localizedStrings.p_copy_times_expl,
-      "ModelName_P": localizedStrings.p_model_name_expl,
-      "ScaleName_P": localizedStrings.p_scale_name_expl,
-      "TaxName_P": localizedStrings.p_tax_name_expl,
-      "SettleAccountTimes_P": localizedStrings.p_settle_account_times_expl,
-      "PLU_Tax_P": localizedStrings.p_plu_tax_expl,
-      "TotalNoTax_P": localizedStrings.p_total_no_tax_expl,
-      "Free Text": localizedStrings.p_text_title,
-      "Dividing Line": localizedStrings.p_line_title,
-      "Price Variable": localizedStrings.p_price_title,
-      "NO.": localizedStrings.l_no_expl,
-      "Gross": localizedStrings.l_gross_expl,
-      "Tare": localizedStrings.l_tare_expl,
-      "Net": localizedStrings.l_net_expl,
-      "PCS": localizedStrings.l_pcs_expl,
-      "WeightUnit": localizedStrings.l_wgt_unit_expl,
-      "U.WGT": localizedStrings.l_uwgt_expl,
-      "U.WU": localizedStrings.l_uwu_expl,
-      "UnitWeight": localizedStrings.l_unit_wgt_expl,
-      "Percent": localizedStrings.l_percent_expl,
-      "TotalWeight": localizedStrings.l_total_wgt_expl,
-      "TotalCount": localizedStrings.l_total_cnt_expl,
+      "Text": (localizedStrings?.p_text_expl ?? "p_text_expl"),
+      "Line": (localizedStrings?.p_div_line_expl ?? "p_div_line_expl"),
+      "NO._P": (localizedStrings?.p_no_expl ?? "p_no_expl"),
+      "Header1_P": (localizedStrings?.p_header1_expl ?? "p_header1_expl"),
+      "Header2_P": (localizedStrings?.p_Header2_expl ?? "p_Header2_expl"),
+      "Header3_P": (localizedStrings?.p_header3_expl ?? "p_header3_expl"),
+      "Footer1_P": (localizedStrings?.p_footer1_expl ?? "p_footer1_expl"),
+      "Footer2_P": (localizedStrings?.p_footer2_expl ?? "p_footer2_expl"),
+      "Footer3_P": (localizedStrings?.p_footer3_expl ?? "p_footer3_expl"),
+      "PLU_ID_P": (localizedStrings?.p_plu_id_expl ?? "p_plu_id_expl"),
+      "PLU_Name_P": (localizedStrings?.p_plu_name_expl ?? "p_plu_name_expl"),
+      "OrderNumber_P": (localizedStrings?.p_order_number_expl ?? "p_order_number_expl"),
+      "UnitPrice_P": (localizedStrings?.p_unit_price_expl ?? "p_unit_price_expl"),
+      "PriceUnit_P": (localizedStrings?.p_price_unit_expl ?? "p_price_unit_expl"),
+      "Price_P": (localizedStrings?.p_price_expl ?? "p_price_expl"),
+      // "PreTare_P": (localizedStrings?.p_pre_tare_expl ?? "p_pre_tare_expl"),
+      "Weight_Pcs_P": (localizedStrings?.p_weight_pcs_expl ?? "p_weight_pcs_expl"),
+      "Unit_P": (localizedStrings?.p_unit_expl ?? "p_unit_expl"),
+      "Tare_P": (localizedStrings?.p_tare_expl ?? "p_tare_expl"),
+      "DATE": (localizedStrings?.p_date_expl ?? "p_date_expl"),
+      "TIME": (localizedStrings?.p_time_expl ?? "p_time_expl"),
+      "TaxType1_P": (localizedStrings?.p_tax_type1_expl ?? "p_tax_type1_expl"),
+      "TaxType2_P": (localizedStrings?.p_tax_type2_expl ?? "p_tax_type2_expl"),
+      "TaxType3_P": (localizedStrings?.p_tax_type3_expl ?? "p_tax_type3_expl"),
+      "TaxBase1_P": (localizedStrings?.p_tax_base1_expl ?? "p_tax_base1_expl"),
+      "TaxBase2_P": (localizedStrings?.p_tax_base2_expl ?? "p_tax_base2_expl"),
+      "TaxBase3_P": (localizedStrings?.p_tax_base3_expl ?? "p_tax_base3_expl"),
+      "TaxAmount1_P": (localizedStrings?.p_tax_amount1_expl ?? "p_tax_amount1_expl"),
+      "TaxAmount2_P": (localizedStrings?.p_tax_amount2_expl ?? "p_tax_amount2_expl"),
+      "TaxAmount3_P": (localizedStrings?.p_tax_amount3_expl ?? "p_tax_amount3_expl"),
+      "TaxModel_P": (localizedStrings?.p_tax_model_expl ?? "p_tax_model_expl"),
+      "TotalTaxAmount_P": (localizedStrings?.p_total_tax_amount_expl ?? "p_total_tax_amount_expl"),
+      "PaymentAmount_P": (localizedStrings?.p_payment_amount_P_expl ?? "p_payment_amount_P_expl"),
+      "ChangeAmount_P": (localizedStrings?.p_change_amount_expl ?? "p_change_amount_expl"),
+      "Subtotal_P": (localizedStrings?.p_subtotal_expl ?? "p_subtotal_expl"),
+      "Currency_P": (localizedStrings?.p_currency_expl ?? "p_currency_expl"),
+      "CopyTimes_P": (localizedStrings?.p_copy_times_expl ?? "p_copy_times_expl"),
+      "ModelName_P": (localizedStrings?.p_model_name_expl ?? "p_model_name_expl"),
+      "ScaleName_P": (localizedStrings?.p_scale_name_expl ?? "p_scale_name_expl"),
+      "TaxName_P": (localizedStrings?.p_tax_name_expl ?? "p_tax_name_expl"),
+      "SettleAccountTimes_P": (localizedStrings?.p_settle_account_times_expl ?? "p_settle_account_times_expl"),
+      "PLU_Tax_P": (localizedStrings?.p_plu_tax_expl ?? "p_plu_tax_expl"),
+      "TotalNoTax_P": (localizedStrings?.p_total_no_tax_expl ?? "p_total_no_tax_expl"),
+      "Free Text": (localizedStrings?.p_text_title ?? "p_text_title"),
+      "Dividing Line": (localizedStrings?.p_line_title ?? "p_line_title"),
+      "Price Variable": (localizedStrings?.p_price_title ?? "p_price_title"),
+      "NO.": (localizedStrings?.l_no_expl ?? "l_no_expl"),
+      "Gross": (localizedStrings?.l_gross_expl ?? "l_gross_expl"),
+      "Tare": (localizedStrings?.l_tare_expl ?? "l_tare_expl"),
+      "Net": (localizedStrings?.l_net_expl ?? "l_net_expl"),
+      "PCS": (localizedStrings?.l_pcs_expl ?? "l_pcs_expl"),
+      "WeightUnit": (localizedStrings?.l_wgt_unit_expl ?? "l_wgt_unit_expl"),
+      "U.WGT": (localizedStrings?.l_uwgt_expl ?? "l_uwgt_expl"),
+      "U.WU": (localizedStrings?.l_uwu_expl ?? "l_uwu_expl"),
+      "UnitWeight": (localizedStrings?.l_unit_wgt_expl ?? "l_unit_wgt_expl"),
+      "Percent": (localizedStrings?.l_percent_expl ?? "l_percent_expl"),
+      "TotalWeight": (localizedStrings?.l_total_wgt_expl ?? "l_total_wgt_expl"),
+      "TotalCount": (localizedStrings?.l_total_cnt_expl ?? "l_total_cnt_expl"),
     };
   }
 }

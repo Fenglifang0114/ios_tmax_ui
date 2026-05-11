@@ -1,4 +1,4 @@
-//检重模式称重共用的重量显示界面 20250521
+﻿//检重模式称重共用的重量显示界面 20250521
 
 import 'dart:async';
 import 'package:flutter/material.dart';
@@ -458,19 +458,19 @@ class _ScaleWgtCheckModeWidgetState extends State<ScaleWgtCheckModeWidget> {
                             children: [
                               _buildIconAndText(
                                 context,
-                                localizedStrings.iStable,
+                                (localizedStrings?.iStable ?? "iStable"),
                                 weightInfo?.isStable,
                                 1,
                               ),
                               _buildIconAndText(
                                 context,
-                                localizedStrings.iTextNet,
+                                (localizedStrings?.iTextNet ?? "iTextNet"),
                                 weightInfo?.isNet,
                                 2,
                               ),
                               _buildIconAndText(
                                 context,
-                                localizedStrings.iTextZero,
+                                (localizedStrings?.iTextZero ?? "iTextZero"),
                                 weightInfo?.isZero,
                                 3,
                               )
@@ -485,7 +485,7 @@ class _ScaleWgtCheckModeWidgetState extends State<ScaleWgtCheckModeWidget> {
                             children: [
                               showPerformIconBtn(
                                   highLowSettingSvgIcon(),
-                                  localizedStrings.iTitleHLSetting,
+                                  (localizedStrings?.iTitleHLSetting ?? "iTitleHLSetting"),
                                   isStart
                                       ? () {
                                           highLowSettingDialog(context);
@@ -496,7 +496,7 @@ class _ScaleWgtCheckModeWidgetState extends State<ScaleWgtCheckModeWidget> {
                               ),
                               showPerformIconBtn(
                                   performTareSvgIcon(),
-                                  localizedStrings.gBtnTare,
+                                  (localizedStrings?.gBtnTare ?? "gBtnTare"),
                                   isStart
                                       ? () {
                                           PublicFunctions
@@ -509,7 +509,7 @@ class _ScaleWgtCheckModeWidgetState extends State<ScaleWgtCheckModeWidget> {
                               ),
                               showPerformIconBtn(
                                   performZeroSvgIcon(),
-                                  localizedStrings.iBtnZero,
+                                  (localizedStrings?.iBtnZero ?? "iBtnZero"),
                                   isStart
                                       ? () {
                                           PublicFunctions
@@ -521,7 +521,7 @@ class _ScaleWgtCheckModeWidgetState extends State<ScaleWgtCheckModeWidget> {
                                 width: smallPadding,
                               ),
                               Tooltip(
-                                  message: localizedStrings.gBtnSave,
+                                  message: (localizedStrings?.gBtnSave ?? "gBtnSave"),
                                   child: IconButton(
                                       iconSize: 28,
                                       color: Theme.of(context)

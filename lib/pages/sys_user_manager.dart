@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:t_max/data/g_data.dart';
 import 'package:t_max/data/home_page_common_data.dart';
@@ -28,9 +28,9 @@ extension RoleValueExtension on RoleValue {
   String getTranslation(BuildContext context) {
     switch (this) {
       case RoleValue.admin:
-        return localizedStrings.admin; // 这里可以替换为翻译函数
+        return (localizedStrings?.admin ?? "admin"); // 这里可以替换为翻译函数
       case RoleValue.operator:
-        return localizedStrings.operator; // 这里可以替换为翻译函数
+        return (localizedStrings?.operator ?? "operator"); // 这里可以替换为翻译函数
     }
   }
 }
@@ -109,21 +109,21 @@ class SysUserManagerPageState extends State<SysUserManagerPage>
     });
     _eventbus2 = eventBus.on<EventRespDeleteSysUser>().listen((event) {
       if (mounted) {
-        showTipInfo(localizedStrings.fSuccessMsg, context);
+        showTipInfo((localizedStrings?.fSuccessMsg ?? "fSuccessMsg"), context);
         PublicFunctions.getAllSysUsers();
       }
     });
 
     _eventbus3 = eventBus.on<EventRespAddSysUser>().listen((event) {
       if (mounted) {
-        showTipInfo(localizedStrings.fSuccessMsg, context);
+        showTipInfo((localizedStrings?.fSuccessMsg ?? "fSuccessMsg"), context);
         PublicFunctions.getAllSysUsers();
       }
     });
 
     _eventbus3 = eventBus.on<EventRespUpdateSysUser>().listen((event) {
       if (mounted) {
-        showTipInfo(localizedStrings.fSuccessMsg, context);
+        showTipInfo((localizedStrings?.fSuccessMsg ?? "fSuccessMsg"), context);
         PublicFunctions.getAllSysUsers();
       }
     });
@@ -165,7 +165,7 @@ class SysUserManagerPageState extends State<SysUserManagerPage>
         child: Column(
           children: [
             pageHeadInfo(context, width - headWidthPadding,
-                localizedStrings.userManagement, '', () {
+                (localizedStrings?.userManagement ?? "userManagement"), '', () {
               widget.onNavigate(widget.lastRouteName);
             }, showHelp: false),
             Expanded(
@@ -333,8 +333,8 @@ class SysUserManagerPageState extends State<SysUserManagerPage>
       barrierDismissible: false, // 点击对话框外部不关闭对话框
       builder: (BuildContext context) {
         return ShowNormalTipDialog(
-          title: localizedStrings.fTipTitle,
-          msg: localizedStrings.fConfirmDelete,
+          title: (localizedStrings?.fTipTitle ?? "fTipTitle"),
+          msg: (localizedStrings?.fConfirmDelete ?? "fConfirmDelete"),
         );
       },
     ).then((value) {
@@ -431,7 +431,7 @@ class SysUserManagerPageState extends State<SysUserManagerPage>
                   },
                 ),
                 StickyTableColumn(
-                  localizedStrings.userAccount,
+                  (localizedStrings?.userAccount ?? "userAccount"),
                   fixedStart: true,
                   showSort: true,
                   sort: sort,
@@ -451,7 +451,7 @@ class SysUserManagerPageState extends State<SysUserManagerPage>
                   },
                 ),
                 StickyTableColumn(
-                  localizedStrings.userUsername,
+                  (localizedStrings?.userUsername ?? "userUsername"),
                   fixedStart: true,
                   showSort: true,
                   sort: sort,
@@ -471,7 +471,7 @@ class SysUserManagerPageState extends State<SysUserManagerPage>
                   },
                 ),
                 StickyTableColumn(
-                  localizedStrings.userRole,
+                  (localizedStrings?.userRole ?? "userRole"),
                   showSort: true,
                   sort: false,
                   columnWidth: FixedColumnWidth(cellWidth),
@@ -481,10 +481,10 @@ class SysUserManagerPageState extends State<SysUserManagerPage>
                   renderCell: (context, title, data, row, column) {
                     return showRenderCellText(
                         (data as SysUserFromDb).roleId == 1
-                            ? localizedStrings.superAdmin
+                            ? (localizedStrings?.superAdmin ?? "superAdmin")
                             : (data).roleId == 2
-                                ? localizedStrings.admin
-                                : localizedStrings.operator);
+                                ? (localizedStrings?.admin ?? "admin")
+                                : (localizedStrings?.operator ?? "operator"));
                   },
                   renderTitle: (context, title) {
                     return showRenderTitleText(
@@ -493,7 +493,7 @@ class SysUserManagerPageState extends State<SysUserManagerPage>
                   },
                 ),
                 StickyTableColumn(
-                  localizedStrings.userPhone,
+                  (localizedStrings?.userPhone ?? "userPhone"),
                   columnWidth: FixedColumnWidth(cellWidth),
                   showSort: true,
                   sort: false,
@@ -510,7 +510,7 @@ class SysUserManagerPageState extends State<SysUserManagerPage>
                   },
                 ),
                 StickyTableColumn(
-                  localizedStrings.userEmail,
+                  (localizedStrings?.userEmail ?? "userEmail"),
                   columnWidth: FixedColumnWidth(cellWidth),
                   showSort: true,
                   sort: false,
@@ -529,7 +529,7 @@ class SysUserManagerPageState extends State<SysUserManagerPage>
                   },
                 ),
                 StickyTableColumn(
-                  localizedStrings.fCreatedTimeCol,
+                  (localizedStrings?.fCreatedTimeCol ?? "fCreatedTimeCol"),
                   columnWidth: FixedColumnWidth(200),
                   showSort: true,
                   sort: false,
@@ -548,7 +548,7 @@ class SysUserManagerPageState extends State<SysUserManagerPage>
                   },
                 ),
                 StickyTableColumn(
-                  localizedStrings.fUpdateTimeCol,
+                  (localizedStrings?.fUpdateTimeCol ?? "fUpdateTimeCol"),
                   columnWidth: FixedColumnWidth(200),
                   showSort: true,
                   sort: false,
@@ -567,7 +567,7 @@ class SysUserManagerPageState extends State<SysUserManagerPage>
                   },
                 ),
                 StickyTableColumn(
-                  localizedStrings.userIsEnabled,
+                  (localizedStrings?.userIsEnabled ?? "userIsEnabled"),
                   fixedEnd: true,
                   columnWidth: FixedColumnWidth(100),
                   renderCell: (context, title, data, row, column) {
@@ -608,7 +608,7 @@ class SysUserManagerPageState extends State<SysUserManagerPage>
                   },
                 ),
                 StickyTableColumn(
-                  localizedStrings.fTipOperation,
+                  (localizedStrings?.fTipOperation ?? "fTipOperation"),
                   fixedEnd: true,
                   columnWidth: const FixedColumnWidth(120),
                   renderCell: (context, title, data, row, column) {
@@ -761,7 +761,7 @@ class SysUserManagerPageState extends State<SysUserManagerPage>
 //导出配方的json文件，只要导出勾选的配方
   exportFormula() async {
     if (selectedUserRows.isEmpty) {
-      showTipInfo(localizedStrings.gTipNoDataSelected, context);
+      showTipInfo((localizedStrings?.gTipNoDataSelected ?? "gTipNoDataSelected"), context);
       return;
     }
   }
@@ -801,7 +801,7 @@ class SysUserManagerPageState extends State<SysUserManagerPage>
                         });
                       },
                     ),
-                    hintText: localizedStrings.fSearchHint,
+                    hintText: (localizedStrings?.fSearchHint ?? "fSearchHint"),
                     contentPadding: EdgeInsets.symmetric(vertical: 10),
                     hintStyle: textTheme.bodySmall!.copyWith(
                       // 设置提示文本样式
@@ -837,7 +837,7 @@ class SysUserManagerPageState extends State<SysUserManagerPage>
           child: DropdownButton<RoleValue>(
             underline: SizedBox(),
             hint: Text(
-              localizedStrings.userRole,
+              (localizedStrings?.userRole ?? "userRole"),
               style: textTheme.bodySmall!.copyWith(
                 // 设置提示文本样式
                 fontSize: 12,
@@ -854,7 +854,7 @@ class SysUserManagerPageState extends State<SysUserManagerPage>
             items: [
               DropdownMenuItem<RoleValue>(
                 value: null,
-                child: Text(localizedStrings.userRole,
+                child: Text((localizedStrings?.userRole ?? "userRole"),
                     style: textTheme.bodySmall!.copyWith(
                       // 设置提示文本样式
                       fontSize: 12,
@@ -900,7 +900,7 @@ class SysUserManagerPageState extends State<SysUserManagerPage>
           width: 14,
         ),
         Tooltip(
-            message: localizedStrings.fClearSearchConditionBtn, // 提示信息
+            message: (localizedStrings?.fClearSearchConditionBtn ?? "fClearSearchConditionBtn"), // 提示信息
             child: IconButton(
               icon: Icon(
                 Icons.cleaning_services_outlined,
@@ -920,7 +920,7 @@ class SysUserManagerPageState extends State<SysUserManagerPage>
         SizedBox(
           width: regularPadding,
         ),
-        showTextButton(context, 40, localizedStrings.gBtnAdd, () {
+        showTextButton(context, 40, (localizedStrings?.gBtnAdd ?? "gBtnAdd"), () {
           if (mySysUser.roleId == superAdminRoleId && !mySysUser.isChanged!) {
             Navigator.push(
                 context,
@@ -931,7 +931,7 @@ class SysUserManagerPageState extends State<SysUserManagerPage>
                           type: 2,
                           isSuperAccount: true,
                         )));
-            showTipInfo(localizedStrings.pleaseSetSuperAdmin, context);
+            showTipInfo((localizedStrings?.pleaseSetSuperAdmin ?? "pleaseSetSuperAdmin"), context);
             return;
           }
           Navigator.push(
@@ -951,7 +951,7 @@ class SysUserManagerPageState extends State<SysUserManagerPage>
         showTextButton(
             context,
             40,
-            localizedStrings.gBtnDelete,
+            (localizedStrings?.gBtnDelete ?? "gBtnDelete"),
             selectedUserRows.isEmpty
                 ? null
                 : () {
@@ -960,8 +960,8 @@ class SysUserManagerPageState extends State<SysUserManagerPage>
                       barrierDismissible: false, // 点击对话框外部不关闭对话框
                       builder: (BuildContext context) {
                         return ShowNormalTipDialog(
-                          title: localizedStrings.fTipTitle,
-                          msg: localizedStrings.fConfirmDelete,
+                          title: (localizedStrings?.fTipTitle ?? "fTipTitle"),
+                          msg: (localizedStrings?.fConfirmDelete ?? "fConfirmDelete"),
                         );
                       },
                     ).then((value) {

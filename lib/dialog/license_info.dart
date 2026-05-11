@@ -1,4 +1,4 @@
-import 'dart:io';
+﻿import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -133,11 +133,11 @@ class LicenseInfoDialogState extends State<LicenseInfoDialog> {
 
   @override
   Widget build(BuildContext context) {
-    systemId = localizedStrings.gSystemId;
+    systemId = (localizedStrings?.gSystemId ?? "gSystemId");
     pidCtl.text = systemId + pId;
     return AlertDialog(
       title: getDialogTitle(
-          context, localizedStrings.gTitleLicense, Icons.key, 420),
+          context, (localizedStrings?.gTitleLicense ?? "gTitleLicense"), Icons.key, 420),
       content: Container(
         height: 400,
         width: 300,
@@ -168,7 +168,7 @@ class LicenseInfoDialogState extends State<LicenseInfoDialog> {
                     ? const SizedBox()
                     : SizedBox(
                         width: 200,
-                        child: Text(localizedStrings.gExpirationDate,
+                        child: Text((localizedStrings?.gExpirationDate ?? "gExpirationDate"),
                             textAlign: TextAlign.left,
                             style: TextStyle(
                               fontSize: 16,
@@ -200,7 +200,7 @@ class LicenseInfoDialogState extends State<LicenseInfoDialog> {
               btnWidth: 200,
               btnHeight: 40,
               icon: Icons.file_open_outlined,
-              text: localizedStrings.btn_add_lic_file,
+              text: (localizedStrings?.btn_add_lic_file ?? "btn_add_lic_file"),
               onPressed: () async {
                 String filePath = '';
                 try {
@@ -237,7 +237,7 @@ class LicenseInfoDialogState extends State<LicenseInfoDialog> {
               btnWidth: 200,
               btnHeight: 40,
               icon: Icons.add_box_outlined,
-              text: localizedStrings.button_add_license,
+              text: (localizedStrings?.button_add_license ?? "button_add_license"),
               onPressed: (licCtl.text.isNotEmpty)
                   ? () async {
                       resCtl.text = "";
@@ -271,7 +271,7 @@ class LicenseInfoDialogState extends State<LicenseInfoDialog> {
             ),
             SizedBox(
               width: 200,
-              child: Text(localizedStrings.gTipResult,
+              child: Text((localizedStrings?.gTipResult ?? "gTipResult"),
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 16,
@@ -305,7 +305,7 @@ class LicenseInfoDialogState extends State<LicenseInfoDialog> {
               btnWidth: 120,
               btnHeight: 40,
               icon: Icons.exit_to_app,
-              text: localizedStrings.gBtnExit,
+              text: (localizedStrings?.gBtnExit ?? "gBtnExit"),
               onPressed: () {
                 myScreenMgr.isMainScreen = true;
                 Navigator.of(context).pop();

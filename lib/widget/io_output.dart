@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/data/language.dart';
@@ -283,7 +283,7 @@ class _SetOutputPortDialogState extends State<SetOutputPortDialog> {
             // 头部
             ...dialogHeadStyle(
               context,
-              localizedStrings.ioSetting,
+              (localizedStrings?.ioSetting ?? "ioSetting"),
               true,
               onClose: () {
                 Navigator.of(context).pop();
@@ -301,7 +301,7 @@ class _SetOutputPortDialogState extends State<SetOutputPortDialog> {
                     ),
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      localizedStrings.inputSetting,
+                      (localizedStrings?.inputSetting ?? "inputSetting"),
                       style: Theme.of(context).textTheme.labelMedium?.copyWith(
                             fontWeight: FontWeight.bold,
                           ),
@@ -315,7 +315,7 @@ class _SetOutputPortDialogState extends State<SetOutputPortDialog> {
                         height: 90,
                         child: Column(children: [
                           showItemNameWithStar(context,
-                              localizedStrings.inputPort + " 1", false),
+                              (localizedStrings?.inputPort ?? "inputPort") + " 1", false),
                           Row(
                             children: [
                               Expanded(
@@ -330,7 +330,7 @@ class _SetOutputPortDialogState extends State<SetOutputPortDialog> {
                         height: 90,
                         child: Column(children: [
                           showItemNameWithStar(context,
-                              localizedStrings.inputPort + " 2", false),
+                              (localizedStrings?.inputPort ?? "inputPort") + " 2", false),
                           Row(
                             children: [
                               Expanded(
@@ -345,7 +345,7 @@ class _SetOutputPortDialogState extends State<SetOutputPortDialog> {
                         height: 90,
                         child: Column(children: [
                           showItemNameWithStar(context,
-                              localizedStrings.inputPort + " 3", false),
+                              (localizedStrings?.inputPort ?? "inputPort") + " 3", false),
                           Row(
                             children: [
                               Expanded(
@@ -360,7 +360,7 @@ class _SetOutputPortDialogState extends State<SetOutputPortDialog> {
                         height: 90,
                         child: Column(children: [
                           showItemNameWithStar(context,
-                              localizedStrings.inputPort + " 4", false),
+                              (localizedStrings?.inputPort ?? "inputPort") + " 4", false),
                           Row(
                             children: [
                               Expanded(
@@ -382,7 +382,7 @@ class _SetOutputPortDialogState extends State<SetOutputPortDialog> {
               ),
               alignment: Alignment.centerLeft,
               child: Text(
-                localizedStrings.outputSetting,
+                (localizedStrings?.outputSetting ?? "outputSetting"),
                 style: Theme.of(context).textTheme.labelMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -397,7 +397,7 @@ class _SetOutputPortDialogState extends State<SetOutputPortDialog> {
                   SizedBox(
                     width: 100,
                     child: Text(
-                      localizedStrings.outputPort,
+                      (localizedStrings?.outputPort ?? "outputPort"),
                       style: Theme.of(context).textTheme.labelMedium?.apply(),
                     ),
                   ),
@@ -405,7 +405,7 @@ class _SetOutputPortDialogState extends State<SetOutputPortDialog> {
                   SizedBox(
                     width: 180,
                     child: Text(
-                      localizedStrings.delayedStart,
+                      (localizedStrings?.delayedStart ?? "delayedStart"),
                       style: Theme.of(context).textTheme.labelMedium?.apply(),
                     ),
                   ),
@@ -413,7 +413,7 @@ class _SetOutputPortDialogState extends State<SetOutputPortDialog> {
                   SizedBox(
                     width: 200,
                     child: Text(
-                      localizedStrings.triggerOffValue,
+                      (localizedStrings?.triggerOffValue ?? "triggerOffValue"),
                       style: Theme.of(context).textTheme.labelMedium?.apply(),
                     ),
                   ),
@@ -421,7 +421,7 @@ class _SetOutputPortDialogState extends State<SetOutputPortDialog> {
                   SizedBox(
                     width: 300,
                     child: Text(
-                      localizedStrings.fRemarkCol,
+                      (localizedStrings?.fRemarkCol ?? "fRemarkCol"),
                       style: Theme.of(context).textTheme.labelMedium?.apply(),
                     ),
                   ),
@@ -565,7 +565,7 @@ class _SetOutputPortDialogState extends State<SetOutputPortDialog> {
                                 ),
                                 contentPadding:
                                     const EdgeInsets.symmetric(horizontal: 8),
-                                hintText: localizedStrings.fRemarkCol,
+                                hintText: (localizedStrings?.fRemarkCol ?? "fRemarkCol"),
                                 hintStyle: getTextStyle(
                                   color: colorScheme.surfaceContainerHighest,
                                 ),
@@ -638,7 +638,7 @@ class _SetOutputPortDialogState extends State<SetOutputPortDialog> {
                         Navigator.of(context).pop();
                       },
                       child: Text(
-                        localizedStrings.gBtnSave,
+                        (localizedStrings?.gBtnSave ?? "gBtnSave"),
                         style: Theme.of(context).textTheme.bodySmall!.apply(
                               color: Theme.of(context).colorScheme.onPrimary,
                               overflow: TextOverflow.ellipsis,
@@ -664,7 +664,7 @@ class _SetOutputPortDialogState extends State<SetOutputPortDialog> {
                         Navigator.of(context).pop();
                       },
                       child: Text(
-                        localizedStrings.button_back,
+                        (localizedStrings?.button_back ?? "button_back"),
                         style: Theme.of(context).textTheme.bodySmall!.apply(
                               color: Theme.of(context).colorScheme.onPrimary,
                               overflow: TextOverflow.ellipsis,

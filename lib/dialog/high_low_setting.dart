@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:t_max/data/high_low_weight.dart';
 import 'package:t_max/widget/custom_button.dart';
@@ -41,7 +41,7 @@ class HighLowSettingDialogState extends State<HighLowSettingDialog> {
           child: Row(
             children: [
               Icon(Icons.edit, color: Theme.of(context).colorScheme.onPrimary),
-              Text(localizedStrings.iTitleHLSetting,
+              Text((localizedStrings?.iTitleHLSetting ?? "iTitleHLSetting"),
                   style:
                       TextStyle(color: Theme.of(context).colorScheme.onPrimary))
             ],
@@ -145,7 +145,7 @@ class HighLowSettingDialogState extends State<HighLowSettingDialog> {
                       const SizedBox(
                         height: 20,
                       ),
-                      Text(localizedStrings.iTipHLUnit,
+                      Text((localizedStrings?.iTipHLUnit ?? "iTipHLUnit"),
                           textAlign: TextAlign.right),
                       const SizedBox(
                         height: 30,
@@ -188,7 +188,7 @@ class HighLowSettingDialogState extends State<HighLowSettingDialog> {
                 btnWidth: 120,
                 btnHeight: 40,
                 icon: Icons.check_circle,
-                text: localizedStrings.gBtnConfirm,
+                text: (localizedStrings?.gBtnConfirm ?? "gBtnConfirm"),
                 onPressed: () {
                   Navigator.of(context).pop();
                 }),
@@ -197,7 +197,7 @@ class HighLowSettingDialogState extends State<HighLowSettingDialog> {
                 btnWidth: 120,
                 btnHeight: 40,
                 icon: Icons.cancel,
-                text: localizedStrings.gBtnCancel,
+                text: (localizedStrings?.gBtnCancel ?? "gBtnCancel"),
                 onPressed: () {
                   Navigator.of(context).pop();
                 })

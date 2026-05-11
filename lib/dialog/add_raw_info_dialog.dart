@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:t_max/data/formula_common.dart';
 import 'package:t_max/data/formula_scale_data.dart';
 import 'package:t_max/data/g_data.dart';
@@ -132,7 +132,7 @@ class AddRawDialogState extends State<AddRawDialog> {
                     DropdownMenuItem<String>(
                       value: null,
                       child: Text(
-                        localizedStrings.fPleaseSelectCategory,
+                        (localizedStrings?.fPleaseSelectCategory ?? "fPleaseSelectCategory"),
                         style: Theme.of(context).textTheme.bodySmall!.copyWith(
                               // 设置提示文本样式
                               fontSize: 12,
@@ -147,7 +147,7 @@ class AddRawDialogState extends State<AddRawDialog> {
                     DropdownMenuItem<String>(
                       value: null,
                       child: Text(
-                        localizedStrings.fPleaseSelectCategory,
+                        (localizedStrings?.fPleaseSelectCategory ?? "fPleaseSelectCategory"),
                         style: Theme.of(context).textTheme.bodySmall!.copyWith(
                               // 设置提示文本样式
                               fontSize: 12,
@@ -395,7 +395,7 @@ class AddRawDialogState extends State<AddRawDialog> {
           children: [
             // 头部
             ...dialogHeadStyle(
-                context, localizedStrings.fAddRawMaterialBtn, true),
+                context, (localizedStrings?.fAddRawMaterialBtn ?? "fAddRawMaterialBtn"), true),
 
             // 中部
             Expanded(
@@ -412,7 +412,7 @@ class AddRawDialogState extends State<AddRawDialog> {
                       flex: 1,
                       child: Column(children: [
                         showItemNameWithStar(
-                            context, localizedStrings.fMaterialIdCol, true),
+                            context, (localizedStrings?.fMaterialIdCol ?? "fMaterialIdCol"), true),
                         SizedBox(
                           height: 48,
                           child: Row(children: [
@@ -466,7 +466,7 @@ class AddRawDialogState extends State<AddRawDialog> {
                       flex: 1,
                       child: Column(children: [
                         showItemNameWithStar(
-                            context, localizedStrings.fMaterialNameCol, true),
+                            context, (localizedStrings?.fMaterialNameCol ?? "fMaterialNameCol"), true),
                         SizedBox(
                           height: 48,
                           child: Row(children: [
@@ -527,9 +527,9 @@ class AddRawDialogState extends State<AddRawDialog> {
                       flex: 1,
                       child: Column(children: [
                         showItemNameWithStar(
-                            context, localizedStrings.fFmaCategoryCol, false),
+                            context, (localizedStrings?.fFmaCategoryCol ?? "fFmaCategoryCol"), false),
                         showTypeDropDownButton(
-                            localizedStrings.fPleaseSelectCategory, rawTypeCtl),
+                            (localizedStrings?.fPleaseSelectCategory ?? "fPleaseSelectCategory"), rawTypeCtl),
                       ])),
                   SizedBox(
                     width: largePadding,
@@ -545,7 +545,7 @@ class AddRawDialogState extends State<AddRawDialog> {
                           child: Row(children: [
                             Expanded(
                               child: showTextButton(context, btnHeight,
-                                  localizedStrings.fRawCategoryManagement, () {
+                                  (localizedStrings?.fRawCategoryManagement ?? "fRawCategoryManagement"), () {
                                 showRawTypeMgrDialog();
                               },
                                   Theme.of(context).colorScheme.onPrimary,
@@ -571,8 +571,8 @@ class AddRawDialogState extends State<AddRawDialog> {
                       flex: 1,
                       child: Column(children: [
                         showItemNameWithStar(
-                            context, localizedStrings.selectDevice, false),
-                        showScaleDropDownBtn(localizedStrings.selectDevice),
+                            context, (localizedStrings?.selectDevice ?? "selectDevice"), false),
+                        showScaleDropDownBtn(localizedStrings?.selectDevice ?? "selectDevice"),
                       ])),
                   SizedBox(
                     width: largePadding,
@@ -581,7 +581,7 @@ class AddRawDialogState extends State<AddRawDialog> {
                       flex: 1,
                       child: Column(children: [
                         showItemNameWithStar(
-                            context, localizedStrings.verificationCode, false),
+                            context, (localizedStrings?.verificationCode ?? "verificationCode"), false),
                         SizedBox(
                           height: 48,
                           child: Row(children: [
@@ -648,8 +648,8 @@ class AddRawDialogState extends State<AddRawDialog> {
                       flex: 1,
                       child: Column(children: [
                         showItemNameWithStar(
-                            context, localizedStrings.outputPort, false),
-                        showOutputDropDownBtn(localizedStrings.outputPort),
+                            context, (localizedStrings?.outputPort ?? "outputPort"), false),
+                        showOutputDropDownBtn(localizedStrings?.outputPort ?? "outputPort"),
                       ])),
                   SizedBox(
                     width: largePadding,
@@ -713,7 +713,7 @@ class AddRawDialogState extends State<AddRawDialog> {
                               // 检查原料是否已经存在
                               for (var item in rawDataList) {
                                 if (item.materialId == rawCodeCtl.text) {
-                                  showTipInfo(localizedStrings.fRawIdDuplicate,
+                                  showTipInfo((localizedStrings?.fRawIdDuplicate ?? "fRawIdDuplicate"),
                                       context);
                                   return;
                                 }
@@ -749,7 +749,7 @@ class AddRawDialogState extends State<AddRawDialog> {
                               Navigator.pop(context);
                             },
                       child: Text(
-                        localizedStrings.gBtnConfirm,
+                        (localizedStrings?.gBtnConfirm ?? "gBtnConfirm"),
                         style: Theme.of(context).textTheme.labelMedium!.apply(
                               color: Theme.of(context).colorScheme.onPrimary,
                               overflow: TextOverflow.ellipsis,
@@ -775,7 +775,7 @@ class AddRawDialogState extends State<AddRawDialog> {
                         Navigator.pop(context);
                       },
                       child: Text(
-                        localizedStrings.gBtnCancel,
+                        (localizedStrings?.gBtnCancel ?? "gBtnCancel"),
                         style: Theme.of(context).textTheme.labelMedium!.apply(
                               color: Theme.of(context).colorScheme.onPrimary,
                               overflow: TextOverflow.ellipsis,
@@ -809,7 +809,7 @@ class _InputSection extends StatelessWidget {
           child: TextField(
             controller: rawRemarkCtl,
             decoration: inputDecoration.copyWith(
-              hintText: localizedStrings.fInputIngredientDescHint,
+              hintText: (localizedStrings?.fInputIngredientDescHint ?? "fInputIngredientDescHint"),
               hintStyle: TextStyle(
                 color: Theme.of(context).colorScheme.surfaceContainerHighest,
               ),
@@ -840,7 +840,7 @@ class _LabelSection extends StatelessWidget {
           child: Container(
             alignment: Alignment.centerLeft,
             child: Text(
-              localizedStrings.fIngredientRemark,
+              (localizedStrings?.fIngredientRemark ?? "fIngredientRemark"),
               style: textStyle,
             ),
           ),
@@ -959,13 +959,13 @@ class EditRawDialogState extends State<EditRawDialog> {
               ? [
                   DropdownMenuItem<String>(
                     value: null,
-                    child: Text(localizedStrings.fPleaseSelectCategory),
+                    child: Text(localizedStrings?.fPleaseSelectCategory ?? "fPleaseSelectCategory"),
                   )
                 ]
               : [
                   DropdownMenuItem<String>(
                     value: null,
-                    child: Text(localizedStrings.fPleaseSelectCategory),
+                    child: Text(localizedStrings?.fPleaseSelectCategory ?? "fPleaseSelectCategory"),
                   ),
                   ...rawTypeList.map((CategoryTypeList item) {
                     return DropdownMenuItem<String>(
@@ -1181,7 +1181,7 @@ class EditRawDialogState extends State<EditRawDialog> {
         child: Column(
           children: [
             // 头部
-            ...dialogHeadStyle(context, localizedStrings.fEditMaterial, true),
+            ...dialogHeadStyle(context, (localizedStrings?.fEditMaterial ?? "fEditMaterial"), true),
 
             // 中部
             Expanded(
@@ -1198,7 +1198,7 @@ class EditRawDialogState extends State<EditRawDialog> {
                       flex: 1,
                       child: Column(children: [
                         showItemNameWithStar(
-                            context, localizedStrings.fMaterialIdCol, true),
+                            context, (localizedStrings?.fMaterialIdCol ?? "fMaterialIdCol"), true),
                         SizedBox(
                           height: 48,
                           child: Row(children: [
@@ -1249,7 +1249,7 @@ class EditRawDialogState extends State<EditRawDialog> {
                       flex: 1,
                       child: Column(children: [
                         showItemNameWithStar(
-                            context, localizedStrings.fMaterialNameCol, true),
+                            context, (localizedStrings?.fMaterialNameCol ?? "fMaterialNameCol"), true),
                         SizedBox(
                           height: 48,
                           child: Row(children: [
@@ -1320,9 +1320,9 @@ class EditRawDialogState extends State<EditRawDialog> {
                       flex: 1,
                       child: Column(children: [
                         showItemNameWithStar(
-                            context, localizedStrings.fFmaCategoryCol, false),
+                            context, (localizedStrings?.fFmaCategoryCol ?? "fFmaCategoryCol"), false),
                         showTypeDropDownButton(
-                            localizedStrings.fPleaseSelectCategory, rawTypeCtl),
+                            (localizedStrings?.fPleaseSelectCategory ?? "fPleaseSelectCategory"), rawTypeCtl),
                       ])),
                   SizedBox(
                     width: 20,
@@ -1338,7 +1338,7 @@ class EditRawDialogState extends State<EditRawDialog> {
                           child: Row(children: [
                             Expanded(
                               child: showTextButton(context, btnHeight,
-                                  localizedStrings.fRawCategoryManagement, () {
+                                  (localizedStrings?.fRawCategoryManagement ?? "fRawCategoryManagement"), () {
                                 showRawTypeMgrDialog();
                               },
                                   Theme.of(context).colorScheme.onPrimary,
@@ -1364,8 +1364,8 @@ class EditRawDialogState extends State<EditRawDialog> {
                       flex: 1,
                       child: Column(children: [
                         showItemNameWithStar(
-                            context, localizedStrings.selectDevice, false),
-                        showScaleDropDownBtn(localizedStrings.selectDevice),
+                            context, (localizedStrings?.selectDevice ?? "selectDevice"), false),
+                        showScaleDropDownBtn(localizedStrings?.selectDevice ?? "selectDevice"),
                       ])),
                   SizedBox(
                     width: largePadding,
@@ -1374,7 +1374,7 @@ class EditRawDialogState extends State<EditRawDialog> {
                       flex: 1,
                       child: Column(children: [
                         showItemNameWithStar(
-                            context, localizedStrings.verificationCode, false),
+                            context, (localizedStrings?.verificationCode ?? "verificationCode"), false),
                         SizedBox(
                           height: 48,
                           child: Row(children: [
@@ -1441,8 +1441,8 @@ class EditRawDialogState extends State<EditRawDialog> {
                       flex: 1,
                       child: Column(children: [
                         showItemNameWithStar(
-                            context, localizedStrings.outputPort, false),
-                        showOutputDropDownBtn(localizedStrings.outputPort),
+                            context, (localizedStrings?.outputPort ?? "outputPort"), false),
+                        showOutputDropDownBtn(localizedStrings?.outputPort ?? "outputPort"),
                       ])),
                   SizedBox(
                     width: largePadding,
@@ -1464,7 +1464,7 @@ class EditRawDialogState extends State<EditRawDialog> {
                       flex: 1,
                       child: Column(children: [
                         showItemNameWithStar(
-                            context, localizedStrings.fIngredientRemark, false),
+                            context, (localizedStrings?.fIngredientRemark ?? "fIngredientRemark"), false),
                         SizedBox(
                           height: 74,
                           child: Row(children: [
@@ -1571,7 +1571,7 @@ class EditRawDialogState extends State<EditRawDialog> {
                                   Navigator.pop(context);
                                 },
                       child: Text(
-                        localizedStrings.gBtnConfirm,
+                        (localizedStrings?.gBtnConfirm ?? "gBtnConfirm"),
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.normal,
@@ -1599,7 +1599,7 @@ class EditRawDialogState extends State<EditRawDialog> {
                         Navigator.pop(context);
                       },
                       child: Text(
-                        localizedStrings.gBtnCancel,
+                        (localizedStrings?.gBtnCancel ?? "gBtnCancel"),
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.normal,

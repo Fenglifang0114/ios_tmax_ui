@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:t_max/data/g_data.dart';
 import 'package:t_max/data/language.dart';
@@ -87,7 +87,7 @@ class AddPluInfoDialogState extends State<AddPluInfoDialog> {
         String res = event.obj;
         setState(() {
           if (res == 'true') {
-            showTipInfo(localizedStrings.fPluExist, context);
+            showTipInfo((localizedStrings?.fPluExist ?? "fPluExist"), context);
             return;
           } else {
             savePluInfo();
@@ -584,8 +584,8 @@ class AddPluInfoDialogState extends State<AddPluInfoDialog> {
               ...dialogHeadStyle(
                   context,
                   widget.type == 0
-                      ? localizedStrings.gBtnAdd
-                      : localizedStrings.gBtnEdit,
+                      ? (localizedStrings?.gBtnAdd ?? "gBtnAdd")
+                      : (localizedStrings?.gBtnEdit ?? "gBtnEdit"),
                   true),
 
               // 中部
@@ -622,11 +622,11 @@ class AddPluInfoDialogState extends State<AddPluInfoDialog> {
                         onPressed: () {
                           if (!checkOk()) {
                             showTipInfo(
-                                localizedStrings.fInputDataIncomplete, context);
+                                (localizedStrings?.fInputDataIncomplete ?? "fInputDataIncomplete"), context);
                             return;
                           }
                           if (checkPluExist()) {
-                            showTipInfo(localizedStrings.fPluExist, context);
+                            showTipInfo((localizedStrings?.fPluExist ?? "fPluExist"), context);
                             return;
                           }
                           if (widget.type == 0) {
@@ -637,7 +637,7 @@ class AddPluInfoDialogState extends State<AddPluInfoDialog> {
                           }
                         },
                         child: Text(
-                          localizedStrings.gBtnConfirm,
+                          (localizedStrings?.gBtnConfirm ?? "gBtnConfirm"),
                           style: getTextStyle(
                             color: Theme.of(context).colorScheme.onPrimary,
                           ),
@@ -663,7 +663,7 @@ class AddPluInfoDialogState extends State<AddPluInfoDialog> {
                           Navigator.pop(context);
                         },
                         child: Text(
-                          localizedStrings.gBtnCancel,
+                          (localizedStrings?.gBtnCancel ?? "gBtnCancel"),
                           style: getTextStyle(
                             color: Theme.of(context).colorScheme.onPrimary,
                           ),

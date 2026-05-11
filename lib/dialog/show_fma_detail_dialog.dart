@@ -1,4 +1,4 @@
-// 展示配方详情弹框组件
+﻿// 展示配方详情弹框组件
 import 'package:flutter/material.dart';
 import 'package:t_max/data/f_raw_name.dart';
 import 'package:t_max/data/formula_common.dart';
@@ -24,8 +24,8 @@ class ShowFormulaDetailDialogState extends State<ShowFormulaDetailDialog> {
 
   // 创建一个映射表，将枚举值与翻译关联起来
   Map<FormulaMode, String> formulaModeTranslation = {
-    FormulaMode.wgt: localizedStrings.fWeightMode,
-    FormulaMode.pct: localizedStrings.fPctMode,
+    FormulaMode.wgt: (localizedStrings?.fWeightMode ?? "fWeightMode"),
+    FormulaMode.pct: (localizedStrings?.fPctMode ?? "fPctMode"),
   };
 
   @override
@@ -94,7 +94,7 @@ class ShowFormulaDetailDialogState extends State<ShowFormulaDetailDialog> {
             // 头部
             ...dialogHeadStyle(
               context,
-              localizedStrings.fFormulaDetailsTitle,
+              (localizedStrings?.fFormulaDetailsTitle ?? "fFormulaDetailsTitle"),
               true,
               onClose: () {
                 Navigator.pop(context, false);
@@ -117,7 +117,7 @@ class ShowFormulaDetailDialogState extends State<ShowFormulaDetailDialog> {
                           text: TextSpan(
                             children: [
                               TextSpan(
-                                text: localizedStrings.fFmaIdLabel + ': ',
+                                text: (localizedStrings?.fFmaIdLabel ?? "fFmaIdLabel") + ': ',
                                 style: Theme.of(context)
                                     .textTheme
                                     .bodySmall!
@@ -154,7 +154,7 @@ class ShowFormulaDetailDialogState extends State<ShowFormulaDetailDialog> {
                             text: TextSpan(
                               children: [
                                 TextSpan(
-                                  text: localizedStrings.fFmaNameLabel + ': ',
+                                  text: (localizedStrings?.fFmaNameLabel ?? "fFmaNameLabel") + ': ',
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodySmall!
@@ -199,7 +199,7 @@ class ShowFormulaDetailDialogState extends State<ShowFormulaDetailDialog> {
                           text: TextSpan(
                             children: [
                               TextSpan(
-                                text: localizedStrings.fIngredientCountLabel +
+                                text: (localizedStrings?.fIngredientCountLabel ?? "fIngredientCountLabel") +
                                     ': ',
                                 style: Theme.of(context)
                                     .textTheme
@@ -234,7 +234,7 @@ class ShowFormulaDetailDialogState extends State<ShowFormulaDetailDialog> {
                           text: TextSpan(
                             children: [
                               TextSpan(
-                                text: localizedStrings.fFmaBarcode + ': ',
+                                text: (localizedStrings?.fFmaBarcode ?? "fFmaBarcode") + ': ',
                                 style: Theme.of(context)
                                     .textTheme
                                     .bodySmall!
@@ -270,7 +270,7 @@ class ShowFormulaDetailDialogState extends State<ShowFormulaDetailDialog> {
                                 text: TextSpan(
                                   children: [
                                     TextSpan(
-                                      text: localizedStrings.fTotalWeightLabel +
+                                      text: (localizedStrings?.fTotalWeightLabel ?? "fTotalWeightLabel") +
                                           ': ',
                                       style: Theme.of(context)
                                           .textTheme
@@ -480,7 +480,7 @@ class ShowFormulaDetailDialogState extends State<ShowFormulaDetailDialog> {
                       height: 42,
                       alignment: Alignment.centerLeft,
                       child: Text(
-                        localizedStrings.fRemarkCol,
+                        (localizedStrings?.fRemarkCol ?? "fRemarkCol"),
                         style: Theme.of(context).textTheme.bodyMedium!.apply(
                             color: Theme.of(context).colorScheme.onSurface,
                             overflow: TextOverflow.ellipsis),
@@ -539,7 +539,7 @@ class ShowFormulaDetailDialogState extends State<ShowFormulaDetailDialog> {
                         Navigator.pop(ctx, true);
                       },
                       child: Text(
-                        localizedStrings.fStartWeighingBtn,
+                        (localizedStrings?.fStartWeighingBtn ?? "fStartWeighingBtn"),
                         style: Theme.of(context).textTheme.bodySmall!.apply(
                               color: Theme.of(context).colorScheme.onPrimary,
                               overflow: TextOverflow.ellipsis,
@@ -565,7 +565,7 @@ class ShowFormulaDetailDialogState extends State<ShowFormulaDetailDialog> {
                         Navigator.pop(ctx, false);
                       },
                       child: Text(
-                        localizedStrings.gBtnCancel,
+                        (localizedStrings?.gBtnCancel ?? "gBtnCancel"),
                         style: Theme.of(context).textTheme.bodySmall!.apply(
                               color: Theme.of(context).colorScheme.onPrimary,
                               overflow: TextOverflow.ellipsis,

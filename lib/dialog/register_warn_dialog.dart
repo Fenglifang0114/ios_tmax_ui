@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:t_max/data/language.dart';
 
 registerWarnDialog(BuildContext context) {
@@ -31,7 +31,7 @@ registerWarnDialog(BuildContext context) {
                     ),
                     const SizedBox(width: 20),
                     Text(
-                      localizedStrings.fTipTitle,
+                      (localizedStrings?.fTipTitle ?? "fTipTitle"),
                       style: TextStyle(
                           color: Theme.of(context).colorScheme.onPrimary),
                       maxLines: 3,

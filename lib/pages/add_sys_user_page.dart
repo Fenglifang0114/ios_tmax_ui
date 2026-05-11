@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:t_max/data/g_data.dart';
 import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/data/routes_data.dart';
@@ -400,7 +400,7 @@ class AddSysUserPageState extends State<AddSysUserPage> {
                     ? () {
                         if (pwd1Ctl.text != pwd2Ctl.text) {
                           showTipInfo(
-                              localizedStrings.tipPasswordNotSame, context);
+                              (localizedStrings?.tipPasswordNotSame ?? "tipPasswordNotSame"), context);
                           return;
                         }
 
@@ -408,7 +408,7 @@ class AddSysUserPageState extends State<AddSysUserPage> {
                           for (var item in widget.sysUserList) {
                             if (item.userName == userNameCtl.text) {
                               showTipInfo(
-                                  localizedStrings.tipAccountExist, context);
+                                  (localizedStrings?.tipAccountExist ?? "tipAccountExist"), context);
                               return;
                             }
                           }
@@ -419,7 +419,7 @@ class AddSysUserPageState extends State<AddSysUserPage> {
                             if (item.userName == userNameCtl.text &&
                                 item.userId != widget.initUserInfo.userId) {
                               showTipInfo(
-                                  localizedStrings.tipAccountExist, context);
+                                  (localizedStrings?.tipAccountExist ?? "tipAccountExist"), context);
                               return;
                             }
                           }
@@ -429,7 +429,7 @@ class AddSysUserPageState extends State<AddSysUserPage> {
                       }
                     : null,
                 child: Text(
-                  localizedStrings.gBtnSave,
+                  (localizedStrings?.gBtnSave ?? "gBtnSave"),
                   style: getTextStyle(
                     color: colorScheme.onPrimary,
                   ),
@@ -454,7 +454,7 @@ class AddSysUserPageState extends State<AddSysUserPage> {
                   Navigator.pop(context);
                 },
                 child: Text(
-                  localizedStrings.fBackBtn,
+                  (localizedStrings?.fBackBtn ?? "fBackBtn"),
                   style: getTextStyle(),
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -477,7 +477,7 @@ class AddSysUserPageState extends State<AddSysUserPage> {
           controller: _scrollController,
           child: Column(
             children: [
-              showTitlePart(localizedStrings.userBasicInfo),
+              showTitlePart(localizedStrings?.userBasicInfo ?? "userBasicInfo"),
               Container(
                   padding: const EdgeInsets.only(left: 20, right: 20),
                   child: Row(
@@ -488,7 +488,7 @@ class AddSysUserPageState extends State<AddSysUserPage> {
                           height: 90,
                           child: Column(children: [
                             showItemNameWithStar(context,
-                                localizedStrings.userAccount + ' ', true),
+                                (localizedStrings?.userAccount ?? "userAccount") + ' ', true),
                             showInputBox(userNameCtl, ''),
                           ]),
                         ),
@@ -500,7 +500,7 @@ class AddSysUserPageState extends State<AddSysUserPage> {
                           height: 90,
                           child: Column(children: [
                             showItemNameWithStar(context,
-                                localizedStrings.userUsername + ' ', true),
+                                (localizedStrings?.userUsername ?? "userUsername") + ' ', true),
                             showInputBox(nickNameCtl, ''),
                           ]),
                         ),
@@ -512,7 +512,7 @@ class AddSysUserPageState extends State<AddSysUserPage> {
                           height: 90,
                           child: Column(children: [
                             showItemNameWithStar(context,
-                                localizedStrings.userPhone + ' ', false),
+                                (localizedStrings?.userPhone ?? "userPhone") + ' ', false),
                             showInputBox(phoneCtl, ''),
                           ]),
                         ),
@@ -524,12 +524,12 @@ class AddSysUserPageState extends State<AddSysUserPage> {
                           height: 90,
                           child: Column(children: [
                             showItemNameWithStar(context,
-                                localizedStrings.userEmail + ' ', false),
+                                (localizedStrings?.userEmail ?? "userEmail") + ' ', false),
                             showInputBox(emailCtl, ''),
                           ]),
                         ),
                       ])),
-              showTitlePart(localizedStrings.userPassword),
+              showTitlePart(localizedStrings?.userPassword ?? "userPassword"),
               Container(
                   padding: const EdgeInsets.only(left: 20, right: 20),
                   child: Row(
@@ -539,7 +539,7 @@ class AddSysUserPageState extends State<AddSysUserPage> {
                           width: inputWidth,
                           height: 90,
                           child: Column(children: [
-                            showPwdName(localizedStrings.userPassword + ' ',
+                            showPwdName((localizedStrings?.userPassword ?? "userPassword") + ' ',
                                 widget.type == 2 ? true : false, 0),
                             showInputPwdBox(pwd1Ctl, '', seePwdList[0]),
                           ]),
@@ -552,14 +552,14 @@ class AddSysUserPageState extends State<AddSysUserPage> {
                           height: 90,
                           child: Column(children: [
                             showPwdName(
-                                localizedStrings.userConfirmPassword + ' ',
+                                (localizedStrings?.userConfirmPassword ?? "userConfirmPassword") + ' ',
                                 widget.type == 2 ? true : false,
                                 1),
                             showInputPwdBox(pwd2Ctl, '', seePwdList[1]),
                           ]),
                         ),
                       ])),
-              showTitlePart(localizedStrings.userRole),
+              showTitlePart(localizedStrings?.userRole ?? "userRole"),
               Container(
                   padding: const EdgeInsets.only(left: 20, right: 20),
                   height: 50,
@@ -582,7 +582,7 @@ class AddSysUserPageState extends State<AddSysUserPage> {
                             SizedBox(
                               width: 150,
                               child: Text(
-                                localizedStrings.superAdmin,
+                                (localizedStrings?.superAdmin ?? "superAdmin"),
                                 style: getTextStyle(),
                                 overflow: TextOverflow.ellipsis,
                               ),
@@ -608,7 +608,7 @@ class AddSysUserPageState extends State<AddSysUserPage> {
                             SizedBox(
                               width: 150,
                               child: Text(
-                                localizedStrings.admin,
+                                (localizedStrings?.admin ?? "admin"),
                                 style: getTextStyle(),
                                 overflow: TextOverflow.ellipsis,
                               ),
@@ -636,7 +636,7 @@ class AddSysUserPageState extends State<AddSysUserPage> {
                               SizedBox(
                                 width: 150,
                                 child: Text(
-                                  localizedStrings.operator,
+                                  (localizedStrings?.operator ?? "operator"),
                                   style: getTextStyle(),
                                   overflow: TextOverflow.ellipsis,
                                 ),
@@ -669,13 +669,13 @@ class AddSysUserPageState extends State<AddSysUserPage> {
 
   List<Widget> operatorPart() {
     return [
-      showTitlePart(localizedStrings.userConfigPermissions),
+      showTitlePart(localizedStrings?.userConfigPermissions ?? "userConfigPermissions"),
       selAllConfig(),
       showConfigSettingWidget(),
-      showTitlePart(localizedStrings.userAppPermissions),
+      showTitlePart(localizedStrings?.userAppPermissions ?? "userAppPermissions"),
       selAllApp(),
       showAppSettingWidget(),
-      showTitlePart(localizedStrings.userDefaultApp),
+      showTitlePart(localizedStrings?.userDefaultApp ?? "userDefaultApp"),
       showDefaultAppWidget(),
     ];
   }
@@ -705,7 +705,7 @@ class AddSysUserPageState extends State<AddSysUserPage> {
             });
           },
         ),
-        Text(localizedStrings.gSelectAll, style: textTheme.bodySmall),
+        Text((localizedStrings?.gSelectAll ?? "gSelectAll"), style: textTheme.bodySmall),
       ]),
     );
   }
@@ -735,7 +735,7 @@ class AddSysUserPageState extends State<AddSysUserPage> {
             });
           },
         ),
-        Text(localizedStrings.gSelectAll, style: textTheme.bodySmall),
+        Text((localizedStrings?.gSelectAll ?? "gSelectAll"), style: textTheme.bodySmall),
       ]),
     );
   }
@@ -975,7 +975,7 @@ class AddSysUserPageState extends State<AddSysUserPage> {
                         child: Text(entry.value, style: textTheme.bodySmall),
                       );
                     }).toList(),
-              hint: Text(localizedStrings.tipNoPermission,
+              hint: Text((localizedStrings?.tipNoPermission ?? "tipNoPermission"),
                   style: textTheme.bodySmall),
               style: textTheme.bodySmall,
             ),
@@ -1000,8 +1000,8 @@ class AddSysUserPageState extends State<AddSysUserPage> {
                   context,
                   width - headWidthPadding,
                   widget.type == 1
-                      ? localizedStrings.userAdd
-                      : localizedStrings.userUpdate,
+                      ? (localizedStrings?.userAdd ?? "userAdd")
+                      : (localizedStrings?.userUpdate ?? "userUpdate"),
                   '', () {
                 Navigator.pop(context);
               }, showHelp: false),

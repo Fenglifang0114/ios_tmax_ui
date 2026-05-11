@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:t_max/data/btinfodata.dart';
 import 'package:t_max/data/icons.dart';
 import 'package:t_max/data/language.dart';
@@ -254,7 +254,7 @@ class BtInfoListWidgetState extends State<BtInfoListWidget> {
           ),
           SizedBox(height: 16),
           Text(
-            localizedStrings.noBluetoothDevicesFound,
+            (localizedStrings?.noBluetoothDevicesFound ?? "noBluetoothDevicesFound"),
             style: TextStyle(
               fontSize: 16,
               color: Colors.grey.shade500,
@@ -263,7 +263,7 @@ class BtInfoListWidgetState extends State<BtInfoListWidget> {
           ),
           SizedBox(height: 8),
           Text(
-            localizedStrings.ensureBluetoothIsEnabled,
+            (localizedStrings?.ensureBluetoothIsEnabled ?? "ensureBluetoothIsEnabled"),
             style: TextStyle(
               fontSize: 14,
               color: Colors.grey.shade400,
@@ -274,7 +274,7 @@ class BtInfoListWidgetState extends State<BtInfoListWidget> {
             ElevatedButton.icon(
               onPressed: widget.onRefresh,
               icon: Icon(Icons.refresh, size: 18),
-              label: Text(localizedStrings.scanBluetoothDevices),
+              label: Text(localizedStrings?.scanBluetoothDevices ?? "scanBluetoothDevices"),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.blue.shade600,
                 shape: RoundedRectangleBorder(

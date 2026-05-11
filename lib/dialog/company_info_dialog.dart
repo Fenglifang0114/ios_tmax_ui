@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/data/license_data.dart';
 import '../data/company_info.dart';
@@ -64,7 +64,7 @@ class CompanyInfoDialogState extends State<CompanyInfoDialog> {
                     child: Container(
                       alignment: Alignment.centerLeft,
                       child: Text(
-                        localizedStrings.gAppInformation,
+                        (localizedStrings?.gAppInformation ?? "gAppInformation"),
                         style: Theme.of(context).textTheme.bodyMedium!.apply(
                             color: Theme.of(context).colorScheme.onSurface,
                             fontWeightDelta: 2),
@@ -91,33 +91,33 @@ class CompanyInfoDialogState extends State<CompanyInfoDialog> {
             const SizedBox(
               height: largePadding,
             ),
-            showItemInfo(localizedStrings.appVersionTitle, getVersion()),
+            showItemInfo((localizedStrings?.appVersionTitle ?? "appVersionTitle"), getVersion()),
             const SizedBox(
               height: regularPadding,
             ),
             showItemInfo(
-                localizedStrings.appCompanyTitle, myCompanyInfo.companyName!),
+                (localizedStrings?.appCompanyTitle ?? "appCompanyTitle"), myCompanyInfo.companyName!),
             const SizedBox(
               height: regularPadding,
             ),
-            showItemInfo(localizedStrings.appTelTitle, myCompanyInfo.tel!),
+            showItemInfo((localizedStrings?.appTelTitle ?? "appTelTitle"), myCompanyInfo.tel!),
             const SizedBox(
               height: regularPadding,
             ),
-            showItemInfo(localizedStrings.appEmailTitle, myCompanyInfo.email!),
+            showItemInfo((localizedStrings?.appEmailTitle ?? "appEmailTitle"), myCompanyInfo.email!),
             const SizedBox(
               height: regularPadding,
             ),
             showItemInfo(
-                localizedStrings.appAddressTitle, myCompanyInfo.address!),
+                (localizedStrings?.appAddressTitle ?? "appAddressTitle"), myCompanyInfo.address!),
             const SizedBox(
               height: regularPadding,
             ),
-            showItemInfo(localizedStrings.appWebTitle, myCompanyInfo.website!),
+            showItemInfo((localizedStrings?.appWebTitle ?? "appWebTitle"), myCompanyInfo.website!),
             const SizedBox(
               height: regularPadding,
             ),
-            // showItemInfo(localizedStrings.appModels, "T-Max Series")
+            // showItemInfo((localizedStrings?.appModels ?? "appModels"), "T-Max Series")
           ],
         ),
       ),

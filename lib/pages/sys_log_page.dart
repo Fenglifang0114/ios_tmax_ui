@@ -1,4 +1,4 @@
-// 系统日志页面
+﻿// 系统日志页面
 
 import 'package:flutter/material.dart';
 import 'package:t_max/data/g_data.dart';
@@ -52,7 +52,7 @@ class _SysLogPageState extends State<SysLogPage>
                 thisPageHeadInfo(
                   context,
                   width - headWidthPadding,
-                  localizedStrings.logManagement,
+                  (localizedStrings?.logManagement ?? "logManagement"),
                 ),
                 if (!isExit)
                   Expanded(
@@ -141,10 +141,10 @@ class _SysLogPageState extends State<SysLogPage>
             dividerHeight: 0,
             tabs: [
               Tab(
-                text: localizedStrings.systemRecords,
+                text: (localizedStrings?.systemRecords ?? "systemRecords"),
               ),
-              Tab(text: localizedStrings.calibrationRecords),
-              Tab(text: localizedStrings.weighingRecords)
+              Tab(text: (localizedStrings?.calibrationRecords ?? "calibrationRecords")),
+              Tab(text: (localizedStrings?.weighingRecords ?? "weighingRecords"))
             ],
           ),
         ),

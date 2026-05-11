@@ -1,4 +1,4 @@
-import 'dart:async';
+﻿import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
@@ -87,8 +87,8 @@ class _DownloadPageState extends State<DownloadLabelPage> {
                 // pageHeadInfo(
                 //     context,
                 //     width - headWidthPadding,
-                //     localizedStrings.menuLabelFormatDownload,
-                //     localizedStrings.gTipLabelFmtDownPageHelp),
+                //     (localizedStrings?.menuLabelFormatDownload ?? "menuLabelFormatDownload"),
+                //     (localizedStrings?.gTipLabelFmtDownPageHelp ?? "gTipLabelFmtDownPageHelp")),
                 Expanded(
                     child: Container(
                   color: Theme.of(context).colorScheme.surfaceTint,
@@ -135,7 +135,7 @@ class _DownloadPageState extends State<DownloadLabelPage> {
                         SizedBox(
                           width: 300,
                           child: Text(
-                            localizedStrings.gTipFreeFormat + " 1:",
+                            (localizedStrings?.gTipFreeFormat ?? "gTipFreeFormat") + " 1:",
                             textAlign: TextAlign.right,
                           ),
                         ),
@@ -166,7 +166,7 @@ class _DownloadPageState extends State<DownloadLabelPage> {
                           btnWidth: 150,
                           btnHeight: 40,
                           icon: Icons.file_open_outlined,
-                          text: localizedStrings.button_select_format,
+                          text: (localizedStrings?.button_select_format ?? "button_select_format"),
                           onPressed: () async {
                             weightModeController.text = '';
                             pickFiles(weightModeController);
@@ -184,7 +184,7 @@ class _DownloadPageState extends State<DownloadLabelPage> {
                         SizedBox(
                           width: 300,
                           child: Text(
-                            localizedStrings.gTipFreeFormat + " 2:",
+                            (localizedStrings?.gTipFreeFormat ?? "gTipFreeFormat") + " 2:",
                             textAlign: TextAlign.right,
                           ),
                         ),
@@ -214,7 +214,7 @@ class _DownloadPageState extends State<DownloadLabelPage> {
                           btnWidth: 150,
                           btnHeight: 40,
                           icon: Icons.file_open_outlined,
-                          text: localizedStrings.button_select_format,
+                          text: (localizedStrings?.button_select_format ?? "button_select_format"),
                           onPressed: () async {
                             accModeController.text = '';
                             pickFiles(accModeController);
@@ -232,7 +232,7 @@ class _DownloadPageState extends State<DownloadLabelPage> {
                         SizedBox(
                           width: 300,
                           child: Text(
-                            localizedStrings.gTipFreeFormat + " 3:",
+                            (localizedStrings?.gTipFreeFormat ?? "gTipFreeFormat") + " 3:",
                             textAlign: TextAlign.right,
                           ),
                         ),
@@ -262,7 +262,7 @@ class _DownloadPageState extends State<DownloadLabelPage> {
                           btnWidth: 150,
                           btnHeight: 40,
                           icon: Icons.file_open_outlined,
-                          text: localizedStrings.button_select_format,
+                          text: (localizedStrings?.button_select_format ?? "button_select_format"),
                           onPressed: () async {
                             pcsModeController.text = '';
                             pickFiles(pcsModeController);
@@ -280,7 +280,7 @@ class _DownloadPageState extends State<DownloadLabelPage> {
                         SizedBox(
                           width: 300,
                           child: Text(
-                            localizedStrings.gTotalFmt,
+                            (localizedStrings?.gTotalFmt ?? "gTotalFmt"),
                             textAlign: TextAlign.right,
                           ),
                         ),
@@ -310,7 +310,7 @@ class _DownloadPageState extends State<DownloadLabelPage> {
                           btnWidth: 150,
                           btnHeight: 40,
                           icon: Icons.file_open_outlined,
-                          text: localizedStrings.button_select_format,
+                          text: (localizedStrings?.button_select_format ?? "button_select_format"),
                           onPressed: () async {
                             pctModeController.text = '';
                             pickFiles(pctModeController);
@@ -366,7 +366,7 @@ class _DownloadPageState extends State<DownloadLabelPage> {
           btnWidth: 200,
           btnHeight: 50,
           icon: Icons.download_outlined,
-          text: localizedStrings.gBtnDownload,
+          text: (localizedStrings?.gBtnDownload ?? "gBtnDownload"),
           onPressed: (!isDownloadClicked) &&
                   (weightModeController.text.isNotEmpty ||
                       accModeController.text.isNotEmpty ||
@@ -381,7 +381,7 @@ class _DownloadPageState extends State<DownloadLabelPage> {
           btnWidth: 200,
           btnHeight: 50,
           icon: Icons.logout,
-          text: localizedStrings.gBtnDownloadDefaultFormat,
+          text: (localizedStrings?.gBtnDownloadDefaultFormat ?? "gBtnDownloadDefaultFormat"),
           onPressed: (!isDownloadClicked)
               ? () {
                   _jumpCfmDialog(context);
@@ -431,7 +431,7 @@ class _DownloadPageState extends State<DownloadLabelPage> {
   //     _stopTimer();
 
   //     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-  //         content: Text(localizedStrings.gBtnDownload_result_fail,
+  //         content: Text((localizedStrings?.gBtnDownload_result_fail ?? "gBtnDownload_result_fail"),
   //             style: const TextStyle(
   //                 fontSize: 20, fontWeight: FontWeight.normal)), ////此处需要秤回复
   //         duration: const Duration(seconds: 3),
@@ -452,10 +452,10 @@ class _DownloadPageState extends State<DownloadLabelPage> {
             borderRadius: BorderRadius.zero, // 设置为直角
           ),
           title: Text(
-            localizedStrings.gTitleConfirm,
+            (localizedStrings?.gTitleConfirm ?? "gTitleConfirm"),
             style: TextStyle(color: Theme.of(context).colorScheme.primary),
           ),
-          content: Text(localizedStrings.jump_confirm_info),
+          content: Text(localizedStrings?.jump_confirm_info ?? "jump_confirm_info"),
           actions: <Widget>[
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -464,7 +464,7 @@ class _DownloadPageState extends State<DownloadLabelPage> {
                   btnWidth: 100,
                   btnHeight: 40,
                   icon: Icons.check_circle,
-                  text: localizedStrings.gBtnConfirm,
+                  text: (localizedStrings?.gBtnConfirm ?? "gBtnConfirm"),
                   onPressed: () {
                     Navigator.of(ctx).pop(true);
                   },
@@ -474,7 +474,7 @@ class _DownloadPageState extends State<DownloadLabelPage> {
                   btnWidth: 100,
                   btnHeight: 40,
                   icon: Icons.cancel,
-                  text: localizedStrings.gBtnCancel,
+                  text: (localizedStrings?.gBtnCancel ?? "gBtnCancel"),
                   onPressed: () {
                     Navigator.of(ctx).pop(false);
                   },
@@ -502,10 +502,10 @@ class _DownloadPageState extends State<DownloadLabelPage> {
       builder: (BuildContext ctx) {
         return AlertDialog(
           title: Text(
-            localizedStrings.gTitleConfirm,
+            (localizedStrings?.gTitleConfirm ?? "gTitleConfirm"),
             style: TextStyle(color: Theme.of(context).colorScheme.primary),
           ),
-          content: Text(localizedStrings.gConfirmPrnFmtOrderTip),
+          content: Text(localizedStrings?.gConfirmPrnFmtOrderTip ?? "gConfirmPrnFmtOrderTip"),
           actions: <Widget>[
             Row(
               children: [
@@ -513,7 +513,7 @@ class _DownloadPageState extends State<DownloadLabelPage> {
                   btnWidth: 100,
                   btnHeight: 40,
                   icon: Icons.check_circle,
-                  text: localizedStrings.gBtnConfirm,
+                  text: (localizedStrings?.gBtnConfirm ?? "gBtnConfirm"),
                   onPressed: () {
                     Navigator.of(ctx).pop(true);
                   },
@@ -523,7 +523,7 @@ class _DownloadPageState extends State<DownloadLabelPage> {
                   btnWidth: 100,
                   btnHeight: 40,
                   icon: Icons.cancel,
-                  text: localizedStrings.gBtnCancel,
+                  text: (localizedStrings?.gBtnCancel ?? "gBtnCancel"),
                   onPressed: () {
                     Navigator.of(ctx).pop(false);
                   },

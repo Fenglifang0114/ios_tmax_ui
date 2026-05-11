@@ -1,4 +1,4 @@
-// //配方导入方法
+﻿// //配方导入方法
 
 // import 'dart:io';
 // import 'package:excel/excel.dart';
@@ -39,19 +39,19 @@
 //     final excelData = Excel.decodeBytes(bytes);
 
 //     if (excelData.tables.isEmpty) {
-//       result.errorMessage = localizedStrings.noDataImport;
+//       result.errorMessage = (localizedStrings?.noDataImport ?? "noDataImport");
 //       return result;
 //     }
 
 //     final sheet = excelData.tables.values.first;
 //     if (sheet.rows.isEmpty) {
-//       result.errorMessage = localizedStrings.noDataImport;
+//       result.errorMessage = (localizedStrings?.noDataImport ?? "noDataImport");
 //       return result;
 //     }
 
 //     //大于1000行 提示用户一次读取1000行
 //     if (sheet.rows.length > 1001) {
-//       result.errorMessage = localizedStrings.max1000Rows;
+//       result.errorMessage = (localizedStrings?.max1000Rows ?? "max1000Rows");
 //       return result;
 //     }
 
@@ -68,7 +68,7 @@
 //         if (importFmaHeaders.containsKey(head)) {
 //           if (columnIndexMap.containsKey(head)) {
 //             result.errorMessage =
-//                 localizedStrings.duplicateHeaders + '：$header  ';
+//                 (localizedStrings?.duplicateHeaders ?? "duplicateHeaders") + '：$header  ';
 //             return result;
 //           }
 //           columnIndexMap[head] = i;
@@ -78,7 +78,7 @@
 //     //验证表头是否完整
 //     final missingHeader = _validateHeaders(columnIndexMap.keys.toList());
 //     if (missingHeader.isNotEmpty) {
-//       result.errorMessage = localizedStrings.missingHeaders + '：$missingHeader';
+//       result.errorMessage = (localizedStrings?.missingHeaders ?? "missingHeaders") + '：$missingHeader';
 //       return result;
 //     }
 
@@ -98,12 +98,12 @@
 //       final formulaIdCol = columnIndexMap['formulaid']!;
 //       final formulaIdValue = _getCellValue(row, formulaIdCol);
 //       if (formulaIdValue.isEmpty) {
-//         result.errorMessage = localizedStrings.formulaIdEmpty +
-//             ',${localizedStrings.tipRow}:${rowIdx + 1}';
+//         result.errorMessage = (localizedStrings?.formulaIdEmpty ?? "formulaIdEmpty") +
+//             ',${(localizedStrings?.tipRow ?? "tipRow")}:${rowIdx + 1}';
 //         return result;
 //       } else if (isFormulaExist(formulaIdValue)) {
 //         result.errorMessage =
-//             '$formulaIdValue ${localizedStrings.formulaIdExists}, ${localizedStrings.tipRow}:${rowIdx + 1}';
+//             '$formulaIdValue ${(localizedStrings?.formulaIdExists ?? "formulaIdExists")}, ${(localizedStrings?.tipRow ?? "tipRow")}:${rowIdx + 1}';
 //         return result;
 //       } else {
 //         rowData['formulaid'] = formulaIdValue;
@@ -115,8 +115,8 @@
 //       final formulaNameCol = columnIndexMap['formulaname']!;
 //       final formulaName = _getCellValue(row, formulaNameCol).trim();
 //       if (formulaName.isEmpty) {
-//         result.errorMessage = localizedStrings.formulaNameEmpty +
-//             ', ${localizedStrings.tipRow}:${rowIdx + 1}';
+//         result.errorMessage = (localizedStrings?.formulaNameEmpty ?? "formulaNameEmpty") +
+//             ', ${(localizedStrings?.tipRow ?? "tipRow")}:${rowIdx + 1}';
 //         return result;
 //       } else {
 //         rowData['formulaname'] = formulaName;
@@ -126,12 +126,12 @@
 //       final modeCol = columnIndexMap['mode']!;
 //       final mode = _getCellValue(row, modeCol).trim().toLowerCase();
 //       if (mode.isEmpty) {
-//         result.errorMessage = localizedStrings.modeEmpty +
-//             ', ${localizedStrings.tipRow}:${rowIdx + 1}';
+//         result.errorMessage = (localizedStrings?.modeEmpty ?? "modeEmpty") +
+//             ', ${(localizedStrings?.tipRow ?? "tipRow")}:${rowIdx + 1}';
 //         return result;
 //       } else if (!['weight', 'percent', "percentage"].contains(mode)) {
-//         result.errorMessage = localizedStrings.modeInvalid +
-//             '：$mode , ${localizedStrings.tipRow}:${rowIdx + 1}';
+//         result.errorMessage = (localizedStrings?.modeInvalid ?? "modeInvalid") +
+//             '：$mode , ${(localizedStrings?.tipRow ?? "tipRow")}:${rowIdx + 1}';
 //         return result;
 //       } else {
 //         rowData['mode'] = mode;
@@ -140,8 +140,8 @@
 //           final weightUnitCol = columnIndexMap['weightunit']!;
 //           final weightUnit = _getCellValue(row, weightUnitCol).trim();
 //           if (weightUnit.isEmpty) {
-//             result.errorMessage = localizedStrings.weightUnitEmpty +
-//                 ', ${localizedStrings.tipRow}:${rowIdx + 1}';
+//             result.errorMessage = (localizedStrings?.weightUnitEmpty ?? "weightUnitEmpty") +
+//                 ', ${(localizedStrings?.tipRow ?? "tipRow")}:${rowIdx + 1}';
 //             return result;
 //           } else {
 //             rowData['weightunit'] = weightUnit;
@@ -153,12 +153,12 @@
 //       final ingredientIdCol = columnIndexMap['ingredientid']!;
 //       final ingredientId = _getCellValue(row, ingredientIdCol).trim();
 //       if (ingredientId.isEmpty) {
-//         result.errorMessage = localizedStrings.ingredientIdEmpty +
-//             ', ${localizedStrings.tipRow}:${rowIdx + 1}';
+//         result.errorMessage = (localizedStrings?.ingredientIdEmpty ?? "ingredientIdEmpty") +
+//             ', ${(localizedStrings?.tipRow ?? "tipRow")}:${rowIdx + 1}';
 //         return result;
 //       } else if (!isRawExist(ingredientId)) {
-//         result.errorMessage = localizedStrings.ingredientIdNotExist +
-//             ', ${localizedStrings.tipRow}:${rowIdx + 1}';
+//         result.errorMessage = (localizedStrings?.ingredientIdNotExist ?? "ingredientIdNotExist") +
+//             ', ${(localizedStrings?.tipRow ?? "tipRow")}:${rowIdx + 1}';
 //         return result;
 //       } else {
 //         rowData['ingredientid'] = ingredientId;
@@ -168,13 +168,13 @@
 //       final weightCol = columnIndexMap['ingredientweight/percentage']!;
 //       final weightValue = _getCellValue(row, weightCol);
 //       if (weightValue.isEmpty) {
-//         result.errorMessage = localizedStrings.weightPercentEmpty +
-//             ', ${localizedStrings.tipRow}:${rowIdx + 1}';
+//         result.errorMessage = (localizedStrings?.weightPercentEmpty ?? "weightPercentEmpty") +
+//             ', ${(localizedStrings?.tipRow ?? "tipRow")}:${rowIdx + 1}';
 //         return result;
 //       } else if (!_isValidDecimal(weightValue,
 //           maxDecimals: 3, minValue: 0.001)) {
-//         result.errorMessage = localizedStrings.weightPercentInvalid +
-//             '：$weightValue , ${localizedStrings.tipRow}:${rowIdx + 1}';
+//         result.errorMessage = (localizedStrings?.weightPercentInvalid ?? "weightPercentInvalid") +
+//             '：$weightValue , ${(localizedStrings?.tipRow ?? "tipRow")}:${rowIdx + 1}';
 //         return result;
 //       } else {
 //         rowData['ingredientweight/percentage'] = double.parse(weightValue);
@@ -184,13 +184,13 @@
 //       final errorCol = columnIndexMap['allowableerror']!;
 //       final errorValue = _getCellValue(row, errorCol);
 //       if (errorValue.isEmpty) {
-//         result.errorMessage = localizedStrings.allowErrorEmpty +
-//             ', ${localizedStrings.tipRow}:${rowIdx + 1}';
+//         result.errorMessage = (localizedStrings?.allowErrorEmpty ?? "allowErrorEmpty") +
+//             ', ${(localizedStrings?.tipRow ?? "tipRow")}:${rowIdx + 1}';
 //         return result;
 //       } else if (!_isValidDecimal(errorValue,
 //           maxDecimals: 3, minValue: 0.001)) {
-//         result.errorMessage = localizedStrings.allowErrorInvalid +
-//             '：$errorValue , ${localizedStrings.tipRow}:${rowIdx + 1}';
+//         result.errorMessage = (localizedStrings?.allowErrorInvalid ?? "allowErrorInvalid") +
+//             '：$errorValue , ${(localizedStrings?.tipRow ?? "tipRow")}:${rowIdx + 1}';
 //         return result;
 //       } else {
 //         rowData['allowableerror'] = double.parse(errorValue);
@@ -262,7 +262,7 @@
 //       for (final row in groupRows) {
 //         final currentName = row['formulaname'] as String;
 //         if (currentName != firstFormulaName) {
-//           result.errorMessage = localizedStrings.formulaNameInconsistent +
+//           result.errorMessage = (localizedStrings?.formulaNameInconsistent ?? "formulaNameInconsistent") +
 //               ', :$currentName  :$firstFormulaName';
 //           return result; // 找到一个不一致就终止循环，无需继续检查
 //         }
@@ -285,7 +285,7 @@
 //         totalPercent = double.parse(totalPercent.toStringAsFixed(3));
 //         // 浮点数比较需用容差，避免精度问题（如99.9999999999或100.0000000001应视为有效）
 //         if (totalPercent != 100) {
-//           result.errorMessage = localizedStrings.percentNot100 +
+//           result.errorMessage = (localizedStrings?.percentNot100 ?? "percentNot100") +
 //               '${totalPercent.toStringAsFixed(3)}%';
 //           return result;
 //         }
@@ -312,7 +312,7 @@
 
 //     return ImportFmaResult(
 //         isSuccess: true,
-//         errorMessage: localizedStrings.tipImporting,
+//         errorMessage: (localizedStrings?.tipImporting ?? "tipImporting"),
 //         importFmaInfoList: validFormulas);
 //   } catch (e) {
 //     stopwatch.stop();

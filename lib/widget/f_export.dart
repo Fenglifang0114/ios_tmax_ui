@@ -1,4 +1,4 @@
-//配方，原料等导出操作
+﻿//配方，原料等导出操作
 
 import 'dart:convert';
 import 'dart:io';
@@ -31,14 +31,14 @@ Future<ExportResult> exportRawListToCsv(
 
     // 写入表头
     rows.add([
-      localizedStrings.fMaterialIdCol,
-      localizedStrings.fMaterialNameCol,
-      localizedStrings.fMaterialCodeCol,
-      localizedStrings.gDeviceName,
-      localizedStrings.fFmaCategoryCol,
-      localizedStrings.fIngredientRemark,
-      localizedStrings.fCreatedAtCol,
-      localizedStrings.fUpdatedAtCol,
+      (localizedStrings?.fMaterialIdCol ?? "fMaterialIdCol"),
+      (localizedStrings?.fMaterialNameCol ?? "fMaterialNameCol"),
+      (localizedStrings?.fMaterialCodeCol ?? "fMaterialCodeCol"),
+      (localizedStrings?.gDeviceName ?? "gDeviceName"),
+      (localizedStrings?.fFmaCategoryCol ?? "fFmaCategoryCol"),
+      (localizedStrings?.fIngredientRemark ?? "fIngredientRemark"),
+      (localizedStrings?.fCreatedAtCol ?? "fCreatedAtCol"),
+      (localizedStrings?.fUpdatedAtCol ?? "fUpdatedAtCol"),
     ]);
 
     // 写入数据行
@@ -75,11 +75,11 @@ Future<ExportResult> exportRawListToCsv(
 
     return ExportResult(isSuccess: true);
   } catch (e) {
-    String errorMessage = localizedStrings.gTipExportError;
+    String errorMessage = (localizedStrings?.gTipExportError ?? "gTipExportError");
     if (e is FileSystemException) {
-      errorMessage = localizedStrings.gTipExportFileError;
+      errorMessage = (localizedStrings?.gTipExportFileError ?? "gTipExportFileError");
     } else if (e is IOException) {
-      errorMessage = localizedStrings.gTipExportIOError;
+      errorMessage = (localizedStrings?.gTipExportIOError ?? "gTipExportIOError");
     }
 
     return ExportResult(isSuccess: false, errorMessage: errorMessage);
@@ -91,31 +91,31 @@ Future<ExportResult> exportFmaTemplate(String filePath) async {
   try {
     List<List<dynamic>> rows = [];
     rows.add([
-      localizedStrings.fFmaIdLabel,
-      localizedStrings.fFmaNameLabel,
-      localizedStrings.fFmaBarcode,
-      localizedStrings.fFmaModeCol,
-      localizedStrings.gTipWeightUnit,
-      localizedStrings.fFmaCategoryCol,
-      localizedStrings.fConfidential, 
-      localizedStrings.fFmaContainer,
-      localizedStrings.fFmaRemark,
-      localizedStrings.fIngredientOrder,
-      localizedStrings.fMaterialIdCol,
-      localizedStrings.fMaterialNameCol,
-      localizedStrings.fMaterialSingleWeight,
-      localizedStrings.fAllowableError,
+      (localizedStrings?.fFmaIdLabel ?? "fFmaIdLabel"),
+      (localizedStrings?.fFmaNameLabel ?? "fFmaNameLabel"),
+      (localizedStrings?.fFmaBarcode ?? "fFmaBarcode"),
+      (localizedStrings?.fFmaModeCol ?? "fFmaModeCol"),
+      (localizedStrings?.gTipWeightUnit ?? "gTipWeightUnit"),
+      (localizedStrings?.fFmaCategoryCol ?? "fFmaCategoryCol"),
+      (localizedStrings?.fConfidential ?? "fConfidential"), 
+      (localizedStrings?.fFmaContainer ?? "fFmaContainer"),
+      (localizedStrings?.fFmaRemark ?? "fFmaRemark"),
+      (localizedStrings?.fIngredientOrder ?? "fIngredientOrder"),
+      (localizedStrings?.fMaterialIdCol ?? "fMaterialIdCol"),
+      (localizedStrings?.fMaterialNameCol ?? "fMaterialNameCol"),
+      (localizedStrings?.fMaterialSingleWeight ?? "fMaterialSingleWeight"),
+      (localizedStrings?.fAllowableError ?? "fAllowableError"),
     ]);
 
     await _writeCsv(filePath, rows);
 
     return ExportResult(isSuccess: true);
   } catch (e) {
-    String errorMessage = localizedStrings.gTipExportError;
+    String errorMessage = (localizedStrings?.gTipExportError ?? "gTipExportError");
     if (e is FileSystemException) {
-      errorMessage = localizedStrings.gTipExportFileError;
+      errorMessage = (localizedStrings?.gTipExportFileError ?? "gTipExportFileError");
     } else if (e is IOException) {
-      errorMessage = localizedStrings.gTipExportIOError;
+      errorMessage = (localizedStrings?.gTipExportIOError ?? "gTipExportIOError");
     }
     return ExportResult(isSuccess: false, errorMessage: errorMessage);
   }
@@ -126,23 +126,23 @@ Future<ExportResult> exportRawTemplate(String filePath) async {
   try {
     List<List<dynamic>> rows = [];
     rows.add([
-      localizedStrings.fMaterialIdCol,
-      localizedStrings.fMaterialNameCol,
-      localizedStrings.fMaterialCodeCol,
-      localizedStrings.gDeviceName,
-      localizedStrings.fFmaCategoryCol,
-      localizedStrings.fIngredientRemark,
+      (localizedStrings?.fMaterialIdCol ?? "fMaterialIdCol"),
+      (localizedStrings?.fMaterialNameCol ?? "fMaterialNameCol"),
+      (localizedStrings?.fMaterialCodeCol ?? "fMaterialCodeCol"),
+      (localizedStrings?.gDeviceName ?? "gDeviceName"),
+      (localizedStrings?.fFmaCategoryCol ?? "fFmaCategoryCol"),
+      (localizedStrings?.fIngredientRemark ?? "fIngredientRemark"),
     ]);
 
     await _writeCsv(filePath, rows);
 
     return ExportResult(isSuccess: true);
   } catch (e) {
-    String errorMessage = localizedStrings.gTipExportError;
+    String errorMessage = (localizedStrings?.gTipExportError ?? "gTipExportError");
     if (e is FileSystemException) {
-      errorMessage = localizedStrings.gTipExportFileError;
+      errorMessage = (localizedStrings?.gTipExportFileError ?? "gTipExportFileError");
     } else if (e is IOException) {
-      errorMessage = localizedStrings.gTipExportIOError;
+      errorMessage = (localizedStrings?.gTipExportIOError ?? "gTipExportIOError");
     }
     return ExportResult(isSuccess: false, errorMessage: errorMessage);
   }
@@ -166,20 +166,20 @@ Future<ExportResult> exportFormulaListToCsv(
 
     // 写入表头
     rows.add([
-      localizedStrings.fFmaIdLabel,
-      localizedStrings.fFmaNameLabel,
-      localizedStrings.fFmaBarcode,
-      localizedStrings.fFmaModeCol,
-      localizedStrings.gTipWeightUnit,
-      localizedStrings.fFmaCategoryCol,
-      localizedStrings.fConfidential,
-      localizedStrings.fFmaContainer,
-      localizedStrings.fFmaRemark,
-      localizedStrings.fIngredientOrder,
-      localizedStrings.fMaterialIdCol,
-      localizedStrings.fMaterialNameCol,
-      localizedStrings.fMaterialSingleWeight,
-      localizedStrings.fAllowableError,
+      (localizedStrings?.fFmaIdLabel ?? "fFmaIdLabel"),
+      (localizedStrings?.fFmaNameLabel ?? "fFmaNameLabel"),
+      (localizedStrings?.fFmaBarcode ?? "fFmaBarcode"),
+      (localizedStrings?.fFmaModeCol ?? "fFmaModeCol"),
+      (localizedStrings?.gTipWeightUnit ?? "gTipWeightUnit"),
+      (localizedStrings?.fFmaCategoryCol ?? "fFmaCategoryCol"),
+      (localizedStrings?.fConfidential ?? "fConfidential"),
+      (localizedStrings?.fFmaContainer ?? "fFmaContainer"),
+      (localizedStrings?.fFmaRemark ?? "fFmaRemark"),
+      (localizedStrings?.fIngredientOrder ?? "fIngredientOrder"),
+      (localizedStrings?.fMaterialIdCol ?? "fMaterialIdCol"),
+      (localizedStrings?.fMaterialNameCol ?? "fMaterialNameCol"),
+      (localizedStrings?.fMaterialSingleWeight ?? "fMaterialSingleWeight"),
+      (localizedStrings?.fAllowableError ?? "fAllowableError"),
     ]);
 
     // 写入数据行
@@ -218,11 +218,11 @@ Future<ExportResult> exportFormulaListToCsv(
 
     return ExportResult(isSuccess: true);
   } catch (e) {
-    String errorMessage = localizedStrings.gTipExportError;
+    String errorMessage = (localizedStrings?.gTipExportError ?? "gTipExportError");
     if (e is FileSystemException) {
-      errorMessage = localizedStrings.gTipExportFileError;
+      errorMessage = (localizedStrings?.gTipExportFileError ?? "gTipExportFileError");
     } else if (e is IOException) {
-      errorMessage = localizedStrings.gTipExportIOError;
+      errorMessage = (localizedStrings?.gTipExportIOError ?? "gTipExportIOError");
     }
 
     return ExportResult(isSuccess: false, errorMessage: errorMessage);

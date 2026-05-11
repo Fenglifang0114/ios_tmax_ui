@@ -1,4 +1,4 @@
-import 'dart:async';
+﻿import 'dart:async';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
@@ -50,9 +50,9 @@ extension EncryptedValueExtension on EncryptedValue {
   String getTranslation(BuildContext context) {
     switch (this) {
       case EncryptedValue.confidential:
-        return localizedStrings.fConfidential; // 这里可以替换为翻译函数
+        return (localizedStrings?.fConfidential ?? "fConfidential"); // 这里可以替换为翻译函数
       case EncryptedValue.public:
-        return localizedStrings.fPublic; // 这里可以替换为翻译函数
+        return (localizedStrings?.fPublic ?? "fPublic"); // 这里可以替换为翻译函数
     }
   }
 }
@@ -202,7 +202,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
       if (mounted) {
         String res = event.obj;
         if (res.startsWith('ok,')) {
-          showTipInfo(localizedStrings.fSuccessMsg, context);
+          showTipInfo((localizedStrings?.fSuccessMsg ?? "fSuccessMsg"), context);
           String idStr = res.substring(3);
           int id = int.parse(idStr);
           PublicFunctions.getRawData(id);
@@ -215,7 +215,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
         String res = event.obj;
         //解析 "ok,52"，获取52
         if (res.startsWith('ok,')) {
-          showTipInfo(localizedStrings.fSuccessMsg, context);
+          showTipInfo((localizedStrings?.fSuccessMsg ?? "fSuccessMsg"), context);
           String idStr = res.substring(3);
           int id = int.parse(idStr);
           //删除配方和原料关系表中所有包含该配方ID的记录
@@ -223,7 +223,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
           clearFmaSearch();
           performFmaSearch();
           selectedFormula = null;
-          showTipInfo(localizedStrings.fSuccessMsg, context);
+          showTipInfo((localizedStrings?.fSuccessMsg ?? "fSuccessMsg"), context);
         }
       }
     });
@@ -259,7 +259,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
       if (mounted) {
         String res = event.obj;
         if (res.startsWith('ok,')) {
-          showTipInfo(localizedStrings.fSuccessMsg, context);
+          showTipInfo((localizedStrings?.fSuccessMsg ?? "fSuccessMsg"), context);
           String idStr = res.substring(3);
           int id = int.parse(idStr);
           PublicFunctions.getFmaData(id);
@@ -272,7 +272,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
       if (mounted) {
         String res = event.obj;
         if (res.startsWith('ok,')) {
-          showTipInfo(localizedStrings.fSuccessMsg, context);
+          showTipInfo((localizedStrings?.fSuccessMsg ?? "fSuccessMsg"), context);
           String idStr = res.substring(3);
           int id = int.parse(idStr);
           PublicFunctions.getRawData(id);
@@ -322,7 +322,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
 
     _eventbus12 = eventBus.on<EventRespDelDraftFmaWgtRecList>().listen((event) {
       if (mounted) {
-        showTipInfo(localizedStrings.fSuccessMsg, context);
+        showTipInfo((localizedStrings?.fSuccessMsg ?? "fSuccessMsg"), context);
         darfFmaInfoList = [];
         searchDarfFmaInfoList = [];
         selDarftFmaList = [];
@@ -351,7 +351,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
     _eventbus16 =
         eventBus.on<EventRespCreateDraftFmaWgtRecList>().listen((event) {
       if (mounted) {
-        showTipInfo(localizedStrings.fSuccessMsg, context);
+        showTipInfo((localizedStrings?.fSuccessMsg ?? "fSuccessMsg"), context);
         setState(() {
           darfFmaInfoList = [];
           searchDarfFmaInfoList = [];
@@ -406,7 +406,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
         String res = event.obj;
         //解析 "ok,52"，获取52
         if (res.startsWith('ok,')) {
-          showTipInfo(localizedStrings.fSuccessMsg, context);
+          showTipInfo((localizedStrings?.fSuccessMsg ?? "fSuccessMsg"), context);
           String idStr = res.substring(3);
           int id = int.parse(idStr);
           //删除配方和原料关系表中所有包含该配方ID的记录
@@ -414,7 +414,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
           clearRawSearch();
           performRawSearch();
           selectedRaw = null;
-          showTipInfo(localizedStrings.fSuccessMsg, context);
+          showTipInfo((localizedStrings?.fSuccessMsg ?? "fSuccessMsg"), context);
         }
       }
     });
@@ -422,7 +422,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
       if (mounted) {
         String res = event.obj;
         if (res.startsWith('ok,')) {
-          showTipInfo(localizedStrings.fSuccessMsg, context);
+          showTipInfo((localizedStrings?.fSuccessMsg ?? "fSuccessMsg"), context);
           String idStr = res.substring(3);
           int id = int.parse(idStr);
           PublicFunctions.getFmaData(id);
@@ -661,8 +661,8 @@ class FormulationScalePageState extends State<FormulationScalePage>
                 pageHeadInfo(
                     context,
                     width - headWidthPadding,
-                    localizedStrings.menuFormula,
-                    localizedStrings.gTipFmaPageHelp, () {
+                    (localizedStrings?.menuFormula ?? "menuFormula"),
+                    (localizedStrings?.gTipFmaPageHelp ?? "gTipFmaPageHelp"), () {
                   setState(() {
                     isExit = true;
                   });
@@ -844,7 +844,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
         // 处理保密状态筛选
         bool encryptedMatch = true;
         if (encryptedFilter.isNotEmpty) {
-          bool isEncrypted = encryptedFilter == localizedStrings.fConfidential;
+          bool isEncrypted = encryptedFilter == (localizedStrings?.fConfidential ?? "fConfidential");
           encryptedMatch = formulaEncrypted == isEncrypted;
         }
 
@@ -889,7 +889,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
         color: colorScheme.surface,
         child: Column(children: [
           ShowRawTitleWidget(
-            text: localizedStrings.fIngredientOrder,
+            text: (localizedStrings?.fIngredientOrder ?? "fIngredientOrder"),
           ),
           showDarftRawOrderDetail(),
         ]),
@@ -905,7 +905,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
         color: colorScheme.surface,
         child: Column(children: [
           ShowRawTitleWidget(
-            text: localizedStrings.fIngredientOrder,
+            text: (localizedStrings?.fIngredientOrder ?? "fIngredientOrder"),
           ),
           showRawOrderDetail(),
         ]),
@@ -1142,7 +1142,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
     if (selScaleId == -1 &&
         ((selectedFormula.header?.isEncrypted ?? false) ||
             (selectedFormula.header?.needContainer ?? false))) {
-      showTipInfo(localizedStrings.gTipSelectDeviceFirst, context);
+      showTipInfo((localizedStrings?.gTipSelectDeviceFirst ?? "gTipSelectDeviceFirst"), context);
       return false;
     }
 
@@ -1163,7 +1163,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
       int scaleId = findScaleIdFromRaw(detail.materialId!);
 
       if (scaleId == 0 && selScaleId == -1) {
-        showTipInfo(localizedStrings.gTipSelectDeviceFirst, context);
+        showTipInfo((localizedStrings?.gTipSelectDeviceFirst ?? "gTipSelectDeviceFirst"), context);
         return false;
       }
       if (scaleId == 0) {
@@ -1181,7 +1181,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
       if (scale.scaleId == scaleId) {
         if (!scale.isOnline) {
           showTipInfo(
-              "${scale.scaleName} ${localizedStrings.gTipOffline}", context);
+              "${scale.scaleName} ${(localizedStrings?.gTipOffline ?? "gTipOffline")}", context);
           return false;
         } else {
           return true;
@@ -1198,7 +1198,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
     if (selScaleId == -1 &&
         ((darftFma.fmaInfo?.header?.isEncrypted ?? false) ||
             (darftFma.fmaInfo?.header?.needContainer ?? false))) {
-      showTipInfo(localizedStrings.gTipSelectDeviceFirst, context);
+      showTipInfo((localizedStrings?.gTipSelectDeviceFirst ?? "gTipSelectDeviceFirst"), context);
       return false;
     }
 
@@ -1219,7 +1219,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
       int scaleId = findScaleIdFromRaw(detail.materialId!);
 
       if (scaleId == 0 && selScaleId == -1) {
-        showTipInfo(localizedStrings.gTipSelectDeviceFirst, context);
+        showTipInfo((localizedStrings?.gTipSelectDeviceFirst ?? "gTipSelectDeviceFirst"), context);
         return false;
       }
 
@@ -1268,7 +1268,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
                   width: regularPadding,
                 ),
                 Text(
-                  localizedStrings.fFmaNameLabel + "：",
+                  (localizedStrings?.fFmaNameLabel ?? "fFmaNameLabel") + "：",
                   style: getTextStyle(
                     color: colorScheme.onSurfaceVariant,
                   ),
@@ -1289,7 +1289,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
                 ),
                 // 显示配方编号标签
                 Text(
-                  localizedStrings.fFmaIdLabel + ": ",
+                  (localizedStrings?.fFmaIdLabel ?? "fFmaIdLabel") + ": ",
                   style: getTextStyle(
                     color: colorScheme.onSurfaceVariant,
                   ),
@@ -1309,7 +1309,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
                   ),
                 ),
                 Text(
-                  localizedStrings.fIngredientCountLabel + ": ",
+                  (localizedStrings?.fIngredientCountLabel ?? "fIngredientCountLabel") + ": ",
                   style: getTextStyle(
                     color: colorScheme.onSurfaceVariant,
                   ),
@@ -1330,7 +1330,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
                 ),
                 selectedFormula?.header?.formulaMode != "pct"
                     ? Text(
-                        "  ${localizedStrings.fTotalWeightLabel}: ",
+                        "  ${(localizedStrings?.fTotalWeightLabel ?? "fTotalWeightLabel")}: ",
                         style: getTextStyle(
                           color: colorScheme.onSurfaceVariant,
                         ),
@@ -1363,8 +1363,8 @@ class FormulationScalePageState extends State<FormulationScalePage>
                       padding: const EdgeInsets.only(left: smallPadding),
                       child: Tooltip(
                         message: checkCode
-                            ? localizedStrings.disableIngredientVerification
-                            : localizedStrings.enableIngredientVerification,
+                            ? (localizedStrings?.disableIngredientVerification ?? "disableIngredientVerification")
+                            : (localizedStrings?.enableIngredientVerification ?? "enableIngredientVerification"),
                         child: IconButton(
                           iconSize: 24,
                           color: colorScheme.onPrimary,
@@ -1459,7 +1459,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
                             startWeighting();
                           },
                     child: Text(
-                      localizedStrings.fStartWeighingBtn,
+                      (localizedStrings?.fStartWeighingBtn ?? "fStartWeighingBtn"),
                       style: textTheme.bodySmall!.copyWith(
                         color: colorScheme.onPrimary,
                       ),
@@ -1490,7 +1490,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
                 flex: 11,
                 child: Column(children: [
                   ShowRawTitleWidget(
-                    text: localizedStrings.fIngredientRemark,
+                    text: (localizedStrings?.fIngredientRemark ?? "fIngredientRemark"),
                   ),
                   RawRemarkTextWidget(
                     text: selectedDetail == Detail()
@@ -1515,7 +1515,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
                 flex: 9,
                 child: Column(children: [
                   ShowRawTitleWidget(
-                    text: localizedStrings.fFmaRemark,
+                    text: (localizedStrings?.fFmaRemark ?? "fFmaRemark"),
                   ),
                   RawRemarkTextWidget(
                     text: selectedFormula?.header?.remark ?? "",
@@ -1580,7 +1580,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
                   width: 20,
                 ),
                 Text(
-                  localizedStrings.fFmaNameLabel + "：",
+                  (localizedStrings?.fFmaNameLabel ?? "fFmaNameLabel") + "：",
                   style: getTextStyle(
                     color: colorScheme.onSurfaceVariant,
                   ),
@@ -1601,7 +1601,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
                 ),
                 // 显示配方编号标签
                 Text(
-                  localizedStrings.fFmaIdLabel + ": ",
+                  (localizedStrings?.fFmaIdLabel ?? "fFmaIdLabel") + ": ",
                   style: getTextStyle(
                     color: colorScheme.onSurfaceVariant,
                   ),
@@ -1621,7 +1621,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
                   ),
                 ),
                 Text(
-                  localizedStrings.fIngredientCountLabel + ": ",
+                  (localizedStrings?.fIngredientCountLabel ?? "fIngredientCountLabel") + ": ",
                   style: getTextStyle(
                     color: colorScheme.onSurfaceVariant,
                   ),
@@ -1644,7 +1644,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
                 ),
                 selectedDarfFma?.fmaInfo!.header!.formulaMode != "pct"
                     ? Text(
-                        "  ${localizedStrings.fTotalWeightLabel}: ",
+                        "  ${(localizedStrings?.fTotalWeightLabel ?? "fTotalWeightLabel")}: ",
                         style: getTextStyle(
                           color: colorScheme.onSurfaceVariant,
                         ),
@@ -1696,7 +1696,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
                             startDarftWeighting();
                           },
                     child: Text(
-                      localizedStrings.btnContinueWeighing,
+                      (localizedStrings?.btnContinueWeighing ?? "btnContinueWeighing"),
                       style: textTheme.bodySmall!.copyWith(
                         color: colorScheme.onPrimary,
                       ),
@@ -1727,7 +1727,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
                 flex: 11,
                 child: Column(children: [
                   ShowRawTitleWidget(
-                    text: localizedStrings.fIngredientRemark,
+                    text: (localizedStrings?.fIngredientRemark ?? "fIngredientRemark"),
                   ),
                   RawRemarkTextWidget(
                     text: selectedDetail == Detail()
@@ -1752,7 +1752,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
                 flex: 9,
                 child: Column(children: [
                   ShowRawTitleWidget(
-                    text: localizedStrings.fFmaRemark,
+                    text: (localizedStrings?.fFmaRemark ?? "fFmaRemark"),
                   ),
                   RawRemarkTextWidget(
                     text: selectedDarfFma?.fmaInfo!.header!.remark ?? "",
@@ -2031,7 +2031,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
                     ),
                     Expanded(
                       child: ShowRawTitleWidget(
-                        text: localizedStrings.fInvolvedFmas,
+                        text: (localizedStrings?.fInvolvedFmas ?? "fInvolvedFmas"),
                       ),
                     )
                   ]),
@@ -2161,9 +2161,9 @@ class FormulationScalePageState extends State<FormulationScalePage>
               // 自定义 indicator 样式，添加分隔线
               dividerColor: Colors.transparent,
               tabs: [
-                Tab(text: localizedStrings.fFmaListTab),
-                Tab(text: localizedStrings.fRawMaterialListTab),
-                Tab(text: localizedStrings.tipTemporarySaveFormulaRecord),
+                Tab(text: (localizedStrings?.fFmaListTab ?? "fFmaListTab")),
+                Tab(text: (localizedStrings?.fRawMaterialListTab ?? "fRawMaterialListTab")),
+                Tab(text: (localizedStrings?.tipTemporarySaveFormulaRecord ?? "tipTemporarySaveFormulaRecord")),
               ],
             ),
           ),
@@ -2219,7 +2219,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
                       });
                     },
                   ),
-                  hintText: localizedStrings.fSearchHint,
+                  hintText: (localizedStrings?.fSearchHint ?? "fSearchHint"),
                   contentPadding: EdgeInsets.symmetric(vertical: 10),
                   hintStyle: textTheme.bodySmall!.copyWith(
                     // 设置提示文本样式
@@ -2261,7 +2261,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
                         DropdownMenuItem<String>(
                           value: null,
                           child: Text(
-                            localizedStrings.fPleaseSelectCategory,
+                            (localizedStrings?.fPleaseSelectCategory ?? "fPleaseSelectCategory"),
                             style: textTheme.bodySmall!.copyWith(
                               fontSize: 12,
                               color: Theme.of(context)
@@ -2276,7 +2276,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
                         DropdownMenuItem<String>(
                           value: null,
                           child: Text(
-                            localizedStrings.fPleaseSelectCategory,
+                            (localizedStrings?.fPleaseSelectCategory ?? "fPleaseSelectCategory"),
                             style: textTheme.bodySmall!.copyWith(
                               fontSize: 12,
                               color: Theme.of(context)
@@ -2316,7 +2316,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
           width: 14,
         ),
         Tooltip(
-            message: localizedStrings.fClearSearchConditionBtn, // 提示信息
+            message: (localizedStrings?.fClearSearchConditionBtn ?? "fClearSearchConditionBtn"), // 提示信息
             child: IconButton(
               icon: Icon(
                 Icons.cleaning_services_outlined,
@@ -2352,15 +2352,15 @@ class FormulationScalePageState extends State<FormulationScalePage>
         SizedBox(
           width: regularPadding,
         ),
-        buildIconBtn(localizedStrings.gBtnExport, exportSvgIcon(), exportRaw),
+        buildIconBtn((localizedStrings?.gBtnExport ?? "gBtnExport"), exportSvgIcon(), exportRaw),
         SizedBox(
           width: regularPadding,
         ),
-        buildIconBtn(localizedStrings.gBtnImport, importSvgIcon(), importRaw),
+        buildIconBtn((localizedStrings?.gBtnImport ?? "gBtnImport"), importSvgIcon(), importRaw),
         SizedBox(
           width: regularPadding,
         ),
-        buildIconBtn(localizedStrings.fGetRawTemplateBtn, rawTemplateSvgIcon(),
+        buildIconBtn((localizedStrings?.fGetRawTemplateBtn ?? "fGetRawTemplateBtn"), rawTemplateSvgIcon(),
             getRawTemplate),
         SizedBox(
           width: regularPadding,
@@ -2387,8 +2387,8 @@ class FormulationScalePageState extends State<FormulationScalePage>
       barrierDismissible: false,
       builder: (BuildContext context) {
         return ShowNormalTipDialog(
-          title: localizedStrings.fTipTitle,
-          msg: localizedStrings.deleteRawInUseConfirm,
+          title: (localizedStrings?.fTipTitle ?? "fTipTitle"),
+          msg: (localizedStrings?.deleteRawInUseConfirm ?? "deleteRawInUseConfirm"),
         );
       },
     ).then((value) {
@@ -2527,7 +2527,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
     if (result == null) return;
     File file = File(result.files.single.path!);
     if (!mounted) return;
-    showTipInfo(localizedStrings.tipValidating, context);
+    showTipInfo((localizedStrings?.tipValidating ?? "tipValidating"), context);
 
     //读取csv文件
     ImportRawResult resImport = await importRawFromExcel(file);
@@ -2644,7 +2644,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
     if (result == null) return;
     File file = File(result.files.single.path!);
     if (!mounted) return;
-    showTipInfo(localizedStrings.tipValidating, context);
+    showTipInfo((localizedStrings?.tipValidating ?? "tipValidating"), context);
     //读取xlsx文件
     ImportFmaResult importRes = await importFormulasFromExcel(file);
     if (!mounted) return;
@@ -2704,7 +2704,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
   //导出原料的json文件，只要导出勾选的原料
   void exportRaw() async {
     if (selRawList.isEmpty) {
-      showTipInfo(localizedStrings.gTipNoDataSelected, context);
+      showTipInfo((localizedStrings?.gTipNoDataSelected ?? "gTipNoDataSelected"), context);
       return;
     }
     List<RawDataInfo> exportRawList = selRawList;
@@ -2737,7 +2737,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
 //导出配方的json文件，只要导出勾选的配方
   exportFormula() async {
     if (selFormulas.isEmpty) {
-      showTipInfo(localizedStrings.gTipNoDataSelected, context);
+      showTipInfo((localizedStrings?.gTipNoDataSelected ?? "gTipNoDataSelected"), context);
       return;
     }
     List<FormulaInfoDb> exportFormulaList = selFormulas;
@@ -2802,7 +2802,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
                         });
                       },
                     ),
-                    hintText: localizedStrings.fSearchHint,
+                    hintText: (localizedStrings?.fSearchHint ?? "fSearchHint"),
                     contentPadding: EdgeInsets.symmetric(vertical: 10),
                     hintStyle: textTheme.bodySmall!.copyWith(
                       // 设置提示文本样式
@@ -2844,7 +2844,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
                     DropdownMenuItem<String>(
                       value: null,
                       child: Text(
-                        localizedStrings.fPleaseSelectCategory,
+                        (localizedStrings?.fPleaseSelectCategory ?? "fPleaseSelectCategory"),
                         style: textTheme.bodySmall!.copyWith(
                           // 设置提示文本样式
                           fontSize: 12,
@@ -2858,7 +2858,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
                 : [
                     DropdownMenuItem<String>(
                       value: null,
-                      child: Text(localizedStrings.fPleaseSelectCategory,
+                      child: Text((localizedStrings?.fPleaseSelectCategory ?? "fPleaseSelectCategory"),
                           style: textTheme.bodySmall!.copyWith(
                             // 设置提示文本样式
                             fontSize: 12,
@@ -2917,7 +2917,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
             items: [
               DropdownMenuItem<EncryptedValue>(
                 value: null,
-                child: Text(localizedStrings.fSelectConfidentialityStatusMsg,
+                child: Text((localizedStrings?.fSelectConfidentialityStatusMsg ?? "fSelectConfidentialityStatusMsg"),
                     style: textTheme.bodySmall!.copyWith(
                       // 设置提示文本样式
                       fontSize: 12,
@@ -2958,7 +2958,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
           width: 14,
         ),
         Tooltip(
-            message: localizedStrings.fClearSearchConditionBtn, // 提示信息
+            message: (localizedStrings?.fClearSearchConditionBtn ?? "fClearSearchConditionBtn"), // 提示信息
             child: IconButton(
               icon: Icon(
                 Icons.cleaning_services_outlined,
@@ -2975,7 +2975,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
 
         Spacer(),
         showAddFormulaIconBtn(
-            localizedStrings.fAddFmaBtn, Icons.add_box_outlined, () {
+            (localizedStrings?.fAddFmaBtn ?? "fAddFmaBtn"), Icons.add_box_outlined, () {
           Navigator.push(context,
               MaterialPageRoute(builder: (context) => AddFormulaPage()));
         }),
@@ -2983,7 +2983,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
           width: 12,
         ),
         //配方称重记录
-        showIconButton(localizedStrings.fFmaBarcode, fmaBarcodeIcon(), () {
+        showIconButton((localizedStrings?.fFmaBarcode ?? "fFmaBarcode"), fmaBarcodeIcon(), () {
           showDialog(
             context: context,
             builder: (BuildContext context) {
@@ -3020,7 +3020,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
         ),
         //配方称重记录
         showIconButton(
-            localizedStrings.fHistoricalWeighingRecordsBtn, recordsIcon(), () {
+            (localizedStrings?.fHistoricalWeighingRecordsBtn ?? "fHistoricalWeighingRecordsBtn"), recordsIcon(), () {
           Navigator.push(context,
               MaterialPageRoute(builder: (context) => AllFmaWgtRecPage()));
         }),
@@ -3029,19 +3029,19 @@ class FormulationScalePageState extends State<FormulationScalePage>
         ),
         //导入配方
         showIconButton(
-            localizedStrings.gBtnImport, importSvgIcon(), importFormula),
+            (localizedStrings?.gBtnImport ?? "gBtnImport"), importSvgIcon(), importFormula),
         SizedBox(
           width: 12,
         ),
         //导出配方
-        showIconButton(localizedStrings.gBtnExport, exportSvgIcon(), () {
+        showIconButton((localizedStrings?.gBtnExport ?? "gBtnExport"), exportSvgIcon(), () {
           //导出配方
           exportFormula();
         }),
         SizedBox(
           width: 12,
         ),
-        buildIconBtn(localizedStrings.fGetFmaTemplateBtn, rawTemplateSvgIcon(),
+        buildIconBtn((localizedStrings?.fGetFmaTemplateBtn ?? "fGetFmaTemplateBtn"), rawTemplateSvgIcon(),
             getFmaTemplate),
         SizedBox(
           width: regularPadding,
@@ -3070,8 +3070,8 @@ class FormulationScalePageState extends State<FormulationScalePage>
       barrierDismissible: false,
       builder: (BuildContext context) {
         return ShowNormalTipDialog(
-          title: localizedStrings.fTipTitle,
-          msg: localizedStrings.deleteFormulaWithDraftConfirm,
+          title: (localizedStrings?.fTipTitle ?? "fTipTitle"),
+          msg: (localizedStrings?.deleteFormulaWithDraftConfirm ?? "deleteFormulaWithDraftConfirm"),
         );
       },
     ).then((value) {
@@ -3122,7 +3122,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
                         });
                       },
                     ),
-                    hintText: localizedStrings.fSearchHint,
+                    hintText: (localizedStrings?.fSearchHint ?? "fSearchHint"),
                     contentPadding: EdgeInsets.symmetric(vertical: 10),
                     hintStyle: textTheme.bodySmall!.copyWith(
                       // 设置提示文本样式
@@ -3180,8 +3180,8 @@ class FormulationScalePageState extends State<FormulationScalePage>
       barrierDismissible: false,
       builder: (BuildContext context) {
         return ShowNormalTipDialog(
-          title: localizedStrings.fTipTitle,
-          msg: localizedStrings.fConfirmDelete,
+          title: (localizedStrings?.fTipTitle ?? "fTipTitle"),
+          msg: (localizedStrings?.fConfirmDelete ?? "fConfirmDelete"),
         );
       },
     ).then((value) {

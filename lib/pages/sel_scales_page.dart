@@ -1,4 +1,4 @@
-import 'dart:async';
+﻿import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:t_max/functions/methods.dart';
@@ -220,7 +220,7 @@ class SelectScalesPageState extends State<SelectScalesPage> {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: getDialogTitle(
-          context, localizedStrings.gBtnDownload, Icons.download, 800),
+          context, (localizedStrings?.gBtnDownload ?? "gBtnDownload"), Icons.download, 800),
       contentPadding: const EdgeInsets.fromLTRB(24, 5, 24, 5),
       content: Container(
           height: 500,
@@ -262,7 +262,7 @@ class SelectScalesPageState extends State<SelectScalesPage> {
               btnWidth: 120,
               btnHeight: 40,
               icon: Icons.check_circle,
-              text: localizedStrings.gBtnConfirm,
+              text: (localizedStrings?.gBtnConfirm ?? "gBtnConfirm"),
               onPressed: !isDownloading && checkSelect()
                   ? () {
                       setState(() {
@@ -280,7 +280,7 @@ class SelectScalesPageState extends State<SelectScalesPage> {
               btnWidth: 120,
               btnHeight: 40,
               icon: Icons.cancel,
-              text: localizedStrings.gBtnCancel,
+              text: (localizedStrings?.gBtnCancel ?? "gBtnCancel"),
               onPressed: isDownloading
                   ? null
                   : () {
@@ -302,19 +302,19 @@ class SelectScalesPageState extends State<SelectScalesPage> {
           color: Theme.of(context).colorScheme.onSurface),
       columns: [
         DataColumn(label: Text('')),
-        DataColumn(label: Text(localizedStrings.gStatus)),
-        DataColumn(label: Text(localizedStrings.gScaleName)),
+        DataColumn(label: Text(localizedStrings?.gStatus ?? "gStatus")),
+        DataColumn(label: Text(localizedStrings?.gScaleName ?? "gScaleName")),
         DataColumn(
             label: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            Text(localizedStrings.gModelName),
+            Text(localizedStrings?.gModelName ?? "gModelName"),
             Text('Sn'),
           ],
         )),
         DataColumn(label: Text('COM')),
-        DataColumn(label: Text(localizedStrings.gProgress)),
-        DataColumn(label: Text(localizedStrings.gTipResult)),
+        DataColumn(label: Text(localizedStrings?.gProgress ?? "gProgress")),
+        DataColumn(label: Text(localizedStrings?.gTipResult ?? "gTipResult")),
       ],
       rows: List.generate(
         1,
@@ -342,8 +342,8 @@ class SelectScalesPageState extends State<SelectScalesPage> {
                 width: 50,
                 child: Text(
                     comScale.isOnline
-                        ? localizedStrings.gTipOnline
-                        : localizedStrings.gTipOffline,
+                        ? (localizedStrings?.gTipOnline ?? "gTipOnline")
+                        : (localizedStrings?.gTipOffline ?? "gTipOffline"),
                     maxLines: 2,
                     style: TextStyle(
                         color: getResTextColor(comScale.scaleId),
@@ -410,19 +410,19 @@ class SelectScalesPageState extends State<SelectScalesPage> {
           color: Theme.of(context).colorScheme.onSurface),
       columns: [
         DataColumn(label: Text('')),
-        DataColumn(label: Text(localizedStrings.gStatus)),
-        DataColumn(label: Text(localizedStrings.gScaleName)),
+        DataColumn(label: Text(localizedStrings?.gStatus ?? "gStatus")),
+        DataColumn(label: Text(localizedStrings?.gScaleName ?? "gScaleName")),
         DataColumn(
             label: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            Text(localizedStrings.gModelName),
+            Text(localizedStrings?.gModelName ?? "gModelName"),
             Text('Sn'),
           ],
         )),
         DataColumn(label: Text('Ip')),
-        DataColumn(label: Text(localizedStrings.gProgress)),
-        DataColumn(label: Text(localizedStrings.gTipResult)),
+        DataColumn(label: Text(localizedStrings?.gProgress ?? "gProgress")),
+        DataColumn(label: Text(localizedStrings?.gTipResult ?? "gTipResult")),
       ],
       rows: List.generate(
         scaleNetItems.length,
@@ -448,8 +448,8 @@ class SelectScalesPageState extends State<SelectScalesPage> {
                 width: 50,
                 child: Text(
                     scaleNetItems[index].isOnline!
-                        ? localizedStrings.gTipOnline
-                        : localizedStrings.gTipOffline,
+                        ? (localizedStrings?.gTipOnline ?? "gTipOnline")
+                        : (localizedStrings?.gTipOffline ?? "gTipOffline"),
                     maxLines: 2,
                     style: TextStyle(
                         color: getResTextColor(scaleNetItems[index].scaleId!),

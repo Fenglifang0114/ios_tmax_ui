@@ -1,4 +1,4 @@
-//重量收集页面 20250522
+﻿//重量收集页面 20250522
 
 import 'dart:async';
 import 'dart:io';
@@ -137,15 +137,15 @@ class WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
         String jsonString = event.obj;
 
         RevAllWgtRecs getAllWgtInfo = revAllWgtRecsFromJson(jsonString);
-        if (getAllWgtInfo.totalCount! > 0) {
+        if ((getAllWgtInfo.totalCount ?? 0) > 0) {
           List<ScaleRecInfo>? scaleRecInfos = getAllWgtInfo.scaleRecInfos;
 
           allWgtRecList.clear();
 
-          allWgtRecList = List<ScaleRecInfo>.from(scaleRecInfos!);
+          allWgtRecList = List<ScaleRecInfo>.from((scaleRecInfos ?? []));
 
           _tableState.addData(allWgtRecList);
-          _tableState.setTotalCount(getAllWgtInfo.totalCount!);
+          _tableState.setTotalCount((getAllWgtInfo.totalCount ?? 0));
           // _tableState.loadPage(1);
         } else {
           allWgtRecList.clear();
@@ -186,14 +186,15 @@ class WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
           return;
         }
         tempWeight = event.obj;
+        var msgBody = tempWeight.msgBody;
         if (tempWeight.scaleId != null &&
             mounted &&
-            tempWeight.msgBody != null) {
+            msgBody != null) {
           // 记录每台秤的最新称重数据
           scaleWeightMap[tempWeight.scaleId!] = WeightInfo(
-              weight: tempWeight.msgBody!.weightVal.toString(),
-              unit: tempWeight.msgBody!.weightUnit,
-              stable: tempWeight.msgBody!.isStable);
+              weight: msgBody.weightVal.toString(),
+              unit: msgBody.weightUnit,
+              stable: msgBody.isStable);
 
           updateTotalWeightAndStable();
           needUpdate = false;
@@ -209,7 +210,7 @@ class WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
             PluData newPlu = PluData(0, 0, 0, 0, '', '', 0, 0, 0, 0, 0, 0, 0,
                 '', false, '', 0, 0, '', '');
             newPlu.enabled = pluInfoList[i].enabled ?? true;
-            if (!pluInfoList[i].enabled!) {
+            if (!(pluInfoList[i].enabled ?? false)) {
               continue;
             }
             newPlu.recId = pluInfoList[i].recId;
@@ -265,7 +266,7 @@ class WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
           showExportDialog(filePath, context);
         } else {
           showTipInfo(
-              '${localizedStrings.gTipExportFail} ：$resString', context);
+              '${(localizedStrings?.gTipExportFail ?? "gTipExportFail")} ：$resString', context);
         }
       }
     });
@@ -275,7 +276,7 @@ class WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
   void didChangeDependencies() {
     setState(() {
       for (var item in myReportFeildsMap.keys) {
-        _tableState.visibleColumns[item]!.isSelect = myReportFeildsMap[item]!;
+        _tableState.visibleColumns[item]?.isSelect = (myReportFeildsMap[item] ?? false);
       }
     });
 
@@ -427,19 +428,19 @@ class WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
         continue;
       }
       //转换为double类型的，最多三位小数
-      double weight = double.parse(info.weight);
+      double weight = (double.tryParse(info.weight) ?? 0.0);
       // 转换为三位小数
-      weight = double.parse(weight.toStringAsFixed(3));
+      weight = (double.tryParse(weight.toStringAsFixed(3)) ?? 0.0);
       double convertedWeight =
           convertUnit(weight, info.unit, totalWgtUnitCtl.text);
-      double tmpWeight = double.parse(convertedWeight.toStringAsFixed(3));
+      double tmpWeight = (double.tryParse(convertedWeight.toStringAsFixed(3)) ?? 0.0);
       totalWeight += tmpWeight;
       scaleWgtMapDetail[scaleId] = WeightInfo(
           weight: tmpWeight.toStringAsFixed(3),
           unit: totalWgtUnitCtl.text,
           stable: info.stable);
     }
-    totalWeight = double.parse(totalWeight.toStringAsFixed(3));
+    totalWeight = (double.tryParse(totalWeight.toStringAsFixed(3)) ?? 0.0);
 
     return totalWeight;
   }
@@ -459,8 +460,8 @@ class WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
                 myPageHeadInfo(
                     context,
                     width - headWidthPadding,
-                    localizedStrings.menuWeighingDataCollection,
-                    localizedStrings.gTipWgtDataCollectionHelp),
+                    (localizedStrings?.menuWeighingDataCollection ?? "menuWeighingDataCollection"),
+                    (localizedStrings?.gTipWgtDataCollectionHelp ?? "gTipWgtDataCollectionHelp")),
                 Container(
                   height: regularPadding,
                   color: Theme.of(context).colorScheme.surfaceContainerLow,
@@ -550,7 +551,7 @@ class WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
       for (var group in groups.values) {
         if (group.length > 1) {
           // 冲突：同一个物理设备选择了多种连接方式
-          showTipInfo(localizedStrings.tipSameScale, context);
+          showTipInfo((localizedStrings?.tipSameScale ?? "tipSameScale"), context);
 
           // 优先级：串口(0) > 网口(1) > 蓝牙(2)。排序并保留最高优先级的连接。
           group.sort((a, b) => a.tMedia.compareTo(b.tMedia));
@@ -655,7 +656,7 @@ class WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
                   child: Row(
                     children: [
                       Text(
-                        localizedStrings.fTotalWeight,
+                        (localizedStrings?.fTotalWeight ?? "fTotalWeight"),
                         style: Theme.of(context).textTheme.labelMedium!.apply(
                             color: Theme.of(context).colorScheme.onSurface),
                         overflow: TextOverflow.ellipsis,
@@ -735,7 +736,7 @@ class WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
                         valueListenable: totalWgtStableNotifier,
                         builder: (context, totalWgtStable, _) {
                           return Tooltip(
-                            message: localizedStrings.gBtnSave,
+                            message: (localizedStrings?.gBtnSave ?? "gBtnSave"),
                             child: IconButton(
                               iconSize: 28,
                               color: Theme.of(context).colorScheme.primary,
@@ -743,7 +744,7 @@ class WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
                               hoverColor: Theme.of(context)
                                   .colorScheme
                                   .onPrimary
-                                  .withValues(alpha: 0.1),
+                                  .withOpacity(0.1),
                               style: IconButton.styleFrom(
                                 disabledBackgroundColor: Theme.of(context)
                                     .colorScheme
@@ -798,7 +799,7 @@ class WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       Tooltip(
-                        message: localizedStrings.gBtnExport,
+                        message: (localizedStrings?.gBtnExport ?? "gBtnExport"),
                         child: IconButton(
                           iconSize: 28,
                           color: Theme.of(context).colorScheme.onPrimary,
@@ -806,7 +807,7 @@ class WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
                           hoverColor: Theme.of(context)
                               .colorScheme
                               .onPrimary
-                              .withValues(alpha: 0.1),
+                              .withOpacity(0.1),
                           style: IconButton.styleFrom(
                             disabledBackgroundColor: Theme.of(context)
                                 .colorScheme
@@ -854,7 +855,7 @@ class WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
                         width: regularPadding,
                       ),
                       Tooltip(
-                        message: localizedStrings.gBtnReportSetting,
+                        message: (localizedStrings?.gBtnReportSetting ?? "gBtnReportSetting"),
                         child: IconButton(
                           iconSize: 28,
                           color: Theme.of(context).colorScheme.onPrimary,
@@ -862,7 +863,7 @@ class WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
                           hoverColor: Theme.of(context)
                               .colorScheme
                               .onPrimary
-                              .withValues(alpha: 0.1),
+                              .withOpacity(0.1),
                           style: IconButton.styleFrom(
                             disabledBackgroundColor: Theme.of(context)
                                 .colorScheme
@@ -890,7 +891,7 @@ class WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
                         width: regularPadding,
                       ),
                       Tooltip(
-                        message: localizedStrings.gParameterSettingsTitle,
+                        message: (localizedStrings?.gParameterSettingsTitle ?? "gParameterSettingsTitle"),
                         child: IconButton(
                           iconSize: 28,
                           color: Theme.of(context).colorScheme.onPrimary,
@@ -898,7 +899,7 @@ class WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
                           hoverColor: Theme.of(context)
                               .colorScheme
                               .onPrimary
-                              .withValues(alpha: 0.1),
+                              .withOpacity(0.1),
                           style: IconButton.styleFrom(
                             disabledBackgroundColor: Theme.of(context)
                                 .colorScheme
@@ -932,7 +933,7 @@ class WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
                         ),
                       if (mySysUser.roleId != operatorRoleId)
                         Tooltip(
-                          message: localizedStrings.gBtnDeleteAll,
+                          message: (localizedStrings?.gBtnDeleteAll ?? "gBtnDeleteAll"),
                           child: IconButton(
                             iconSize: 28,
                             color: Theme.of(context).colorScheme.onPrimary,
@@ -940,7 +941,7 @@ class WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
                             hoverColor: Theme.of(context)
                                 .colorScheme
                                 .onPrimary
-                                .withValues(alpha: 0.1),
+                                .withOpacity(0.1),
                             style: IconButton.styleFrom(
                               disabledBackgroundColor: Theme.of(context)
                                   .colorScheme
@@ -959,8 +960,8 @@ class WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
                                 barrierDismissible: false, // 点击对话框外部不关闭对话框
                                 builder: (BuildContext context) {
                                   return ShowDeleteTipDialog(
-                                    title: localizedStrings.fTipTitle,
-                                    msg: localizedStrings.gTipConfirmDeleteAll,
+                                    title: (localizedStrings?.fTipTitle ?? "fTipTitle"),
+                                    msg: (localizedStrings?.gTipConfirmDeleteAll ?? "gTipConfirmDeleteAll"),
                                   );
                                 },
                               ).then((value) {
@@ -1008,8 +1009,8 @@ class WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
       if (value) {
         setState(() {
           for (var item in myReportFeildsMap.keys) {
-            _tableState.visibleColumns[item]!.isSelect =
-                myReportFeildsMap[item]!;
+            _tableState.visibleColumns[item]?.isSelect =
+                (myReportFeildsMap[item] ?? false);
           }
         });
       }
@@ -1044,8 +1045,8 @@ class WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
                 Row(mainAxisAlignment: MainAxisAlignment.end, children: [
                   Text(
                     mySettingParam.wgtMode == 0
-                        ? localizedStrings.gTipStandaloneMode
-                        : localizedStrings.gTipWeightSummationMode,
+                        ? (localizedStrings?.gTipStandaloneMode ?? "gTipStandaloneMode")
+                        : (localizedStrings?.gTipWeightSummationMode ?? "gTipWeightSummationMode"),
                     style: Theme.of(context)
                         .textTheme
                         .bodySmall!
@@ -1148,7 +1149,7 @@ void sendDataToDb(
       final weight = weightInfo.weight;
 
       // baseUnit == 'g'
-      //     ? double.parse(weightInfo.weight).toStringAsFixed(0)
+      //     ? ((double.tryParse() ?? 0.0).toStringAsFixed(0)
       //     : weightInfo.weight;
 
       newAddRec.detailRec!.add(NewWgtDetail(

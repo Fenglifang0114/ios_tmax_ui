@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/data/language.dart';
 import 'package:t_max/data/icons.dart';
@@ -47,7 +47,7 @@ class AddScaleDialogState extends State<AddScaleDialog> {
                     child: Container(
                       alignment: Alignment.centerLeft,
                       child: Text(
-                        localizedStrings.gTitleAddDevice,
+                        (localizedStrings?.gTitleAddDevice ?? "gTitleAddDevice"),
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -114,7 +114,7 @@ class AddScaleDialogState extends State<AddScaleDialog> {
                                         height: regularPadding,
                                       ),
                                       Text(
-                                        localizedStrings.gNetwork,
+                                        (localizedStrings?.gNetwork ?? "gNetwork"),
                                         style: Theme.of(context)
                                             .textTheme
                                             .bodyMedium!
@@ -168,7 +168,7 @@ class AddScaleDialogState extends State<AddScaleDialog> {
                                         height: regularPadding,
                                       ),
                                       Text(
-                                        localizedStrings.bluetooth,
+                                        (localizedStrings?.bluetooth ?? "bluetooth"),
                                         style: Theme.of(context)
                                             .textTheme
                                             .bodyMedium!
@@ -193,7 +193,7 @@ class AddScaleDialogState extends State<AddScaleDialog> {
                 alignment: Alignment.topCenter,
                 padding: const EdgeInsets.only(left: 50, right: 50),
                 child: SelectableText(
-                  localizedStrings.gTipAddDevice,
+                  (localizedStrings?.gTipAddDevice ?? "gTipAddDevice"),
                   style: Theme.of(context).textTheme.bodySmall!.apply(
                         color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),

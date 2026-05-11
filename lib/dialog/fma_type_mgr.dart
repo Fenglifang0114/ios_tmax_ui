@@ -1,4 +1,4 @@
-// 配方类别管理弹框
+﻿// 配方类别管理弹框
 import 'package:flutter/material.dart';
 import 'package:t_max/data/formula_common.dart';
 import 'package:t_max/data/home_page_common_data.dart';
@@ -31,8 +31,8 @@ class FmaTypeMgrDialogState extends State<FmaTypeMgrDialog> {
       barrierDismissible: false, // 点击对话框外部不关闭对话框
       builder: (BuildContext context) {
         return ShowDeleteTipDialog(
-          title: localizedStrings.fTipTitle,
-          msg: localizedStrings.deleteTypeUnusedConfirm,
+          title: (localizedStrings?.fTipTitle ?? "fTipTitle"),
+          msg: (localizedStrings?.deleteTypeUnusedConfirm ?? "deleteTypeUnusedConfirm"),
         );
       },
     ).then((value) {
@@ -99,7 +99,7 @@ class FmaTypeMgrDialogState extends State<FmaTypeMgrDialog> {
     _eventbus2 = eventBus.on<EventRespAddFormulaType>().listen((event) {
       if (mounted) {
         PublicFunctions.getFormulaTypeList();
-        showTipInfo(localizedStrings.fSuccessMsg, context);
+        showTipInfo((localizedStrings?.fSuccessMsg ?? "fSuccessMsg"), context);
       }
     });
   }
@@ -129,7 +129,7 @@ class FmaTypeMgrDialogState extends State<FmaTypeMgrDialog> {
             // 头部
             ...dialogHeadStyle(
               context,
-              localizedStrings.fRawCategoryManagement,
+              (localizedStrings?.fRawCategoryManagement ?? "fRawCategoryManagement"),
               true,
               onClose: () {
                 PublicFunctions.getFormulaTypeList(); // 刷新类型列表
@@ -187,7 +187,7 @@ class FmaTypeMgrDialogState extends State<FmaTypeMgrDialog> {
                                           });
                                         },
                                       ),
-                                      hintText: localizedStrings.fSearchHint,
+                                      hintText: (localizedStrings?.fSearchHint ?? "fSearchHint"),
                                       contentPadding:
                                           EdgeInsets.symmetric(vertical: 10),
                                       hintStyle: Theme.of(context)
@@ -219,7 +219,7 @@ class FmaTypeMgrDialogState extends State<FmaTypeMgrDialog> {
                         showTextButton(
                           context,
                           btnHeight,
-                          localizedStrings.gBtnClear,
+                          (localizedStrings?.gBtnClear ?? "gBtnClear"),
                           () {
                             showDeleteDialog();
                           },
@@ -233,7 +233,7 @@ class FmaTypeMgrDialogState extends State<FmaTypeMgrDialog> {
                         showTextButton(
                           context,
                           btnHeight,
-                          localizedStrings.gBtnAdd,
+                          (localizedStrings?.gBtnAdd ?? "gBtnAdd"),
                           () {
                             showAddFormulaTypeDialog();
                           },
@@ -254,7 +254,7 @@ class FmaTypeMgrDialogState extends State<FmaTypeMgrDialog> {
                       children: [
                         Expanded(
                             child: Text(
-                          localizedStrings.fRawMaterialTypeNameCol,
+                          (localizedStrings?.fRawMaterialTypeNameCol ?? "fRawMaterialTypeNameCol"),
                           style: Theme.of(context).textTheme.bodySmall!.apply(
                                 color: Theme.of(context).colorScheme.onSurface,
                               ),
@@ -262,7 +262,7 @@ class FmaTypeMgrDialogState extends State<FmaTypeMgrDialog> {
                         )),
                         SizedBox(
                             width: 80,
-                            child: Text(localizedStrings.fTipOperation,
+                            child: Text((localizedStrings?.fTipOperation ?? "fTipOperation"),
                                 style: Theme.of(context)
                                     .textTheme
                                     .bodySmall!
@@ -281,7 +281,7 @@ class FmaTypeMgrDialogState extends State<FmaTypeMgrDialog> {
                           child: Container(
                           alignment: Alignment.center,
                           child: Text(
-                            localizedStrings.fTipNoData,
+                            (localizedStrings?.fTipNoData ?? "fTipNoData"),
                             style: Theme.of(context).textTheme.bodySmall!.apply(
                                   color:
                                       Theme.of(context).colorScheme.onSurface,
@@ -411,7 +411,7 @@ class AddFormulaTypeDialogState extends State<AddFormulaTypeDialog> {
             // 头部
             ...dialogHeadStyle(
               context,
-              localizedStrings.fAddTypeBtn,
+              (localizedStrings?.fAddTypeBtn ?? "fAddTypeBtn"),
               true,
             ),
 
@@ -429,7 +429,7 @@ class AddFormulaTypeDialogState extends State<AddFormulaTypeDialog> {
                         child: Container(
                           alignment: Alignment.centerLeft,
                           child: Text(
-                            localizedStrings.fFmaCategoryCol,
+                            (localizedStrings?.fFmaCategoryCol ?? "fFmaCategoryCol"),
                             style: Theme.of(context).textTheme.bodySmall!.apply(
                                   color:
                                       Theme.of(context).colorScheme.onSurface,
@@ -455,7 +455,7 @@ class AddFormulaTypeDialogState extends State<AddFormulaTypeDialog> {
                                     borderRadius:
                                         BorderRadius.all(Radius.circular(0.0))),
                                 hintText:
-                                    localizedStrings.fInputFormulaTypeHint,
+                                    (localizedStrings?.fInputFormulaTypeHint ?? "fInputFormulaTypeHint"),
                                 suffixIconConstraints:
                                     BoxConstraints.tight(Size(40, 40)),
                                 suffixIcon: IconButton(
@@ -514,7 +514,7 @@ class AddFormulaTypeDialogState extends State<AddFormulaTypeDialog> {
                               for (var item in formulaTypeList) {
                                 if (item.categoryName == formulaTypeCtl.text) {
                                   showTipInfo(
-                                      localizedStrings.fTypeExistsMsg, context);
+                                      (localizedStrings?.fTypeExistsMsg ?? "fTypeExistsMsg"), context);
                                   return;
                                 }
                               }
@@ -523,7 +523,7 @@ class AddFormulaTypeDialogState extends State<AddFormulaTypeDialog> {
                               Navigator.pop(context);
                             },
                       child: Text(
-                        localizedStrings.gBtnConfirm,
+                        (localizedStrings?.gBtnConfirm ?? "gBtnConfirm"),
                         style: Theme.of(context).textTheme.bodyMedium!.apply(
                               color: Theme.of(context).colorScheme.onPrimary,
                             ),
@@ -549,7 +549,7 @@ class AddFormulaTypeDialogState extends State<AddFormulaTypeDialog> {
                         Navigator.pop(context);
                       },
                       child: Text(
-                        localizedStrings.gBtnCancel,
+                        (localizedStrings?.gBtnCancel ?? "gBtnCancel"),
                         style: Theme.of(context).textTheme.bodyMedium!.apply(
                               color: Theme.of(context).colorScheme.onPrimary,
                             ),
@@ -599,7 +599,7 @@ class EditFormulaTypeDialogState extends State<EditFormulaTypeDialog> {
             // 头部
             ...dialogHeadStyle(
               context,
-              localizedStrings.fEditFormulaTypeBtn,
+              (localizedStrings?.fEditFormulaTypeBtn ?? "fEditFormulaTypeBtn"),
               true,
             ),
 
@@ -617,7 +617,7 @@ class EditFormulaTypeDialogState extends State<EditFormulaTypeDialog> {
                         child: Container(
                           alignment: Alignment.centerLeft,
                           child: Text(
-                            localizedStrings.fFmaCategoryCol,
+                            (localizedStrings?.fFmaCategoryCol ?? "fFmaCategoryCol"),
                             style: Theme.of(context).textTheme.bodySmall!.apply(
                                   color:
                                       Theme.of(context).colorScheme.onSurface,
@@ -643,7 +643,7 @@ class EditFormulaTypeDialogState extends State<EditFormulaTypeDialog> {
                                     borderRadius:
                                         BorderRadius.all(Radius.circular(0.0))),
                                 hintText:
-                                    localizedStrings.fInputFormulaTypeHint,
+                                    (localizedStrings?.fInputFormulaTypeHint ?? "fInputFormulaTypeHint"),
                                 suffixIconConstraints:
                                     BoxConstraints.tight(Size(40, 40)),
                                 suffixIcon: IconButton(
@@ -702,7 +702,7 @@ class EditFormulaTypeDialogState extends State<EditFormulaTypeDialog> {
                               for (var item in formulaTypeList) {
                                 if (item.categoryName == formulaTypeCtl.text) {
                                   showTipInfo(
-                                      localizedStrings.fTypeExistsMsg, context);
+                                      (localizedStrings?.fTypeExistsMsg ?? "fTypeExistsMsg"), context);
                                   return;
                                 }
                               }
@@ -711,7 +711,7 @@ class EditFormulaTypeDialogState extends State<EditFormulaTypeDialog> {
                               Navigator.pop(context);
                             },
                       child: Text(
-                        localizedStrings.gBtnConfirm,
+                        (localizedStrings?.gBtnConfirm ?? "gBtnConfirm"),
                         style: Theme.of(context).textTheme.bodyMedium!.apply(
                               color: Theme.of(context).colorScheme.onPrimary,
                             ),
@@ -737,7 +737,7 @@ class EditFormulaTypeDialogState extends State<EditFormulaTypeDialog> {
                         Navigator.pop(context);
                       },
                       child: Text(
-                        localizedStrings.gBtnCancel,
+                        (localizedStrings?.gBtnCancel ?? "gBtnCancel"),
                         style: Theme.of(context).textTheme.bodyMedium!.apply(
                               color: Theme.of(context).colorScheme.onPrimary,
                             ),

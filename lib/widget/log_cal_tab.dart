@@ -1,4 +1,4 @@
-import 'dart:convert';
+﻿import 'dart:convert';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -114,7 +114,7 @@ class _ScaleCalLogTabPageState extends State<ScaleCalLogTabPage> {
         String josnData = event.obj;
         try {
           if (josnData.isEmpty) {
-            showTipInfo(localizedStrings.gTipExportFail, context);
+            showTipInfo((localizedStrings?.gTipExportFail ?? "gTipExportFail"), context);
             return;
           }
           if (josnData.contains('ok')) {
@@ -341,7 +341,7 @@ class _ScaleCalLogTabPageState extends State<ScaleCalLogTabPage> {
               ),
               SizedBox(width: 16),
               Text(
-                localizedStrings.tipJumpPage,
+                (localizedStrings?.tipJumpPage ?? "tipJumpPage"),
                 style: textTheme.bodySmall,
               ),
               SizedBox(width: 8),
@@ -370,13 +370,13 @@ class _ScaleCalLogTabPageState extends State<ScaleCalLogTabPage> {
             width: regularPadding,
           ),
           Text(
-            '${localizedStrings.tipPageTotal} $totalCount ${localizedStrings.tipPageItems}',
+            '${(localizedStrings?.tipPageTotal ?? "tipPageTotal")} $totalCount ${(localizedStrings?.tipPageItems ?? "tipPageItems")}',
             style: textTheme.bodySmall,
           ),
           SizedBox(width: 16),
           // 显示选中的记录数量
           Text(
-            '${localizedStrings.selected} ${allSelectedRecIds.length} ${localizedStrings.tipPageItems}',
+            '${(localizedStrings?.selected ?? "selected")} ${allSelectedRecIds.length} ${(localizedStrings?.tipPageItems ?? "tipPageItems")}',
             style: textTheme.bodySmall!.copyWith(
               color: colorScheme.primary,
             ),
@@ -546,35 +546,35 @@ class _ScaleCalLogTabPageState extends State<ScaleCalLogTabPage> {
         ),
       ),
       getColumnWidget(80, 'recId', 'ID', textTheme, colorScheme),
-      getColumnWidget(columnWidth, 'operator', localizedStrings.operator,
+      getColumnWidget(columnWidth, 'operator', (localizedStrings?.operator ?? "operator"),
           textTheme, colorScheme),
-      getColumnWidget(columnWidth, 'roleId', localizedStrings.userRole,
+      getColumnWidget(columnWidth, 'roleId', (localizedStrings?.userRole ?? "userRole"),
           textTheme, colorScheme),
-      getColumnWidget(200, 'calType', localizedStrings.calibrationType,
+      getColumnWidget(200, 'calType', (localizedStrings?.calibrationType ?? "calibrationType"),
           textTheme, colorScheme),
-      getColumnWidget(columnWidth, 'calMode', localizedStrings.calibrationMode,
+      getColumnWidget(columnWidth, 'calMode', (localizedStrings?.calibrationMode ?? "calibrationMode"),
           textTheme, colorScheme),
-      getColumnWidget(columnWidth, 'unit', localizedStrings.gTipWeightUnit,
+      getColumnWidget(columnWidth, 'unit', (localizedStrings?.gTipWeightUnit ?? "gTipWeightUnit"),
           textTheme, colorScheme),
       getColumnWidget(columnWidth, 'calValue',
-          localizedStrings.calibrationValue, textTheme, colorScheme),
+          (localizedStrings?.calibrationValue ?? "calibrationValue"), textTheme, colorScheme),
       getColumnWidget(200, 'calBefore',
-          localizedStrings.weightBeforeCalibration, textTheme, colorScheme),
+          (localizedStrings?.weightBeforeCalibration ?? "weightBeforeCalibration"), textTheme, colorScheme),
       getColumnWidget(columnWidth, 'calAfter',
-          localizedStrings.weightAfterCalibration, textTheme, colorScheme),
+          (localizedStrings?.weightAfterCalibration ?? "weightAfterCalibration"), textTheme, colorScheme),
       getColumnWidget(columnWidth, 'calError',
-          localizedStrings.calibrationError, textTheme, colorScheme),
-      getColumnWidget(columnWidth, 'result', localizedStrings.gTipResult,
+          (localizedStrings?.calibrationError ?? "calibrationError"), textTheme, colorScheme),
+      getColumnWidget(columnWidth, 'result', (localizedStrings?.gTipResult ?? "gTipResult"),
           textTheme, colorScheme),
-      getColumnWidget(columnWidth, 'scaleName', localizedStrings.gDeviceName,
+      getColumnWidget(columnWidth, 'scaleName', (localizedStrings?.gDeviceName ?? "gDeviceName"),
           textTheme, colorScheme),
-      getColumnWidget(columnWidth, 'modelName', localizedStrings.gModelName,
+      getColumnWidget(columnWidth, 'modelName', (localizedStrings?.gModelName ?? "gModelName"),
           textTheme, colorScheme),
       getColumnWidget(
-          columnWidth, 'sn', localizedStrings.gScaleSn, textTheme, colorScheme),
-      getColumnWidget(200, 'createTime', localizedStrings.fCreatedAtCol,
+          columnWidth, 'sn', (localizedStrings?.gScaleSn ?? "gScaleSn"), textTheme, colorScheme),
+      getColumnWidget(200, 'createTime', (localizedStrings?.fCreatedAtCol ?? "fCreatedAtCol"),
           textTheme, colorScheme),
-      // getColumnWidgetNoSort(120, 'operate', localizedStrings.fTipOperation,
+      // getColumnWidgetNoSort(120, 'operate', (localizedStrings?.fTipOperation ?? "fTipOperation"),
       //     textTheme, colorScheme),
     ];
   }
@@ -613,7 +613,7 @@ class _ScaleCalLogTabPageState extends State<ScaleCalLogTabPage> {
                         });
                       },
                     ),
-                    hintText: localizedStrings.operator,
+                    hintText: (localizedStrings?.operator ?? "operator"),
                     contentPadding: EdgeInsets.symmetric(vertical: 10),
                     hintStyle: Theme.of(context).textTheme.bodySmall!.copyWith(
                           // 设置提示文本样式
@@ -655,7 +655,7 @@ class _ScaleCalLogTabPageState extends State<ScaleCalLogTabPage> {
               DropdownMenuItem<String>(
                 value: null,
                 child: Text(
-                  localizedStrings.userRole,
+                  (localizedStrings?.userRole ?? "userRole"),
                   style: Theme.of(context).textTheme.bodySmall!.copyWith(
                         fontSize: 12,
                         color: Theme.of(context)
@@ -667,7 +667,7 @@ class _ScaleCalLogTabPageState extends State<ScaleCalLogTabPage> {
               DropdownMenuItem<String>(
                 value: "1",
                 child: Text(
-                  localizedStrings.superAdmin,
+                  (localizedStrings?.superAdmin ?? "superAdmin"),
                   style: Theme.of(context).textTheme.bodySmall!.copyWith(
                         color: Theme.of(context).colorScheme.onSurface,
                       ),
@@ -676,7 +676,7 @@ class _ScaleCalLogTabPageState extends State<ScaleCalLogTabPage> {
               DropdownMenuItem<String>(
                 value: "2",
                 child: Text(
-                  localizedStrings.admin,
+                  (localizedStrings?.admin ?? "admin"),
                   style: Theme.of(context).textTheme.bodySmall!.copyWith(
                         color: Theme.of(context).colorScheme.onSurface,
                       ),
@@ -685,7 +685,7 @@ class _ScaleCalLogTabPageState extends State<ScaleCalLogTabPage> {
               DropdownMenuItem<String>(
                 value: "3",
                 child: Text(
-                  localizedStrings.operator,
+                  (localizedStrings?.operator ?? "operator"),
                   style: Theme.of(context).textTheme.bodySmall!.copyWith(
                         color: Theme.of(context).colorScheme.onSurface,
                       ),
@@ -721,7 +721,7 @@ class _ScaleCalLogTabPageState extends State<ScaleCalLogTabPage> {
             controller: dateCtl,
             readOnly: true,
             decoration: InputDecoration(
-              hintText: localizedStrings.gBtnSelectDate,
+              hintText: (localizedStrings?.gBtnSelectDate ?? "gBtnSelectDate"),
               hintStyle: Theme.of(context).textTheme.bodySmall!.copyWith(
                     fontSize: 12,
                     color:
@@ -752,7 +752,7 @@ class _ScaleCalLogTabPageState extends State<ScaleCalLogTabPage> {
           width: 14,
         ),
         Tooltip(
-            message: localizedStrings.search, // 翻译
+            message: (localizedStrings?.search ?? "search"), // 翻译
             child: IconButton(
               icon: Icon(
                 Icons.search_rounded,
@@ -769,7 +769,7 @@ class _ScaleCalLogTabPageState extends State<ScaleCalLogTabPage> {
           width: 14,
         ),
         Tooltip(
-            message: localizedStrings.fClearSearchConditionBtn, // 提示信息
+            message: (localizedStrings?.fClearSearchConditionBtn ?? "fClearSearchConditionBtn"), // 提示信息
             child: IconButton(
               icon: Icon(
                 Icons.cleaning_services_outlined,
@@ -794,7 +794,7 @@ class _ScaleCalLogTabPageState extends State<ScaleCalLogTabPage> {
         showTextButton(
             context,
             btnHeight,
-            localizedStrings.gBtnExport,
+            (localizedStrings?.gBtnExport ?? "gBtnExport"),
             _allCalLogs.isEmpty
                 ? null
                 : () async {
@@ -835,20 +835,20 @@ class _ScaleCalLogTabPageState extends State<ScaleCalLogTabPage> {
                       translation: CalLogTranslator.getLanguageMap(),
                       headers: [
                         'ID',
-                        localizedStrings.operator,
-                        localizedStrings.userRole,
-                        localizedStrings.calibrationType,
-                        localizedStrings.calibrationMode,
-                        localizedStrings.gTipWeightUnit,
-                        localizedStrings.calibrationValue,
-                        localizedStrings.weightBeforeCalibration,
-                        localizedStrings.weightAfterCalibration,
-                        localizedStrings.calibrationError,
-                        localizedStrings.gTipResult,
-                        localizedStrings.gDeviceName,
-                        localizedStrings.gModelName,
-                        localizedStrings.gScaleSn,
-                        localizedStrings.fCreatedAtCol,
+                        (localizedStrings?.operator ?? "operator"),
+                        (localizedStrings?.userRole ?? "userRole"),
+                        (localizedStrings?.calibrationType ?? "calibrationType"),
+                        (localizedStrings?.calibrationMode ?? "calibrationMode"),
+                        (localizedStrings?.gTipWeightUnit ?? "gTipWeightUnit"),
+                        (localizedStrings?.calibrationValue ?? "calibrationValue"),
+                        (localizedStrings?.weightBeforeCalibration ?? "weightBeforeCalibration"),
+                        (localizedStrings?.weightAfterCalibration ?? "weightAfterCalibration"),
+                        (localizedStrings?.calibrationError ?? "calibrationError"),
+                        (localizedStrings?.gTipResult ?? "gTipResult"),
+                        (localizedStrings?.gDeviceName ?? "gDeviceName"),
+                        (localizedStrings?.gModelName ?? "gModelName"),
+                        (localizedStrings?.gScaleSn ?? "gScaleSn"),
+                        (localizedStrings?.fCreatedAtCol ?? "fCreatedAtCol"),
                       ],
                     );
                     String jsonStr = json.encode(exportLog.toJson());
@@ -864,14 +864,14 @@ class _ScaleCalLogTabPageState extends State<ScaleCalLogTabPage> {
         // showTextButton(
         //     context,
         //     btnHeight,
-        //     localizedStrings.fClearBtn,
+        //     (localizedStrings?.fClearBtn ?? "fClearBtn"),
         //     _allCalLogs.isEmpty
         //         ? null
         //         : () {
         //             _clearSelection();
         //             showDeleteDialog(() {
         //               PublicFunctions.deleteAllCalLog();
-        //             }, localizedStrings.data_delete_confirm, context);
+        //             }, (localizedStrings?.data_delete_confirm ?? "data_delete_confirm"), context);
         //           },
         //     Theme.of(context).colorScheme.onPrimary,
         //     Theme.of(context).colorScheme.error,
@@ -882,7 +882,7 @@ class _ScaleCalLogTabPageState extends State<ScaleCalLogTabPage> {
         // showTextButton(
         //     context,
         //     btnHeight,
-        //     localizedStrings.gBtnDelete,
+        //     (localizedStrings?.gBtnDelete ?? "gBtnDelete"),
         //     allSelectedRecIds.isEmpty
         //         ? null
         //         : () {
@@ -893,7 +893,7 @@ class _ScaleCalLogTabPageState extends State<ScaleCalLogTabPage> {
 
         //             showDeleteDialog(() {
         //               PublicFunctions.deleteCalLog(jsonStr);
-        //             }, localizedStrings.fConfirmDelete, context);
+        //             }, (localizedStrings?.fConfirmDelete ?? "fConfirmDelete"), context);
         //           },
         //     Theme.of(context).colorScheme.onPrimary,
         //     Theme.of(context).colorScheme.error,
@@ -1116,7 +1116,7 @@ class CalLogDataSource extends DataGridSource {
       //           reqDelLogsToJson(ReqDelLogs(recId: [syslog.recId!]));
       //       showDeleteDialog(() {
       //         PublicFunctions.deleteCalLog(jsonStr);
-      //       }, localizedStrings.fConfirmDelete, context);
+      //       }, (localizedStrings?.fConfirmDelete ?? "fConfirmDelete"), context);
       //     },
       //   );
 

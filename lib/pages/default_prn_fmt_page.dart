@@ -1,4 +1,4 @@
-import 'dart:async';
+﻿import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
@@ -86,8 +86,8 @@ class _DefaultPrnFmtPageState extends State<DefaultPrnFmtPage> {
                 pageHeadInfo(
                     context,
                     width - headWidthPadding,
-                    localizedStrings.menuLabelFormatDownload,
-                    localizedStrings.gTipLabelFmtDownPageHelp, () {
+                    (localizedStrings?.menuLabelFormatDownload ?? "menuLabelFormatDownload"),
+                    (localizedStrings?.gTipLabelFmtDownPageHelp ?? "gTipLabelFmtDownPageHelp"), () {
                   Navigator.pop(context);
                 }),
                 Expanded(
@@ -127,7 +127,7 @@ class _DefaultPrnFmtPageState extends State<DefaultPrnFmtPage> {
                       width: 300,
                       alignment: Alignment.centerRight,
                       child: Text(
-                        localizedStrings.gPrinter + '    ',
+                        (localizedStrings?.gPrinter ?? "gPrinter") + '    ',
                         style: Theme.of(context).textTheme.bodySmall,
                       ),
                     ),
@@ -173,7 +173,7 @@ class _DefaultPrnFmtPageState extends State<DefaultPrnFmtPage> {
                             label: SizedBox(
                               width: 300,
                               child: Text(
-                                localizedStrings.def_fmt_no_title,
+                                (localizedStrings?.def_fmt_no_title ?? "def_fmt_no_title"),
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                   color: Theme.of(context).colorScheme.primary,
@@ -185,7 +185,7 @@ class _DefaultPrnFmtPageState extends State<DefaultPrnFmtPage> {
                             label: SizedBox(
                               width: 500,
                               child: Text(
-                                localizedStrings.def_fmt_file_title,
+                                (localizedStrings?.def_fmt_file_title ?? "def_fmt_file_title"),
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                   color: Theme.of(context).colorScheme.primary,
@@ -198,7 +198,7 @@ class _DefaultPrnFmtPageState extends State<DefaultPrnFmtPage> {
                       ),
                     if (dataRows.isEmpty)
                       Text(
-                        localizedStrings.def_fmt_no_file_tip,
+                        (localizedStrings?.def_fmt_no_file_tip ?? "def_fmt_no_file_tip"),
                         style: TextStyle(
                             color:
                                 Theme.of(context).colorScheme.secondaryFixed),
@@ -238,7 +238,7 @@ class _DefaultPrnFmtPageState extends State<DefaultPrnFmtPage> {
           btnWidth: 200,
           btnHeight: 50,
           icon: Icons.file_open_outlined,
-          text: localizedStrings.button_select_format,
+          text: (localizedStrings?.button_select_format ?? "button_select_format"),
           onPressed: () async {
             result = await FilePicker.platform.pickFiles(
               allowMultiple: true,
@@ -271,7 +271,7 @@ class _DefaultPrnFmtPageState extends State<DefaultPrnFmtPage> {
               });
               if (result!.count > 10) {
                 if (mounted && context.mounted) {
-                  _showErrorDialog(context, localizedStrings.def_fmt_sel_tip);
+                  _showErrorDialog(context, (localizedStrings?.def_fmt_sel_tip ?? "def_fmt_sel_tip"));
                 }
               }
               int totalLen = 0;
@@ -281,7 +281,7 @@ class _DefaultPrnFmtPageState extends State<DefaultPrnFmtPage> {
               if (totalLen > maxDefFmtLen) {
                 if (mounted && context.mounted) {
                   _showErrorDialog(
-                      context, localizedStrings.def_fmt_out_range_tip);
+                      context, (localizedStrings?.def_fmt_out_range_tip ?? "def_fmt_out_range_tip"));
                 }
                 setState(() {
                   dataRows.clear();
@@ -305,14 +305,14 @@ class _DefaultPrnFmtPageState extends State<DefaultPrnFmtPage> {
                 ? () {
                     if (dataRows.length > 10) {
                       _showErrorDialog(
-                          context, localizedStrings.def_fmt_sel_tip);
+                          context, (localizedStrings?.def_fmt_sel_tip ?? "def_fmt_sel_tip"));
                     } else {
                       _showConfirmationDialog(context);
                     }
                   }
                 : null,
             child: Text(
-              localizedStrings.gBtnDownload,
+              (localizedStrings?.gBtnDownload ?? "gBtnDownload"),
             ),
           ),
         ),
@@ -328,7 +328,7 @@ class _DefaultPrnFmtPageState extends State<DefaultPrnFmtPage> {
   //     _stopTimer();
 
   //     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-  //         content: Text(localizedStrings.gBtnDownload_result_fail,
+  //         content: Text((localizedStrings?.gBtnDownload_result_fail ?? "gBtnDownload_result_fail"),
   //             style: const TextStyle(
   //                 fontSize: 20, fontWeight: FontWeight.normal)), ////此处需要秤回复
   //         duration: const Duration(seconds: 3),
@@ -349,7 +349,7 @@ class _DefaultPrnFmtPageState extends State<DefaultPrnFmtPage> {
             borderRadius: BorderRadius.circular(0),
           ),
           title: Text(
-            localizedStrings.gTitleConfirm,
+            (localizedStrings?.gTitleConfirm ?? "gTitleConfirm"),
             style: TextStyle(color: Theme.of(context).colorScheme.primary),
           ),
           content: Text(error),
@@ -361,7 +361,7 @@ class _DefaultPrnFmtPageState extends State<DefaultPrnFmtPage> {
                   btnWidth: 100,
                   btnHeight: 40,
                   icon: Icons.check_circle,
-                  text: localizedStrings.gBtnConfirm,
+                  text: (localizedStrings?.gBtnConfirm ?? "gBtnConfirm"),
                   onPressed: () {
                     Navigator.of(ctx).pop(true);
                   },
@@ -383,10 +383,10 @@ class _DefaultPrnFmtPageState extends State<DefaultPrnFmtPage> {
             borderRadius: BorderRadius.circular(0),
           ),
           title: Text(
-            localizedStrings.gTitleConfirm,
+            (localizedStrings?.gTitleConfirm ?? "gTitleConfirm"),
             style: TextStyle(color: Theme.of(context).colorScheme.primary),
           ),
-          content: Text(localizedStrings.gConfirmPrnFmtOrderTip),
+          content: Text(localizedStrings?.gConfirmPrnFmtOrderTip ?? "gConfirmPrnFmtOrderTip"),
           actions: <Widget>[
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -395,7 +395,7 @@ class _DefaultPrnFmtPageState extends State<DefaultPrnFmtPage> {
                   btnWidth: 100,
                   btnHeight: 40,
                   icon: Icons.check_circle,
-                  text: localizedStrings.gBtnConfirm,
+                  text: (localizedStrings?.gBtnConfirm ?? "gBtnConfirm"),
                   onPressed: () {
                     Navigator.of(ctx).pop(true);
                   },
@@ -405,7 +405,7 @@ class _DefaultPrnFmtPageState extends State<DefaultPrnFmtPage> {
                   btnWidth: 100,
                   btnHeight: 40,
                   icon: Icons.cancel,
-                  text: localizedStrings.gBtnCancel,
+                  text: (localizedStrings?.gBtnCancel ?? "gBtnCancel"),
                   onPressed: () {
                     Navigator.of(ctx).pop(false);
                   },

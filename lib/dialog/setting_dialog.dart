@@ -1,4 +1,4 @@
-import 'dart:convert';
+﻿import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -107,7 +107,7 @@ class ParameterSettingDialogState extends State<ParameterSettingDialog> {
             // 头部
             ...dialogHeadStyle(
               context,
-              localizedStrings.gParameterSettingsTitle,
+              (localizedStrings?.gParameterSettingsTitle ?? "gParameterSettingsTitle"),
               true,
             ),
 
@@ -126,13 +126,13 @@ class ParameterSettingDialogState extends State<ParameterSettingDialog> {
                               if (mySettingParam.scaleMode.toString() !=
                                   wgtCheckMode)
                                 showTitleName(
-                                    localizedStrings.gTipWeightSummationMode),
-                              showTitleName(localizedStrings.save_mode),
-                              showTitleName(localizedStrings.gTipStableTime),
-                              showTitleName(localizedStrings.date_format),
-                              showTitleName(localizedStrings.gDateSeparator),
+                                    (localizedStrings?.gTipWeightSummationMode ?? "gTipWeightSummationMode")),
+                              showTitleName(localizedStrings?.save_mode ?? "save_mode"),
+                              showTitleName(localizedStrings?.gTipStableTime ?? "gTipStableTime"),
+                              showTitleName(localizedStrings?.date_format ?? "date_format"),
+                              showTitleName(localizedStrings?.gDateSeparator ?? "gDateSeparator"),
                               if (mySettingParam.scaleMode == 1)
-                                showTitleName(localizedStrings.gTipSaveType),
+                                showTitleName(localizedStrings?.gTipSaveType ?? "gTipSaveType"),
                             ],
                           )),
                       SizedBox(
@@ -200,9 +200,9 @@ class ParameterSettingDialogState extends State<ParameterSettingDialog> {
                                 child: Row(
                                   children: [
                                     showSaveModeWidget(
-                                        1, localizedStrings.gTipManual),
+                                        1, (localizedStrings?.gTipManual ?? "gTipManual")),
                                     showSaveModeWidget(
-                                        2, localizedStrings.gTipAuto)
+                                        2, (localizedStrings?.gTipAuto ?? "gTipAuto"))
                                   ],
                                 ),
                               ),
@@ -336,7 +336,7 @@ class ParameterSettingDialogState extends State<ParameterSettingDialog> {
                         Navigator.pop(context);
                       },
                       child: Text(
-                        localizedStrings.gBtnConfirm,
+                        (localizedStrings?.gBtnConfirm ?? "gBtnConfirm"),
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.normal,
@@ -364,7 +364,7 @@ class ParameterSettingDialogState extends State<ParameterSettingDialog> {
                         Navigator.pop(context);
                       },
                       child: Text(
-                        localizedStrings.gBtnCancel,
+                        (localizedStrings?.gBtnCancel ?? "gBtnCancel"),
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.normal,
@@ -609,7 +609,7 @@ class ParamSettingDialogState extends State<ParamSettingDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: getDialogTitle(context, localizedStrings.gParameterSettingsTitle,
+      title: getDialogTitle(context, (localizedStrings?.gParameterSettingsTitle ?? "gParameterSettingsTitle"),
           Icons.settings_outlined, 400),
       content: Container(
           height: 300,
@@ -637,7 +637,7 @@ class ParamSettingDialogState extends State<ParamSettingDialog> {
                                   SizedBox(
                                     width: 200,
                                     child: Text(
-                                      localizedStrings.gTipStableTime + ":",
+                                      (localizedStrings?.gTipStableTime ?? "gTipStableTime") + ":",
                                       overflow: TextOverflow.ellipsis,
                                       maxLines: 1,
                                     ),
@@ -691,7 +691,7 @@ class ParamSettingDialogState extends State<ParamSettingDialog> {
                                   SizedBox(
                                       width: 200,
                                       child: Text(
-                                        localizedStrings.date_format + ":",
+                                        (localizedStrings?.date_format ?? "date_format") + ":",
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
                                       )),
@@ -710,7 +710,7 @@ class ParamSettingDialogState extends State<ParamSettingDialog> {
                                   SizedBox(
                                       width: 200,
                                       child: Text(
-                                        localizedStrings.gDateSeparator + ":",
+                                        (localizedStrings?.gDateSeparator ?? "gDateSeparator") + ":",
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
                                       )),
@@ -733,7 +733,7 @@ class ParamSettingDialogState extends State<ParamSettingDialog> {
                                         SizedBox(
                                           width: 200,
                                           child: Text(
-                                            localizedStrings.save_mode + ":",
+                                            (localizedStrings?.save_mode ?? "save_mode") + ":",
                                             overflow: TextOverflow.ellipsis,
                                             maxLines: 1,
                                           ),
@@ -789,7 +789,7 @@ class ParamSettingDialogState extends State<ParamSettingDialog> {
               btnWidth: 120,
               btnHeight: 40,
               icon: Icons.check_circle,
-              text: localizedStrings.gBtnConfirm,
+              text: (localizedStrings?.gBtnConfirm ?? "gBtnConfirm"),
               onPressed: () {
                 updateUIConf();
                 Navigator.of(context).pop(connectionType);
@@ -800,7 +800,7 @@ class ParamSettingDialogState extends State<ParamSettingDialog> {
               btnWidth: 120,
               btnHeight: 40,
               icon: Icons.cancel,
-              text: localizedStrings.gBtnCancel,
+              text: (localizedStrings?.gBtnCancel ?? "gBtnCancel"),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -846,7 +846,7 @@ class ParamSettingDialogState extends State<ParamSettingDialog> {
         SizedBox(
             width: 200,
             child: Text(
-              localizedStrings.save_mode + ":",
+              (localizedStrings?.save_mode ?? "save_mode") + ":",
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             )),
@@ -858,7 +858,7 @@ class ParamSettingDialogState extends State<ParamSettingDialog> {
                 SizedBox(
                     width: 200,
                     child: Text(
-                      localizedStrings.gTipManual,
+                      (localizedStrings?.gTipManual ?? "gTipManual"),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     )),
@@ -870,7 +870,7 @@ class ParamSettingDialogState extends State<ParamSettingDialog> {
                 SizedBox(
                     width: 200,
                     child: Text(
-                      localizedStrings.gTipAuto,
+                      (localizedStrings?.gTipAuto ?? "gTipAuto"),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     )),

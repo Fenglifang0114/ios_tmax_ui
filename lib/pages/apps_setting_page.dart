@@ -1,4 +1,4 @@
-//配置app
+﻿//配置app
 
 import 'dart:io';
 
@@ -189,7 +189,7 @@ class _AppsSettingPageState extends State<AppsSettingPage> {
           }
           mapActiveMenusRes.value = Map.from(mapActiveMenusRes.value)
             ..[tConfigLic] = ShowAppActiveInfo(
-                myTConLicInfo.liceseDate, localizedStrings.gTipDateNotUpdated);
+                myTConLicInfo.liceseDate, (localizedStrings?.gTipDateNotUpdated ?? "gTipDateNotUpdated"));
 
           updateResCtl();
         }
@@ -222,7 +222,7 @@ class _AppsSettingPageState extends State<AppsSettingPage> {
           } else {
             mapActiveMenusRes.value = Map.from(mapActiveMenusRes.value)
               ..[tConfigLic] = ShowAppActiveInfo(myTConLicInfo.liceseDate,
-                  localizedStrings.gTipDateNotUpdated);
+                  (localizedStrings?.gTipDateNotUpdated ?? "gTipDateNotUpdated"));
 
             updateResCtl();
           }
@@ -246,7 +246,7 @@ class _AppsSettingPageState extends State<AppsSettingPage> {
           } else {
             mapActiveMenusRes.value = Map.from(mapActiveMenusRes.value)
               ..[redeLic] = ShowAppActiveInfo(myRedeLicInfo.liceseDate,
-                  localizedStrings.gTipDateNotUpdated);
+                  (localizedStrings?.gTipDateNotUpdated ?? "gTipDateNotUpdated"));
 
             updateResCtl();
           }
@@ -269,7 +269,7 @@ class _AppsSettingPageState extends State<AppsSettingPage> {
           } else {
             mapActiveMenusRes.value = Map.from(mapActiveMenusRes.value)
               ..[wedaLic] = ShowAppActiveInfo(myWedaLicInfo.liceseDate,
-                  localizedStrings.gTipDateNotUpdated);
+                  (localizedStrings?.gTipDateNotUpdated ?? "gTipDateNotUpdated"));
             updateResCtl();
           }
         } else {
@@ -291,7 +291,7 @@ class _AppsSettingPageState extends State<AppsSettingPage> {
           } else {
             mapActiveMenusRes.value = Map.from(mapActiveMenusRes.value)
               ..[chweLic] = ShowAppActiveInfo(myChweLicInfo.liceseDate,
-                  localizedStrings.gTipDateNotUpdated);
+                  (localizedStrings?.gTipDateNotUpdated ?? "gTipDateNotUpdated"));
 
             updateResCtl();
           }
@@ -313,7 +313,7 @@ class _AppsSettingPageState extends State<AppsSettingPage> {
           } else {
             mapActiveMenusRes.value = Map.from(mapActiveMenusRes.value)
               ..[inweLic] = ShowAppActiveInfo(myInWeLicInfo.liceseDate,
-                  localizedStrings.gTipDateNotUpdated);
+                  (localizedStrings?.gTipDateNotUpdated ?? "gTipDateNotUpdated"));
 
             updateResCtl();
           }
@@ -335,7 +335,7 @@ class _AppsSettingPageState extends State<AppsSettingPage> {
           } else {
             mapActiveMenusRes.value = Map.from(mapActiveMenusRes.value)
               ..[taouLic] = ShowAppActiveInfo(myTaouLicInfo.liceseDate,
-                  localizedStrings.gTipDateNotUpdated);
+                  (localizedStrings?.gTipDateNotUpdated ?? "gTipDateNotUpdated"));
 
             updateResCtl();
           }
@@ -356,7 +356,7 @@ class _AppsSettingPageState extends State<AppsSettingPage> {
           } else {
             mapActiveMenusRes.value = Map.from(mapActiveMenusRes.value)
               ..[faspLic] = ShowAppActiveInfo(
-                  myFaSpInfo.liceseDate, localizedStrings.gTipDateNotUpdated);
+                  myFaSpInfo.liceseDate, (localizedStrings?.gTipDateNotUpdated ?? "gTipDateNotUpdated"));
 
             updateResCtl();
           }
@@ -377,7 +377,7 @@ class _AppsSettingPageState extends State<AppsSettingPage> {
           } else {
             mapActiveMenusRes.value = Map.from(mapActiveMenusRes.value)
               ..[foscLic] = ShowAppActiveInfo(myFoScLicInfo.liceseDate,
-                  localizedStrings.gTipDateNotUpdated);
+                  (localizedStrings?.gTipDateNotUpdated ?? "gTipDateNotUpdated"));
 
             updateResCtl();
           }
@@ -398,7 +398,7 @@ class _AppsSettingPageState extends State<AppsSettingPage> {
           } else {
             mapActiveMenusRes.value = Map.from(mapActiveMenusRes.value)
               ..[ladeLic] = ShowAppActiveInfo(myLadeLicInfo.liceseDate,
-                  localizedStrings.gTipDateNotUpdated);
+                  (localizedStrings?.gTipDateNotUpdated ?? "gTipDateNotUpdated"));
 
             updateResCtl();
           }
@@ -538,8 +538,8 @@ class _AppsSettingPageState extends State<AppsSettingPage> {
               height: 30,
               child: Text(
                 isConfigCertified
-                    ? localizedStrings.gTipActivated
-                    : localizedStrings.gTipUnactivated,
+                    ? (localizedStrings?.gTipActivated ?? "gTipActivated")
+                    : (localizedStrings?.gTipUnactivated ?? "gTipUnactivated"),
                 style: textTheme.bodySmall!.apply(
                     color: isConfigCertified
                         ? colorScheme.onTertiaryFixedVariant
@@ -722,8 +722,8 @@ class _AppsSettingPageState extends State<AppsSettingPage> {
               height: 30,
               child: Text(
                 isConfigCertified
-                    ? localizedStrings.gTipActivated
-                    : localizedStrings.gTipUnactivated,
+                    ? (localizedStrings?.gTipActivated ?? "gTipActivated")
+                    : (localizedStrings?.gTipUnactivated ?? "gTipUnactivated"),
                 style: textTheme.bodySmall!.apply(
                     color: isConfigCertified
                         ? colorScheme.onTertiaryFixedVariant
@@ -790,7 +790,7 @@ class _AppsSettingPageState extends State<AppsSettingPage> {
                 child: Column(
                   children: [
                     ...dialogHeadStyle(
-                        context, localizedStrings.gBtnActivate, true,
+                        context, (localizedStrings?.gBtnActivate ?? "gBtnActivate"), true,
                         onClose: () {
                       activationFileCtl.text = '';
                       Navigator.pop(context);
@@ -848,7 +848,7 @@ class _AppsSettingPageState extends State<AppsSettingPage> {
                                         isFilePickerBusy = false;
                                       });
                                     }
-                                  }, localizedStrings.gBtnSelectFile,
+                                  }, (localizedStrings?.gBtnSelectFile ?? "gBtnSelectFile"),
                                       inputHeight)
                                 ]),
                           )),
@@ -884,7 +884,7 @@ class _AppsSettingPageState extends State<AppsSettingPage> {
                                       }
                                     : null,
                                 child: Text(
-                                  localizedStrings.gBtnActivate,
+                                  (localizedStrings?.gBtnActivate ?? "gBtnActivate"),
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodyMedium!
@@ -919,7 +919,7 @@ class _AppsSettingPageState extends State<AppsSettingPage> {
                                 Navigator.pop(context);
                               },
                               child: Text(
-                                localizedStrings.gBtnCancel,
+                                (localizedStrings?.gBtnCancel ?? "gBtnCancel"),
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.normal,
@@ -959,7 +959,7 @@ class _AppsSettingPageState extends State<AppsSettingPage> {
                   ),
                   Row(children: [
                     Text(
-                      localizedStrings.gSystemId + ": ",
+                      (localizedStrings?.gSystemId ?? "gSystemId") + ": ",
                       style: Theme.of(context).textTheme.bodySmall!.apply(
                           color: Theme.of(context).colorScheme.onSurface),
                     ),
@@ -982,7 +982,7 @@ class _AppsSettingPageState extends State<AppsSettingPage> {
                     Theme.of(context).colorScheme,
                     Theme.of(context).textTheme,
                     showActivateDialog,
-                    localizedStrings.gBtnActivate,
+                    (localizedStrings?.gBtnActivate ?? "gBtnActivate"),
                     36,
                   ),
                   const SizedBox(
@@ -1032,7 +1032,7 @@ class _AppsSettingPageState extends State<AppsSettingPage> {
                 pressedConfig = true; // 抬起时更新状态
               });
             },
-            child: Text(localizedStrings.menuConfiguration,
+            child: Text((localizedStrings?.menuConfiguration ?? "menuConfiguration"),
                 style: Theme.of(context).textTheme.labelLarge!.apply(
                     color: pressedConfig
                         ? Theme.of(context).colorScheme.primary
@@ -1051,7 +1051,7 @@ class _AppsSettingPageState extends State<AppsSettingPage> {
                 pressedConfig = false; // 抬起时更新状态
               });
             },
-            child: Text(localizedStrings.gTitleAppConfig,
+            child: Text((localizedStrings?.gTitleAppConfig ?? "gTitleAppConfig"),
                 style: Theme.of(context).textTheme.labelLarge!.apply(
                     color: !pressedConfig
                         ? Theme.of(context).colorScheme.primary
@@ -1072,7 +1072,7 @@ class _AppsSettingPageState extends State<AppsSettingPage> {
     return Scaffold(
       body: Column(children: [
         // 第一部分，固定高度 64
-        myPageHeadInfo(context, localizedStrings.gBtnConfigSetting, ''),
+        myPageHeadInfo(context, (localizedStrings?.gBtnConfigSetting ?? "gBtnConfigSetting"), ''),
 
         // 第二部分和第三部分按 13:10 比例分配剩余空间
         Expanded(
@@ -1099,7 +1099,7 @@ class _AppsSettingPageState extends State<AppsSettingPage> {
           child: Row(children: [
             Expanded(
               child: SelectableText(
-                localizedStrings.gSubtitleConfigFunctionCharge,
+                (localizedStrings?.gSubtitleConfigFunctionCharge ?? "gSubtitleConfigFunctionCharge"),
                 style: Theme.of(context).textTheme.bodySmall!.apply(
                     color: Theme.of(context).colorScheme.onSurfaceVariant),
               ),
@@ -1117,7 +1117,7 @@ class _AppsSettingPageState extends State<AppsSettingPage> {
                       alignment: Alignment.centerLeft,
                       child: Row(children: [
                         Text(
-                          localizedStrings.gTipFreeConfiguration,
+                          (localizedStrings?.gTipFreeConfiguration ?? "gTipFreeConfiguration"),
                           style: Theme.of(context).textTheme.labelLarge!.apply(
                               color: Theme.of(context).colorScheme.onSurface),
                         ),
@@ -1164,7 +1164,7 @@ class _AppsSettingPageState extends State<AppsSettingPage> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              localizedStrings.gTipAdvancedConfiguration,
+                              (localizedStrings?.gTipAdvancedConfiguration ?? "gTipAdvancedConfiguration"),
                               style: Theme.of(context)
                                   .textTheme
                                   .labelLarge!
@@ -1175,7 +1175,7 @@ class _AppsSettingPageState extends State<AppsSettingPage> {
                             ),
                             if (myTConLicInfo.isValid)
                               Text(
-                                ' ${localizedStrings.gExpirationDate}  :  ${myTConLicInfo.liceseDate} ',
+                                ' ${(localizedStrings?.gExpirationDate ?? "gExpirationDate")}  :  ${myTConLicInfo.liceseDate} ',
                                 style: Theme.of(context)
                                     .textTheme
                                     .bodySmall!
@@ -1235,7 +1235,7 @@ class _AppsSettingPageState extends State<AppsSettingPage> {
           child: Row(children: [
             Expanded(
               child: SelectableText(
-                localizedStrings.gSubtitleAppsCharge,
+                (localizedStrings?.gSubtitleAppsCharge ?? "gSubtitleAppsCharge"),
                 style: Theme.of(context).textTheme.bodySmall!.apply(
                     color: Theme.of(context).colorScheme.onSurfaceVariant),
               ),
@@ -1253,7 +1253,7 @@ class _AppsSettingPageState extends State<AppsSettingPage> {
                       alignment: Alignment.centerLeft,
                       child: Row(children: [
                         Text(
-                          localizedStrings.gTipFreeApplications,
+                          (localizedStrings?.gTipFreeApplications ?? "gTipFreeApplications"),
                           style: Theme.of(context).textTheme.labelLarge!.apply(
                               color: Theme.of(context).colorScheme.onSurface),
                         ),
@@ -1297,7 +1297,7 @@ class _AppsSettingPageState extends State<AppsSettingPage> {
                       alignment: Alignment.centerLeft,
                       child: Row(children: [
                         Text(
-                          localizedStrings.gTipRetailApplications,
+                          (localizedStrings?.gTipRetailApplications ?? "gTipRetailApplications"),
                           style: Theme.of(context).textTheme.labelLarge!.apply(
                               color: Theme.of(context).colorScheme.onSurface),
                         ),
@@ -1342,7 +1342,7 @@ class _AppsSettingPageState extends State<AppsSettingPage> {
                       alignment: Alignment.centerLeft,
                       child: Row(children: [
                         Text(
-                          localizedStrings.gTipIndustrialApplications,
+                          (localizedStrings?.gTipIndustrialApplications ?? "gTipIndustrialApplications"),
                           style: Theme.of(context).textTheme.labelLarge!.apply(
                               color: Theme.of(context).colorScheme.onSurface),
                         ),

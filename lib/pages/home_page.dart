@@ -1,4 +1,4 @@
-// //主页
+﻿// //主页
 
 //首页   测试首页
 import 'dart:async';
@@ -177,8 +177,8 @@ class MyHomePageState extends State<MyHomePage>
 
     _eventbus9 = eventBus.on<EventServiceOff>().listen((event) {
       setState(() {
-        showServiceErrorDialog(context, localizedStrings.gTipServiceOff,
-            localizedStrings.gTitleConfirm);
+        showServiceErrorDialog(context, (localizedStrings?.gTipServiceOff ?? "gTipServiceOff"),
+            (localizedStrings?.gTitleConfirm ?? "gTitleConfirm"));
       });
     });
 
@@ -255,7 +255,7 @@ class MyHomePageState extends State<MyHomePage>
     }
 
     // 特殊处理"多台秤管理"组 - 直接作为菜单项跳转
-    if (group.title == localizedStrings.menuMultiScaleManagement) {
+    if (group.title == (localizedStrings?.menuMultiScaleManagement ?? "menuMultiScaleManagement")) {
       // 获取第一个有效路由项
       final effectiveRoute = group.children.firstWhere(
         (item) => item is RouteData,
@@ -273,7 +273,7 @@ class MyHomePageState extends State<MyHomePage>
           : Container();
     }
 
-    if (group.title == localizedStrings.menuApplications) {
+    if (group.title == (localizedStrings?.menuApplications ?? "menuApplications")) {
       final effectiveRoute = group.children.firstWhere(
         (item) => item is RouteData,
         orElse: () => RouteData(
@@ -459,7 +459,7 @@ class MyHomePageState extends State<MyHomePage>
 
   Widget showSysSetting(ColorScheme colorScheme, TextTheme textTheme) {
     return PopupMenuButton<String>(
-      tooltip: localizedStrings.gSystemSetting,
+      tooltip: (localizedStrings?.gSystemSetting ?? "gSystemSetting"),
       splashRadius: 20,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(0),
@@ -475,7 +475,7 @@ class MyHomePageState extends State<MyHomePage>
           PopupMenuItem(
             value: '1',
             child: Text(
-              localizedStrings.userManagement,
+              (localizedStrings?.userManagement ?? "userManagement"),
               style: textTheme.bodySmall!.apply(
                 // 根据选中状态改变颜色
                 color: colorScheme.surface,
@@ -496,7 +496,7 @@ class MyHomePageState extends State<MyHomePage>
           PopupMenuItem(
             value: '5',
             child: Text(
-              localizedStrings.logManagement,
+              (localizedStrings?.logManagement ?? "logManagement"),
               style: textTheme.bodySmall!.apply(
                 // 根据选中状态改变颜色
                 color: colorScheme.surface,
@@ -517,7 +517,7 @@ class MyHomePageState extends State<MyHomePage>
           PopupMenuItem(
             value: '6',
             child: Text(
-              localizedStrings.gBtnConfigSetting,
+              (localizedStrings?.gBtnConfigSetting ?? "gBtnConfigSetting"),
               style: textTheme.bodySmall!.apply(
                 // 根据选中状态改变颜色
                 color: colorScheme.surface,
@@ -539,7 +539,7 @@ class MyHomePageState extends State<MyHomePage>
           PopupMenuItem(
             value: '2',
             child: Text(
-              localizedStrings.titleChangePassword,
+              (localizedStrings?.titleChangePassword ?? "titleChangePassword"),
               style: textTheme.bodySmall!.apply(
                 // 根据选中状态改变颜色
                 color: colorScheme.surface,
@@ -558,7 +558,7 @@ class MyHomePageState extends State<MyHomePage>
         PopupMenuItem(
           value: '3',
           child: Text(
-            localizedStrings.menuLanguageSetting,
+            (localizedStrings?.menuLanguageSetting ?? "menuLanguageSetting"),
             style: textTheme.bodySmall!.apply(
               // 根据选中状态改变颜色
               color: colorScheme.surface,
@@ -581,7 +581,7 @@ class MyHomePageState extends State<MyHomePage>
           PopupMenuItem(
             value: '4',
             child: Text(
-              localizedStrings.titleLogout,
+              (localizedStrings?.titleLogout ?? "titleLogout"),
               style: textTheme.bodySmall!.apply(
                 // 根据选中状态改变颜色
                 color: colorScheme.surface,
@@ -609,7 +609,7 @@ class MyHomePageState extends State<MyHomePage>
         SizedBox(width: regularPadding),
         if (generateHelpTitle(getPageId(_selectedNavRoute)) != '')
           Tooltip(
-            message: localizedStrings.gTipHelp,
+            message: (localizedStrings?.gTipHelp ?? "gTipHelp"),
             child: PageInfoButton(
                 helpInfo: generateHelpTitle(getPageId(_selectedNavRoute)),
                 onRefresh: () {},
@@ -635,7 +635,7 @@ class MyHomePageState extends State<MyHomePage>
         showSysSetting(colorScheme, textTheme),
         SizedBox(width: regularPadding),
         Tooltip(
-          message: localizedStrings.menuSystemInformation,
+          message: (localizedStrings?.menuSystemInformation ?? "menuSystemInformation"),
           child: IconButton(
             icon: getSvgIcon(
                 infoSvgIcon(),

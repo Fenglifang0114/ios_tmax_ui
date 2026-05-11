@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:t_max/data/language.dart';
 import 'package:t_max/labeldesign/ai_service.dart';
 import 'package:t_max/labeldesign/label_element.dart';
@@ -164,7 +164,7 @@ class _AIDesignDialogState extends State<AIDesignDialog> {
                 controller: _promptController,
                 maxLines: 4,
                 decoration: InputDecoration(
-                  hintText: localizedStrings.aiDesignHintText,
+                  hintText: (localizedStrings?.aiDesignHintText ?? "aiDesignHintText"),
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(0)),
                 ),

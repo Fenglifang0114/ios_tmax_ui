@@ -1,4 +1,4 @@
-import 'dart:async';
+﻿import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -82,7 +82,7 @@ class RetailReportPageState extends State<RetailReportPage> {
   @override
   void initState() {
     initScaleList();
-    srvStatusMsg = localizedStrings.gTipWait;
+    srvStatusMsg = (localizedStrings?.gTipWait ?? "gTipWait");
     PublicFunctions.getScaleSrvList(999999999);
     netScaleOpenBill();
     // PublicFunctions.getDetailList();
@@ -166,15 +166,15 @@ class RetailReportPageState extends State<RetailReportPage> {
               srvStatus = splitted[1];
               switch (srvStatus) {
                 case srvUninstalled:
-                  srvStatusMsg = localizedStrings.gTipServiceUninstalled;
+                  srvStatusMsg = (localizedStrings?.gTipServiceUninstalled ?? "gTipServiceUninstalled");
 
                   break;
                 case srvinstalled:
-                  srvStatusMsg = localizedStrings.gTipServiceStoped;
+                  srvStatusMsg = (localizedStrings?.gTipServiceStoped ?? "gTipServiceStoped");
 
                   break;
                 case srvStarted:
-                  srvStatusMsg = localizedStrings.gTipServiceStarted;
+                  srvStatusMsg = (localizedStrings?.gTipServiceStarted ?? "gTipServiceStarted");
                   if (isFirstLoad) {
                     isFirstLoad = false;
                     PublicFunctions.getDetailListSrv1();
@@ -187,15 +187,15 @@ class RetailReportPageState extends State<RetailReportPage> {
         } else {
           switch (msgStr) {
             case srvUninstalled:
-              msgStr = localizedStrings.gTipServiceUninstalled;
+              msgStr = (localizedStrings?.gTipServiceUninstalled ?? "gTipServiceUninstalled");
 
               break;
             case srvinstalled:
-              msgStr = localizedStrings.gTipServiceStoped;
+              msgStr = (localizedStrings?.gTipServiceStoped ?? "gTipServiceStoped");
 
               break;
             case srvStarted:
-              msgStr = localizedStrings.gTipServiceStarted;
+              msgStr = (localizedStrings?.gTipServiceStarted ?? "gTipServiceStarted");
 
               break;
           }
@@ -340,7 +340,7 @@ class RetailReportPageState extends State<RetailReportPage> {
                   children: [
                     SizedBox(
                       child: Text(
-                        localizedStrings.gTipServiceStatus,
+                        (localizedStrings?.gTipServiceStatus ?? "gTipServiceStatus"),
                         textAlign: TextAlign.right,
                         overflow: TextOverflow.ellipsis,
                         style: getTextStyle(),
@@ -423,8 +423,8 @@ class RetailReportPageState extends State<RetailReportPage> {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                myHeadInfo(context, localizedStrings.menuRetailReport,
-                    localizedStrings.gTipRetailDetailPageHelp),
+                myHeadInfo(context, (localizedStrings?.menuRetailReport ?? "menuRetailReport"),
+                    (localizedStrings?.gTipRetailDetailPageHelp ?? "gTipRetailDetailPageHelp")),
                 Container(
                   height: regularPadding,
                   color: colorScheme.surfaceDim,
@@ -469,7 +469,7 @@ class RetailReportPageState extends State<RetailReportPage> {
           SizedBox(
             child: Row(
               children: [
-                showTextButton(context, 40, localizedStrings.rRefreshListBtn,
+                showTextButton(context, 40, (localizedStrings?.rRefreshListBtn ?? "rRefreshListBtn"),
                     () {
                   PublicFunctions.getDetailListSrv1();
                 }, colorScheme.onPrimary, colorScheme.primary,
@@ -480,7 +480,7 @@ class RetailReportPageState extends State<RetailReportPage> {
                 showTextButton(
                     context,
                     40,
-                    localizedStrings.gBtnExport,
+                    (localizedStrings?.gBtnExport ?? "gBtnExport"),
                     exportFlag ? exportToCsv : null,
                     colorScheme.onPrimary,
                     colorScheme.primary,
@@ -575,7 +575,7 @@ class RetailReportPageState extends State<RetailReportPage> {
           width: smallPadding,
         ),
         CustomGeneralButton(
-          text: localizedStrings.gTipInstallService,
+          text: (localizedStrings?.gTipInstallService ?? "gTipInstallService"),
           maxWidth: 200,
           onPressed: () {
             _performActionForOption('Install');
@@ -585,7 +585,7 @@ class RetailReportPageState extends State<RetailReportPage> {
           width: smallPadding,
         ),
         CustomGeneralButton(
-          text: localizedStrings.gTipStartService,
+          text: (localizedStrings?.gTipStartService ?? "gTipStartService"),
           maxWidth: 200,
           onPressed: () {
             _performActionForOption('Start');
@@ -595,7 +595,7 @@ class RetailReportPageState extends State<RetailReportPage> {
           width: smallPadding,
         ),
         CustomGeneralButton(
-          text: localizedStrings.gTipStopService,
+          text: (localizedStrings?.gTipStopService ?? "gTipStopService"),
           maxWidth: 200,
           onPressed: () {
             _performActionForOption('Stop');
@@ -605,7 +605,7 @@ class RetailReportPageState extends State<RetailReportPage> {
           width: smallPadding,
         ),
         CustomGeneralButton(
-          text: localizedStrings.gTipUninstallService,
+          text: (localizedStrings?.gTipUninstallService ?? "gTipUninstallService"),
           maxWidth: 200,
           onPressed: () {
             _performActionForOption('Uninstall');
@@ -633,7 +633,7 @@ class RetailReportPageState extends State<RetailReportPage> {
 
           PublicFunctions.sendServiceAction(serviceActionToJson(mySrvAct));
           srvStatus = "";
-          srvStatusMsg = localizedStrings.gTipWait;
+          srvStatusMsg = (localizedStrings?.gTipWait ?? "gTipWait");
         } else {
           showErrorDialog(context, srvStatusMsg);
         }
@@ -645,7 +645,7 @@ class RetailReportPageState extends State<RetailReportPage> {
               ServiceAction(action: "Start", serviceId: serviceId);
           PublicFunctions.sendServiceAction(serviceActionToJson(mySrvAct));
           srvStatus = "";
-          srvStatusMsg = localizedStrings.gTipWait;
+          srvStatusMsg = (localizedStrings?.gTipWait ?? "gTipWait");
         } else {
           showErrorDialog(context, srvStatusMsg);
         }
@@ -656,7 +656,7 @@ class RetailReportPageState extends State<RetailReportPage> {
               ServiceAction(action: "Stop", serviceId: serviceId);
           PublicFunctions.sendServiceAction(serviceActionToJson(mySrvAct));
           srvStatus = "";
-          srvStatusMsg = localizedStrings.gTipWait;
+          srvStatusMsg = (localizedStrings?.gTipWait ?? "gTipWait");
         } else {
           showErrorDialog(context, srvStatusMsg);
         }
@@ -668,7 +668,7 @@ class RetailReportPageState extends State<RetailReportPage> {
           PublicFunctions.sendServiceAction(serviceActionToJson(mySrvAct));
           srvStatus = "";
 
-          srvStatusMsg = localizedStrings.gTipWait;
+          srvStatusMsg = (localizedStrings?.gTipWait ?? "gTipWait");
         } else {
           showErrorDialog(context, srvStatusMsg);
         }

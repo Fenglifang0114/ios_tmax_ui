@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import 'package:intl/intl.dart';
 import 'package:t_max/data/formula_common.dart';
@@ -204,7 +204,7 @@ class _RawMaterialTableState extends State<RawMaterialTable> {
               ),
               SizedBox(width: 16),
               Text(
-                localizedStrings.tipJumpPage,
+                (localizedStrings?.tipJumpPage ?? "tipJumpPage"),
                 style: textTheme.bodySmall,
               ),
               SizedBox(width: 8),
@@ -233,7 +233,7 @@ class _RawMaterialTableState extends State<RawMaterialTable> {
             width: regularPadding,
           ),
           Text(
-            '${localizedStrings.tipPageTotal}: ${widget.searchRawList.length} ${localizedStrings.tipPageItems}',
+            '${(localizedStrings?.tipPageTotal ?? "tipPageTotal")}: ${widget.searchRawList.length} ${(localizedStrings?.tipPageItems ?? "tipPageItems")}',
             style: textTheme.bodySmall,
           ),
         ],
@@ -448,25 +448,25 @@ class _RawMaterialTableState extends State<RawMaterialTable> {
           ),
         ),
       ),
-      getColumnWidget(150, 'materialId', localizedStrings.fMaterialIdCol,
+      getColumnWidget(150, 'materialId', (localizedStrings?.fMaterialIdCol ?? "fMaterialIdCol"),
           textTheme, colorScheme),
-      getColumnWidget(300, 'materialName', localizedStrings.fMaterialNameCol,
+      getColumnWidget(300, 'materialName', (localizedStrings?.fMaterialNameCol ?? "fMaterialNameCol"),
           textTheme, colorScheme),
-      getColumnWidget(200, 'checkCode', localizedStrings.verificationCode,
+      getColumnWidget(200, 'checkCode', (localizedStrings?.verificationCode ?? "verificationCode"),
           textTheme, colorScheme),
       getColumnWidget(
-          150, 'output', localizedStrings.outputPort, textTheme, colorScheme),
-      getColumnWidget(150, 'scaleName', localizedStrings.gDeviceName, textTheme,
+          150, 'output', (localizedStrings?.outputPort ?? "outputPort"), textTheme, colorScheme),
+      getColumnWidget(150, 'scaleName', (localizedStrings?.gDeviceName ?? "gDeviceName"), textTheme,
           colorScheme),
-      getColumnWidget(200, 'category', localizedStrings.fRawMaterialTypeNameCol,
+      getColumnWidget(200, 'category', (localizedStrings?.fRawMaterialTypeNameCol ?? "fRawMaterialTypeNameCol"),
           textTheme, colorScheme),
-      getColumnWidget(200, 'createdAt', localizedStrings.fCreatedAtCol,
+      getColumnWidget(200, 'createdAt', (localizedStrings?.fCreatedAtCol ?? "fCreatedAtCol"),
           textTheme, colorScheme),
-      getColumnWidget(200, 'updatedAt', localizedStrings.fUpdatedAtCol,
+      getColumnWidget(200, 'updatedAt', (localizedStrings?.fUpdatedAtCol ?? "fUpdatedAtCol"),
           textTheme, colorScheme),
-      getColumnWidget(400, 'ingredient', localizedStrings.fIngredientRemark,
+      getColumnWidget(400, 'ingredient', (localizedStrings?.fIngredientRemark ?? "fIngredientRemark"),
           textTheme, colorScheme),
-      getColumnWidgetNoSort(120, 'operation', localizedStrings.fTipOperation,
+      getColumnWidgetNoSort(120, 'operation', (localizedStrings?.fTipOperation ?? "fTipOperation"),
           textTheme, colorScheme),
     ];
   }
@@ -694,7 +694,7 @@ class RawMaterialDataSource extends DataGridSource {
     // 检查原料是否被配方使用
     bool canDelete = _checkRawDelete(raw);
     if (!canDelete) {
-      showTipInfo(localizedStrings.fFormulaInUseDeleteErrorMsg, context);
+      showTipInfo((localizedStrings?.fFormulaInUseDeleteErrorMsg ?? "fFormulaInUseDeleteErrorMsg"), context);
       return;
     }
 
@@ -703,8 +703,8 @@ class RawMaterialDataSource extends DataGridSource {
       barrierDismissible: false,
       builder: (BuildContext context) {
         return ShowNormalTipDialog(
-          title: localizedStrings.fTipTitle,
-          msg: localizedStrings.fConfirmDelete,
+          title: (localizedStrings?.fTipTitle ?? "fTipTitle"),
+          msg: (localizedStrings?.fConfirmDelete ?? "fConfirmDelete"),
         );
       },
     ).then((value) {

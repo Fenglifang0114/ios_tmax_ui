@@ -1,4 +1,4 @@
-//百分比模式时，需要添加的配方总重量
+﻿//百分比模式时，需要添加的配方总重量
 
 // 定义新增配方重量弹框组件
 import 'package:flutter/material.dart';
@@ -81,7 +81,7 @@ class AddFormulaWgtDialogState extends State<AddFormulaWgtDialog> {
           children: [
             // 头部
             ...dialogHeadStyle(
-                context, localizedStrings.fAddFormulaWeightTitle, true),
+                context, (localizedStrings?.fAddFormulaWeightTitle ?? "fAddFormulaWeightTitle"), true),
             // 中部
             Expanded(
               child: Container(
@@ -99,7 +99,7 @@ class AddFormulaWgtDialogState extends State<AddFormulaWgtDialog> {
                               child: Container(
                                 alignment: Alignment.centerLeft,
                                 child: Text(
-                                  localizedStrings.fFormulaTotalWeightLabel,
+                                  (localizedStrings?.fFormulaTotalWeightLabel ?? "fFormulaTotalWeightLabel"),
                                   style: TextStyle(
                                     fontSize: 14,
                                     color:
@@ -175,7 +175,7 @@ class AddFormulaWgtDialogState extends State<AddFormulaWgtDialog> {
                               child: Container(
                                 alignment: Alignment.centerLeft,
                                 child: Text(
-                                  localizedStrings.fWgtUnit,
+                                  (localizedStrings?.fWgtUnit ?? "fWgtUnit"),
                                   style: TextStyle(
                                     fontSize: 14,
                                     color:
@@ -191,7 +191,7 @@ class AddFormulaWgtDialogState extends State<AddFormulaWgtDialog> {
                           FormulaWgtUnit.g,
                           FormulaWgtUnit.kg,
                           FormulaWgtUnit.lb
-                        ], localizedStrings.fSelectUnitHint, formulaUnitCtl),
+                        ], (localizedStrings?.fSelectUnitHint ?? "fSelectUnitHint"), formulaUnitCtl),
                       ])),
                 ]),
               ),
@@ -226,7 +226,7 @@ class AddFormulaWgtDialogState extends State<AddFormulaWgtDialog> {
                               });
                             },
                       child: Text(
-                        localizedStrings.gBtnConfirm,
+                        (localizedStrings?.gBtnConfirm ?? "gBtnConfirm"),
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.normal,
@@ -254,7 +254,7 @@ class AddFormulaWgtDialogState extends State<AddFormulaWgtDialog> {
                         Navigator.pop(context, '');
                       },
                       child: Text(
-                        localizedStrings.gBtnCancel,
+                        (localizedStrings?.gBtnCancel ?? "gBtnCancel"),
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.normal,

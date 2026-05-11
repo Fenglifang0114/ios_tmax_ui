@@ -1,4 +1,4 @@
-// wifi 设置界面 只能用串口设置
+﻿// wifi 设置界面 只能用串口设置
 
 import 'dart:async';
 import 'dart:convert';
@@ -86,7 +86,7 @@ class WiredSettingPageState extends State<WiredSettingPage> {
       if (mounted) {
         String dataStr = event.obj;
         if (dataStr.isEmpty || dataStr.contains("fail")) {
-          showTipInfo(localizedStrings.localizedStrings.gTipGetIpFail, context);
+          showTipInfo((localizedStrings?.gTipGetIpFail ?? "gTipGetIpFail"), context);
         }
 
         try {
@@ -97,9 +97,9 @@ class WiredSettingPageState extends State<WiredSettingPage> {
             netMaskController.text = ipInfoData.netmask ?? '';
             gateWayController.text = ipInfoData.gateway ?? '';
           });
-          showTipInfo(localizedStrings.gTipGetIpOk, context);
+          showTipInfo((localizedStrings?.gTipGetIpOk ?? "gTipGetIpOk"), context);
         } catch (e) {
-          showTipInfo(localizedStrings.gTipGetIpFail, context);
+          showTipInfo((localizedStrings?.gTipGetIpFail ?? "gTipGetIpFail"), context);
         }
       }
     });
@@ -111,9 +111,9 @@ class WiredSettingPageState extends State<WiredSettingPage> {
           isSetting = false;
         }
         if (dataStr.contains('ok')) {
-          showTipInfo(localizedStrings.setIPSuccess, context);
+          showTipInfo((localizedStrings?.setIPSuccess ?? "setIPSuccess"), context);
         } else if (dataStr.contains('fail')) {
-          showTipInfo(localizedStrings.setIPFailed, context);
+          showTipInfo((localizedStrings?.setIPFailed ?? "setIPFailed"), context);
         }
       }
     });
@@ -125,7 +125,7 @@ class WiredSettingPageState extends State<WiredSettingPage> {
           isBusy = false;
         }
         if (dataStr.contains('ok')) {
-          showTipInfo(localizedStrings.setDHCPSuccess, context);
+          showTipInfo((localizedStrings?.setDHCPSuccess ?? "setDHCPSuccess"), context);
           if (_isStatic && isSetting) {
             IpInfo ipInfo = IpInfo(
               ipController.text,
@@ -135,7 +135,7 @@ class WiredSettingPageState extends State<WiredSettingPage> {
             PublicFunctions.setWiredIp(selScaleId, jsonEncode(ipInfo));
           }
         } else if (dataStr.contains('fail')) {
-          showTipInfo(localizedStrings.setDHCPFailed, context);
+          showTipInfo((localizedStrings?.setDHCPFailed ?? "setDHCPFailed"), context);
         }
       }
     });
@@ -147,7 +147,7 @@ class WiredSettingPageState extends State<WiredSettingPage> {
           isBusy = false;
         }
         if (dataStr.isEmpty || dataStr.contains("fail")) {
-          showTipInfo(localizedStrings.gTipGetIpFail, context);
+          showTipInfo((localizedStrings?.gTipGetIpFail ?? "gTipGetIpFail"), context);
           return;
         }
 
@@ -168,10 +168,10 @@ class WiredSettingPageState extends State<WiredSettingPage> {
     // 在页面构建完成后显示提示
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (comScalesList.isEmpty) {
-        showTipInfo(localizedStrings.gTipNoDeviceAddFirst, context);
+        showTipInfo((localizedStrings?.gTipNoDeviceAddFirst ?? "gTipNoDeviceAddFirst"), context);
       } else {
         if (selScaleId == -1) {
-          showTipInfo(localizedStrings.gTipSelectDeviceFirst, context);
+          showTipInfo((localizedStrings?.gTipSelectDeviceFirst ?? "gTipSelectDeviceFirst"), context);
         }
       }
     });
@@ -210,7 +210,7 @@ class WiredSettingPageState extends State<WiredSettingPage> {
                 clickScale: (scale) {
                   if (isSetting) {
                     showTipInfo(
-                        localizedStrings.gTipPerformingOperation, context);
+                        (localizedStrings?.gTipPerformingOperation ?? "gTipPerformingOperation"), context);
                     return;
                   }
                   setState(() {
@@ -225,7 +225,7 @@ class WiredSettingPageState extends State<WiredSettingPage> {
         child: Column(
           children: [
             pageHeadInfo(context, width - headWidthPadding,
-                localizedStrings.menuWiredSetting, '', () {
+                (localizedStrings?.menuWiredSetting ?? "menuWiredSetting"), '', () {
               Navigator.pop(context);
             },
                 leading: isMobile
@@ -256,7 +256,7 @@ class WiredSettingPageState extends State<WiredSettingPage> {
                               selScaleId: selScaleId,
                               clickScale: (scale) {
                                 if (isSetting) {
-                                  showTipInfo(localizedStrings.gTipPerformingOperation, context);
+                                  showTipInfo((localizedStrings?.gTipPerformingOperation ?? "gTipPerformingOperation"), context);
                                   return;
                                 }
                                 setState(() {
@@ -291,13 +291,13 @@ class WiredSettingPageState extends State<WiredSettingPage> {
   void changeScale(int scaleId) {
     setState(() {
       if (isBusy) {
-        return showTipInfo(localizedStrings.gTipGetIP, context);
+        return showTipInfo((localizedStrings?.gTipGetIP ?? "gTipGetIP"), context);
       }
       netMaskController.clear();
       ipController.clear();
       gateWayController.clear();
       selScaleId = scaleId;
-      showTipInfo(localizedStrings.gTipGetIP, context);
+      showTipInfo((localizedStrings?.gTipGetIP ?? "gTipGetIP"), context);
       PublicFunctions.getWiredDhcp(selScaleId);
 
       isBusy = true;
@@ -317,11 +317,11 @@ class WiredSettingPageState extends State<WiredSettingPage> {
             if (isNarrow)
               Column(
                 children: [
-                  _buildWiredField(localizedStrings.gIpAddress, ipController, width: itemWidth),
+                  _buildWiredField((localizedStrings?.gIpAddress ?? "gIpAddress"), ipController, width: itemWidth),
                   const SizedBox(height: 20),
-                  _buildWiredField(localizedStrings.gNetmask, netMaskController, width: itemWidth),
+                  _buildWiredField((localizedStrings?.gNetmask ?? "gNetmask"), netMaskController, width: itemWidth),
                   const SizedBox(height: 20),
-                  _buildWiredField(localizedStrings.gGateway, gateWayController, width: itemWidth),
+                  _buildWiredField((localizedStrings?.gGateway ?? "gGateway"), gateWayController, width: itemWidth),
                   const SizedBox(height: 20),
                   _buildDhcpToggle(width: itemWidth),
                 ],
@@ -332,16 +332,16 @@ class WiredSettingPageState extends State<WiredSettingPage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      _buildWiredField(localizedStrings.gIpAddress, ipController, width: itemWidth),
+                      _buildWiredField((localizedStrings?.gIpAddress ?? "gIpAddress"), ipController, width: itemWidth),
                       const SizedBox(width: 70),
-                      _buildWiredField(localizedStrings.gNetmask, netMaskController, width: itemWidth),
+                      _buildWiredField((localizedStrings?.gNetmask ?? "gNetmask"), netMaskController, width: itemWidth),
                     ],
                   ),
                   const SizedBox(height: 20),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      _buildWiredField(localizedStrings.gGateway, gateWayController, width: itemWidth),
+                      _buildWiredField((localizedStrings?.gGateway ?? "gGateway"), gateWayController, width: itemWidth),
                       const SizedBox(width: 70),
                       _buildDhcpToggle(width: itemWidth),
                     ],
@@ -360,11 +360,11 @@ class WiredSettingPageState extends State<WiredSettingPage> {
                       child: showTextButton(
                         context,
                         btnHeight,
-                        localizedStrings.setStaticIP,
+                        (localizedStrings?.setStaticIP ?? "setStaticIP"),
                         (_isStatic && isValidData())
                             ? () {
                                 if (isBusy) {
-                                  return showTipInfo(localizedStrings.pleaseWait, context);
+                                  return showTipInfo((localizedStrings?.pleaseWait ?? "pleaseWait"), context);
                                 }
                                 isBusy = true;
                                 PublicFunctions.setWiredDhcp(selScaleId, 'false');
@@ -382,13 +382,13 @@ class WiredSettingPageState extends State<WiredSettingPage> {
                     child: showTextButton(
                       context,
                       btnHeight,
-                      localizedStrings.gBtnGetIp,
+                      (localizedStrings?.gBtnGetIp ?? "gBtnGetIp"),
                       () {
                         if (selScaleId == -1) {
-                          showTipInfo(localizedStrings.gTipSelectDeviceFirst, context);
+                          showTipInfo((localizedStrings?.gTipSelectDeviceFirst ?? "gTipSelectDeviceFirst"), context);
                           return;
                         }
-                        showTipInfo(localizedStrings.gTipGetIP, context);
+                        showTipInfo((localizedStrings?.gTipGetIP ?? "gTipGetIP"), context);
                         PublicFunctions.getWiredDhcp(selScaleId);
                       },
                       Theme.of(context).colorScheme.onPrimary,
@@ -434,7 +434,7 @@ class WiredSettingPageState extends State<WiredSettingPage> {
                     ),
                   ),
                   border: const OutlineInputBorder(),
-                  errorText: validateIpFlag(controller.text) ? null : localizedStrings.gTipErrorIp,
+                  errorText: validateIpFlag(controller.text) ? null : (localizedStrings?.gTipErrorIp ?? "gTipErrorIp"),
                 ),
                 style: Theme.of(context).textTheme.bodySmall!.apply(
                       color: !_isStatic
@@ -479,14 +479,14 @@ class WiredSettingPageState extends State<WiredSettingPage> {
                   : Theme.of(context).colorScheme.onSurfaceVariant,
               onPressed: () async {
                 if (selScaleId == -1) {
-                  showTipInfo(localizedStrings.gTipSelectDeviceFirst, context);
+                  showTipInfo((localizedStrings?.gTipSelectDeviceFirst ?? "gTipSelectDeviceFirst"), context);
                   return;
                 }
                 if (isBusy) {
-                  return showTipInfo(localizedStrings.pleaseWait, context);
+                  return showTipInfo((localizedStrings?.pleaseWait ?? "pleaseWait"), context);
                 }
                 if (_isPressing) {
-                  showTipInfo(localizedStrings.pleaseWait, context);
+                  showTipInfo((localizedStrings?.pleaseWait ?? "pleaseWait"), context);
                   return;
                 }
 

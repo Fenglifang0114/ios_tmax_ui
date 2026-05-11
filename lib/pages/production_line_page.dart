@@ -1,4 +1,4 @@
-import 'dart:async';
+﻿import 'dart:async';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -254,7 +254,7 @@ class ProductionLinePageState extends State<ProductionLinePage> {
         preferredSize: const Size.fromHeight(50),
         child: pageHeadDesign(
           context,
-          // localizedStrings.menuWeighing,
+          // (localizedStrings?.menuWeighing ?? "menuWeighing"),
           'Production Line', scaleIds, '',
         ),
       ),
@@ -733,8 +733,8 @@ class ProductionLinePageState extends State<ProductionLinePage> {
                   ),
                   subtitle: Text(
                     scaleWgtMap[scaleNetItems[index].scaleId]!.isStart
-                        ? localizedStrings.gTipOnline
-                        : localizedStrings.gTipOffline,
+                        ? (localizedStrings?.gTipOnline ?? "gTipOnline")
+                        : (localizedStrings?.gTipOffline ?? "gTipOffline"),
                     style: TextStyle(
                         color:
                             scaleWgtMap[scaleNetItems[index].scaleId]!.isStart

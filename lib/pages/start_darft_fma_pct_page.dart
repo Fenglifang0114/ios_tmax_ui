@@ -1,4 +1,4 @@
-//暂存的配方走这条路
+﻿//暂存的配方走这条路
 
 import 'dart:async';
 import 'dart:convert';
@@ -801,7 +801,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
       if (mounted) {
         String dataStr = event.obj;
         if (dataStr.contains("fail")) {
-          showTipInfo(localizedStrings.openOutputPortFailed, context);
+          showTipInfo((localizedStrings?.openOutputPortFailed ?? "openOutputPortFailed"), context);
         }
       }
     });
@@ -930,9 +930,9 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
       barrierDismissible: false, // 点击对话框外部不关闭对话框
       builder: (BuildContext context) {
         return ShowUnitTipDialog(
-          title: localizedStrings.fTipTitle,
+          title: (localizedStrings?.fTipTitle ?? "fTipTitle"),
           msg:
-              '${localizedStrings.fWgtUnit} ${(myFmaInfo.header?.formulaUnit ?? '')}, ${localizedStrings.fSwitchUnitHint}',
+              '${(localizedStrings?.fWgtUnit ?? "fWgtUnit")} ${(myFmaInfo.header?.formulaUnit ?? '')}, ${(localizedStrings?.fSwitchUnitHint ?? "fSwitchUnitHint")}',
         );
       },
     ).then((value) {
@@ -953,8 +953,8 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
       barrierDismissible: false, // 点击对话框外部不关闭对话框
       builder: (BuildContext context) {
         return ShowDeleteTipDialog(
-          title: localizedStrings.fTipTitle,
-          msg: localizedStrings.fClearWeighingDataMsg,
+          title: (localizedStrings?.fTipTitle ?? "fTipTitle"),
+          msg: (localizedStrings?.fClearWeighingDataMsg ?? "fClearWeighingDataMsg"),
         );
       },
     ).then((value) {
@@ -1095,7 +1095,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
     }
 
     if (!hasRawWeight) {
-      showTipInfo(localizedStrings.tipNoRawMaterialWeightData, context);
+      showTipInfo((localizedStrings?.tipNoRawMaterialWeightData ?? "tipNoRawMaterialWeightData"), context);
       return;
     }
 
@@ -1183,8 +1183,8 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
       barrierDismissible: false, // 点击对话框外部不关闭对话框
       builder: (BuildContext context) {
         return ShowDeleteTipDialog(
-          title: localizedStrings.fTipTitle,
-          msg: localizedStrings.fClearWeighingDataMsg,
+          title: (localizedStrings?.fTipTitle ?? "fTipTitle"),
+          msg: (localizedStrings?.fClearWeighingDataMsg ?? "fClearWeighingDataMsg"),
         );
       },
     ).then((value) {
@@ -1214,7 +1214,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
             ConstrainedBox(
               constraints: BoxConstraints(maxWidth: maxWidth),
               child: showTextButton(
-                  context, btnHeight, localizedStrings.fCompleteIngredientsBtn,
+                  context, btnHeight, (localizedStrings?.fCompleteIngredientsBtn ?? "fCompleteIngredientsBtn"),
                   () {
                 performFinishBtn();
               }, colorScheme.onPrimary, colorScheme.primary,
@@ -1225,7 +1225,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
             ConstrainedBox(
               constraints: BoxConstraints(maxWidth: maxWidth),
               child: showTextButton(
-                  context, btnHeight, localizedStrings.fPrintFmaBtn, () {
+                  context, btnHeight, (localizedStrings?.fPrintFmaBtn ?? "fPrintFmaBtn"), () {
                 performPrintBtn();
               }, colorScheme.onPrimary, colorScheme.primary,
                   colorScheme.onPrimary),
@@ -1237,7 +1237,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
               child: showTextButton(
                   context,
                   btnHeight,
-                  localizedStrings.btnTemporarySave,
+                  (localizedStrings?.btnTemporarySave ?? "btnTemporarySave"),
                   !isEnableNext
                       ? null
                       : () {
@@ -1253,7 +1253,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
             ConstrainedBox(
               constraints: BoxConstraints(maxWidth: maxWidth),
               child: showTextButton(
-                  context, btnHeight, localizedStrings.fAbandonIngredientsBtn,
+                  context, btnHeight, (localizedStrings?.fAbandonIngredientsBtn ?? "fAbandonIngredientsBtn"),
                   () {
                 performAbandonBtn();
               }, colorScheme.onPrimary, colorScheme.error,
@@ -1264,7 +1264,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
             ConstrainedBox(
               constraints: BoxConstraints(maxWidth: maxWidth),
               child: showTextButton(
-                  context, btnHeight, localizedStrings.btnRestart, () {
+                  context, btnHeight, (localizedStrings?.btnRestart ?? "btnRestart"), () {
                 showDeleteDialog();
               }, colorScheme.onPrimary, colorScheme.error,
                   colorScheme.onPrimary),
@@ -1284,7 +1284,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
         child: Column(
           children: [
             pageHeadInfo(context, width - headWidthPadding,
-                localizedStrings.menuFormulaExecution, '', () {
+                (localizedStrings?.menuFormulaExecution ?? "menuFormulaExecution"), '', () {
               performAbandonBtn();
             }),
             Expanded(
@@ -1320,7 +1320,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
                       ),
                       Expanded(
                         child: Text(
-                          localizedStrings.fIngredientsRecordTitle,
+                          (localizedStrings?.fIngredientsRecordTitle ?? "fIngredientsRecordTitle"),
                           style: textTheme.labelMedium!
                               .apply(color: colorScheme.onSurface),
                           overflow: TextOverflow.ellipsis,
@@ -1352,7 +1352,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
                                 children: [
                                   Flexible(
                                     child: Text(
-                                      localizedStrings.fEditFmaBtn,
+                                      (localizedStrings?.fEditFmaBtn ?? "fEditFmaBtn"),
                                       style: Theme.of(context)
                                           .textTheme
                                           .bodyMedium!
@@ -1403,7 +1403,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
         // 显示标签部分，设置固定宽度
         Expanded(
           child: Text(
-            '${localizedStrings.gDeviceName} : ${myScale.scaleName}',
+            '${(localizedStrings?.gDeviceName ?? "gDeviceName")} : ${myScale.scaleName}',
             style: Theme.of(context)
                 .textTheme
                 .bodyMedium!
@@ -1518,7 +1518,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
               },
               columns: [
                 StickyTableColumn(
-                  localizedStrings.fIngredientOrder,
+                  (localizedStrings?.fIngredientOrder ?? "fIngredientOrder"),
                   fixedStart: true,
                   showSort: true,
                   sort: false,
@@ -1548,7 +1548,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
                   },
                 ),
                 StickyTableColumn(
-                  localizedStrings.fMaterialIdCol,
+                  (localizedStrings?.fMaterialIdCol ?? "fMaterialIdCol"),
                   showSort: true,
                   sort: false,
                   columnWidth: FixedColumnWidth(columnWidth),
@@ -1568,7 +1568,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
                   },
                 ),
                 StickyTableColumn(
-                  localizedStrings.fMaterialNameCol,
+                  (localizedStrings?.fMaterialNameCol ?? "fMaterialNameCol"),
                   columnWidth: FixedColumnWidth(columnWidth),
                   showSort: true,
                   sort: false,
@@ -1579,7 +1579,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
                     return Text(
                         //修改了此处
                         (data as FormulaWgtProcessData).no == 0
-                            ? localizedStrings.fFmaContainer
+                            ? (localizedStrings?.fFmaContainer ?? "fFmaContainer")
                             : (data).rawName!,
                         style: getTextStyle(
                           color: colorScheme.onSurfaceVariant,
@@ -1591,7 +1591,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
                 ),
                 if ((myFmaInfo.header?.formulaMode ?? '') == "pct")
                   StickyTableColumn(
-                    localizedStrings.fPctMode,
+                    (localizedStrings?.fPctMode ?? "fPctMode"),
                     columnWidth: FixedColumnWidth(columnWidth),
                     showSort: true,
                     sort: false,
@@ -1612,7 +1612,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
                     },
                   ),
                 StickyTableColumn(
-                  localizedStrings.fTargetWeightLabel,
+                  (localizedStrings?.fTargetWeightLabel ?? "fTargetWeightLabel"),
                   showSort: true,
                   sort: false,
                   columnWidth: FixedColumnWidth(columnWidth),
@@ -1634,7 +1634,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
                   },
                 ),
                 StickyTableColumn(
-                  localizedStrings.fCurrentWeightLabel,
+                  (localizedStrings?.fCurrentWeightLabel ?? "fCurrentWeightLabel"),
                   showSort: true,
                   sort: false,
                   columnWidth: FixedColumnWidth(columnWidth),
@@ -1653,7 +1653,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
                   },
                 ),
                 StickyTableColumn(
-                  localizedStrings.fAllowableErrorWeightLabel,
+                  (localizedStrings?.fAllowableErrorWeightLabel ?? "fAllowableErrorWeightLabel"),
                   showSort: true,
                   sort: false,
                   columnWidth: FixedColumnWidth(columnWidth),
@@ -1675,7 +1675,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
                   },
                 ),
                 StickyTableColumn(
-                  localizedStrings.fCurrentErrorWeightLabel,
+                  (localizedStrings?.fCurrentErrorWeightLabel ?? "fCurrentErrorWeightLabel"),
                   showSort: true,
                   sort: false,
                   columnWidth: FixedColumnWidth(columnWidth),
@@ -1697,7 +1697,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
                   },
                 ),
                 StickyTableColumn(
-                  localizedStrings.fQualificationStatus,
+                  (localizedStrings?.fQualificationStatus ?? "fQualificationStatus"),
                   showSort: true,
                   sort: false,
                   columnWidth: FixedColumnWidth(columnWidth),
@@ -1738,10 +1738,10 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
                             (data).no == 0
                                 ? "-"
                                 : (data).isOK! == "no"
-                                    ? localizedStrings.fIncompleteStatus
+                                    ? (localizedStrings?.fIncompleteStatus ?? "fIncompleteStatus")
                                     : (data).isOK! == "ok"
-                                        ? localizedStrings.fQualified
-                                        : localizedStrings.fUnqualified,
+                                        ? (localizedStrings?.fQualified ?? "fQualified")
+                                        : (localizedStrings?.fUnqualified ?? "fUnqualified"),
                             style: textTheme.bodySmall!.apply(
                               color: (data).isOK! == "no"
                                   ? colorScheme.primary
@@ -1860,7 +1860,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
             maxWidth: 200, // 最大宽度为 200
           ),
           child: Text(
-            localizedStrings.fFmaNameLabel + ": ",
+            (localizedStrings?.fFmaNameLabel ?? "fFmaNameLabel") + ": ",
             style: getTitleTextStyle(color: colorScheme.onSurfaceVariant),
             overflow: TextOverflow.ellipsis,
             maxLines: 1,
@@ -1912,7 +1912,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
                   Flexible(
                     fit: FlexFit.loose,
                     child: Text(
-                      localizedStrings.fFmaIdLabel + ": ",
+                      (localizedStrings?.fFmaIdLabel ?? "fFmaIdLabel") + ": ",
                       style: getTitleTextStyle(
                         color: colorScheme.onSurfaceVariant,
                       ),
@@ -1930,7 +1930,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
                   text: TextSpan(
                     children: [
                       TextSpan(
-                        text: localizedStrings.fFmaBarcode + ": ",
+                        text: (localizedStrings?.fFmaBarcode ?? "fFmaBarcode") + ": ",
                         style: getTitleTextStyle(
                             color: colorScheme.onSurfaceVariant),
                       ),
@@ -1952,7 +1952,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
             Flexible(
               fit: FlexFit.loose,
               child: Text(
-                localizedStrings.fTotalWeightLabel + ": ",
+                (localizedStrings?.fTotalWeightLabel ?? "fTotalWeightLabel") + ": ",
                 style: getTitleTextStyle(color: colorScheme.onSurfaceVariant),
                 overflow: TextOverflow.ellipsis,
                 maxLines: 1,
@@ -1970,7 +1970,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
             // 显示标签部分，设置固定宽度
             Expanded(
               child: Text(
-                localizedStrings.fRemarkCol,
+                (localizedStrings?.fRemarkCol ?? "fRemarkCol"),
                 style: getTitleTextStyle(),
                 overflow: TextOverflow.ellipsis,
                 maxLines: 1,
@@ -2058,7 +2058,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
                           Container(
                             alignment: Alignment.center,
                             child: Text(
-                              localizedStrings.fFormulaCompletedTip,
+                              (localizedStrings?.fFormulaCompletedTip ?? "fFormulaCompletedTip"),
                               style: textTheme.bodyMedium!.apply(
                                 color: Theme.of(context)
                                     .colorScheme
@@ -2113,7 +2113,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
                               child: Text(
                                 //修改了此处
                                 selectedProcessWgt.no == 0
-                                    ? localizedStrings.fFmaContainer
+                                    ? (localizedStrings?.fFmaContainer ?? "fFmaContainer")
                                     : selectedProcessWgt.rawName ?? "",
                                 maxLines: 1,
                                 style: Theme.of(context)
@@ -2202,7 +2202,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
                                   padding: const EdgeInsets.only(left: 8.0),
                                   alignment: Alignment.centerLeft,
                                   child: Text(
-                                    localizedStrings.fTargetWeightLabel,
+                                    (localizedStrings?.fTargetWeightLabel ?? "fTargetWeightLabel"),
                                     maxLines: 1,
                                     style: Theme.of(context)
                                         .textTheme
@@ -2295,7 +2295,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
                               padding: const EdgeInsets.only(left: 8.0),
                               alignment: Alignment.centerLeft,
                               child: Text(
-                                localizedStrings.fAllowableError,
+                                (localizedStrings?.fAllowableError ?? "fAllowableError"),
                                 maxLines: 1,
                                 style: Theme.of(context)
                                     .textTheme
@@ -2389,7 +2389,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
                                 alignment: Alignment.centerLeft,
                                 color: Color.fromARGB(255, 249, 252, 252),
                                 child: Text(
-                                  localizedStrings.fRawMaterialWeightLabel,
+                                  (localizedStrings?.fRawMaterialWeightLabel ?? "fRawMaterialWeightLabel"),
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodySmall!
@@ -2469,7 +2469,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
                                 alignment: Alignment.centerLeft,
                                 color: Color.fromARGB(255, 249, 252, 252),
                                 child: Text(
-                                  localizedStrings.fFormulaProgressLabel,
+                                  (localizedStrings?.fFormulaProgressLabel ?? "fFormulaProgressLabel"),
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodySmall!
@@ -2540,7 +2540,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
                                   myScale.scaleId);
                             },
                             child: Text(
-                              localizedStrings.iBtnZero,
+                              (localizedStrings?.iBtnZero ?? "iBtnZero"),
                               style:
                                   Theme.of(context).textTheme.bodySmall!.apply(
                                         color: colorScheme.primary,
@@ -2569,8 +2569,8 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
                                   barrierDismissible: false,
                                   builder: (BuildContext context) {
                                     return ShowNormalTipDialog(
-                                      title: localizedStrings.fTipTitle,
-                                      msg: localizedStrings.tipForceClearTare,
+                                      title: (localizedStrings?.fTipTitle ?? "fTipTitle"),
+                                      msg: (localizedStrings?.tipForceClearTare ?? "tipForceClearTare"),
                                     );
                                   },
                                 ).then((value) {
@@ -2600,7 +2600,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
                               ),
                               elevation: 0,
                               child: Text(
-                                localizedStrings.gBtnTare,
+                                (localizedStrings?.gBtnTare ?? "gBtnTare"),
                                 style: Theme.of(context)
                                     .textTheme
                                     .bodySmall!
@@ -2637,7 +2637,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
                                 : null,
                             child: Text(
                               //下一步  修改了此处
-                              localizedStrings.fNextStepBtn,
+                              (localizedStrings?.fNextStepBtn ?? "fNextStepBtn"),
                               style: getTextStyle(
                                 color: colorScheme.onPrimary,
                               ),
@@ -2693,12 +2693,12 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
   void handleNexBtn() {
     //判断为空
     if (myReqWeightCountine.msgBody == null) {
-      showTipInfo(localizedStrings.fDeviceDisconnected, context);
+      showTipInfo((localizedStrings?.fDeviceDisconnected ?? "fDeviceDisconnected"), context);
       return;
     }
     //判断当前是否已经稳定
     if ((myReqWeightCountine.msgBody?.isStable ?? false) == false) {
-      showTipInfo(localizedStrings.fStableOperationHint, context);
+      showTipInfo((localizedStrings?.fStableOperationHint ?? "fStableOperationHint"), context);
       return;
     }
 
@@ -2726,8 +2726,8 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
         barrierDismissible: false, // 点击对话框外部不关闭对话框
         builder: (BuildContext context) {
           return ShowLowWgtTipDialog(
-            title: localizedStrings.fTipTitle,
-            msg: localizedStrings.fCurrentMaterialWeightInvalidMsg,
+            title: (localizedStrings?.fTipTitle ?? "fTipTitle"),
+            msg: (localizedStrings?.fCurrentMaterialWeightInvalidMsg ?? "fCurrentMaterialWeightInvalidMsg"),
           );
         },
       ).then((value) {
@@ -2752,8 +2752,8 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
         barrierDismissible: false, // 点击对话框外部不关闭对话框
         builder: (BuildContext context) {
           return ShowHignWgtTipDialog(
-            title: localizedStrings.fTipTitle,
-            msg: localizedStrings.fCurrentMaterialOverweightMsg,
+            title: (localizedStrings?.fTipTitle ?? "fTipTitle"),
+            msg: (localizedStrings?.fCurrentMaterialOverweightMsg ?? "fCurrentMaterialOverweightMsg"),
           );
         },
       ).then((value) {
@@ -2962,7 +2962,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
       setState(() {
         isEnableNext = false; // 禁用按钮
       });
-      showTipInfo(localizedStrings.fFormulaCompletionMsg, context);
+      showTipInfo((localizedStrings?.fFormulaCompletionMsg ?? "fFormulaCompletionMsg"), context);
       handleCloseIoPort();
       saveFormula();
       return;
@@ -2980,7 +2980,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
         barrierDismissible: false,
         builder: (BuildContext context) {
           return ShowCheckCodeDialog(
-            title: localizedStrings.ingredientVerification,
+            title: (localizedStrings?.ingredientVerification ?? "ingredientVerification"),
             rawId: selectedProcessWgt.rawId!,
             rawName: selectedProcessWgt.rawName!,
             rawCode: selectedProcessWgt.checkCode!,
@@ -3075,7 +3075,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
         } else {
           // 处理空值情况
           needTotalWgt = 0.0;
-          showTipInfo(localizedStrings.tipFormulaDataError, context);
+          showTipInfo((localizedStrings?.tipFormulaDataError ?? "tipFormulaDataError"), context);
         }
       } catch (e) {
         return; // 处理未找到匹配项的情况
@@ -3322,7 +3322,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
           ),
           Expanded(
               child: Text(
-            localizedStrings.fOrderNo + ': $recRecNumber',
+            (localizedStrings?.fOrderNo ?? "fOrderNo") + ': $recRecNumber',
             style: Theme.of(context)
                 .textTheme
                 .labelMedium!
@@ -3337,7 +3337,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
                 icon: Icon(openIoPortFlag
                     ? Icons.toggle_on_outlined
                     : Icons.toggle_off_outlined),
-                tooltip: localizedStrings.ioPort,
+                tooltip: (localizedStrings?.ioPort ?? "ioPort"),
                 color: openIoPortFlag
                     ? Theme.of(context).colorScheme.onTertiaryFixedVariant
                     : Theme.of(context).colorScheme.onSurfaceVariant,
@@ -3361,15 +3361,15 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
                   Icons.cleaning_services_outlined,
                   color: colorScheme.primary,
                 ),
-                tooltip: localizedStrings.btnForceClearTare,
+                tooltip: (localizedStrings?.btnForceClearTare ?? "btnForceClearTare"),
                 onPressed: () {
                   showDialog(
                     context: context,
                     barrierDismissible: false,
                     builder: (BuildContext context) {
                       return ShowNormalTipDialog(
-                        title: localizedStrings.fTipTitle,
-                        msg: localizedStrings.tipForceClearTare,
+                        title: (localizedStrings?.fTipTitle ?? "fTipTitle"),
+                        msg: (localizedStrings?.tipForceClearTare ?? "tipForceClearTare"),
                       );
                     },
                   ).then((value) {
@@ -3389,7 +3389,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
                   Icons.settings_outlined,
                   color: colorScheme.primary,
                 ),
-                tooltip: localizedStrings.gParameterSettingsTitle,
+                tooltip: (localizedStrings?.gParameterSettingsTitle ?? "gParameterSettingsTitle"),
                 onPressed: () {
                   showSettigDialog();
                 }),

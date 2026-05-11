@@ -1,4 +1,4 @@
-import 'dart:async';
+﻿import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
@@ -337,8 +337,8 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
                     // pageHeadInfo(
                     //     context,
                     //     width - headWidthPadding,
-                    //     localizedStrings.menuSerialOutputDesign,
-                    //     localizedStrings.gTipSerialDesignPageHelp),
+                    //     (localizedStrings?.menuSerialOutputDesign ?? "menuSerialOutputDesign"),
+                    //     (localizedStrings?.gTipSerialDesignPageHelp ?? "gTipSerialDesignPageHelp")),
                     buildPageTitle(),
                     buildBottomPart(),
                   ]))
@@ -358,8 +358,8 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
               child: subTitleInfo(
                   context,
                   width - headWidthPadding,
-                  localizedStrings.gTitlePreview,
-                  localizedStrings.gTipScaleMgrPageHelp),
+                  (localizedStrings?.gTitlePreview ?? "gTitlePreview"),
+                  (localizedStrings?.gTipScaleMgrPageHelp ?? "gTipScaleMgrPageHelp")),
             ),
             Expanded(
               child:
@@ -428,7 +428,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
                               showTextButton(context, btnHeight,
-                                  localizedStrings.gBtnClear, () {
+                                  (localizedStrings?.gBtnClear ?? "gBtnClear"), () {
                                 setState(() {
                                   outputData.clear();
                                 });
@@ -747,7 +747,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                showTextButton(context, btnHeight, localizedStrings.gBtnClear,
+                showTextButton(context, btnHeight, (localizedStrings?.gBtnClear ?? "gBtnClear"),
                     () {
                   setState(() {
                     outputData.clear();
@@ -961,22 +961,22 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
         pageMap.entries.firstWhere((entry) => entry.value == pageId).key;
     switch (key) {
       case "OL":
-        titleName = localizedStrings.serial_page_ol;
+        titleName = (localizedStrings?.serial_page_ol ?? "serial_page_ol");
         break;
       case "UL":
-        titleName = localizedStrings.serial_page_ul;
+        titleName = (localizedStrings?.serial_page_ul ?? "serial_page_ul");
         break;
       case "Weight":
-        titleName = localizedStrings.serial_page_weight;
+        titleName = (localizedStrings?.serial_page_weight ?? "serial_page_weight");
         break;
       case "Pcs":
-        titleName = localizedStrings.serial_page_pcs;
+        titleName = (localizedStrings?.serial_page_pcs ?? "serial_page_pcs");
         break;
       case "Price":
-        titleName = localizedStrings.serial_page_price;
+        titleName = (localizedStrings?.serial_page_price ?? "serial_page_price");
         break;
       case "Percent":
-        titleName = localizedStrings.serial_page_percent;
+        titleName = (localizedStrings?.serial_page_percent ?? "serial_page_percent");
         break;
       default:
         titleName = ""; // 如果没有匹配的pageId，设置一个默认值
@@ -1006,7 +1006,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
               onPressed: () {
                 setState(() {
                   _currentPageIndex = pageId;
-                  // pageTitle = localizedStrings.serial_page_ol;
+                  // pageTitle = (localizedStrings?.serial_page_ol ?? "serial_page_ol");
                 });
               },
               child: Text(
@@ -1027,7 +1027,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
               child: showTextButton(
                   context,
                   btnHeight,
-                  localizedStrings.gBtnDownload,
+                  (localizedStrings?.gBtnDownload ?? "gBtnDownload"),
                   (!serialPreview && isListEmpty())
                       ? () async {
                           jsonFilesList.clear();
@@ -1054,7 +1054,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
               child: showTextButton(
                   context,
                   btnHeight,
-                  localizedStrings.cBtnOpenPreview,
+                  (localizedStrings?.cBtnOpenPreview ?? "cBtnOpenPreview"),
                   handleButtonPress,
                   colorScheme.onPrimary,
                   colorScheme.onTertiaryFixedVariant,
@@ -1095,7 +1095,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
             color: colorScheme.surfaceContainerLow,
             child: Center(
               child: Text(
-                localizedStrings.cBtnOpenPreview,
+                (localizedStrings?.cBtnOpenPreview ?? "cBtnOpenPreview"),
                 style: Theme.of(context)
                     .textTheme
                     .bodySmall!
@@ -1186,7 +1186,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
         color: colorScheme.surfaceTint,
         child: Center(
           child: Text(
-            localizedStrings.gTipTextProperty,
+            (localizedStrings?.gTipTextProperty ?? "gTipTextProperty"),
             style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 20,
@@ -1198,8 +1198,8 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
       showTextTitleAttribute('Type:    ${mySerialProtocolText.type}'),
       Text(
         (mySerialProtocolText.varName == 'isstable')
-            ? localizedStrings.gTipStableText
-            : localizedStrings.gTipNetText,
+            ? (localizedStrings?.gTipStableText ?? "gTipStableText")
+            : (localizedStrings?.gTipNetText ?? "gTipNetText"),
         style: TextStyle(color: colorScheme.primary),
       ),
       TextField(
@@ -1220,8 +1220,8 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
       ),
       Text(
         (mySerialProtocolText.varName == 'isstable')
-            ? localizedStrings.gTipUnstableText
-            : localizedStrings.gTipGrossText,
+            ? (localizedStrings?.gTipUnstableText ?? "gTipUnstableText")
+            : (localizedStrings?.gTipGrossText ?? "gTipGrossText"),
         style: TextStyle(color: colorScheme.primary),
       ),
       TextField(
@@ -1269,7 +1269,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
         color: colorScheme.tertiaryContainer,
         child: Center(
           child: Text(
-            localizedStrings.gTipEnterProperty,
+            (localizedStrings?.gTipEnterProperty ?? "gTipEnterProperty"),
             style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 20,
@@ -1279,7 +1279,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
         ),
       ),
       showTextTitleAttribute('Type:    ${mySerialProtocolText.type}'),
-      showTextTitleAttribute(localizedStrings.gTipContent + '    \\r\\n'),
+      showTextTitleAttribute((localizedStrings?.gTipContent ?? "gTipContent") + '    \\r\\n'),
       const SizedBox(
         height: 15,
       ),
@@ -1423,7 +1423,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
         color: colorScheme.tertiaryContainer,
         child: Center(
           child: Text(
-            localizedStrings.gTipTextProperty,
+            (localizedStrings?.gTipTextProperty ?? "gTipTextProperty"),
             style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 20,
@@ -1436,7 +1436,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
         height: 20,
       ),
       showTextTitleAttribute('Type:    ${mySerialProtocolText.type}'),
-      showTextTitleAttribute(localizedStrings.gTipContent),
+      showTextTitleAttribute(localizedStrings?.gTipContent ?? "gTipContent"),
       TextField(
         controller: myContentCtl,
         onChanged: (value) {
@@ -1466,7 +1466,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
         color: colorScheme.tertiaryContainer,
         child: Center(
           child: Text(
-            localizedStrings.gTipTextHexProperty,
+            (localizedStrings?.gTipTextHexProperty ?? "gTipTextHexProperty"),
             style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 20,
@@ -1483,7 +1483,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
         color: colorScheme.surface,
         alignment: Alignment.centerLeft,
         child: Text(
-          localizedStrings.gTipHexInput,
+          (localizedStrings?.gTipHexInput ?? "gTipHexInput"),
           style: Theme.of(context).textTheme.bodySmall!.apply(
                 color: colorScheme.onSurface,
               ),
@@ -1530,13 +1530,13 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
         ),
       ),
       showTextTitleAttribute('Type:    ${mySerialProtocolText.type}'),
-      showTextTitleAttribute(localizedStrings.gTipAlignment),
+      showTextTitleAttribute(localizedStrings?.gTipAlignment ?? "gTipAlignment"),
       _alignmentDropdownButton(_currentPageIndex),
-      showTextTitleAttribute(localizedStrings.gTipFilling),
+      showTextTitleAttribute(localizedStrings?.gTipFilling ?? "gTipFilling"),
       _fillingDropdownButton(_currentPageIndex),
-      showTextTitleAttribute(localizedStrings.gTipMaxLength),
+      showTextTitleAttribute(localizedStrings?.gTipMaxLength ?? "gTipMaxLength"),
       maxLenWidget(),
-      showTextTitleAttribute(localizedStrings.gTipDefaultValue),
+      showTextTitleAttribute(localizedStrings?.gTipDefaultValue ?? "gTipDefaultValue"),
       TextField(
         readOnly: true,
         controller: myContentCtl,
@@ -1613,7 +1613,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
         color: colorScheme.tertiaryContainer,
         child: Center(
           child: Text(
-            localizedStrings.gTipFloatProperty,
+            (localizedStrings?.gTipFloatProperty ?? "gTipFloatProperty"),
             style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 20,
@@ -1623,15 +1623,15 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
         ),
       ),
       showTextTitleAttribute('Type:    ${mySerialProtocolText.type}'),
-      showTextTitleAttribute(localizedStrings.gTipAlignment),
+      showTextTitleAttribute(localizedStrings?.gTipAlignment ?? "gTipAlignment"),
       _alignmentDropdownButton(_currentPageIndex),
-      showTextTitleAttribute(localizedStrings.gTipFilling),
+      showTextTitleAttribute(localizedStrings?.gTipFilling ?? "gTipFilling"),
       _fillingDropdownButton(_currentPageIndex),
-      showTextTitleAttribute(localizedStrings.gTipDecimal),
+      showTextTitleAttribute(localizedStrings?.gTipDecimal ?? "gTipDecimal"),
       _decimalDropdownButton(_currentPageIndex),
-      showTextTitleAttribute(localizedStrings.gTipMaxLength),
+      showTextTitleAttribute(localizedStrings?.gTipMaxLength ?? "gTipMaxLength"),
       maxLenWidget(),
-      showTextTitleAttribute(localizedStrings.gTipDefaultValue),
+      showTextTitleAttribute(localizedStrings?.gTipDefaultValue ?? "gTipDefaultValue"),
       TextField(
         readOnly: true,
         controller: myContentCtl,
@@ -1694,13 +1694,13 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
         ),
       ),
       showTextTitleAttribute('Type:    ${mySerialProtocolText.type}'),
-      showTextTitleAttribute(localizedStrings.gTipAlignment),
+      showTextTitleAttribute(localizedStrings?.gTipAlignment ?? "gTipAlignment"),
       _alignmentDropdownButton(_currentPageIndex),
-      showTextTitleAttribute(localizedStrings.gTipFilling),
+      showTextTitleAttribute(localizedStrings?.gTipFilling ?? "gTipFilling"),
       _fillingDropdownButton(_currentPageIndex),
-      showTextTitleAttribute(localizedStrings.gTipMaxLength),
+      showTextTitleAttribute(localizedStrings?.gTipMaxLength ?? "gTipMaxLength"),
       maxLenWidget(),
-      showTextTitleAttribute(localizedStrings.gTipDefaultValue),
+      showTextTitleAttribute(localizedStrings?.gTipDefaultValue ?? "gTipDefaultValue"),
       TextField(
         readOnly: true,
         controller: myContentCtl,
@@ -1733,7 +1733,7 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
   }
 
   Widget deleteButton() {
-    return showTextButton(context, btnHeight, localizedStrings.gBtnDelete, () {
+    return showTextButton(context, btnHeight, (localizedStrings?.gBtnDelete ?? "gBtnDelete"), () {
       setState(() {
         _deleteItem(_currentPageIndex);
       });
@@ -2046,13 +2046,13 @@ class _CustomSerialProtocolState extends State<CustomSerialProtocol> {
       builder: (BuildContext ctx) {
         return AlertDialog(
           title: Text(
-            localizedStrings.gTitleConfirm,
+            (localizedStrings?.gTitleConfirm ?? "gTitleConfirm"),
             style: TextStyle(color: colorScheme.primary),
           ),
           content: Text(msg),
           actions: <Widget>[
             OutlinedButton(
-              child: Text(localizedStrings.gBtnConfirm),
+              child: Text(localizedStrings?.gBtnConfirm ?? "gBtnConfirm"),
               onPressed: () {
                 Navigator.of(context).pop(true); // 跳转
               },

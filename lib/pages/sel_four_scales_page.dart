@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:t_max/pages/production_line_page.dart';
 import '../../eventbus/eventbus.dart';
 import '../data/comscaleinfo_data.dart';
@@ -231,7 +231,7 @@ class SltFourScalesPageState extends State<SltFourScalesPage> {
               btnWidth: 120,
               btnHeight: 40,
               icon: Icons.check_circle,
-              text: localizedStrings.gBtnConfirm,
+              text: (localizedStrings?.gBtnConfirm ?? "gBtnConfirm"),
               onPressed: isDownloading || !checkSelect()
                   ? null
                   : () {
@@ -250,7 +250,7 @@ class SltFourScalesPageState extends State<SltFourScalesPage> {
               btnWidth: 120,
               btnHeight: 40,
               icon: Icons.cancel,
-              text: localizedStrings.gBtnCancel,
+              text: (localizedStrings?.gBtnCancel ?? "gBtnCancel"),
               onPressed: isDownloading
                   ? null
                   : () {

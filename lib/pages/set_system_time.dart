@@ -1,4 +1,4 @@
-import 'dart:async';
+﻿import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/data/scale_info_from_db.dart';
@@ -66,7 +66,7 @@ class SetSystemTimePageState extends State<SetSystemTimePage> {
           }
 
           myRespDataFromScale.msgBody.contains('ok')
-              ? showTipInfo(localizedStrings.fSuccessMsg, context)
+              ? showTipInfo((localizedStrings?.fSuccessMsg ?? "fSuccessMsg"), context)
               : showTipInfo(myRespDataFromScale.msgBody, context);
         }
       }
@@ -91,14 +91,14 @@ class SetSystemTimePageState extends State<SetSystemTimePage> {
                 stopTimer();
                 startTimer();
               });
-              showTipInfo(localizedStrings.fSuccessMsg, context);
+              showTipInfo((localizedStrings?.fSuccessMsg ?? "fSuccessMsg"), context);
             } else {
               stopTimer();
-              showTipInfo(localizedStrings.gTipFailedGetTime, context);
+              showTipInfo((localizedStrings?.gTipFailedGetTime ?? "gTipFailedGetTime"), context);
             }
           } else {
             stopTimer();
-            showTipInfo(localizedStrings.gTipFailedGetTime, context);
+            showTipInfo((localizedStrings?.gTipFailedGetTime ?? "gTipFailedGetTime"), context);
           }
         } else {
           stopTimer();
@@ -125,10 +125,10 @@ class SetSystemTimePageState extends State<SetSystemTimePage> {
     // 在页面构建完成后显示提示
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (myAllScalesList.isEmpty) {
-        showTipInfo(localizedStrings.gTipNoDeviceAddFirst, context);
+        showTipInfo((localizedStrings?.gTipNoDeviceAddFirst ?? "gTipNoDeviceAddFirst"), context);
       } else {
         if (selScaleId == -1) {
-          showTipInfo(localizedStrings.gTipSelectDeviceFirst, context);
+          showTipInfo((localizedStrings?.gTipSelectDeviceFirst ?? "gTipSelectDeviceFirst"), context);
         }
       }
     });
@@ -160,7 +160,7 @@ class SetSystemTimePageState extends State<SetSystemTimePage> {
 
   //切换的时候要修改掉秤的信息
   void changeScale(int scaleId) {
-    showTipInfo(localizedStrings.gTipGettingDeviceTime, context);
+    showTipInfo((localizedStrings?.gTipGettingDeviceTime ?? "gTipGettingDeviceTime"), context);
     setState(() {
       selScaleId = scaleId;
       PublicFunctions.getScaleTime(selScaleId);
@@ -192,7 +192,7 @@ class SetSystemTimePageState extends State<SetSystemTimePage> {
                         clickScale: (scale) {
                           if (isGettingTime || isSettingTime) {
                             showTipInfo(
-                                localizedStrings.gTipPerformingOperation,
+                                (localizedStrings?.gTipPerformingOperation ?? "gTipPerformingOperation"),
                                 context);
                             return;
                           }
@@ -227,7 +227,7 @@ class SetSystemTimePageState extends State<SetSystemTimePage> {
                   onPressed: () => _scaffoldKey.currentState?.openDrawer(),
                 ),
                 title: Text(
-                  localizedStrings.menuDeviceTime,
+                  (localizedStrings?.menuDeviceTime ?? "menuDeviceTime"),
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
               ),
@@ -254,7 +254,7 @@ class SetSystemTimePageState extends State<SetSystemTimePage> {
                                 clickScale: (scale) {
                                   if (isGettingTime || isSettingTime) {
                                     showTipInfo(
-                                        localizedStrings.gTipPerformingOperation,
+                                        (localizedStrings?.gTipPerformingOperation ?? "gTipPerformingOperation"),
                                         context);
                                     return;
                                   }
@@ -332,7 +332,7 @@ class SetSystemTimePageState extends State<SetSystemTimePage> {
                                                       left: regularPadding,
                                                       right: regularPadding),
                                                   child: Text(
-                                                    localizedStrings.gBtnSyncPcTime,
+                                                    (localizedStrings?.gBtnSyncPcTime ?? "gBtnSyncPcTime"),
                                                     style: Theme.of(context)
                                                         .textTheme
                                                         .bodySmall!
@@ -352,7 +352,7 @@ class SetSystemTimePageState extends State<SetSystemTimePage> {
                                                   child: showTextButton(
                                                       context,
                                                       btnHeight,
-                                                      localizedStrings.gBtnSyncTime,
+                                                      (localizedStrings?.gBtnSyncTime ?? "gBtnSyncTime"),
                                                       selScaleId == -1
                                                           ? null
                                                           : () {
@@ -405,7 +405,7 @@ class SetSystemTimePageState extends State<SetSystemTimePage> {
                                                       left: regularPadding,
                                                       right: regularPadding),
                                                   child: Text(
-                                                    localizedStrings.gBtnSelectDate,
+                                                    (localizedStrings?.gBtnSelectDate ?? "gBtnSelectDate"),
                                                     style: Theme.of(context)
                                                         .textTheme
                                                         .bodySmall!
@@ -425,7 +425,7 @@ class SetSystemTimePageState extends State<SetSystemTimePage> {
                                                   child: showTextButton(
                                                       context,
                                                       btnHeight,
-                                                      localizedStrings.gBtnSetTime,
+                                                      (localizedStrings?.gBtnSetTime ?? "gBtnSetTime"),
                                                       selScaleId == -1
                                                           ? null
                                                           : () async {

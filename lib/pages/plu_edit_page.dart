@@ -1,4 +1,4 @@
-import 'dart:async';
+﻿import 'dart:async';
 import 'dart:convert';
 import 'package:fast_gbk/fast_gbk.dart';
 import 'dart:io';
@@ -162,8 +162,8 @@ class _PluEidtPageState extends State<PluEidtPage> {
       textScheme: textTheme,
       colorScheme: colorScheme,
       canSelect: true,
-      enableTitle: localizedStrings.gBtnEnable,
-      disableTitle: localizedStrings.gBtnDisable,
+      enableTitle: (localizedStrings?.gBtnEnable ?? "gBtnEnable"),
+      disableTitle: (localizedStrings?.gBtnDisable ?? "gBtnDisable"),
     );
   }
 
@@ -294,8 +294,8 @@ class _PluEidtPageState extends State<PluEidtPage> {
       textScheme: Theme.of(context).textTheme,
       colorScheme: Theme.of(context).colorScheme,
       canSelect: true,
-      enableTitle: localizedStrings.gBtnEnable,
-      disableTitle: localizedStrings.gBtnDisable,
+      enableTitle: (localizedStrings?.gBtnEnable ?? "gBtnEnable"),
+      disableTitle: (localizedStrings?.gBtnDisable ?? "gBtnDisable"),
     );
 
     allSelectedNotifier.addListener(() {
@@ -333,7 +333,7 @@ class _PluEidtPageState extends State<PluEidtPage> {
 
         if (isImportAll) {
           isImportAll = false;
-          showErrorDialog(context, localizedStrings.gTipImportPluSame);
+          showErrorDialog(context, (localizedStrings?.gTipImportPluSame ?? "gTipImportPluSame"));
         }
       }
     });
@@ -388,7 +388,7 @@ class _PluEidtPageState extends State<PluEidtPage> {
           return;
         }
         if (jsonData.contains('fail')) {
-          showTipInfo(localizedStrings.gTipExportFail, context);
+          showTipInfo((localizedStrings?.gTipExportFail ?? "gTipExportFail"), context);
           return;
         }
         showExportDialog(jsonData, context);
@@ -561,11 +561,11 @@ class _PluEidtPageState extends State<PluEidtPage> {
 
       return ExportResult(isSuccess: true);
     } catch (e) {
-      String errorMessage = localizedStrings.gTipExportError;
+      String errorMessage = (localizedStrings?.gTipExportError ?? "gTipExportError");
       if (e is FileSystemException) {
-        errorMessage = localizedStrings.gTipExportFileError;
+        errorMessage = (localizedStrings?.gTipExportFileError ?? "gTipExportFileError");
       } else if (e is IOException) {
-        errorMessage = localizedStrings.gTipExportIOError;
+        errorMessage = (localizedStrings?.gTipExportIOError ?? "gTipExportIOError");
       }
       return ExportResult(isSuccess: false, errorMessage: errorMessage);
     }
@@ -619,7 +619,7 @@ class _PluEidtPageState extends State<PluEidtPage> {
     }
 
     if (importPlu.isEmpty) {
-      return localizedStrings.gTipNoData;
+      return (localizedStrings?.gTipNoData ?? "gTipNoData");
     }
     if (importPlu.isNotEmpty) {
       addDataToSrv();
@@ -630,7 +630,7 @@ class _PluEidtPageState extends State<PluEidtPage> {
 
     //新增的PLU列表
 
-    return localizedStrings.gTipImportPluOK;
+    return (localizedStrings?.gTipImportPluOK ?? "gTipImportPluOK");
   }
 
   bool isImportAll = false; //是否全部导入，有重复的PLU会去掉
@@ -652,7 +652,7 @@ class _PluEidtPageState extends State<PluEidtPage> {
   /// [nowPluList] 当前已存在的 PLU 列表，用于去重
   Future<String?> importDataFromCSV(String filePath) async {
     List<int> bytes = await File(filePath).readAsBytes();
-    if (bytes.isEmpty) return localizedStrings.gTipNoData;
+    if (bytes.isEmpty) return (localizedStrings?.gTipNoData ?? "gTipNoData");
 
     Map<String, String> translationMap = getTranslationMap();
     String? currentDelimiter;
@@ -713,13 +713,13 @@ class _PluEidtPageState extends State<PluEidtPage> {
 
     // 3. 如果两者都失败，提示用户使用 UTF-8
     if (content == null) {
-      return localizedStrings.gMsgUseUtf8;
+      return (localizedStrings?.gMsgUseUtf8 ?? "gMsgUseUtf8");
     }
 
     // 4. 移除 BOM 并按行分割
     content = content.replaceFirst('\uFEFF', '');
     List<String> lines = LineSplitter.split(content).toList();
-    if (lines.isEmpty) return localizedStrings.gTipNoData;
+    if (lines.isEmpty) return (localizedStrings?.gTipNoData ?? "gTipNoData");
 
     // 5. 解析标题行并准备映射 (使用检测到的分隔符)
     List<String> rawHeaders =
@@ -919,18 +919,18 @@ class _PluEidtPageState extends State<PluEidtPage> {
 
       // 检查PLU相关条件
       if (dataRow.pluData.plu == null) {
-        return '${localizedStrings.gPluPlu}  null. ${localizedStrings.gPluPluName} : ${dataRow..pluData.productName}';
+        return '${(localizedStrings?.gPluPlu ?? "gPluPlu")}  null. ${(localizedStrings?.gPluPluName ?? "gPluPluName")} : ${dataRow..pluData.productName}';
       }
       if (dataRow.pluData.plu == 0) {
-        return '${localizedStrings.gPluPlu} : 1-99999. ${localizedStrings.gPluPluName} : ${dataRow..pluData.productName}';
+        return '${(localizedStrings?.gPluPlu ?? "gPluPlu")} : 1-99999. ${(localizedStrings?.gPluPluName ?? "gPluPluName")} : ${dataRow..pluData.productName}';
       }
 
       // 检查Product Name相关条件
       if (dataRow.pluData.productName == null) {
-        return '${localizedStrings.gPluPluName} null. ${localizedStrings.gPluPlu} : ${dataRow.pluData.plu}';
+        return '${(localizedStrings?.gPluPluName ?? "gPluPluName")} null. ${(localizedStrings?.gPluPlu ?? "gPluPlu")} : ${dataRow.pluData.plu}';
       }
       if (dataRow.pluData.productName == '') {
-        return "${localizedStrings.gPluPluName}   . ${localizedStrings.gPluPlu} : ${dataRow.pluData.plu}";
+        return "${(localizedStrings?.gPluPluName ?? "gPluPluName")}   . ${(localizedStrings?.gPluPlu ?? "gPluPlu")} : ${dataRow.pluData.plu}";
       }
 
       // 检查是否有PLU值重复的情况
@@ -938,7 +938,7 @@ class _PluEidtPageState extends State<PluEidtPage> {
       int pluCount =
           pluValues.where((plu) => plu == dataRow.pluData.plu).length;
       if (pluCount > 1) {
-        return '${localizedStrings.gPluPlu} ${localizedStrings.gTipPluDuplicated}.  ${localizedStrings.gPluPlu}: ${dataRow.pluData.plu}';
+        return '${(localizedStrings?.gPluPlu ?? "gPluPlu")} ${(localizedStrings?.gTipPluDuplicated ?? "gTipPluDuplicated")}.  ${(localizedStrings?.gPluPlu ?? "gPluPlu")}: ${dataRow.pluData.plu}';
       }
     }
     return '';
@@ -948,7 +948,7 @@ class _PluEidtPageState extends State<PluEidtPage> {
   void sendAllData(String saveType) {
     if (dataModels.isEmpty) {
       isSendDb = false;
-      return showErrorDialog(context, localizedStrings.gTipNoData);
+      return showErrorDialog(context, (localizedStrings?.gTipNoData ?? "gTipNoData"));
     }
     bool selectRow = false;
     for (var dessert in dataModels) {
@@ -959,7 +959,7 @@ class _PluEidtPageState extends State<PluEidtPage> {
     }
     if (!selectRow) {
       isSendDb = false;
-      return showErrorDialog(context, localizedStrings.gTipNoDataSelected);
+      return showErrorDialog(context, (localizedStrings?.gTipNoDataSelected ?? "gTipNoDataSelected"));
     }
     String msg = checkImportData(dataModels);
     if (msg != "") {
@@ -1153,7 +1153,7 @@ class _PluEidtPageState extends State<PluEidtPage> {
     return Row(
       children: [
         showIconBtn(
-            localizedStrings.gBtnDownload,
+            (localizedStrings?.gBtnDownload ?? "gBtnDownload"),
             getSvgIcon(
                 downloadToScaleSvgIcon(),
                 24,
@@ -1169,8 +1169,8 @@ class _PluEidtPageState extends State<PluEidtPage> {
                         context: context,
                         builder: (context) {
                           return ShowNormalTipDialog(
-                            title: localizedStrings.fTipTitle,
-                            msg: localizedStrings.downAllPluTip,
+                            title: (localizedStrings?.fTipTitle ?? "fTipTitle"),
+                            msg: (localizedStrings?.downAllPluTip ?? "downAllPluTip"),
                           );
                         }).then((value) async {
                       if (value == true) {
@@ -1184,7 +1184,7 @@ class _PluEidtPageState extends State<PluEidtPage> {
           width: regularPadding,
         ),
         showIconBtn(
-          localizedStrings.gBtnAdd,
+          (localizedStrings?.gBtnAdd ?? "gBtnAdd"),
           getSvgIcon(addSvgIcon(), 24, 24, colorScheme.onPrimary),
           colorScheme.primary,
           isImporting
@@ -1198,7 +1198,7 @@ class _PluEidtPageState extends State<PluEidtPage> {
         ),
         //导出
         showIconBtn(
-          localizedStrings.gBtnExport,
+          (localizedStrings?.gBtnExport ?? "gBtnExport"),
           getSvgIcon(
               exportSvgIcon(),
               24,
@@ -1249,7 +1249,7 @@ class _PluEidtPageState extends State<PluEidtPage> {
         ),
         //导入
         showIconBtn(
-            localizedStrings.gBtnImport,
+            (localizedStrings?.gBtnImport ?? "gBtnImport"),
             getSvgIcon(importSvgIcon(), 24, 24, colorScheme.onPrimary),
             colorScheme.primary,
             isImporting
@@ -1265,7 +1265,7 @@ class _PluEidtPageState extends State<PluEidtPage> {
         ),
         //设置
         showIconBtn(
-            localizedStrings.gBtnReportSetting,
+            (localizedStrings?.gBtnReportSetting ?? "gBtnReportSetting"),
             getSvgIcon(reportSettingSvgIcon(), 24, 24, colorScheme.onPrimary),
             colorScheme.primary,
             isImporting
@@ -1278,7 +1278,7 @@ class _PluEidtPageState extends State<PluEidtPage> {
         ),
         //模板
         showIconBtn(
-            localizedStrings.gBtnGetPluTemplate,
+            (localizedStrings?.gBtnGetPluTemplate ?? "gBtnGetPluTemplate"),
             getSvgIcon(rawTemplateSvgIcon(), 24, 24, colorScheme.onPrimary),
             colorScheme.primary,
             isImporting
@@ -1303,7 +1303,7 @@ class _PluEidtPageState extends State<PluEidtPage> {
           width: regularPadding,
         ), //批量删除
         showIconBtn(
-          localizedStrings.fClearBtn,
+          (localizedStrings?.fClearBtn ?? "fClearBtn"),
           getSvgIcon(
               clearSvgIcon(),
               24,
@@ -1331,8 +1331,8 @@ class _PluEidtPageState extends State<PluEidtPage> {
       barrierDismissible: false, // 点击对话框外部不关闭对话框
       builder: (BuildContext context) {
         return ShowDeleteTipDialog(
-          title: localizedStrings.fTipTitle,
-          msg: localizedStrings.fClearDataBtn,
+          title: (localizedStrings?.fTipTitle ?? "fTipTitle"),
+          msg: (localizedStrings?.fClearDataBtn ?? "fClearDataBtn"),
         );
       },
     ).then((value) {
@@ -1410,7 +1410,7 @@ class _PluEidtPageState extends State<PluEidtPage> {
                         pluNameCtl.clear();
                       },
                     ),
-                    hintText: localizedStrings.gPluName,
+                    hintText: (localizedStrings?.gPluName ?? "gPluName"),
                     contentPadding:
                         EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                     hintStyle: Theme.of(context).textTheme.bodySmall!.copyWith(
@@ -1453,7 +1453,7 @@ class _PluEidtPageState extends State<PluEidtPage> {
                         categoryCtl.clear();
                       },
                     ),
-                    hintText: localizedStrings.gPluCategory,
+                    hintText: (localizedStrings?.gPluCategory ?? "gPluCategory"),
                     contentPadding:
                         EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                     hintStyle: Theme.of(context).textTheme.bodySmall!.copyWith(
@@ -1477,7 +1477,7 @@ class _PluEidtPageState extends State<PluEidtPage> {
           width: 14,
         ),
         Tooltip(
-            message: localizedStrings.search, // 翻译
+            message: (localizedStrings?.search ?? "search"), // 翻译
             child: IconButton(
               icon: Icon(
                 Icons.search_rounded,
@@ -1495,7 +1495,7 @@ class _PluEidtPageState extends State<PluEidtPage> {
           width: 14,
         ),
         Tooltip(
-            message: localizedStrings.fClearSearchConditionBtn, // 提示信息
+            message: (localizedStrings?.fClearSearchConditionBtn ?? "fClearSearchConditionBtn"), // 提示信息
             child: IconButton(
               icon: Icon(
                 Icons.cleaning_services_outlined,
@@ -1519,7 +1519,7 @@ class _PluEidtPageState extends State<PluEidtPage> {
     return Row(
       children: [
         showIconBtn(
-          localizedStrings.gBtnDownload,
+          (localizedStrings?.gBtnDownload ?? "gBtnDownload"),
           getSvgIcon(
               downloadToScaleSvgIcon(),
               24,
@@ -1543,13 +1543,13 @@ class _PluEidtPageState extends State<PluEidtPage> {
                   if (!selectRow) {
                     isSendDb = false;
                     return showErrorDialog(
-                        context, localizedStrings.gTipNoDataSelected);
+                        context, (localizedStrings?.gTipNoDataSelected ?? "gTipNoDataSelected"));
                   }
                   for (var dessert in selectedPluInfos) {
                     if (dessert.pluData.enabled == false) {
                       isSendDb = false;
                       return showErrorDialog(
-                          context, localizedStrings.gTipDownPluDisabled);
+                          context, (localizedStrings?.gTipDownPluDisabled ?? "gTipDownPluDisabled"));
                     }
                   }
 
@@ -1578,7 +1578,7 @@ class _PluEidtPageState extends State<PluEidtPage> {
         ),
         //批量启用
         showIconBtn(
-          localizedStrings.gBtnEnable,
+          (localizedStrings?.gBtnEnable ?? "gBtnEnable"),
           getSvgIcon(
               enabledSvgIcon(),
               24,
@@ -1598,7 +1598,7 @@ class _PluEidtPageState extends State<PluEidtPage> {
         ),
         //批量停用
         showIconBtn(
-          localizedStrings.gBtnDisable,
+          (localizedStrings?.gBtnDisable ?? "gBtnDisable"),
           getSvgIcon(
               disabledSvgIcon(),
               24,
@@ -1619,7 +1619,7 @@ class _PluEidtPageState extends State<PluEidtPage> {
 
         //批量删除
         showIconBtn(
-          localizedStrings.gBtnDelete,
+          (localizedStrings?.gBtnDelete ?? "gBtnDelete"),
           getSvgIcon(
               deleteSvgIcon(),
               24,
@@ -1647,8 +1647,8 @@ class _PluEidtPageState extends State<PluEidtPage> {
       barrierDismissible: false, // 点击对话框外部不关闭对话框
       builder: (BuildContext context) {
         return ShowDeleteTipDialog(
-          title: localizedStrings.fTipTitle,
-          msg: localizedStrings.fConfirmDelete,
+          title: (localizedStrings?.fTipTitle ?? "fTipTitle"),
+          msg: (localizedStrings?.fConfirmDelete ?? "fConfirmDelete"),
         );
       },
     ).then((value) {
@@ -1719,7 +1719,7 @@ class _PluEidtPageState extends State<PluEidtPage> {
                   children: [
                     // 头部
                     ...dialogHeadStyle(
-                        context, localizedStrings.gTitleConfirm, false),
+                        context, (localizedStrings?.gTitleConfirm ?? "gTitleConfirm"), false),
 
                     // 中部
                     Expanded(
@@ -1731,7 +1731,7 @@ class _PluEidtPageState extends State<PluEidtPage> {
                               width: 400,
                               child: RadioListTile(
                                 title: Text(
-                                  localizedStrings.gTipDownloadAllPlu,
+                                  (localizedStrings?.gTipDownloadAllPlu ?? "gTipDownloadAllPlu"),
                                   style: getTextStyle(),
                                 ),
                                 value: '1',
@@ -1747,7 +1747,7 @@ class _PluEidtPageState extends State<PluEidtPage> {
                               width: 400,
                               child: RadioListTile(
                                 title: Text(
-                                  localizedStrings.gTipUpdatePlu,
+                                  (localizedStrings?.gTipUpdatePlu ?? "gTipUpdatePlu"),
                                   style: getTextStyle(),
                                 ),
                                 value: '2',
@@ -1792,7 +1792,7 @@ class _PluEidtPageState extends State<PluEidtPage> {
                                 selectDownloadType(_downloadType, filePath);
                               },
                               child: Text(
-                                localizedStrings.gBtnConfirm,
+                                (localizedStrings?.gBtnConfirm ?? "gBtnConfirm"),
                                 style: getTextStyle(
                                   color:
                                       Theme.of(context).colorScheme.onPrimary,
@@ -1820,7 +1820,7 @@ class _PluEidtPageState extends State<PluEidtPage> {
                                 Navigator.of(ctx).pop(false);
                               },
                               child: Text(
-                                localizedStrings.gBtnCancel,
+                                (localizedStrings?.gBtnCancel ?? "gBtnCancel"),
                                 style: getTextStyle(
                                   color:
                                       Theme.of(context).colorScheme.onPrimary,
@@ -1919,7 +1919,7 @@ class _PluEidtPageState extends State<PluEidtPage> {
       await file.writeAsBytes(excel.save()!);
       return ('OK,$filePath');
     } catch (e) {
-      return ('${localizedStrings.gTipSaveFail} $e');
+      return ('${(localizedStrings?.gTipSaveFail ?? "gTipSaveFail")} $e');
     }
   }
 
@@ -2073,51 +2073,51 @@ class _PluEidtPageState extends State<PluEidtPage> {
       switch (fieldName) {
         case 'plu':
           fieldTitle
-              .add(getColumnWidget(itemWidth, 'plu', localizedStrings.gPluPlu));
+              .add(getColumnWidget(itemWidth, 'plu', (localizedStrings?.gPluPlu ?? "gPluPlu")));
           break;
         case 'productName':
           fieldTitle.add(getColumnWidget(
-              itemWidth, 'productName', localizedStrings.gPluPluName));
+              itemWidth, 'productName', (localizedStrings?.gPluPluName ?? "gPluPluName")));
           break;
         case 'category':
           fieldTitle.add(getColumnWidget(
-              itemWidth, 'category', localizedStrings.gPluCategory));
+              itemWidth, 'category', (localizedStrings?.gPluCategory ?? "gPluCategory")));
           break;
         case 'price':
           fieldTitle.add(
-              getColumnWidget(itemWidth, 'price', localizedStrings.gPluPrice));
+              getColumnWidget(itemWidth, 'price', (localizedStrings?.gPluPrice ?? "gPluPrice")));
           break;
         case 'generalUnit':
           fieldTitle.add(getColumnWidget(
-              itemWidth, 'generalUnit', localizedStrings.gPluWgtUnit));
+              itemWidth, 'generalUnit', (localizedStrings?.gPluWgtUnit ?? "gPluWgtUnit")));
           break;
         case 'taxType':
           fieldTitle.add(getColumnWidget(
-              itemWidth, 'taxType', localizedStrings.gPluTaxType));
+              itemWidth, 'taxType', (localizedStrings?.gPluTaxType ?? "gPluTaxType")));
           break;
         case 'unitWeight':
           fieldTitle.add(getColumnWidget(
-              itemWidth, 'unitWeight', localizedStrings.gPluUnitWgt));
+              itemWidth, 'unitWeight', (localizedStrings?.gPluUnitWgt ?? "gPluUnitWgt")));
           break;
         case 'pretare':
           fieldTitle.add(getColumnWidget(
-              itemWidth, 'pretare', localizedStrings.gPluPretare));
+              itemWidth, 'pretare', (localizedStrings?.gPluPretare ?? "gPluPretare")));
           break;
         case 'limitHigh':
           fieldTitle.add(getColumnWidget(
-              itemWidth, 'limitHigh', localizedStrings.gPluLimitHigh));
+              itemWidth, 'limitHigh', (localizedStrings?.gPluLimitHigh ?? "gPluLimitHigh")));
           break;
         case 'limitLow':
           fieldTitle.add(getColumnWidget(
-              itemWidth, 'limitLow', localizedStrings.gPluLimitLow));
+              itemWidth, 'limitLow', (localizedStrings?.gPluLimitLow ?? "gPluLimitLow")));
           break;
         case 'productCode':
           fieldTitle.add(getColumnWidget(
-              itemWidth, 'productCode', localizedStrings.gPluPluCode));
+              itemWidth, 'productCode', (localizedStrings?.gPluPluCode ?? "gPluPluCode")));
           break;
         case 'itemCode':
           fieldTitle.add(getColumnWidget(
-              itemWidth, 'itemCode', localizedStrings.gPluItemCode));
+              itemWidth, 'itemCode', (localizedStrings?.gPluItemCode ?? "gPluItemCode")));
           break;
         default:
           break;
@@ -2212,8 +2212,8 @@ class _PluEidtPageState extends State<PluEidtPage> {
                           textScheme: textTheme,
                           colorScheme: colorScheme,
                           canSelect: true,
-                          enableTitle: localizedStrings.gBtnEnable,
-                          disableTitle: localizedStrings.gBtnDisable,
+                          enableTitle: (localizedStrings?.gBtnEnable ?? "gBtnEnable"),
+                          disableTitle: (localizedStrings?.gBtnDisable ?? "gBtnDisable"),
                         ),
                     columns: [
                       GridColumn(
@@ -2247,7 +2247,7 @@ class _PluEidtPageState extends State<PluEidtPage> {
                           color: colorScheme.surfaceDim,
                           padding: const EdgeInsets.all(8.0),
                           alignment: Alignment.centerLeft,
-                          child: Text(localizedStrings.gStatus),
+                          child: Text(localizedStrings?.gStatus ?? "gStatus"),
                         ),
                       ),
                     ],
@@ -2282,8 +2282,8 @@ class _PluEidtPageState extends State<PluEidtPage> {
                           : null,
                     ),
                     Text(
-                      localizedStrings.tipPageSequnce +
-                          ' $currentPage / $totalPages ${localizedStrings.tipPage}',
+                      (localizedStrings?.tipPageSequnce ?? "tipPageSequnce") +
+                          ' $currentPage / $totalPages ${(localizedStrings?.tipPage ?? "tipPage")}',
                       style: getTitleTextStyle(),
                     ),
                     IconButton(
@@ -2302,7 +2302,7 @@ class _PluEidtPageState extends State<PluEidtPage> {
                       width: regularPadding,
                     ),
                     Text(
-                      localizedStrings.tipJumpPage,
+                      (localizedStrings?.tipJumpPage ?? "tipJumpPage"),
                       style: getTitleTextStyle(),
                     ),
                     SizedBox(
@@ -2355,7 +2355,7 @@ class _PluEidtPageState extends State<PluEidtPage> {
                       width: regularPadding,
                     ),
                     Text(
-                      localizedStrings.tipPage,
+                      (localizedStrings?.tipPage ?? "tipPage"),
                       style: getTitleTextStyle(),
                     ),
                   ],
