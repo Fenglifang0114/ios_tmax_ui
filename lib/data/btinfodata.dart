@@ -1,4 +1,4 @@
-import 'dart:convert';
+﻿import 'dart:convert';
 
 List<BtInfo> btInfoFromJson(String str) =>
     List<BtInfo>.from(json.decode(str).map((x) => BtInfo.fromJson(x)));

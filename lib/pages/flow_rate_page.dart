@@ -1717,9 +1717,9 @@ class _LineChartSample5State extends State<LineChartSample5> {
         //   show: true,
         //   gradient: LinearGradient(
         //     colors: [
-        //       widget.gradientColor1.withValues(alpha: 0.4),
-        //       widget.gradientColor2.withValues(alpha: 0.4),
-        //       widget.gradientColor3.withValues(alpha: 0.4),
+        //       widget.gradientColor1.withOpacity(0.4),
+        //       widget.gradientColor2.withOpacity(0.4),
+        //       widget.gradientColor3.withOpacity(0.4),
         //     ],
         //   ),
         // ),
@@ -1945,7 +1945,7 @@ class _LineChartSample5State extends State<LineChartSample5> {
                   horizontalInterval: yInterval,
                   getDrawingHorizontalLine: (value) {
                     return FlLine(
-                      color: Colors.grey.withValues(alpha: 0.5),
+                      color: Colors.grey.withOpacity(0.5),
                       strokeWidth: 1,
                       dashArray: [5, 5],
                     );

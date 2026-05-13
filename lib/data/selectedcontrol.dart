@@ -1,4 +1,4 @@
-class SelectedControl {
+﻿class SelectedControl {
   int selectid;
   bool isSelect;
   SelectedControl(this.selectid, this.isSelect);

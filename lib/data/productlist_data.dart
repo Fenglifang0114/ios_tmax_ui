@@ -1,4 +1,4 @@
-class ProductRecInfo {
+﻿class ProductRecInfo {
   int? plu;
   String? productCode;
   String? itemCode;

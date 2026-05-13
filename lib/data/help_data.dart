@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 
 class TextUtils {
   // 新增 color 参数，默认值为 Colors.blue

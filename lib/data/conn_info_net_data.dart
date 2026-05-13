@@ -1,4 +1,4 @@
-class ConnInfoNet {
+﻿class ConnInfoNet {
   String? ipAddr;
 
   ConnInfoNet(this.ipAddr);

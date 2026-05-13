@@ -1,4 +1,4 @@
-class HighLowWeight {
+﻿class HighLowWeight {
   double highValue;
   double lowValue;
   HighLowWeight(this.highValue, this.lowValue);

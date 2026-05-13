@@ -100,7 +100,7 @@ class SelScaleDialogState extends State<SelScaleDialog> {
                               : Theme.of(context)
                                   .colorScheme
                                   .surface
-                                  .withValues(alpha: 0.1),
+                                  .withOpacity(0.1),
                         ),
                         width: scaleInnerItemHeight,
                         height: scaleInnerItemHeight,

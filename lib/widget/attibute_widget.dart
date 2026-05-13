@@ -1,4 +1,4 @@
-//属性列表
+﻿//属性列表
 
 import 'package:flutter/material.dart';
 import 'package:t_max/data/home_page_common_data.dart';

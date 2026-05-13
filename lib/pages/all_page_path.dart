@@ -1,4 +1,4 @@
-//所有的页面路径
+﻿//所有的页面路径
 
 export 'home_multi_scales_page.dart';
 export '../widget/defer_widget.dart';

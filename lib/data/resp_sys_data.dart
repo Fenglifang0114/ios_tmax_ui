@@ -672,10 +672,13 @@ class RespSysMsgType {
   }
 
   static void handleGetUIConf(String data) {
-    var jsonData = json.decode(data);
-    mySettingParam = SettingParam.fromJson(jsonData);
-
-    eventBus.fire(EventSettingParam(mySettingParam));
+    try {
+      var jsonData = json.decode(data);
+      mySettingParam = SettingParam.fromJson(jsonData);
+      eventBus.fire(EventSettingParam(mySettingParam));
+    } catch (e) {
+      // 防御性拦截：捕获非法JSON或类型不匹配异常，确保通信层稳定性
+    }
   }
 
   static void pasterLicense(String jsonDataString) {

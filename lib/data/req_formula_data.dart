@@ -1,4 +1,4 @@
-import 'dart:convert';
+﻿import 'dart:convert';
 
 //配方秤中的类型添加字段
 class TypeName {

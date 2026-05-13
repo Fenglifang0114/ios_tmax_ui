@@ -43,7 +43,7 @@ class ShowMenuItem extends StatelessWidget {
           height: 52, // 固定高度
           child: Material(
             color: isSelected
-                ? Colors.black.withValues(alpha: 0.2) //透明度百分比20% *255
+                ? Colors.black.withOpacity(0.2) //透明度百分比20% *255
                 : Theme.of(context).colorScheme.primary,
             child: MergeSemantics(
               child: InkWell(
@@ -100,7 +100,7 @@ class ShowMenuItem extends StatelessWidget {
     return SmartTooltip(
         borderColor: colorScheme.onInverseSurface,
         message: isExpanded ? '' : demo.title,
-        backgroundColor: colorScheme.onInverseSurface.withValues(alpha: 0.7),
+        backgroundColor: colorScheme.onInverseSurface.withOpacity(0.7),
         textStyle: TextStyle(
           color: colorScheme.onPrimary,
         ),

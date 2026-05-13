@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 
 void showWarningDialog(BuildContext context, void Function(bool) onOKPressed) {
   WidgetsBinding.instance.addPostFrameCallback((_) {

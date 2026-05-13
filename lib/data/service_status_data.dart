@@ -1,4 +1,4 @@
-import 'dart:convert';
+﻿import 'dart:convert';
 
 ServiceAction serviceActionFromJson(String str) =>
     ServiceAction.fromJson(json.decode(str));

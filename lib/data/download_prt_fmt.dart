@@ -1,4 +1,4 @@
-class DownLoadPrtFmt {
+﻿class DownLoadPrtFmt {
   String? scaleModel;
   String? printerModel;
   List<String>? filePaths;

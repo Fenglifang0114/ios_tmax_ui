@@ -1,4 +1,4 @@
-import 'package:t_max/data/conninfobt_data.dart';
+﻿import 'package:t_max/data/conninfobt_data.dart';
 import 'package:t_max/data/conn_info_net_data.dart';
 import 'package:t_max/data/conn_info_sport_data.dart';
 

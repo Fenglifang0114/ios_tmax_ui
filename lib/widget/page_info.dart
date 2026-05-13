@@ -1,4 +1,4 @@
-//每个页面的关于按钮
+﻿//每个页面的关于按钮
 
 import 'package:flutter/material.dart';
 import 'package:t_max/data/home_page_common_data.dart';

@@ -1,4 +1,4 @@
-class DialogData {
+﻿class DialogData {
   String type;
   String msg;
   DialogData(this.type, this.msg);

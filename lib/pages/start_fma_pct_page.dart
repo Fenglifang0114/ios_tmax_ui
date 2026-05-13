@@ -1728,16 +1728,16 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
                                 ? Theme.of(context)
                                     .colorScheme
                                     .primary
-                                    .withValues(alpha: 0.1)
+                                    .withOpacity(0.1)
                                 : (data).isOK! == "ok"
                                     ? Theme.of(context)
                                         .colorScheme
                                         .onTertiaryFixedVariant
-                                        .withValues(alpha: 0.1)
+                                        .withOpacity(0.1)
                                     : Theme.of(context)
                                         .colorScheme
                                         .error
-                                        .withValues(alpha: 0.1),
+                                        .withOpacity(0.1),
                           ),
                           padding: const EdgeInsets.symmetric(
                             horizontal: smallPadding,

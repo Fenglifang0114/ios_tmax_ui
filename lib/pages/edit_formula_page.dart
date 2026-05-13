@@ -778,7 +778,7 @@ class EditFormulaPageState extends State<EditFormulaPage> {
                                             : Theme.of(context)
                                                 .colorScheme
                                                 .onSurface
-                                                .withValues(alpha: 0.5),
+                                                .withOpacity(0.5),
                                       ),
                                 ),
                                 TextSpan(
@@ -813,7 +813,7 @@ class EditFormulaPageState extends State<EditFormulaPage> {
                                             : Theme.of(context)
                                                 .colorScheme
                                                 .onSurface
-                                                .withValues(alpha: 0.5),
+                                                .withOpacity(0.5),
                                       ),
                                 ),
                                 TextSpan(
@@ -845,7 +845,7 @@ class EditFormulaPageState extends State<EditFormulaPage> {
                                             : Theme.of(context)
                                                 .colorScheme
                                                 .onSurface
-                                                .withValues(alpha: 0.5),
+                                                .withOpacity(0.5),
                                       ),
                                 ),
                                 TextSpan(
@@ -878,7 +878,7 @@ class EditFormulaPageState extends State<EditFormulaPage> {
                                             : Theme.of(context)
                                                 .colorScheme
                                                 .onSurface
-                                                .withValues(alpha: 0.5),
+                                                .withOpacity(0.5),
                                       ),
                                 ),
                                 TextSpan(
@@ -928,7 +928,7 @@ class EditFormulaPageState extends State<EditFormulaPage> {
                               hoverColor: Theme.of(context)
                                   .colorScheme
                                   .primary
-                                  .withValues(alpha: 0.1),
+                                  .withOpacity(0.1),
                               onTap: () {
                                 moveDown(index);
                               },
@@ -1016,7 +1016,7 @@ class EditFormulaPageState extends State<EditFormulaPage> {
                                   color: Theme.of(context)
                                       .colorScheme
                                       .onSurface
-                                      .withValues(alpha: 0.5),
+                                      .withOpacity(0.5),
                                 ),
                           ),
                         ],

@@ -1,4 +1,4 @@
-import 'conninfo_data.dart';
+﻿import 'conninfo_data.dart';
 
 class ConnInfoList {
   int? count;

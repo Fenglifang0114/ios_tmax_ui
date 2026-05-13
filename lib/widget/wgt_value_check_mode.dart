@@ -1,4 +1,4 @@
-﻿//检重模式称重共用的重量显示界面 20250521
+//检重模式称重共用的重量显示界面 20250521
 
 import 'dart:async';
 import 'package:flutter/material.dart';
@@ -400,16 +400,15 @@ class _ScaleWgtCheckModeWidgetState extends State<ScaleWgtCheckModeWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final isMobile = MediaQuery.of(context).size.width < 600;
     return Container(
-        padding: EdgeInsets.only(bottom: regularPadding),
-        height: 184,
+        padding: EdgeInsets.only(bottom: isMobile ? 4 : regularPadding),
         color: Theme.of(context).colorScheme.surfaceContainerLow,
         child: Column(children: [
           Container(
-            height: 169,
             color: Theme.of(context).colorScheme.surface,
-            padding: const EdgeInsets.only(
-                left: regularPadding, right: regularPadding),
+            padding: EdgeInsets.symmetric(
+                horizontal: isMobile ? 8 : regularPadding),
             child: Column(
               children: [
                 Container(
@@ -447,7 +446,7 @@ class _ScaleWgtCheckModeWidgetState extends State<ScaleWgtCheckModeWidget> {
                   color: Theme.of(context).colorScheme.surfaceContainerLow,
                 ),
                 Container(
-                    height: 52,
+                    height: isMobile ? 40 : 52,
                     color: Theme.of(context).colorScheme.surface,
                     child: Row(
                       children: [
@@ -479,7 +478,7 @@ class _ScaleWgtCheckModeWidgetState extends State<ScaleWgtCheckModeWidget> {
                         ),
                         Spacer(),
                         SizedBox(
-                          width: 190,
+                          width: isMobile ? 180 : 190,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
@@ -532,7 +531,7 @@ class _ScaleWgtCheckModeWidgetState extends State<ScaleWgtCheckModeWidget> {
                                       hoverColor: Theme.of(context)
                                           .colorScheme
                                           .onPrimary
-                                          .withValues(alpha: 0.1),
+                                          .withOpacity(0.1),
                                       style: IconButton.styleFrom(
                                         disabledBackgroundColor:
                                             Theme.of(context)
@@ -578,7 +577,7 @@ class _ScaleWgtCheckModeWidgetState extends State<ScaleWgtCheckModeWidget> {
                   color: Theme.of(context).colorScheme.surfaceContainerLow,
                 ),
                 Container(
-                  height: 60,
+                  height: isMobile ? 50 : 60,
                   color: (lowValue == 0 && highValue == 0 || !isStart || (!_isHigh && !_isOK && !_isLow))
                       ? Colors.transparent
                       : (_isHigh
@@ -666,7 +665,7 @@ class _ScaleWgtCheckModeWidgetState extends State<ScaleWgtCheckModeWidget> {
             disabledColor: Theme.of(context).colorScheme.primary,
             focusColor: Theme.of(context).colorScheme.outline,
             hoverColor:
-                Theme.of(context).colorScheme.onPrimary.withValues(alpha: 0.1),
+                Theme.of(context).colorScheme.onPrimary.withOpacity(0.1),
             style: IconButton.styleFrom(
               // 当按钮不可用时，设置背景颜色为灰色
               disabledBackgroundColor:
@@ -753,7 +752,7 @@ class _ScaleWgtCheckModeWidgetState extends State<ScaleWgtCheckModeWidget> {
         child: IconButton(
           iconSize: 24,
           hoverColor:
-              Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.1),
+              Theme.of(context).colorScheme.onSurface.withOpacity(0.1),
           style: IconButton.styleFrom(
             backgroundColor: bkColor,
             shape: RoundedRectangleBorder(

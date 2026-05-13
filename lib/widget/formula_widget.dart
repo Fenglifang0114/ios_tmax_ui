@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 
 //页面下方备注部分
 class RawRemarkTextWidget extends StatelessWidget {

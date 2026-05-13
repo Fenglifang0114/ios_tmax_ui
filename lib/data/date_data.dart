@@ -1,4 +1,4 @@
-class Date {
+﻿class Date {
   String date;
   Date(this.date);
   Date.fromJson(Map<String, dynamic> json) : date = json['date'];

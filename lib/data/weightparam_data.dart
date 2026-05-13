@@ -1,4 +1,4 @@
-class WeightParamData {
+﻿class WeightParamData {
   String unit;
   String max1;
   String max2;

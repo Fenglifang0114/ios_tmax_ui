@@ -1,4 +1,4 @@
-class WifiListInfo {
+﻿class WifiListInfo {
   List<WifiInfo>? wifidatalist;
 
   WifiListInfo({this.wifidatalist});

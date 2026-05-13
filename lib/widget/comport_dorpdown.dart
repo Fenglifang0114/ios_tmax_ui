@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import '../../data/dialog_data.dart';
 import '../data/scalelist_data.dart';
 

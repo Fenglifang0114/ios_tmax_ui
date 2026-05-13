@@ -1,4 +1,4 @@
-// 自定义机种信息
+﻿// 自定义机种信息
 
 import 'dart:convert';
 

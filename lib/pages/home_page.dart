@@ -1,4 +1,4 @@
-﻿// //主页
+// //主页
 
 //首页   测试首页
 import 'dart:async';
@@ -58,20 +58,27 @@ class MyHomePageState extends State<MyHomePage>
   ScrollController scrollController = ScrollController();
   bool isHovering = false; // 用于控制鼠标悬停状态
 
+  bool _isInitialized = false;
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     localizedStrings = S.of(context);
-    Future.delayed(const Duration(milliseconds: 10), () {
-      setState(() {
-        if (mySysUser.roleId == superAdminRoleId ||
-            mySysUser.roleId == adminRoleId) {
-          _navigateContent('/multiScaleManagement');
-        } else {
-          _navigateContent(defualtSelectPage);
+    if (!_isInitialized) {
+      _isInitialized = true;
+      Future.delayed(const Duration(milliseconds: 10), () {
+        if (mounted) {
+          setState(() {
+            if (mySysUser.roleId == superAdminRoleId ||
+                mySysUser.roleId == adminRoleId) {
+              _navigateContent('/multiScaleManagement');
+            } else {
+              _navigateContent(defualtSelectPage);
+            }
+          });
         }
       });
-    });
+    }
   }
 
 

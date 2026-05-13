@@ -1,4 +1,4 @@
-import '../common/web_socket_mgr.dart';
+﻿import '../common/web_socket_mgr.dart';
 import 'comscaleinfo_data.dart';
 
 final manager = WebSocketScaleManager();

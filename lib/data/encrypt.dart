@@ -1,4 +1,4 @@
-import 'package:encrypt/encrypt.dart';
+﻿import 'package:encrypt/encrypt.dart';
 
 class MyEncryptClass {
   final Key myKey;

@@ -1,4 +1,4 @@
-class Time {
+﻿class Time {
   String time;
   Time(this.time);
   Time.fromJson(Map<String, dynamic> json) : time = json['time'];

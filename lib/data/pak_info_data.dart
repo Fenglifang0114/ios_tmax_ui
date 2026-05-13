@@ -1,4 +1,4 @@
-import 'dart:convert';
+﻿import 'dart:convert';
 
 PakInfo pakInfoFromJson(String str) => PakInfo.fromJson(json.decode(str));
 String pakInfoToJson(PakInfo data) => json.encode(data.toJson());

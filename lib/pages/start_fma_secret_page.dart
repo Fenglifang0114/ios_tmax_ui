@@ -937,7 +937,7 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
       Color backgroundColor = (checkIndexIsOK(index))
           ? Theme.of(context).colorScheme.surfaceContainerLow
           : isSelected
-              ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.1)
+              ? Theme.of(context).colorScheme.primary.withOpacity(0.1)
               : Theme.of(context).colorScheme.surfaceContainerLow;
       Color innerContainerColor = isSelected
           ? Theme.of(context).colorScheme.primary

@@ -518,7 +518,7 @@ class _ScaleWgtWidgetState extends State<ScaleWgtWidget> {
                                         hoverColor: Theme.of(context)
                                             .colorScheme
                                             .onPrimary
-                                            .withValues(alpha: 0.1),
+                                            .withOpacity(0.1),
                                         style: IconButton.styleFrom(
                                           disabledBackgroundColor:
                                               Theme.of(context)
@@ -625,7 +625,7 @@ class _ScaleWgtWidgetState extends State<ScaleWgtWidget> {
             disabledColor: Theme.of(context).colorScheme.primary,
             focusColor: Theme.of(context).colorScheme.outline,
             hoverColor:
-                Theme.of(context).colorScheme.onPrimary.withValues(alpha: 0.1),
+                Theme.of(context).colorScheme.onPrimary.withOpacity(0.1),
             style: IconButton.styleFrom(
               // 当按钮不可用时，设置背景颜色为灰色
               disabledBackgroundColor:
@@ -711,7 +711,7 @@ class _ScaleWgtWidgetState extends State<ScaleWgtWidget> {
         child: IconButton(
           iconSize: 24,
           hoverColor:
-              Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.1),
+              Theme.of(context).colorScheme.onSurface.withOpacity(0.1),
           style: IconButton.styleFrom(
             backgroundColor: bkColor,
             shape: RoundedRectangleBorder(

@@ -1,4 +1,4 @@
-class GetScaleRecords {
+﻿class GetScaleRecords {
   List<WeightRecords>? weightRecords;
   GetScaleRecords({this.weightRecords});
 

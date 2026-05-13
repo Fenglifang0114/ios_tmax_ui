@@ -1,4 +1,4 @@
-//常量集合
+﻿//常量集合
 
 final String wifiStatic = 'static';
 final String wifiDhcp = 'dhcp';

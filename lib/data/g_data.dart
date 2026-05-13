@@ -1,4 +1,4 @@
-//全局数据
+﻿//全局数据
 import 'package:t_max/data/sys_user_from_db.dart';
 
 SysUserDetailFromDb mySysUser = SysUserDetailFromDb(); //登录的系统用户信息

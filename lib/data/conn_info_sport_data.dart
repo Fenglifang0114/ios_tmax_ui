@@ -1,4 +1,4 @@
-class ConnInfoSport {
+﻿class ConnInfoSport {
   String? portName;
   int? baud;
   int? dataBits;

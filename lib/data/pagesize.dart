@@ -1,4 +1,4 @@
-class PageSize {
+﻿class PageSize {
   String size;
 
   PageSize(this.size);

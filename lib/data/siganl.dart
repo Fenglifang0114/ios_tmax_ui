@@ -1,4 +1,4 @@
-class Siganl {
+﻿class Siganl {
   String msg;
 
   Siganl(this.msg);

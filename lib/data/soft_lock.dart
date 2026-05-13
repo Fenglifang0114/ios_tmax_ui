@@ -1,4 +1,4 @@
-// // 软件锁
+﻿// // 软件锁
 
 // import 'dart:convert';
 // import 'dart:typed_data' as typed_data;

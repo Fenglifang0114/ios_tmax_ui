@@ -1,4 +1,4 @@
-// 弹框的头部样式
+﻿// 弹框的头部样式
 
 import 'package:flutter/material.dart';
 import 'package:t_max/data/home_page_common_data.dart';

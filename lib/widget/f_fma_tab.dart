@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:t_max/data/formula_from_db_data.dart';
 
 import 'f_fma_table.dart';

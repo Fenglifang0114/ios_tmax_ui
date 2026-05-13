@@ -1,4 +1,4 @@
-class FromateItemData {
+﻿class FromateItemData {
   String type;
   int xPos;
   int yPos;

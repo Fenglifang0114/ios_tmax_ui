@@ -1,4 +1,4 @@
-/*
+﻿/*
 单通道收到的数据格式
 */
 class RevScaleData {

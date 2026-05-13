@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 
 import 'package:t_max/data/readoutput.dart';
 import 'package:t_max/functions/methods.dart';

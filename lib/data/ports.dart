@@ -1,4 +1,4 @@
-class Ports {
+﻿class Ports {
   String? portName;
   String? description;
 

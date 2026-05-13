@@ -1,4 +1,4 @@
-class ComInfoList {
+﻿class ComInfoList {
   List<String>? msgBody;
 
   ComInfoList(this.msgBody);

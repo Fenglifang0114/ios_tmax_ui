@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:t_max/data/receipt_item.dart';
 import '../../data/selectedcontrol.dart';
 import '../../eventbus/eventbus.dart';

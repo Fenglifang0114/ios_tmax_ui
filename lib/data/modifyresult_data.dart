@@ -1,4 +1,4 @@
-class ModifyAck {
+﻿class ModifyAck {
   bool? isAck;
   String? ackData;
 

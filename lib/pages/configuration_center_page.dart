@@ -1,4 +1,4 @@
-//配置Config的页面 按年收费
+﻿//配置Config的页面 按年收费
 
 import 'dart:io';
 import 'package:flutter/material.dart';

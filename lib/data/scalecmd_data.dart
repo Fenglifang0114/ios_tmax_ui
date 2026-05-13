@@ -1,4 +1,4 @@
-class ScaleCmd {
+﻿class ScaleCmd {
   String? cmdMode;
   String? cmdData;
 

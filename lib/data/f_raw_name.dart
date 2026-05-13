@@ -1,4 +1,4 @@
-import 'package:t_max/data/formula_common.dart';
+﻿import 'package:t_max/data/formula_common.dart';
 import 'package:t_max/data/formula_scale_data.dart';
 
 RawDataInfo getRawData(String rawId) {

@@ -1,4 +1,4 @@
-const clockInterval = Duration(microseconds: 1000);
+﻿const clockInterval = Duration(microseconds: 1000);
 const chineseWeekDays = <int, String>{
   1: '一',
   2: '二',

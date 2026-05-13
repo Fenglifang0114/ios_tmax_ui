@@ -1,4 +1,4 @@
-class IpInfoData {
+﻿class IpInfoData {
   String? iP;
   String? gateway;
   String? netmask;

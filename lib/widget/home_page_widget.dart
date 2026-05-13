@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 
 Widget appCard(BuildContext context, String titleName, IconData iconInfo,
     bool isValid, String explanation, String validDate) {

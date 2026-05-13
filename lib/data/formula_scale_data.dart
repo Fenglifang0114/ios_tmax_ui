@@ -1,4 +1,4 @@
-import 'dart:convert';
+﻿import 'dart:convert';
 
 List<RawDataInfo> rawDataInfoFromJson(String str) => List<RawDataInfo>.from(
     json.decode(str).map((x) => RawDataInfo.fromJson(x)));

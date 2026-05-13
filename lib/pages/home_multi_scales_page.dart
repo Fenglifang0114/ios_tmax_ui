@@ -252,7 +252,7 @@
 //     return SmartTooltip(
 //         borderColor: colorScheme.onInverseSurface,
 //         message: isExpanded ? '' : demo.title,
-//         backgroundColor: colorScheme.onInverseSurface.withValues(alpha: 0.7),
+//         backgroundColor: colorScheme.onInverseSurface.withOpacity(0.7),
 //         textStyle: TextStyle(
 //           color: colorScheme.onPrimary,
 //         ),

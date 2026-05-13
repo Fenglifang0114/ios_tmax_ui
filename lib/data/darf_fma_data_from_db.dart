@@ -1,4 +1,4 @@
-//暂存的配方记录，来自数据库
+﻿//暂存的配方记录，来自数据库
 // To parse this JSON data, do
 //
 //     final darfFmaInfoListFromDb = darfFmaInfoListFromDbFromJson(jsonString);

@@ -1,4 +1,4 @@
-class BasicErrInfo {
+﻿class BasicErrInfo {
   int forcedShutdownCnt;
   int powerOnCnt;
   int runningTime;

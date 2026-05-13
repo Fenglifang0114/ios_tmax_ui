@@ -1,4 +1,4 @@
-class CompanyInfo {
+﻿class CompanyInfo {
   String? companyName;
   String? tel;
   String? email;

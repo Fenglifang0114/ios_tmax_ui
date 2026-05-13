@@ -231,7 +231,7 @@ class _AIDesignDialogState extends State<AIDesignDialog> {
                                 decoration: BoxDecoration(
                                   border: Border.all(
                                       color:
-                                          Colors.blue.withValues(alpha: 0.5)),
+                                          Colors.blue.withOpacity(0.5)),
                                 ),
                                 child: Text(
                                   item.type == 'barcode'

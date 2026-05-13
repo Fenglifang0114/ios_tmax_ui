@@ -1,4 +1,4 @@
-//接收到的重量值
+﻿//接收到的重量值
 
 class ReceiveWgtInfo {
   String? weightVal;

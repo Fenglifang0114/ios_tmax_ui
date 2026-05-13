@@ -22,16 +22,16 @@ class SettingParam {
       this.saveMode,
       this.wgtMode);
   SettingParam.fromJson(Map<String, dynamic> json)
-      : id = json['Id'],
-        recMode = json['RecMode'],
-        zeroRange = json['ZeroRange'],
-        stableTime = json['StableTime'],
-        dateFormat = json['DateFormat'],
-        dateSeparator = json['DateSeparator'],
-        scaleMode = json['ScaleMode'],
-        scaleSn = json['ScaleSn'],
-        saveMode = json['SaveMode'],
-        wgtMode = json['WgtMode'];
+      : id = json['Id'] ?? 0,
+        recMode = json['RecMode']?.toString() ?? "0",
+        zeroRange = json['ZeroRange']?.toString() ?? "1",
+        stableTime = json['StableTime']?.toString() ?? "1",
+        dateFormat = json['DateFormat']?.toString() ?? "0",
+        dateSeparator = json['DateSeparator']?.toString() ?? "0",
+        scaleMode = json['ScaleMode'] ?? 0,
+        scaleSn = json['ScaleSn']?.toString() ?? "",
+        saveMode = json['SaveMode']?.toString() ?? "",
+        wgtMode = json['WgtMode'] ?? 0;
 
   Map<String, dynamic> toJson() {
     return {

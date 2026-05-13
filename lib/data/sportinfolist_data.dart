@@ -1,4 +1,4 @@
-import 'package:t_max/data/ports.dart';
+﻿import 'package:t_max/data/ports.dart';
 
 //获取串口列表
 

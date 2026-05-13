@@ -1,4 +1,4 @@
-import '../data/reqweightdata_data.dart';
+﻿import '../data/reqweightdata_data.dart';
 
 class PubWeightFuncs {
   static bool weightIsZero() {

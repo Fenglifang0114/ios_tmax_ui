@@ -1,4 +1,4 @@
-import 'package:event_bus/event_bus.dart';
+﻿import 'package:event_bus/event_bus.dart';
 
 /// 全局唯一的 [EventBus] 消息总线单例。
 /// 用于跨 Widget 和跨业务层之间的无状态异步消息传递。

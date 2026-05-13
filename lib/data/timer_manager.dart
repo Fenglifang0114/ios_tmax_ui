@@ -1,4 +1,4 @@
-import 'dart:async';
+﻿import 'dart:async';
 
 import 'package:t_max/data/manager_scale_channel.dart';
 

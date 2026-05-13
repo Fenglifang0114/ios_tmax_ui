@@ -1,4 +1,4 @@
-class ReceiptItemData {
+﻿class ReceiptItemData {
   String type;
   int xPos;
   int yPos;

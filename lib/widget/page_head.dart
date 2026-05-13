@@ -424,7 +424,7 @@ class _TopRightIconsState extends State<TopRightIcons> {
           //   color: colorScheme.primary,
           // ),
           offset: Offset(-15, 40),
-          color: colorScheme.onInverseSurface.withValues(alpha: 0.7),
+          color: colorScheme.onInverseSurface.withOpacity(0.7),
           itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
             PopupMenuItem(
               value: '1',
@@ -490,7 +490,7 @@ class _TopRightIconsState extends State<TopRightIcons> {
           //   color: colorScheme.primary,
           // ),
           offset: Offset(-15, 40),
-          color: colorScheme.onInverseSurface.withValues(alpha: 0.7),
+          color: colorScheme.onInverseSurface.withOpacity(0.7),
           itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
             PopupMenuItem(
               value: '1',

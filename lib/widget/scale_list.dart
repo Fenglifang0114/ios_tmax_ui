@@ -567,7 +567,7 @@ class _NewAllScaleListWidgetState extends State<NewAllScaleListWidget> {
                                                     : Theme.of(context)
                                                         .colorScheme
                                                         .surface
-                                                        .withValues(alpha: 0.1),
+                                                        .withOpacity(0.1),
                                               ),
                                               width: scaleInnerItemHeight,
                                               height: scaleInnerItemHeight,
@@ -765,7 +765,7 @@ class _NewComScaleListWidgetState extends State<NewComScaleListWidget> {
                                                   : Theme.of(context)
                                                       .colorScheme
                                                       .surface
-                                                      .withValues(alpha: 0.1),
+                                                      .withOpacity(0.1),
                                             ),
                                             width: scaleInnerItemHeight,
                                             height: scaleInnerItemHeight,
@@ -988,7 +988,7 @@ class _NewMutiScaleListWidgetState extends State<NewMutiScaleListWidget> {
                                                   : Theme.of(context)
                                                       .colorScheme
                                                       .surface
-                                                      .withValues(alpha: 0.1),
+                                                      .withOpacity(0.1),
                                             ),
                                             width: scaleInnerItemHeight,
                                             height: scaleInnerItemHeight,
@@ -1237,7 +1237,7 @@ class _NewMutiScaleListWifiWidgetState
                                                       .colorScheme
                                                       .surface
                                                       // 浣跨敤 withValues 鏇夸唬 withOpacity
-                                                      .withValues(alpha: 0.1),
+                                                      .withOpacity(0.1),
                                             ),
                                             width: scaleInnerItemHeight,
                                             height: scaleInnerItemHeight,

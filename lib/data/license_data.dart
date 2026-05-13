@@ -1,4 +1,4 @@
-const String tConfigLic = "T-Config";
+﻿const String tConfigLic = "T-Config";
 const String redeLic = "rede";
 const String wedaLic = "weda";
 const String chweLic = "chwe";

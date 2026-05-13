@@ -1,4 +1,4 @@
-import 'log_access.dart';
+﻿import 'log_access.dart';
 
 void writelog(String dataStr) async {
   try {

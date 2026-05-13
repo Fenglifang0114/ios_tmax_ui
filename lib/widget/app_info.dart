@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import '../dialog/company_info_dialog.dart';
 
 class AppInfoButton extends StatefulWidget {

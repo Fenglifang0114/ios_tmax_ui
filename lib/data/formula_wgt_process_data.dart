@@ -1,4 +1,4 @@
-//称重配方过程中使用的数据
+﻿//称重配方过程中使用的数据
 class FormulaWgtProcessData {
   int? no;
   String? rawId; //原料编号

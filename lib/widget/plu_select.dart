@@ -1,4 +1,4 @@
-// 选择PLU数据的小部件
+﻿// 选择PLU数据的小部件
 
 // 构建输入框装饰
 import 'package:flutter/material.dart';

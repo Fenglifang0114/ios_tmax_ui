@@ -1,4 +1,4 @@
-//登录请求参数
+﻿//登录请求参数
 import 'dart:convert';
 
 class SysUserReq {

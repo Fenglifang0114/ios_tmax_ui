@@ -1,4 +1,4 @@
-class Devicedata {
+﻿class Devicedata {
   String name;
   String type;
 

@@ -752,7 +752,7 @@ class EditDarftFmaPageState extends State<EditDarftFmaPage> {
                                             : Theme.of(context)
                                                 .colorScheme
                                                 .onSurface
-                                                .withValues(alpha: 0.5),
+                                                .withOpacity(0.5),
                                       ),
                                 ),
                                 TextSpan(
@@ -787,7 +787,7 @@ class EditDarftFmaPageState extends State<EditDarftFmaPage> {
                                             : Theme.of(context)
                                                 .colorScheme
                                                 .onSurface
-                                                .withValues(alpha: 0.5),
+                                                .withOpacity(0.5),
                                       ),
                                 ),
                                 TextSpan(
@@ -819,7 +819,7 @@ class EditDarftFmaPageState extends State<EditDarftFmaPage> {
                                             : Theme.of(context)
                                                 .colorScheme
                                                 .onSurface
-                                                .withValues(alpha: 0.5),
+                                                .withOpacity(0.5),
                                       ),
                                 ),
                                 TextSpan(
@@ -852,7 +852,7 @@ class EditDarftFmaPageState extends State<EditDarftFmaPage> {
                                             : Theme.of(context)
                                                 .colorScheme
                                                 .onSurface
-                                                .withValues(alpha: 0.5),
+                                                .withOpacity(0.5),
                                       ),
                                 ),
                                 TextSpan(
@@ -908,7 +908,7 @@ class EditDarftFmaPageState extends State<EditDarftFmaPage> {
                                     hoverColor: Theme.of(context)
                                         .colorScheme
                                         .primary
-                                        .withValues(alpha: 0.1),
+                                        .withOpacity(0.1),
                                     onTap: () {
                                       moveDown(index);
                                     },
@@ -1000,7 +1000,7 @@ class EditDarftFmaPageState extends State<EditDarftFmaPage> {
                                   color: Theme.of(context)
                                       .colorScheme
                                       .onSurface
-                                      .withValues(alpha: 0.5),
+                                      .withOpacity(0.5),
                                 ),
                           ),
                         ],

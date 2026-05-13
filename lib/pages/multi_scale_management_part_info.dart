@@ -317,7 +317,7 @@ extension MultiScaleManagementInfoExt on MultiScaleManagementState {
                       child: Container(
                         padding: EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          color: Colors.black.withValues(alpha: 0.05),
+                          color: Colors.black.withOpacity(0.05),
                           borderRadius: BorderRadius.circular(4),
                         ),
                         child: ListView.builder(

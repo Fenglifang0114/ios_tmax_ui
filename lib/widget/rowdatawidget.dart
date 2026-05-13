@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:t_max/data/barcodetype.dart';
 
 import '../../data/barcoderowdata.dart';

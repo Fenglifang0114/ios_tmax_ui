@@ -1,4 +1,4 @@
-class BarCodeRowData {
+﻿class BarCodeRowData {
   String type;
   String content;
   String defaultvalue;

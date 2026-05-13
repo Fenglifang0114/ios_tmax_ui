@@ -1,4 +1,4 @@
-class DownloadFileList {
+﻿class DownloadFileList {
   List<String> downloadFileList;
   DownloadFileList(this.downloadFileList);
 }

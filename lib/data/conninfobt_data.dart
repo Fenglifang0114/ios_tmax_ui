@@ -1,4 +1,4 @@
-class ConnInfoBt {
+﻿class ConnInfoBt {
   String? btAddr;
 
   ConnInfoBt(this.btAddr);

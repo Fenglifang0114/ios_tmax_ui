@@ -1,4 +1,4 @@
-﻿//汇总称重之后共用的widget
+//汇总称重之后共用的widget
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -62,8 +62,7 @@ class _WgtDataTableState extends State<WgtDataTable> {
       }
     });
 
-    return Expanded(
-      child: LayoutBuilder(
+    return LayoutBuilder(
         builder: (BuildContext context, BoxConstraints builder) {
           final double width = builder.maxWidth; // 获取当前可用宽度
           final double height = builder.maxHeight;
@@ -109,7 +108,6 @@ class _WgtDataTableState extends State<WgtDataTable> {
                               ),
                               Expanded(
                                 child: ListView.builder(
-                                  shrinkWrap: true,
                                   controller: scrollController,
                                   physics: ClampingScrollPhysics(),
                                   itemCount: tableState.currentPageData.length,
@@ -151,47 +149,52 @@ class _WgtDataTableState extends State<WgtDataTable> {
                                                   horizontalMargin: 10),
                                             ),
                                             if (item.scaleRec.details != null && item.scaleRec.details!.isNotEmpty)
-                                              AnimatedBuilder(
-                                                animation: horizontalScrollController,
-                                                builder: (context, child) {
-                                                  double offsetData = 0.0;
-                                                  if (horizontalScrollController.hasClients) {
-                                                    offsetData = horizontalScrollController.offset;
-                                                  }
-                                                  
-                                                  double currentViewportWidth = width;
-                                                  if (minWidth < width) currentViewportWidth = minWidth;
-                                                  double leftPos = offsetData + currentViewportWidth - 90;
-                                                  
-                                                  if (leftPos > minWidth - 90) leftPos = minWidth - 90;
-                                                  
-                                                  return Positioned(
-                                                    left: leftPos,
-                                                    top: 0,
-                                                    bottom: 0,
-                                                    child: child!,
-                                                  );
-                                                },
-                                                child: Container(
-                                                  width: 90,
-                                                  alignment: Alignment.center,
-                                                  decoration: BoxDecoration(
-                                                    color: item.isExpanded
-                                                        ? Theme.of(context).colorScheme.surfaceDim
-                                                        : Theme.of(context).colorScheme.surface,
-                                                    boxShadow: [
-                                                      BoxShadow(
-                                                        color: Colors.black.withOpacity(0.05),
-                                                        blurRadius: 2,
-                                                        offset: const Offset(-2, 0),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  child: IconButton(
+                                              Positioned.fill(
+                                                child: AnimatedBuilder(
+                                                  animation: horizontalScrollController,
+                                                  builder: (context, child) {
+                                                    double offsetData = 0.0;
+                                                    if (horizontalScrollController.hasClients) {
+                                                      offsetData = horizontalScrollController.offset;
+                                                    }
+                                                    
+                                                    double currentViewportWidth = width;
+                                                    if (minWidth < width) currentViewportWidth = minWidth;
+                                                    double leftPos = offsetData + currentViewportWidth - 90;
+                                                    if (leftPos > minWidth - 90) leftPos = minWidth - 90;
+                                                    
+                                                    return Stack(
+                                                      children: [
+                                                        Positioned(
+                                                          left: leftPos,
+                                                          top: 0,
+                                                          bottom: 0,
+                                                          child: child!,
+                                                        ),
+                                                      ],
+                                                    );
+                                                  },
+                                                  child: Container(
+                                                    width: 90,
                                                     alignment: Alignment.center,
-                                                    icon: Icon(
-                                                        item.isExpanded ? Icons.expand_less : Icons.expand_more),
-                                                    onPressed: () => tableState.toggleExpanded(item.id),
+                                                    decoration: BoxDecoration(
+                                                      color: item.isExpanded
+                                                          ? Theme.of(context).colorScheme.surfaceDim
+                                                          : Theme.of(context).colorScheme.surface,
+                                                      boxShadow: [
+                                                        BoxShadow(
+                                                          color: Colors.black.withOpacity(0.05),
+                                                          blurRadius: 2,
+                                                          offset: const Offset(-2, 0),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    child: IconButton(
+                                                      alignment: Alignment.center,
+                                                      icon: Icon(
+                                                          item.isExpanded ? Icons.expand_less : Icons.expand_more),
+                                                      onPressed: () => tableState.toggleExpanded(item.id),
+                                                    ),
                                                   ),
                                                 ),
                                               ),
@@ -272,8 +275,7 @@ class _WgtDataTableState extends State<WgtDataTable> {
             ),
           );
         },
-      ),
-    );
+      );
   }
 
   int getItemNum(TableState tableState) {
@@ -895,6 +897,9 @@ class DataItem {
 
 // 表格状态管理
 class TableState with ChangeNotifier {
+  final int? mode;
+  TableState({this.mode});
+
   Map<String, ReportShowName>? _visibleColumns;
   Map<String, ReportShowName> get visibleColumns {
     if (_visibleColumns == null) {
@@ -933,7 +938,7 @@ class TableState with ChangeNotifier {
 
   // 获取当前页数据
   List<DataItem> get currentPageData {
-    final startIndex = (1 - 1) * _itemsPerPage;
+    final startIndex = (_currentPage - 1) * _itemsPerPage;
     final endIndex = min(startIndex + _itemsPerPage, _allData.length);
     return _allData.sublist(startIndex, endIndex);
   }
@@ -941,7 +946,7 @@ class TableState with ChangeNotifier {
   // 假设这是请求数据的方法，需要根据实际情况实现
   void fetchData(int page, int pageSize) {
     PublicFunctions.newGetRecords(
-      mySettingParam.scaleMode,
+      mode ?? mySettingParam.scaleMode,
       page,
       pageSize,
       sortColumnName.toString(),

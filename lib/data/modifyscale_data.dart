@@ -1,4 +1,4 @@
-class AddNetScale {
+﻿class AddNetScale {
   int? scaleId;
   String? scaleModel;
   MediaConf? mediaConf;

@@ -1,4 +1,4 @@
-//记录选中的秤体在shared_preferences中的key
+﻿//记录选中的秤体在shared_preferences中的key
 
 import 'package:shared_preferences/shared_preferences.dart';
 

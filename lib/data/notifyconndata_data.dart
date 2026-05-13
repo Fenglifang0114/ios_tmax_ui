@@ -1,4 +1,4 @@
-class NotifyConnData {
+﻿class NotifyConnData {
   int? connId;
   String? status;
 

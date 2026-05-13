@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:t_max/data/formula_scale_data.dart';
 import 'package:t_max/widget/f_raw_table.dart';
 

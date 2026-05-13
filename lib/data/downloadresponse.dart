@@ -1,4 +1,4 @@
-// 9. {"MsgType":13,"MsgBody":"no response, time out","ScaleId":1}  下载后秤反馈的消息
+﻿// 9. {"MsgType":13,"MsgBody":"no response, time out","ScaleId":1}  下载后秤反馈的消息
 //10.{"MsgType":14,"MsgBody":"serial port error","ScaleId":1}  串口报错后的反馈
 
 class ChannelResponse {

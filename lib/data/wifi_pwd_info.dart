@@ -1,4 +1,4 @@
-// To parse this JSON data, do
+﻿// To parse this JSON data, do
 //
 //     final wifiPwdInfoList = wifiPwdInfoListFromJson(jsonString);
 //wifi 密码解析

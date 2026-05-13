@@ -1,4 +1,4 @@
-class ScaleInfoFromScale {
+﻿class ScaleInfoFromScale {
   String? scaleSn;
   String? modelName;
   String? scaleName;

@@ -990,7 +990,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
             child: () {
               bool isSelected = _selectedRawIndex == index;
               Color backgroundColor = isSelected
-                  ? colorScheme.primary.withValues(alpha: 0.1)
+                  ? colorScheme.primary.withOpacity(0.1)
                   : colorScheme.surfaceContainerLow;
               Color innerContainerColor =
                   isSelected ? colorScheme.primary : colorScheme.surface;
@@ -1073,7 +1073,7 @@ class FormulationScalePageState extends State<FormulationScalePage>
             child: () {
               bool isSelected = _selectedRawIndex == index;
               Color backgroundColor = isSelected
-                  ? colorScheme.primary.withValues(alpha: 0.1)
+                  ? colorScheme.primary.withOpacity(0.1)
                   : colorScheme.surfaceContainerLow;
               Color innerContainerColor =
                   isSelected ? colorScheme.primary : colorScheme.surface;

@@ -1,4 +1,4 @@
-class ReportData {
+﻿class ReportData {
   String firstField;
   String secondField;
   String thirdField;

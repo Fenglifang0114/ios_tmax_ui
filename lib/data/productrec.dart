@@ -1,4 +1,4 @@
-class ProductRec {
+﻿class ProductRec {
   String id;
   String product;
   bool withPretare;

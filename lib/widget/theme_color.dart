@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 
 int _safeColorParse(dynamic value, int fallback) {
   if (value == null) return fallback;

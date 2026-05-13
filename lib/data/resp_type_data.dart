@@ -1,4 +1,4 @@
-import 'dart:convert';
+﻿import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import '../bluetooth/bluetooth_manager.dart';
 import 'package:t_max/data/scale_info_from_db.dart';

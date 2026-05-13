@@ -1,4 +1,4 @@
-class Networkdata {
+﻿class Networkdata {
   String name;
   String type;
   String content;

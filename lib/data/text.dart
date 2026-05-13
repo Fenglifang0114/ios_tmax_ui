@@ -1,4 +1,4 @@
-class TextData {
+﻿class TextData {
   String type;
   int xPos;
   int yPos;

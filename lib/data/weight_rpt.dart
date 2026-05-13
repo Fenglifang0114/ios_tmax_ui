@@ -375,30 +375,37 @@ void sendRptDataToDB(
   }
 
   var currentData = myWeightReportData[myWeightReportData.length - 1];
-  myScaleCmd.cmdMode = "add_rec";
-  myAddScaleRecord.scaleId = scaleId;
-  myAddScaleRecord.id = currentData.id;
-  myAddScaleRecord.scaleModel = currentData.scaleModel;
-  myAddScaleRecord.scaleSn = currentData.scaleSn;
-  myAddScaleRecord.plu = currentData.plu;
-  myAddScaleRecord.productCode = currentData.productCode;
-  myAddScaleRecord.itemCode = currentData.itemCode;
-  myAddScaleRecord.category = currentData.category;
-  myAddScaleRecord.productName = currentData.productName;
-  myAddScaleRecord.generalUnit = currentData.generalUnit;
-  myAddScaleRecord.taxType = currentData.taxType;
-  myAddScaleRecord.price = currentData.price;
-  myAddScaleRecord.unitWeight = currentData.unitWeight;
-  myAddScaleRecord.pretare = currentData.pretare;
-  myAddScaleRecord.limitHigh = currentData.limitHigh;
-  myAddScaleRecord.limitLow = currentData.limitLow;
-  myAddScaleRecord.weight = currentData.weight;
-  myAddScaleRecord.weightUnit = currentData.weightUnit;
-  myAddScaleRecord.userNo = mySysUser.userId.toString();
-  myAddScaleRecord.userName = mySysUser.nickName;
-  myAddScaleRecord.scaleName = currentData.scaleName;
-  myAddScaleRecord.scaleMode = wgtMode;
+  
+  // 手动构建干净的 Map，避免 null 值引起后端 Go 解析错误
+  Map<String, dynamic> addRecMap = {
+    "ScaleId": scaleId,
+    "Id": currentData.id ?? "",
+    "ScaleModel": currentData.scaleModel ?? "",
+    "ScaleSn": currentData.scaleSn ?? "",
+    "Plu": currentData.plu ?? "",
+    "ProductCode": currentData.productCode ?? "",
+    "ItemCode": currentData.itemCode ?? "",
+    "Category": currentData.category ?? "",
+    "ProductName": currentData.productName ?? "",
+    "GeneralUnit": currentData.generalUnit ?? "",
+    "TaxType": currentData.taxType ?? "",
+    "Price": currentData.price ?? "",
+    "UnitWeight": currentData.unitWeight ?? "",
+    "Pretare": currentData.pretare ?? "",
+    "LimitHigh": currentData.limitHigh ?? "",
+    "LimitLow": currentData.limitLow ?? "",
+    "Weight": currentData.weight ?? "",
+    "WeightUnit": currentData.weightUnit ?? "",
+    "UserNo": mySysUser.userId.toString(),
+    "UserName": mySysUser.nickName ?? "",
+    "ScaleName": currentData.scaleName ?? "",
+    "ScaleMode": wgtMode,
+  };
 
-  myScaleCmd.cmdData = jsonEncode(myAddScaleRecord);
-  PublicFunctions.sendMsg(scaleId, jsonEncode(myScaleCmd));
+  Map<String, dynamic> cmdMap = {
+    "Mode": "add_rec",
+    "Data": jsonEncode(addRecMap),
+  };
+
+  PublicFunctions.sendMsg(scaleId, jsonEncode(cmdMap));
 }

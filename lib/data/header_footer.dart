@@ -1,4 +1,4 @@
-class HeaderFooterData {
+﻿class HeaderFooterData {
   int id;
   String value;
   HeaderFooterData(

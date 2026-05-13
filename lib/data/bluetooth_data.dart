@@ -1,4 +1,4 @@
-class Bluetoothdata {
+﻿class Bluetoothdata {
   String name;
   String type;
   String device;

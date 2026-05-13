@@ -1,4 +1,4 @@
-class Barcodetypedata {
+﻿class Barcodetypedata {
   String barcodetype;
 
   Barcodetypedata(

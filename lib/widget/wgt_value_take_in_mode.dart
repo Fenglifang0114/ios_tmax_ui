@@ -1,4 +1,4 @@
-﻿//称重共用的重量显示界面 20250521
+//称重共用的重量显示界面 20250521
 
 import 'dart:async';
 import 'package:flutter/material.dart';
@@ -412,16 +412,15 @@ class _ScaleWgtTakeInWidgetState extends State<ScaleWgtTakeInWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final isMobile = MediaQuery.of(context).size.width < 600;
     return Container(
-        padding: EdgeInsets.only(bottom: regularPadding),
-        height: 215,
+        padding: EdgeInsets.only(bottom: isMobile ? 4 : regularPadding),
         color: Theme.of(context).colorScheme.surfaceContainerLow,
         child: Column(children: [
           Container(
-            height: 200,
             color: Theme.of(context).colorScheme.surface,
-            padding: const EdgeInsets.only(
-                left: regularPadding, right: regularPadding),
+            padding: EdgeInsets.symmetric(
+                horizontal: isMobile ? 8 : regularPadding),
             child: Column(
               children: [
                 Container(
@@ -457,7 +456,7 @@ class _ScaleWgtTakeInWidgetState extends State<ScaleWgtTakeInWidget> {
                   color: Theme.of(context).colorScheme.surfaceContainerLow,
                 ),
                 Container(
-                    height: 52,
+                    height: isMobile ? 40 : 52,
                     color: Theme.of(context).colorScheme.surface,
                     child: Row(
                       children: [
@@ -496,7 +495,7 @@ class _ScaleWgtTakeInWidgetState extends State<ScaleWgtTakeInWidget> {
                   color: Theme.of(context).colorScheme.surfaceContainerLow,
                 ),
                 SizedBox(
-                  height: 50,
+                  height: isMobile ? 40 : 50,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
@@ -537,7 +536,7 @@ class _ScaleWgtTakeInWidgetState extends State<ScaleWgtTakeInWidget> {
                   ),
                 ),
                 SizedBox(
-                  height: 48,
+                  height: isMobile ? 40 : 48,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
@@ -662,7 +661,7 @@ class _ScaleWgtTakeInWidgetState extends State<ScaleWgtTakeInWidget> {
                 hoverColor: Theme.of(context)
                     .colorScheme
                     .onPrimary
-                    .withValues(alpha: 0.1),
+                    .withOpacity(0.1),
                 style: IconButton.styleFrom(
                   disabledBackgroundColor:
                       Theme.of(context).colorScheme.surfaceContainerLow,
@@ -705,7 +704,7 @@ class _ScaleWgtTakeInWidgetState extends State<ScaleWgtTakeInWidget> {
             color: color,
             focusColor: Theme.of(context).colorScheme.outline,
             hoverColor:
-                Theme.of(context).colorScheme.onPrimary.withValues(alpha: 0.1),
+                Theme.of(context).colorScheme.onPrimary.withOpacity(0.1),
             style: IconButton.styleFrom(
               // 当按钮不可用时，设置背景颜色为灰色
               disabledBackgroundColor:
@@ -816,7 +815,7 @@ class _ScaleWgtTakeInWidgetState extends State<ScaleWgtTakeInWidget> {
         child: IconButton(
           iconSize: 24,
           hoverColor:
-              Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.1),
+              Theme.of(context).colorScheme.onSurface.withOpacity(0.1),
           style: IconButton.styleFrom(
             backgroundColor: bkColor,
             shape: RoundedRectangleBorder(

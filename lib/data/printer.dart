@@ -1,4 +1,4 @@
-class Printer {
+﻿class Printer {
   String printer;
 
   Printer(this.printer);

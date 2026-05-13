@@ -1,4 +1,4 @@
-class WiFiAPInfo {
+﻿class WiFiAPInfo {
   String? ssid;
   String? bssid;
   String? channel;

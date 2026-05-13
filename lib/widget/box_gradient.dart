@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 
 boxGradient(BuildContext context) {
   return LinearGradient(

@@ -1,4 +1,4 @@
-class ScreenMgr {
+﻿class ScreenMgr {
   bool isMainScreen;
 
   String wifiOrBt;

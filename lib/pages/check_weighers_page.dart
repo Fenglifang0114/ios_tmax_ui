@@ -1,4 +1,4 @@
-﻿//重量收集页面 20250522
+//重量收集页面 20250522
 
 import 'dart:async';
 import 'dart:io';
@@ -55,8 +55,11 @@ class CheckWeighersPageState extends State<CheckWeighersPage> {
   List<int> mySelScaleIdList = [];
   List<ScaleRecInfo> allWgtRecList = [];
 
-  final double scaleWgtWidth = 351;
   late TableState _tableState;
+  double get scaleWgtWidth {
+    final width = MediaQuery.of(context).size.width;
+    return width < 600 ? width : width * 0.45;
+  }
 
   bool firstGetRec = true;
   bool totalWgtStble = false;
@@ -83,7 +86,7 @@ class CheckWeighersPageState extends State<CheckWeighersPage> {
     myPluInfoList.clear();
     // 初始化 TableState
     mySettingParam.scaleMode = 1;
-    _tableState = TableState();
+    _tableState = TableState(mode: int.tryParse(wgtCheckMode) ?? 0);
     _tableState.loadPage(1);
 
     PublicFunctions.getUIConfNormal(wgtCheckMode);
@@ -463,44 +466,53 @@ class CheckWeighersPageState extends State<CheckWeighersPage> {
             Expanded(
               child: Container(
                 color: Theme.of(context).colorScheme.surfaceTint,
-                child: Row(
-                  children: [
-                    if (!isMobile)
-                      Container(
-                        width: appScaleListWidth,
-                        color: Theme.of(context).colorScheme.surfaceTint,
-                        child: NewMutiScaleListWidget(
-                          listWidth: appScaleListWidth,
-                          selScaleList: mySelScaleIdList,
-                          clickScale: (scale) {
-                            setState(() {
-                              addOrRemoveSelScale(scale.scaleId);
-                            });
-                          },
+                child: isMobile 
+                  ? Column(
+                      children: [
+                        if (mySelScaleIdList.isNotEmpty)
+                          SizedBox(
+                            height: 200, // 降低高度，给表格留出更多空间
+                            child: showScaleWgt(context, width),
+                          ),
+                        Expanded(
+                          child: Container(
+                            color: Theme.of(context).colorScheme.surfaceContainerLow,
+                            child: showWgtTable(context),
+                          ),
                         ),
-                      ),
-                    if (!isMobile)
-                      Container(
-                        width: regularPadding,
-                        color: Theme.of(context).colorScheme.surfaceContainerLow,
-                      ),
-                      Container(
-                        width: regularPadding,
-                        color:
-                            Theme.of(context).colorScheme.surfaceContainerLow,
-                      ),
-                      if (mySelScaleIdList.isNotEmpty)
-                        showScaleWgt(context, scaleWgtWidth),
-                      if (mySelScaleIdList.isNotEmpty)
+                      ],
+                    )
+                  : Row(
+                      children: [
+                        Container(
+                          width: appScaleListWidth,
+                          color: Theme.of(context).colorScheme.surfaceTint,
+                          child: NewMutiScaleListWidget(
+                            listWidth: appScaleListWidth,
+                            selScaleList: mySelScaleIdList,
+                            clickScale: (scale) {
+                              setState(() {
+                                addOrRemoveSelScale(scale.scaleId);
+                              });
+                            },
+                          ),
+                        ),
                         Container(
                           width: regularPadding,
-                          color:
-                              Theme.of(context).colorScheme.surfaceContainerLow,
+                          color: Theme.of(context).colorScheme.surfaceContainerLow,
                         ),
-                      showWgtTable(context) // width - 591 - 36)
-                    ],
-                  ),
-                )),
+                        if (mySelScaleIdList.isNotEmpty)
+                          showScaleWgt(context, scaleWgtWidth),
+                        if (mySelScaleIdList.isNotEmpty)
+                          Container(
+                            width: regularPadding,
+                            color: Theme.of(context).colorScheme.surfaceContainerLow,
+                          ),
+                        Expanded(child: showWgtTable(context))
+                      ],
+                    ),
+              ),
+            ),
               ])),
     );
   }
@@ -610,9 +622,8 @@ class CheckWeighersPageState extends State<CheckWeighersPage> {
   }
 
   showWgtTable(BuildContext context) {
-    return Expanded(
-      child: Container(
-          color: Theme.of(context).colorScheme.surface,
+    return Container(
+      color: Theme.of(context).colorScheme.surface,
           child: Column(
             children: [
               Container(
@@ -813,14 +824,16 @@ class CheckWeighersPageState extends State<CheckWeighersPage> {
               SizedBox(
                 height: regularPadding,
               ),
-              ChangeNotifierProvider<TableState>.value(
-                value: _tableState,
-                child: WgtDataTable(),
+              Expanded(
+                child: ChangeNotifierProvider<TableState>.value(
+                  value: _tableState,
+                  child: WgtDataTable(),
+                ),
               ),
             ],
-          )),
+          ),
     );
-  }
+}
 
   void reportFieldsSettingDialog(BuildContext context) {
     showDialog(

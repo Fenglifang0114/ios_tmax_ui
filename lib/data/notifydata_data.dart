@@ -1,4 +1,4 @@
-const int notifyTypeConn = 1;
+﻿const int notifyTypeConn = 1;
 
 class NotifyData {
   int? notifyType;

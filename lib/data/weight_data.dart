@@ -1,4 +1,4 @@
-class WeightData {
+﻿class WeightData {
   bool? isStable;
   bool? isNet;
   String? weightVal;

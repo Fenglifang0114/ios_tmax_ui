@@ -1,4 +1,4 @@
-class RecCount {
+﻿class RecCount {
   int? recId;
   String? productName;
   double? unitWeight;

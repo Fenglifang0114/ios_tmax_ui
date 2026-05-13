@@ -334,7 +334,7 @@ class ShowFormulaDetailDialogState extends State<ShowFormulaDetailDialog> {
                                   ? Theme.of(context)
                                       .colorScheme
                                       .primary
-                                      .withValues(alpha: 0.1)
+                                      .withOpacity(0.1)
                                   : Theme.of(context)
                                       .colorScheme
                                       .surfaceContainerLow,

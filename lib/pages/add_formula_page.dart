@@ -993,7 +993,7 @@ class AddFormulaPageState extends State<AddFormulaPage> {
                 ),
               ),
               InkWell(
-                hoverColor: colorScheme.primary.withValues(alpha: 0.1),
+                hoverColor: colorScheme.primary.withOpacity(0.1),
                 onTap: () {
                   moveDown(index);
                 },
@@ -1088,7 +1088,7 @@ class AddFormulaPageState extends State<AddFormulaPage> {
                               text: (localizedStrings?.fFmaContainer ?? "fFmaContainer"),
                               style: getTextStyle(
                                 color: colorScheme.onSurface
-                                    .withValues(alpha: 0.5),
+                                    .withOpacity(0.5),
                               )),
                         ],
                       ),
