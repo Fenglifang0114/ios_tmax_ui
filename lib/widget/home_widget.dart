@@ -1,4 +1,4 @@
-﻿// 修改 MenuItem 以支持选中状态和点击回调
+// 修改 MenuItem 以支持选中状态和点击回调
 import 'dart:async';
 import 'dart:io';
 
@@ -79,7 +79,7 @@ class ShowMenuItem extends StatelessWidget {
                                 child: Text(
                                   demo.title,
                                   maxLines: 1,
-                                  style: textTheme.bodySmall!.apply(
+                                  style: textTheme.bodySmall?.apply(
                                       // 根据选中状态改变颜色
                                       color: colorScheme.onPrimary),
                                 ),

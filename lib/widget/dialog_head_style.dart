@@ -1,4 +1,4 @@
-﻿// 弹框的头部样式
+// 弹框的头部样式
 
 import 'package:flutter/material.dart';
 import 'package:t_max/data/home_page_common_data.dart';
@@ -28,7 +28,7 @@ List<Widget> dialogHeadStyle(
               alignment: Alignment.centerLeft,
               child: Text(
                 title,
-                style: Theme.of(context).textTheme.labelMedium!.apply(
+                style: Theme.of(context).textTheme.labelMedium?.apply(
                       color: Theme.of(context).colorScheme.onSurface,
                     ),
                 overflow: TextOverflow.ellipsis,
@@ -73,7 +73,7 @@ List<Widget> fmaDialogHeadStyle(
               alignment: Alignment.centerLeft,
               child: Text(
                 title,
-                style: Theme.of(context).textTheme.labelMedium!.apply(
+                style: Theme.of(context).textTheme.labelMedium?.apply(
                       color: Theme.of(context).colorScheme.onSurface,
                     ),
                 overflow: TextOverflow.ellipsis,

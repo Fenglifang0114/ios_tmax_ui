@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 
 import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/data/icons.dart';
@@ -362,7 +362,7 @@ Widget pageHeadInfo(dynamic context, double maxWidth, String pageTitle,
           ),
         ),
         Divider(
-          color: Theme.of(context).colorScheme.surfaceContainerLow, // 设置分割线的颜色
+          color: Theme.of(context).colorScheme.surface, // 设置分割线的颜色
           height: 1, // 设置分割线的高度
           thickness: 1, // 设置分割线的粗细
         ),
@@ -391,7 +391,7 @@ Widget subTitle(dynamic context, String pageTitle, Function() onExit,
       Expanded(
         child: Text(
           pageTitle,
-          style: Theme.of(context).textTheme.labelMedium!.apply(
+          style: Theme.of(context).textTheme.labelMedium?.apply(
                 color: Theme.of(context).colorScheme.onSurface,
               ),
           overflow: TextOverflow.ellipsis,
@@ -430,7 +430,7 @@ class _TopRightIconsState extends State<TopRightIcons> {
               value: '1',
               child: Text(
                 (localizedStrings?.menuConfiguration ?? "menuConfiguration"),
-                style: textTheme.bodySmall!.apply(
+                style: textTheme.bodySmall?.apply(
                   // 根据选中状态改变颜色
                   color: colorScheme.surface,
                 ),
@@ -456,7 +456,7 @@ class _TopRightIconsState extends State<TopRightIcons> {
               value: '2',
               child: Text(
                 (localizedStrings?.menuApplications ?? "menuApplications"),
-                style: textTheme.bodySmall!.apply(
+                style: textTheme.bodySmall?.apply(
                   // 根据选中状态改变颜色
                   color: colorScheme.surface,
                 ),
@@ -496,7 +496,7 @@ class _TopRightIconsState extends State<TopRightIcons> {
               value: '1',
               child: Text(
                 (localizedStrings?.menuLanguageSetting ?? "menuLanguageSetting"),
-                style: textTheme.bodySmall!.apply(
+                style: textTheme.bodySmall?.apply(
                   // 根据选中状态改变颜色
                   color: colorScheme.surface,
                 ),
@@ -582,7 +582,7 @@ Widget subTitleInfo(
           ),
         ),
         Divider(
-          color: Theme.of(context).colorScheme.surfaceContainerLow, // 设置分割线的颜色
+          color: Theme.of(context).colorScheme.surface, // 设置分割线的颜色
           height: 1, // 设置分割线的高度
           thickness: 1, // 设置分割线的粗细
         ),
@@ -610,7 +610,7 @@ Widget subNewTitle(
       Expanded(
         child: Text(
           pageTitle,
-          style: Theme.of(context).textTheme.labelMedium!.apply(
+          style: Theme.of(context).textTheme.labelMedium?.apply(
                 color: Theme.of(context).colorScheme.onSurface,
               ),
           overflow: TextOverflow.ellipsis,

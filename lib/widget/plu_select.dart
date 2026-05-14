@@ -1,4 +1,4 @@
-﻿// 选择PLU数据的小部件
+// 选择PLU数据的小部件
 
 // 构建输入框装饰
 import 'package:flutter/material.dart';
@@ -166,7 +166,7 @@ Widget showSelPluWidget(
           onSubmitted: (String value) => onFieldSubmitted(),
           maxLines: 1,
           textAlignVertical: TextAlignVertical.top,
-          style: Theme.of(context).textTheme.bodySmall!.apply(
+          style: Theme.of(context).textTheme.bodySmall?.apply(
                 color: Theme.of(context).colorScheme.onSurface,
               ),
           decoration: buildInputDecoration(context),

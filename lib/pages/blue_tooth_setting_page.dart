@@ -1,4 +1,4 @@
-﻿//蓝牙设置界面   蓝牙设置只能通过串口
+//蓝牙设置界面   蓝牙设置只能通过串口
 
 import 'dart:async';
 import 'package:flutter/material.dart';
@@ -15,7 +15,10 @@ import '../functions/adaptive.dart';
 import '../widget/page_head.dart';
 
 class BluetoothPage extends StatefulWidget {
-  const BluetoothPage({super.key});
+  final Function(String) onNavigate;
+  final String lastRouteName;
+  const BluetoothPage(
+      {super.key, required this.onNavigate, required this.lastRouteName});
 
   @override
   BluetoothPageState createState() => BluetoothPageState();
@@ -176,7 +179,7 @@ class BluetoothPageState extends State<BluetoothPage> {
           children: [
             pageHeadInfo(context, width - headWidthPadding,
                 (localizedStrings?.menuBluetoothSetting ?? "menuBluetoothSetting"), '', () {
-              Navigator.pop(context);
+              widget.onNavigate(widget.lastRouteName);
             },
                 leading: isMobile
                     ? Padding(

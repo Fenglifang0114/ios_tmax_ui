@@ -342,29 +342,34 @@ class WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
   Widget _buildDesktopBody() {
     return Row(
       children: [
+        // 左侧：秤列表
         Container(
-          width: 300,
+          width: 260,
           decoration: BoxDecoration(
-            border: Border(right: BorderSide(color: Theme.of(context).dividerColor)),
+            border: Border(right: BorderSide(color: Theme.of(context).dividerColor.withOpacity(0.5))),
           ),
           child: NewMutiScaleListWidget(
-            listWidth: 300,
+            listWidth: 260,
             selScaleList: mySelScaleIdList,
             clickScale: (scale) => addOrRemoveSelScale(scale.scaleId),
           ),
         ),
+        // 中间：数值显示与操作
+        Container(
+          width: 340,
+          decoration: BoxDecoration(
+            border: Border(right: BorderSide(color: Theme.of(context).dividerColor.withOpacity(0.5))),
+            color: Theme.of(context).colorScheme.surface,
+          ),
+          child: SingleChildScrollView(
+            child: _buildValueSection(),
+          ),
+        ),
+        // 右侧：数据表格
         Expanded(
-          child: Column(
-            children: [
-              _buildValueSection(),
-              const Divider(height: 1),
-              Expanded(
-                child: ChangeNotifierProvider<TableState>.value(
-                  value: _tableState,
-                  child: const WgtDataTable(),
-                ),
-              ),
-            ],
+          child: ChangeNotifierProvider<TableState>.value(
+            value: _tableState,
+            child: const WgtDataTable(),
           ),
         ),
       ],
@@ -409,99 +414,112 @@ class WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
 
   Widget _buildValueSection() {
     final isMobile = MediaQuery.of(context).size.width < 600;
+    // 如果不是移动端，但在三列布局中，我们也希望内部垂直排列
+    final bool useVerticalLayout = isMobile || MediaQuery.of(context).size.width >= 600;
+
     return Container(
       padding: EdgeInsets.all(isMobile ? 8 : 16),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          isMobile 
-            ? Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                crossAxisAlignment: WrapCrossAlignment.center,
-                children: [
-                  SizedBox(
-                    width: double.infinity,
-                    child: DropdownButton<PluData>(
-                      isExpanded: true,
-                      hint: const Text("Select PLU"),
-                      value: selectedPluData,
-                      items: myPluInfoList.map((p) => DropdownMenuItem(value: p, child: Text("${p.plu} - ${p.productName}"))).toList(),
-                      onChanged: (val) => setState(() => selectedPluData = val),
-                    ),
-                  ),
-                  ElevatedButton.icon(
-                    onPressed: () {
-                      _tableState.allData.clear();
-                      PublicFunctions.newDeleteAllRecords(mySettingParam.scaleMode);
-                    },
-                    icon: const Icon(Icons.delete_sweep, size: 20),
-                    label: Text(S.of(context).gBtnDeleteAll, style: const TextStyle(fontSize: 12)),
-                  ),
-                  ElevatedButton.icon(
-                    onPressed: () async {
-                      // ... export logic
-                      _handleExport();
-                    },
-                    icon: const Icon(Icons.download, size: 20),
-                    label: Text(S.of(context).gBtnExport, style: const TextStyle(fontSize: 12)),
-                  ),
-                ],
-              )
-            : Row(
-                children: [
-                  Expanded(
-                    child: DropdownButton<PluData>(
-                      isExpanded: true,
-                      hint: const Text("Select PLU"),
-                      value: selectedPluData,
-                      items: myPluInfoList.map((p) => DropdownMenuItem(value: p, child: Text("${p.plu} - ${p.productName}"))).toList(),
-                      onChanged: (val) => setState(() => selectedPluData = val),
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  ElevatedButton.icon(
-                    onPressed: () {
-                      _tableState.allData.clear();
-                      PublicFunctions.newDeleteAllRecords(mySettingParam.scaleMode);
-                    },
-                    icon: const Icon(Icons.delete_sweep),
-                    label: Text(S.of(context).gBtnDeleteAll),
-                  ),
-                  const SizedBox(width: 8),
-                  ElevatedButton.icon(
-                    onPressed: () async {
-                      _handleExport();
-                    },
-                    icon: const Icon(Icons.download),
-                    label: Text(S.of(context).gBtnExport),
-                  ),
-                ],
+          // PLU 选择区
+          Text(
+            "Product (PLU)",
+            style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                  color: Theme.of(context).colorScheme.primary,
+                  fontWeight: FontWeight.bold,
+                ),
+          ),
+          const SizedBox(height: 4),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
+            ),
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton<PluData>(
+                isExpanded: true,
+                hint: Text(myPluInfoList.isEmpty ? "Loading products..." : "Select PLU"),
+                value: myPluInfoList.contains(selectedPluData) ? selectedPluData : null,
+                items: myPluInfoList.map((p) => DropdownMenuItem(value: p, child: Text("${p.plu} - ${p.productName}"))).toList(),
+                onChanged: (val) {
+                  setState(() {
+                    selectedPluData = val;
+                  });
+                },
               ),
+            ),
+          ),
           const SizedBox(height: 16),
+          
+          // 操作按钮区
           Row(
             children: [
               Expanded(
-                child: _buildValueDisplay(
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    _tableState.allData.clear();
+                    PublicFunctions.newDeleteAllRecords(mySettingParam.scaleMode);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Theme.of(context).colorScheme.errorContainer,
+                    foregroundColor: Theme.of(context).colorScheme.onErrorContainer,
+                  ),
+                  icon: const Icon(Icons.delete_sweep, size: 20),
+                  label: Text(S.of(context).gBtnDeleteAll, style: const TextStyle(fontSize: 12)),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: ElevatedButton.icon(
+                  onPressed: () async {
+                    _handleExport();
+                  },
+                  icon: const Icon(Icons.download, size: 20),
+                  label: Text(S.of(context).gBtnExport, style: const TextStyle(fontSize: 12)),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 24),
+          
+          // 重量显示区
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.primaryContainer.withOpacity(0.3),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Theme.of(context).colorScheme.primary.withOpacity(0.2)),
+            ),
+            child: Column(
+              children: [
+                _buildValueDisplay(
                   S.of(context).fTotalWeight,
                   totalWeightNotifier,
                   totalWgtUnitNotifier.value,
                 ),
-              ),
-              const SizedBox(width: 16),
-              ValueListenableBuilder<bool>(
-                valueListenable: totalWgtStableNotifier,
-                builder: (context, isStable, _) {
-                  return ElevatedButton.icon(
-                    onPressed: isStable ? sendDataToDb : null,
-                    icon: Icon(isStable ? Icons.save : Icons.hourglass_empty),
-                    label: Text(S.of(context).gBtnSave),
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                    ),
-                  );
-                },
-              ),
-            ],
+                const SizedBox(height: 16),
+                ValueListenableBuilder<bool>(
+                  valueListenable: totalWgtStableNotifier,
+                  builder: (context, isStable, _) {
+                    return SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton.icon(
+                        onPressed: isStable ? sendDataToDb : null,
+                        icon: Icon(isStable ? Icons.save : Icons.hourglass_empty),
+                        label: Text(S.of(context).gBtnSave),
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          backgroundColor: isStable ? Theme.of(context).colorScheme.primary : null,
+                          foregroundColor: isStable ? Theme.of(context).colorScheme.onPrimary : null,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ),
           ),
         ],
       ),

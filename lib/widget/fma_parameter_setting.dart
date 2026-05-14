@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:t_max/data/g_data.dart';
 import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/data/language.dart';
@@ -39,9 +39,9 @@ class _FmaParameterSettingDialogState extends State<FmaParameterSettingDialog> {
   TextStyle getTextStyle({Color? color}) {
     //返回一个文本样式
     color ??= Theme.of(context).colorScheme.onSurface;
-    return Theme.of(context).textTheme.bodySmall!.apply(
+    return Theme.of(context).textTheme.bodySmall?.apply(
           color: color,
-        );
+        ) ?? const TextStyle();
   }
 
   @override
@@ -353,7 +353,7 @@ class _FmaParameterSettingDialogState extends State<FmaParameterSettingDialog> {
                             Theme.of(context).colorScheme.onSurfaceVariant,
                         backgroundColor: Theme.of(context)
                             .colorScheme
-                            .surfaceContainerHighest,
+                            .surface,
                         fixedSize: const Size(double.infinity, 48),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.zero,

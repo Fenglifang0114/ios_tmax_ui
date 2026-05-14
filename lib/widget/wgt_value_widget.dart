@@ -1,4 +1,4 @@
-﻿//称重共用的重量显示界面 20250521
+//称重共用的重量显示界面 20250521
 
 import 'dart:async';
 import 'package:flutter/material.dart';
@@ -156,7 +156,7 @@ class _ScaleItemWidgetState extends State<ScaleItemWidget> {
             alignment: Alignment.centerLeft,
             child: Text(
               widget.scaleName,
-              style: Theme.of(context).textTheme.bodyMedium!.apply(
+              style: Theme.of(context).textTheme.bodyMedium?.apply(
                     color: Theme.of(context).colorScheme.onSurface,
                   ),
               overflow: TextOverflow.ellipsis,
@@ -164,7 +164,7 @@ class _ScaleItemWidgetState extends State<ScaleItemWidget> {
           ),
           Container(
             height: 1,
-            color: Theme.of(context).colorScheme.surfaceContainerLow,
+            color: Theme.of(context).colorScheme.surface,
           ),
           Expanded(
             child: Container(
@@ -183,21 +183,21 @@ class _ScaleItemWidgetState extends State<ScaleItemWidget> {
                               _buildIconAndText(
                                 context,
                                 (localizedStrings?.iStable ?? "iStable"),
-                                weightInfo?.isStable,
+                                (weightInfo?.isStable ?? false),
                                 1,
                               ),
                               SizedBox(width: isMobile ? 8 : 24),
                               _buildIconAndText(
                                 context,
                                 (localizedStrings?.iTextNet ?? "iTextNet"),
-                                weightInfo?.isNet,
+                                (weightInfo?.isNet ?? false),
                                 2,
                               ),
                               SizedBox(width: isMobile ? 8 : 24),
                               _buildIconAndText(
                                 context,
                                 (localizedStrings?.iTextZero ?? "iTextZero"),
-                                weightInfo?.isZero,
+                                (weightInfo?.isZero ?? false),
                                 3,
                               ),
                             ],
@@ -220,8 +220,8 @@ class _ScaleItemWidgetState extends State<ScaleItemWidget> {
                                   textAlign: TextAlign.right,
                                   style: Theme.of(context)
                                       .textTheme
-                                      .headlineLarge!
-                                      .copyWith(
+                                      .headlineLarge
+                                      ?.copyWith(
                                         fontSize: isMobile ? 32 : null,
                                         color: isStart
                                             ? Theme.of(context)
@@ -244,8 +244,8 @@ class _ScaleItemWidgetState extends State<ScaleItemWidget> {
                                   overflow: TextOverflow.ellipsis,
                                   style: Theme.of(context)
                                       .textTheme
-                                      .bodyLarge!
-                                      .apply(
+                                      .bodyLarge
+                                      ?.apply(
                                         color: Theme.of(context)
                                             .colorScheme
                                             .onSurface,
@@ -296,7 +296,7 @@ class _ScaleItemWidgetState extends State<ScaleItemWidget> {
           ),
           Container(
             height: regularPadding,
-            color: Theme.of(context).colorScheme.surfaceDim,
+            color: Theme.of(context).colorScheme.surface,
           ),
         ],
       ),
@@ -326,10 +326,10 @@ class _ScaleItemWidgetState extends State<ScaleItemWidget> {
           wgtIconSize,
           20,
           isConditionMet == null
-              ? Theme.of(context).colorScheme.surfaceContainerHighest
+              ? Theme.of(context).colorScheme.surface
               : isConditionMet
                   ? Theme.of(context).colorScheme.onPrimary
-                  : Theme.of(context).colorScheme.surfaceContainerHighest),
+                  : Theme.of(context).colorScheme.surface),
     ));
   }
 }

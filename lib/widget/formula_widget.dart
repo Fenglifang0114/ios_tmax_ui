@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 
 //页面下方备注部分
 class RawRemarkTextWidget extends StatelessWidget {
@@ -11,7 +11,7 @@ class RawRemarkTextWidget extends StatelessWidget {
       child: Container(
         alignment: Alignment.topLeft,
         padding: const EdgeInsets.all(8.0),
-        color: Theme.of(context).colorScheme.surfaceContainerLow,
+        color: Theme.of(context).colorScheme.surface,
         child: SelectableText(
           text,
           style: TextStyle(
@@ -36,7 +36,7 @@ class ShowRawTitleWidget extends StatelessWidget {
       alignment: Alignment.centerLeft,
       child: Text(
         text,
-        style: Theme.of(context).textTheme.bodyMedium!.apply(
+        style: Theme.of(context).textTheme.bodyMedium?.apply(
               color: Theme.of(context).colorScheme.onSurface,
             ),
         overflow: TextOverflow.ellipsis,

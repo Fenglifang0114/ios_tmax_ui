@@ -97,7 +97,7 @@ class _WgtDataTableState extends State<WgtDataTable> {
                               Container(
                                 height: 36,
                                 width: minWidth,
-                                color: Theme.of(context).colorScheme.surfaceDim,
+                                color: Theme.of(context).colorScheme.surface,
                                 child: DataTable(
                                     columns: _buildColumns(context, tableState),
                                     rows: [],
@@ -124,7 +124,7 @@ class _WgtDataTableState extends State<WgtDataTable> {
                                               color: item.isExpanded
                                                   ? Theme.of(context)
                                                       .colorScheme
-                                                      .surfaceDim
+                                                      .surface
                                                   : Theme.of(context)
                                                       .colorScheme
                                                       .surface,
@@ -179,7 +179,7 @@ class _WgtDataTableState extends State<WgtDataTable> {
                                                     alignment: Alignment.center,
                                                     decoration: BoxDecoration(
                                                       color: item.isExpanded
-                                                          ? Theme.of(context).colorScheme.surfaceDim
+                                                          ? Theme.of(context).colorScheme.surface
                                                           : Theme.of(context).colorScheme.surface,
                                                       boxShadow: [
                                                         BoxShadow(
@@ -394,8 +394,8 @@ class _WgtDataTableState extends State<WgtDataTable> {
           title,
           style: Theme.of(context)
               .textTheme
-              .bodySmall!
-              .apply(color: Theme.of(context).colorScheme.onSurface),
+              .labelMedium
+              ?.apply(color: Theme.of(context).colorScheme.onSurface),
           textAlign: TextAlign.left,
           overflow: TextOverflow.ellipsis,
         ),
@@ -579,8 +579,8 @@ class _WgtDataTableState extends State<WgtDataTable> {
                 title,
                 style: Theme.of(context)
                     .textTheme
-                    .bodySmall!
-                    .apply(color: Theme.of(context).colorScheme.onSurface),
+                    .labelMedium
+                    ?.apply(color: Theme.of(context).colorScheme.onSurface),
                 textAlign: TextAlign.left,
                 overflow: TextOverflow.ellipsis,
               ),

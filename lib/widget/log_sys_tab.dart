@@ -1,4 +1,4 @@
-﻿import 'dart:convert';
+import 'dart:convert';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -375,7 +375,7 @@ class _SysLogTabPageState extends State<SysLogTabPage> {
           // 显示选中的记录数量
           Text(
             '${(localizedStrings?.selected ?? "selected")} ${allSelectedRecIds.length} ${(localizedStrings?.tipPageItems ?? "tipPageItems")}',
-            style: textTheme.bodySmall!.copyWith(
+            style: textTheme.bodySmall?.copyWith(
               color: colorScheme.primary,
             ),
           ),
@@ -476,7 +476,7 @@ class _SysLogTabPageState extends State<SysLogTabPage> {
                 child: Text(
                   title,
                   style:
-                      textTheme.bodyMedium!.apply(color: colorScheme.onSurface),
+                      textTheme.bodyMedium?.apply(color: colorScheme.onSurface),
                   overflow: TextOverflow.ellipsis,
                   maxLines: 1,
                 ),
@@ -510,7 +510,7 @@ class _SysLogTabPageState extends State<SysLogTabPage> {
               child: Text(
                 title,
                 style:
-                    textTheme.bodyMedium!.apply(color: colorScheme.onSurface),
+                    textTheme.bodyMedium?.apply(color: colorScheme.onSurface),
                 overflow: TextOverflow.ellipsis,
                 maxLines: 1,
               ),
@@ -578,7 +578,7 @@ class _SysLogTabPageState extends State<SysLogTabPage> {
             child: Align(
               alignment: Alignment.centerLeft,
               child: TextField(
-                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: Theme.of(context).colorScheme.onSurface,
                       ),
                   controller: operatorCtl,
@@ -600,7 +600,7 @@ class _SysLogTabPageState extends State<SysLogTabPage> {
                     ),
                     hintText: (localizedStrings?.operator ?? "operator"),
                     contentPadding: EdgeInsets.symmetric(vertical: 10),
-                    hintStyle: Theme.of(context).textTheme.bodySmall!.copyWith(
+                    hintStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
                           // 设置提示文本样式
                           fontSize: 12,
                           color: Theme.of(context)
@@ -641,7 +641,7 @@ class _SysLogTabPageState extends State<SysLogTabPage> {
                 value: null,
                 child: Text(
                   (localizedStrings?.userRole ?? "userRole"),
-                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         fontSize: 12,
                         color: Theme.of(context)
                             .colorScheme
@@ -653,7 +653,7 @@ class _SysLogTabPageState extends State<SysLogTabPage> {
                 value: "1",
                 child: Text(
                   (localizedStrings?.superAdmin ?? "superAdmin"),
-                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: Theme.of(context).colorScheme.onSurface,
                       ),
                 ),
@@ -662,7 +662,7 @@ class _SysLogTabPageState extends State<SysLogTabPage> {
                 value: "2",
                 child: Text(
                   (localizedStrings?.admin ?? "admin"),
-                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: Theme.of(context).colorScheme.onSurface,
                       ),
                 ),
@@ -671,7 +671,7 @@ class _SysLogTabPageState extends State<SysLogTabPage> {
                 value: "3",
                 child: Text(
                   (localizedStrings?.operator ?? "operator"),
-                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: Theme.of(context).colorScheme.onSurface,
                       ),
                 ),
@@ -682,7 +682,7 @@ class _SysLogTabPageState extends State<SysLogTabPage> {
                 roleIdCtl.text = value ?? "";
               });
             },
-            style: Theme.of(context).textTheme.bodySmall!.copyWith(
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
                   color: Theme.of(context).colorScheme.onSurface,
                 ),
           ),
@@ -707,7 +707,7 @@ class _SysLogTabPageState extends State<SysLogTabPage> {
             readOnly: true,
             decoration: InputDecoration(
               hintText: (localizedStrings?.gBtnSelectDate ?? "gBtnSelectDate"),
-              hintStyle: Theme.of(context).textTheme.bodySmall!.copyWith(
+              hintStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
                     fontSize: 12,
                     color:
                         Theme.of(context).colorScheme.surfaceContainerHighest,
@@ -725,7 +725,7 @@ class _SysLogTabPageState extends State<SysLogTabPage> {
                 },
               ),
             ),
-            style: Theme.of(context).textTheme.bodySmall!.copyWith(
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
                   color: Theme.of(context).colorScheme.onSurface,
                 ),
             onTap: () {

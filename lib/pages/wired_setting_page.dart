@@ -1,4 +1,4 @@
-﻿// wifi 设置界面 只能用串口设置
+// wifi 设置界面 只能用串口设置
 
 import 'dart:async';
 import 'dart:convert';
@@ -21,7 +21,10 @@ import '../eventbus/eventbus.dart';
 import '../functions/methods.dart';
 
 class WiredSettingPage extends StatefulWidget {
-  const WiredSettingPage({super.key});
+  final Function(String) onNavigate;
+  final String lastRouteName;
+  const WiredSettingPage(
+      {super.key, required this.onNavigate, required this.lastRouteName});
 
   @override
   State<WiredSettingPage> createState() => WiredSettingPageState();
@@ -226,7 +229,7 @@ class WiredSettingPageState extends State<WiredSettingPage> {
           children: [
             pageHeadInfo(context, width - headWidthPadding,
                 (localizedStrings?.menuWiredSetting ?? "menuWiredSetting"), '', () {
-              Navigator.pop(context);
+              widget.onNavigate(widget.lastRouteName);
             },
                 leading: isMobile
                     ? Padding(

@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:t_max/widget/dialog_head_style.dart';
 
 import '../data/language.dart';
@@ -57,7 +57,7 @@ void showErrorDialog(BuildContext context, String tipStr) {
                           },
                           child: Text(
                             (localizedStrings?.gBtnConfirm ?? "gBtnConfirm"),
-                            style: Theme.of(ctx).textTheme.bodySmall!.apply(
+                            style: Theme.of(ctx).textTheme.bodySmall?.apply(
                                   color: Theme.of(ctx).colorScheme.onPrimary,
                                 ),
                             overflow: TextOverflow.ellipsis,

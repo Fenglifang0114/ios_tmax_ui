@@ -1,4 +1,5 @@
-﻿//所有的路由
+//所有的路由
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:t_max/data/g_data.dart';
@@ -187,6 +188,15 @@ List<RouteData> getAllConfigMenus() {
         subtitle: (localizedStrings?.subTitleReceiptFormatDownload ?? "subTitleReceiptFormatDownload"),
         iconPath: reciptDownloadSvgIcon()),
   ];
+
+  if (Platform.isAndroid || Platform.isIOS) {
+    allConfigMenus.removeWhere((menu) =>
+        menu.id == MenuId.wiredSettingPage ||
+        menu.id == MenuId.wifiSettingPage ||
+        menu.id == MenuId.btSettingPage ||
+        menu.id == MenuId.serialOutputDesignPage);
+  }
+
   return allConfigMenus;
 }
 
@@ -465,11 +475,20 @@ Widget buildPageContent(dynamic Function(String) navigateContent,
   } else if (pageId == MenuId.setSystemTimePage) {
     return SetSystemTimePage();
   } else if (pageId == MenuId.wifiSettingPage) {
-    return WifiSettingPage();
+    return WifiSettingPage(
+      onNavigate: navigateContent,
+      lastRouteName: lastRouteName ?? defualtSelectPage,
+    );
   } else if (pageId == MenuId.wiredSettingPage) {
-    return WiredSettingPage();
+    return WiredSettingPage(
+      onNavigate: navigateContent,
+      lastRouteName: lastRouteName ?? defualtSelectPage,
+    );
   } else if (pageId == MenuId.btSettingPage) {
-    return BluetoothPage();
+    return BluetoothPage(
+      onNavigate: navigateContent,
+      lastRouteName: lastRouteName ?? defualtSelectPage,
+    );
   } else if (pageId == MenuId.updateFirmwarePage) {
     return UpdateFirmwarePage();
   } else if (pageId == MenuId.labelDesignPage) {
@@ -546,7 +565,10 @@ Widget buildPageContent(dynamic Function(String) navigateContent,
   } else if (pageId == MenuId.multiScaleManagement) {
     return MultiScaleManagement();
   } else if (pageId == MenuId.calibrationPage) {
-    return CalibrationPage();
+    return CalibrationPage(
+      onNavigate: navigateContent,
+      lastRouteName: lastRouteName ?? defualtSelectPage,
+    );
   }
   return Container();
 }

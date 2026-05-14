@@ -1,4 +1,4 @@
-﻿import 'dart:convert';
+import 'dart:convert';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -377,7 +377,7 @@ class _ScaleCalLogTabPageState extends State<ScaleCalLogTabPage> {
           // 显示选中的记录数量
           Text(
             '${(localizedStrings?.selected ?? "selected")} ${allSelectedRecIds.length} ${(localizedStrings?.tipPageItems ?? "tipPageItems")}',
-            style: textTheme.bodySmall!.copyWith(
+            style: textTheme.bodySmall?.copyWith(
               color: colorScheme.primary,
             ),
           ),
@@ -479,7 +479,7 @@ class _ScaleCalLogTabPageState extends State<ScaleCalLogTabPage> {
                 child: Text(
                   title,
                   style:
-                      textTheme.bodyMedium!.apply(color: colorScheme.onSurface),
+                      textTheme.bodyMedium?.apply(color: colorScheme.onSurface),
                   overflow: TextOverflow.ellipsis,
                   maxLines: 1,
                 ),
@@ -513,7 +513,7 @@ class _ScaleCalLogTabPageState extends State<ScaleCalLogTabPage> {
               child: Text(
                 title,
                 style:
-                    textTheme.bodyMedium!.apply(color: colorScheme.onSurface),
+                    textTheme.bodyMedium?.apply(color: colorScheme.onSurface),
                 overflow: TextOverflow.ellipsis,
                 maxLines: 1,
               ),
@@ -593,7 +593,7 @@ class _ScaleCalLogTabPageState extends State<ScaleCalLogTabPage> {
             child: Align(
               alignment: Alignment.centerLeft,
               child: TextField(
-                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: Theme.of(context).colorScheme.onSurface,
                       ),
                   controller: operatorCtl,
@@ -615,7 +615,7 @@ class _ScaleCalLogTabPageState extends State<ScaleCalLogTabPage> {
                     ),
                     hintText: (localizedStrings?.operator ?? "operator"),
                     contentPadding: EdgeInsets.symmetric(vertical: 10),
-                    hintStyle: Theme.of(context).textTheme.bodySmall!.copyWith(
+                    hintStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
                           // 设置提示文本样式
                           fontSize: 12,
                           color: Theme.of(context)
@@ -656,7 +656,7 @@ class _ScaleCalLogTabPageState extends State<ScaleCalLogTabPage> {
                 value: null,
                 child: Text(
                   (localizedStrings?.userRole ?? "userRole"),
-                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         fontSize: 12,
                         color: Theme.of(context)
                             .colorScheme
@@ -668,7 +668,7 @@ class _ScaleCalLogTabPageState extends State<ScaleCalLogTabPage> {
                 value: "1",
                 child: Text(
                   (localizedStrings?.superAdmin ?? "superAdmin"),
-                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: Theme.of(context).colorScheme.onSurface,
                       ),
                 ),
@@ -677,7 +677,7 @@ class _ScaleCalLogTabPageState extends State<ScaleCalLogTabPage> {
                 value: "2",
                 child: Text(
                   (localizedStrings?.admin ?? "admin"),
-                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: Theme.of(context).colorScheme.onSurface,
                       ),
                 ),
@@ -686,7 +686,7 @@ class _ScaleCalLogTabPageState extends State<ScaleCalLogTabPage> {
                 value: "3",
                 child: Text(
                   (localizedStrings?.operator ?? "operator"),
-                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: Theme.of(context).colorScheme.onSurface,
                       ),
                 ),
@@ -697,7 +697,7 @@ class _ScaleCalLogTabPageState extends State<ScaleCalLogTabPage> {
                 roleIdCtl.text = value ?? "";
               });
             },
-            style: Theme.of(context).textTheme.bodySmall!.copyWith(
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
                   color: Theme.of(context).colorScheme.onSurface,
                 ),
           ),
@@ -722,7 +722,7 @@ class _ScaleCalLogTabPageState extends State<ScaleCalLogTabPage> {
             readOnly: true,
             decoration: InputDecoration(
               hintText: (localizedStrings?.gBtnSelectDate ?? "gBtnSelectDate"),
-              hintStyle: Theme.of(context).textTheme.bodySmall!.copyWith(
+              hintStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
                     fontSize: 12,
                     color:
                         Theme.of(context).colorScheme.surfaceContainerHighest,
@@ -740,7 +740,7 @@ class _ScaleCalLogTabPageState extends State<ScaleCalLogTabPage> {
                 },
               ),
             ),
-            style: Theme.of(context).textTheme.bodySmall!.copyWith(
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
                   color: Theme.of(context).colorScheme.onSurface,
                 ),
             onTap: () {

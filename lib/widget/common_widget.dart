@@ -1,4 +1,4 @@
-﻿//共用的组件  输入框，文本框，下拉框
+//共用的组件  输入框，文本框，下拉框
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -16,7 +16,7 @@ showItemNameWithStar(BuildContext context, String itemName, bool showFlag) {
           showFlag
               ? TextSpan(
                   text: '* ',
-                  style: Theme.of(context).textTheme.bodyMedium!.apply(
+                  style: Theme.of(context).textTheme.bodyMedium?.apply(
                         color: Theme.of(context).colorScheme.error, // 设置输入文本颜色
                       ),
                 )
@@ -25,7 +25,7 @@ showItemNameWithStar(BuildContext context, String itemName, bool showFlag) {
                 ),
           TextSpan(
             text: itemName,
-            style: Theme.of(context).textTheme.bodySmall!.apply(
+            style: Theme.of(context).textTheme.bodySmall?.apply(
                   color: Theme.of(context).colorScheme.onSurface, // 设置输入文本颜色
                 ),
           ),
@@ -52,12 +52,12 @@ showInputBox(BuildContext context, TextEditingController controller,
           color: Theme.of(context).colorScheme.onSurface, // 设置提示文本颜色
         ),
       ),
-      style: Theme.of(context).textTheme.bodySmall!.apply(
+      style: Theme.of(context).textTheme.bodySmall?.apply(
             color: isEnabled
                 ? Theme.of(context).colorScheme.onSurface
                 : Theme.of(context)
                     .colorScheme
-                    .surfaceContainerHighest, // 设置输入文本颜色
+                    .surface, // 设置输入文本颜色
           ),
       onChanged: onChanged, // 监听文本变化,
     ),
@@ -125,7 +125,7 @@ showTextButton(BuildContext context, double btnHeight, String btnText,
     onPressed: onPressed,
     child: Text(
       btnText,
-      style: Theme.of(context).textTheme.bodySmall!.apply(
+      style: Theme.of(context).textTheme.bodySmall?.apply(
             color: textColor,
           ),
       overflow: TextOverflow.ellipsis,
@@ -166,7 +166,7 @@ showScaleNameInputBox(
       inputFormatters: [
         LengthLimitingTextInputFormatter(30),
       ],
-      style: Theme.of(context).textTheme.bodySmall!.apply(
+      style: Theme.of(context).textTheme.bodySmall?.apply(
             color: Theme.of(context).colorScheme.onSurface, // 设置输入文本颜色
           ),
       onChanged: onChanged, // 监听文本变化,

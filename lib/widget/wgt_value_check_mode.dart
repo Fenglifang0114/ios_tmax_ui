@@ -210,7 +210,7 @@ class _ScaleWgtCheckModeWidgetState extends State<ScaleWgtCheckModeWidget> {
           );
         });
 
-        var weight = double.tryParse(weightInfo!.weightVal!);
+        var weight = double.tryParse((weightInfo?.weightVal ?? '0'));
         if (weight != null) {
           if (weight >= 0) {
             if (weight < lowValue) {
@@ -305,12 +305,12 @@ class _ScaleWgtCheckModeWidgetState extends State<ScaleWgtCheckModeWidget> {
     // 判断是否为稳定保存模式且 _stableSaveTime 大于 0
     if (weightMode == cstStableSave && _stableSaveTime > 0) {
       // 检查是否经过 0 点
-      if (weightInfo!.isZero! && weightInfo!.isStable!) {
+      if (weightInfo!.isZero! && (weightInfo?.isStable ?? false)) {
         _hasPassedZero = true;
       }
-      if (weightInfo!.isStable!) {
+      if ((weightInfo?.isStable ?? false)) {
         // 检查重量数据是否有效
-        final weightValue = double.tryParse(weightInfo!.weightVal!) ?? 0;
+        final weightValue = double.tryParse((weightInfo?.weightVal ?? '0')) ?? 0;
         if (weightValue > 0 && _hasPassedZero) {
           if (_stableTimer == null) {
             _currentStableDuration = 0;
@@ -342,8 +342,8 @@ class _ScaleWgtCheckModeWidgetState extends State<ScaleWgtCheckModeWidget> {
 
   // 保存重量数据
   void _saveWeightData() {
-    if (_hasPassedZero && weightInfo!.isStable!) {
-      final weightValue = double.tryParse(weightInfo!.weightVal!) ?? 0;
+    if (_hasPassedZero && (weightInfo?.isStable ?? false)) {
+      final weightValue = double.tryParse((weightInfo?.weightVal ?? '0')) ?? 0;
       if (weightValue > 0) {
         if (mySettingParam.saveMode == hiMode && _isHigh) {
           _changeSaveButton();
@@ -403,7 +403,7 @@ class _ScaleWgtCheckModeWidgetState extends State<ScaleWgtCheckModeWidget> {
     final isMobile = MediaQuery.of(context).size.width < 600;
     return Container(
         padding: EdgeInsets.only(bottom: isMobile ? 4 : regularPadding),
-        color: Theme.of(context).colorScheme.surfaceContainerLow,
+        color: Theme.of(context).colorScheme.surface,
         child: Column(children: [
           Container(
             color: Theme.of(context).colorScheme.surface,
@@ -419,13 +419,13 @@ class _ScaleWgtCheckModeWidgetState extends State<ScaleWgtCheckModeWidget> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           SizedBox(
-                            width: 170,
+                            width: 140, // 缩小宽度，原为 170
                             child: Text(
                               widget.scaleName,
                               style: Theme.of(context)
                                   .textTheme
-                                  .labelMedium!
-                                  .apply(
+                                  .labelMedium
+                                  ?.apply(
                                     color:
                                         Theme.of(context).colorScheme.onSurface,
                                   ),
@@ -436,14 +436,14 @@ class _ScaleWgtCheckModeWidgetState extends State<ScaleWgtCheckModeWidget> {
                             showSelPluWidget(140, 40, (value) {
                               setState(() {
                                 selectedPluData = value;
-                                highValue = selectedPluData!.limitHigh!;
-                                lowValue = selectedPluData!.limitLow!;
+                                highValue = selectedPluData?.limitHigh ?? 0;
+                                lowValue = selectedPluData?.limitLow ?? 0;
                               });
                             }),
                         ])),
                 Container(
                   height: 1,
-                  color: Theme.of(context).colorScheme.surfaceContainerLow,
+                  color: Theme.of(context).colorScheme.surface,
                 ),
                 Container(
                     height: isMobile ? 40 : 52,
@@ -478,7 +478,7 @@ class _ScaleWgtCheckModeWidgetState extends State<ScaleWgtCheckModeWidget> {
                         ),
                         Spacer(),
                         SizedBox(
-                          width: isMobile ? 180 : 190,
+                          width: isMobile ? 200 : 160, // 缩小平板宽度，原为 190
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
@@ -491,7 +491,7 @@ class _ScaleWgtCheckModeWidgetState extends State<ScaleWgtCheckModeWidget> {
                                         }
                                       : null),
                               SizedBox(
-                                width: smallPadding,
+                                width: isMobile ? 4 : smallPadding,
                               ),
                               showPerformIconBtn(
                                   performTareSvgIcon(),
@@ -504,7 +504,7 @@ class _ScaleWgtCheckModeWidgetState extends State<ScaleWgtCheckModeWidget> {
                                         }
                                       : null),
                               SizedBox(
-                                width: smallPadding,
+                                width: isMobile ? 4 : smallPadding,
                               ),
                               showPerformIconBtn(
                                   performZeroSvgIcon(),
@@ -517,7 +517,7 @@ class _ScaleWgtCheckModeWidgetState extends State<ScaleWgtCheckModeWidget> {
                                         }
                                       : null),
                               SizedBox(
-                                width: smallPadding,
+                                width: isMobile ? 4 : smallPadding,
                               ),
                               Tooltip(
                                   message: (localizedStrings?.gBtnSave ?? "gBtnSave"),
@@ -536,7 +536,7 @@ class _ScaleWgtCheckModeWidgetState extends State<ScaleWgtCheckModeWidget> {
                                         disabledBackgroundColor:
                                             Theme.of(context)
                                                 .colorScheme
-                                                .surfaceContainerLow,
+                                                .surface,
                                         backgroundColor: Theme.of(context)
                                             .colorScheme
                                             .onTertiaryFixedVariant,
@@ -549,7 +549,7 @@ class _ScaleWgtCheckModeWidgetState extends State<ScaleWgtCheckModeWidget> {
                                       ),
                                       onPressed: isStart &&
                                               _isSaveBtnEnable &&
-                                              weightInfo!.isStable!
+                                              (weightInfo?.isStable ?? false)
                                           ? () {
                                               _changeSaveButton();
                                             }
@@ -560,13 +560,13 @@ class _ScaleWgtCheckModeWidgetState extends State<ScaleWgtCheckModeWidget> {
                                           28,
                                           isStart &&
                                                   _isSaveBtnEnable &&
-                                                  weightInfo!.isStable!
+                                                  (weightInfo?.isStable ?? false)
                                               ? Theme.of(context)
                                                   .colorScheme
                                                   .onPrimary
                                               : Theme.of(context)
                                                   .colorScheme
-                                                  .surfaceContainerHighest))),
+                                                  .surface))),
                             ],
                           ),
                         )
@@ -574,7 +574,7 @@ class _ScaleWgtCheckModeWidgetState extends State<ScaleWgtCheckModeWidget> {
                     )),
                 Divider(
                   height: 1,
-                  color: Theme.of(context).colorScheme.surfaceContainerLow,
+                  color: Theme.of(context).colorScheme.surface,
                 ),
                 Container(
                   height: isMobile ? 50 : 60,
@@ -600,8 +600,7 @@ class _ScaleWgtCheckModeWidgetState extends State<ScaleWgtCheckModeWidget> {
                               textAlign: TextAlign.right,
                               style: Theme.of(context)
                                   .textTheme
-                                  .headlineLarge!
-                                  .copyWith(
+                                  .headlineLarge?.copyWith(
                                     fontSize: 40,
                                     color: (lowValue == 0 && highValue == 0 || !isStart || (!_isHigh && !_isOK && !_isLow))
                                         ? (isStart
@@ -620,7 +619,7 @@ class _ScaleWgtCheckModeWidgetState extends State<ScaleWgtCheckModeWidget> {
                         child: Text(weightInfo?.weightUnit ?? '----',
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: Theme.of(context).textTheme.bodyLarge!.apply(
+                            style: Theme.of(context).textTheme.bodyLarge?.apply(
                                   color: (lowValue == 0 && highValue == 0 || !isStart || (!_isHigh && !_isOK && !_isLow))
                                       ? Theme.of(context).colorScheme.onSurface
                                       : Colors.white,
@@ -669,7 +668,7 @@ class _ScaleWgtCheckModeWidgetState extends State<ScaleWgtCheckModeWidget> {
             style: IconButton.styleFrom(
               // 当按钮不可用时，设置背景颜色为灰色
               disabledBackgroundColor:
-                  Theme.of(context).colorScheme.surfaceContainerLow,
+                  Theme.of(context).colorScheme.surface,
               backgroundColor: Theme.of(context).colorScheme.primary,
               shape: RoundedRectangleBorder(
                 // 设置为矩形形状
@@ -684,7 +683,7 @@ class _ScaleWgtCheckModeWidgetState extends State<ScaleWgtCheckModeWidget> {
                 iconBtnSize,
                 isStart
                     ? Theme.of(context).colorScheme.onPrimary
-                    : Theme.of(context).colorScheme.surfaceContainerHighest)));
+                    : Theme.of(context).colorScheme.surface)));
   }
 
   _changeSaveButton() {
@@ -735,8 +734,8 @@ class _ScaleWgtCheckModeWidgetState extends State<ScaleWgtCheckModeWidget> {
 
       (tempPlu.limitLow == null) ? "" : tempPlu.limitLow.toString(),
 
-      (weightInfo!.weightVal == '---------') ? (" ") : (weightInfo!.weightVal!),
-      (weightInfo?.weightUnit == '----') ? (" ") : (weightInfo!.weightUnit!),
+      (weightInfo!.weightVal == '---------') ? (" ") : ((weightInfo?.weightVal ?? '0')),
+      (weightInfo?.weightUnit == '----') ? (" ") : ((weightInfo?.weightUnit ?? 'kg')),
       mySysUser.userName ?? "",
       mySysUser.nickName ?? "",
       tempDefScaleInfo.scaleName, //此处应该是秤机种名
@@ -789,10 +788,10 @@ class _ScaleWgtCheckModeWidgetState extends State<ScaleWgtCheckModeWidget> {
           20,
           20,
           isConditionMet == null
-              ? Theme.of(context).colorScheme.surfaceContainerHighest
+              ? Theme.of(context).colorScheme.surface
               : isConditionMet
                   ? Theme.of(context).colorScheme.onPrimary
-                  : Theme.of(context).colorScheme.surfaceContainerHighest),
+                  : Theme.of(context).colorScheme.surface),
     ));
   }
 }

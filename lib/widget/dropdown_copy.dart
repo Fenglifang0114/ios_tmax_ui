@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:t_max/data/home_page_common_data.dart';
 
 Widget buildDropdownButton({
@@ -77,7 +77,7 @@ showDropDownButtonValue(BuildContext context, String value, List<String> items,
           }
         },
         onTap: onTap,
-        style: Theme.of(context).textTheme.bodySmall!.copyWith(
+        style: Theme.of(context).textTheme.bodySmall?.copyWith(
               color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
       ));
@@ -127,7 +127,7 @@ Widget buildTabOrderAndTyptText(
               alignment: Alignment.centerLeft,
               child: Text(
                 title,
-                style: Theme.of(context).textTheme.bodySmall!.apply(
+                style: Theme.of(context).textTheme.bodySmall?.apply(
                       color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
               ),
@@ -143,7 +143,7 @@ Widget buildTabOrderAndTyptText(
                   alignment: Alignment.center,
                   child: Text(
                     value,
-                    style: Theme.of(context).textTheme.bodySmall!.apply(
+                    style: Theme.of(context).textTheme.bodySmall?.apply(
                           color: Theme.of(context).colorScheme.primary,
                         ),
                   )))
@@ -157,7 +157,7 @@ Widget showRightItemTitleText(BuildContext context, String title) {
     alignment: Alignment.centerLeft,
     child: Text(title,
         textAlign: TextAlign.left,
-        style: Theme.of(context).textTheme.bodySmall!.apply(
+        style: Theme.of(context).textTheme.bodySmall?.apply(
               color: Theme.of(context).colorScheme.onSurface,
             )),
   );

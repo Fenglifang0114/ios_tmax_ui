@@ -1,4 +1,4 @@
-﻿//显示认证结果
+//显示认证结果
 import 'package:flutter/material.dart';
 import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/data/language.dart';
@@ -112,7 +112,7 @@ class ShowLicenseResDialogState extends State<ShowLicenseResDialog> {
                   value.forEach((key, info) {
                     children.add(Container(
                       height: inputHeight + smallPadding,
-                      color: Theme.of(context).colorScheme.surfaceContainerLow,
+                      color: Theme.of(context).colorScheme.surface,
                       child: Column(children: [
                         SizedBox(
                             height: inputHeight,
@@ -210,7 +210,7 @@ class ShowLicenseResDialogState extends State<ShowLicenseResDialog> {
                         },
                         child: Text(
                           (localizedStrings?.gBtnConfirm ?? "gBtnConfirm"),
-                          style: Theme.of(context).textTheme.bodyMedium!.apply(
+                          style: Theme.of(context).textTheme.bodyMedium?.apply(
                               color: Theme.of(context).colorScheme.onPrimary),
                           overflow: TextOverflow.ellipsis,
                         ),

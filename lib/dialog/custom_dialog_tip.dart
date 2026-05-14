@@ -1,4 +1,4 @@
-﻿import 'dart:async';
+import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:t_max/data/home_page_common_data.dart';
@@ -199,7 +199,7 @@ class ShowNormalTipDialogState extends State<ShowNormalTipDialog> {
                         foregroundColor:
                             Theme.of(context).colorScheme.onPrimary,
                         backgroundColor:
-                            Theme.of(context).colorScheme.surfaceContainerLow,
+                            Theme.of(context).colorScheme.surface,
                         fixedSize: const Size(double.infinity, 48),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.zero,
@@ -329,7 +329,7 @@ class ShowDeleteTipDialogState extends State<ShowDeleteTipDialog> {
                             Theme.of(context).colorScheme.onPrimary,
                         backgroundColor: Theme.of(context)
                             .colorScheme
-                            .surfaceContainerHighest,
+                            .surface,
                         fixedSize: const Size(double.infinity, 48),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.zero,
@@ -569,7 +569,7 @@ class ShowLowWgtTipDialogState extends State<ShowLowWgtTipDialog> {
                     Navigator.pop(context, 0);
                   },
                           Theme.of(context).colorScheme.onPrimary,
-                          Theme.of(context).colorScheme.surfaceContainerHighest,
+                          Theme.of(context).colorScheme.surface,
                           Theme.of(context).colorScheme.onPrimary)),
                 ],
               ),
@@ -725,7 +725,7 @@ getCustomDialogTitle(
     // 分割线
     Divider(
       height: 1,
-      color: Theme.of(context).colorScheme.surfaceContainerLow,
+      color: Theme.of(context).colorScheme.surface,
     )
   ];
 }
@@ -775,7 +775,7 @@ class ShowCheckCodeDialogState extends State<ShowCheckCodeDialog> {
   Widget showTextTitle(String title) {
     return Text(
       title,
-      style: Theme.of(context).textTheme.bodySmall!.apply(
+      style: Theme.of(context).textTheme.bodySmall?.apply(
             color: Theme.of(context).colorScheme.onSurface, // 设置文本颜色
           ),
       overflow: TextOverflow.ellipsis,
@@ -785,7 +785,7 @@ class ShowCheckCodeDialogState extends State<ShowCheckCodeDialog> {
   Widget showName(String title) {
     return Text(
       title,
-      style: Theme.of(context).textTheme.titleLarge!.apply(
+      style: Theme.of(context).textTheme.titleLarge?.apply(
             color: Theme.of(context).colorScheme.primary, // 设置文本颜色
           ),
       maxLines: 2,
@@ -863,13 +863,13 @@ class ShowCheckCodeDialogState extends State<ShowCheckCodeDialog> {
                                     BorderRadius.all(Radius.circular(0.0))),
                             hintText: (localizedStrings?.fMaterialCodeCol ?? "fMaterialCodeCol"),
                             hintStyle:
-                                Theme.of(context).textTheme.bodySmall!.apply(
+                                Theme.of(context).textTheme.bodySmall?.apply(
                                       color: Theme.of(context)
                                           .colorScheme
-                                          .surfaceContainerHighest, // 设置提示文本颜色
+                                          .surface, // 设置提示文本颜色
                                     ),
                           ),
-                          style: Theme.of(context).textTheme.bodySmall!.apply(
+                          style: Theme.of(context).textTheme.bodySmall?.apply(
                                 color: Theme.of(context)
                                     .colorScheme
                                     .onSurface, // 设置输入文本颜色
@@ -906,7 +906,7 @@ class ShowCheckCodeDialogState extends State<ShowCheckCodeDialog> {
                     height: 40,
                     child: Text(
                       errorText,
-                      style: Theme.of(context).textTheme.bodySmall!.apply(
+                      style: Theme.of(context).textTheme.bodySmall?.apply(
                             color:
                                 Theme.of(context).colorScheme.error, // 设置输入文本颜色
                           ),

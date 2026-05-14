@@ -1,4 +1,4 @@
-﻿import 'dart:async';
+import 'dart:async';
 import 'dart:convert';
 import 'package:t_max/bluetooth/bluetooth_manager.dart';
 import 'package:flutter/material.dart';
@@ -206,7 +206,7 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
           if (myFactoryInfoFromScale.modelName != '') {
             setScaleStatus(myOnlineInfo.scaleId!, true);
             if (isTesting) {
-              showTipInfo((localizedStrings?.gTipGetIpOk ?? "gTipGetIpOk"), context);
+              showTipInfo((localizedStrings?.gTipConnected ?? "gTipConnected"), context);
             }
           } else {
             setScaleStatus(myOnlineInfo.scaleId!, false);

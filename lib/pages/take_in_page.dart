@@ -47,7 +47,7 @@ class TakeInPageState extends State<TakeInPage> {
   final ValueNotifier<double> totalWeightNotifier = ValueNotifier<double>(0);
   final ValueNotifier<bool> totalWgtStableNotifier = ValueNotifier<bool>(false);
 
-  final Map<int, GlobalKey<TakeInPageState>> _scaleWidgetKeys = {};
+  final Map<int, GlobalKey> _scaleWidgetKeys = {};
   ReqWeightCountine tempWeight = ReqWeightCountine();
   final Map<int, Widget> _scaleWidgetCache = {};
   Map<int, WeightInfo> scaleWgtMapDetail = {}; //存储每台秤的详细数据，组成total weight 的明细数据
@@ -56,10 +56,6 @@ class TakeInPageState extends State<TakeInPage> {
 
   PluData? selectedPluData; // 用于存储选中的PluData
 
-  double get scaleWgtWidth {
-    final width = MediaQuery.of(context).size.width;
-    return width < 600 ? width : width * 0.45;
-  }
   late Timer updateTimer; //刷新数据
   // 添加定时器变量
   Timer? _scaleCheckTimer;
@@ -137,7 +133,7 @@ class TakeInPageState extends State<TakeInPage> {
         String jsonString = event.obj;
 
         RevAllWgtRecs getAllWgtInfo = revAllWgtRecsFromJson(jsonString);
-        if (getAllWgtInfo.totalCount! > 0) {
+        if ((getAllWgtInfo.totalCount ?? 0) > 0) {
           List<ScaleRecInfo>? scaleRecInfos = getAllWgtInfo.scaleRecInfos;
 
           allWgtRecList.clear();
@@ -145,7 +141,7 @@ class TakeInPageState extends State<TakeInPage> {
           allWgtRecList = List<ScaleRecInfo>.from(scaleRecInfos!);
 
           _tableState.addData(allWgtRecList);
-          _tableState.setTotalCount(getAllWgtInfo.totalCount!);
+          _tableState.setTotalCount(getAllWgtInfo.totalCount ?? 0);
           // _tableState.loadPage(1);
         } else {
           allWgtRecList.clear();
@@ -461,7 +457,7 @@ class TakeInPageState extends State<TakeInPage> {
                       alignment: Alignment.centerLeft,
                       child: Text(
                         (localizedStrings?.gTitleDeviceList ?? "gTitleDeviceList"),
-                        style: Theme.of(context).textTheme.labelLarge!.apply(
+                        style: Theme.of(context).textTheme.bodyLarge?.apply(
                               color: Theme.of(context).colorScheme.primary,
                             ),
                       ),
@@ -499,73 +495,64 @@ class TakeInPageState extends State<TakeInPage> {
                     isMobile),
                 Container(
                   height: regularPadding,
-                  color: Theme.of(context).colorScheme.surfaceContainerLow,
+                  color: Theme.of(context).colorScheme.surface,
                 ),
                 Expanded(
                     child: Container(
-                  color: Theme.of(context).colorScheme.surfaceTint,
-                  child: isMobile
-                    ? Column(
-                        children: [
-                          if (mySelScaleIdList.isNotEmpty)
-                            SizedBox(
-                              height: 180, // 压缩高度
-                              child: showScaleWgt(context, scaleWgtWidth),
-                            ),
-                          Expanded(
-                            child: Container(
-                              color: Theme.of(context).colorScheme.surfaceContainerLow,
-                              child: showWgtTable(context),
-                            ),
-                          ),
-                        ],
-                      )
-                    : Row(
-                        children: [
-                          Container(
-                            width: appScaleListWidth,
-                            color: Theme.of(context).colorScheme.surfaceTint,
-                            child: SizedBox(
-                              height: MediaQuery.of(context).size.height,
-                              child: Column(
-                                mainAxisSize: MainAxisSize.max,
-                                children: [
-                                  SizedBox(
-                                    height: regularPadding,
-                                  ),
-                                  Expanded(
-                                    child: NewMutiScaleListWidget(
-                                      listWidth: appScaleListWidth, // 列表宽度
-                                      selScaleList: mySelScaleIdList,
-                                      clickScale: (scale) {
-                                        setState(() {
-                                          addOrRemoveSelScale(scale.scaleId);
-                                        });
-                                      },
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          Container(
-                            width: regularPadding,
-                            color:
-                                Theme.of(context).colorScheme.surfaceContainerLow,
-                          ),
-                          if (mySelScaleIdList.isNotEmpty)
-                            showScaleWgt(context, scaleWgtWidth),
-                          if (mySelScaleIdList.isNotEmpty)
-                            Container(
-                              width: regularPadding,
-                              color:
-                                  Theme.of(context).colorScheme.surfaceContainerLow,
-                            ),
-                          Expanded(child: showWgtTable(context)) // width - 591 - 36)
-                        ],
-                      ),
+                  color: Theme.of(context).colorScheme.surface,
+                  child: isMobile ? _buildMobileBody() : _buildDesktopBody(),
                 )),
               ])),
+    );
+  }
+
+  Widget _buildMobileBody() {
+    return Column(
+      children: [
+        if (mySelScaleIdList.isNotEmpty)
+          SizedBox(
+            height: 180, // 压缩高度
+            child: showScaleWgt(context, MediaQuery.of(context).size.width),
+          ),
+        Expanded(
+          child: Container(
+            color: Theme.of(context).colorScheme.surface,
+            child: showWgtTable(context),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDesktopBody() {
+    return Row(
+      children: [
+        // 左侧：秤列表
+        Container(
+          width: 260,
+          decoration: BoxDecoration(
+            border: Border(right: BorderSide(color: Theme.of(context).dividerColor.withOpacity(0.5))),
+          ),
+          child: NewMutiScaleListWidget(
+            listWidth: 260,
+            selScaleList: mySelScaleIdList,
+            clickScale: (scale) => addOrRemoveSelScale(scale.scaleId),
+          ),
+        ),
+        // 中间：称重显示与操作
+        Container(
+          width: 340,
+          decoration: BoxDecoration(
+            border: Border(right: BorderSide(color: Theme.of(context).dividerColor.withOpacity(0.5))),
+            color: Theme.of(context).colorScheme.surface,
+          ),
+          child: showScaleWgt(context, 340),
+        ),
+        // 右侧：数据表格
+        Expanded(
+          child: showWgtTable(context),
+        ),
+      ],
     );
   }
 
@@ -662,13 +649,13 @@ class TakeInPageState extends State<TakeInPage> {
           if (mySettingParam.wgtMode == 1)
             Container(
               height: regularPadding,
-              color: Theme.of(context).colorScheme.surfaceContainerLow,
+              color: Theme.of(context).colorScheme.surface,
             ),
           Expanded(
               child: Container(
             width: width,
             padding: const EdgeInsets.only(bottom: regularPadding),
-            color: Theme.of(context).colorScheme.surfaceContainerLow,
+            color: Theme.of(context).colorScheme.surface,
             child: ListView.builder(
               itemCount: mySelScaleIdList.length,
               itemBuilder: (context, index) {
@@ -676,7 +663,7 @@ class TakeInPageState extends State<TakeInPage> {
 
                 // 如果key不存在，创建新的GlobalKey
                 if (!_scaleWidgetKeys.containsKey(scaleId)) {
-                  _scaleWidgetKeys[scaleId] = GlobalKey<TakeInPageState>();
+                  _scaleWidgetKeys[scaleId] = GlobalKey();
                 }
 
                 // 如果缓存不存在，使用稳定的GlobalKey创建新Widget
@@ -700,7 +687,7 @@ class TakeInPageState extends State<TakeInPage> {
     );
   }
 
-  showWgtTable(BuildContext context) {
+  Widget showWgtTable(BuildContext context) {
     return Container(
       color: Theme.of(context).colorScheme.surface,
           child: Column(
@@ -714,7 +701,7 @@ class TakeInPageState extends State<TakeInPage> {
                     children: [
                       Text(
                         (localizedStrings?.fTotalWeight ?? "fTotalWeight"),
-                        style: Theme.of(context).textTheme.labelMedium!.apply(
+                        style: Theme.of(context).textTheme.labelMedium?.apply(
                             color: Theme.of(context).colorScheme.onSurface),
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -737,8 +724,7 @@ class TakeInPageState extends State<TakeInPage> {
                                 textAlign: TextAlign.right,
                                 style: Theme.of(context)
                                     .textTheme
-                                    .headlineLarge!
-                                    .copyWith(
+                                    .headlineLarge?.copyWith(
                                       fontSize: 40,
                                       color: mySelScaleIdList.isNotEmpty
                                           ? Theme.of(context)
@@ -764,8 +750,7 @@ class TakeInPageState extends State<TakeInPage> {
                                 child: Text(value,
                                     style: Theme.of(context)
                                         .textTheme
-                                        .bodyLarge!
-                                        .apply(
+                                        .bodyLarge?.apply(
                                           color: Theme.of(context)
                                               .colorScheme
                                               .onSurface,
@@ -805,7 +790,7 @@ class TakeInPageState extends State<TakeInPage> {
                               style: IconButton.styleFrom(
                                 disabledBackgroundColor: Theme.of(context)
                                     .colorScheme
-                                    .surfaceContainerLow,
+                                    .surface,
                                 backgroundColor: Theme.of(context)
                                     .colorScheme
                                     .onTertiaryFixedVariant,
@@ -847,7 +832,7 @@ class TakeInPageState extends State<TakeInPage> {
               if (mySettingParam.wgtMode == 1)
                 Container(
                   height: regularPadding,
-                  color: Theme.of(context).colorScheme.surfaceContainerLow,
+                  color: Theme.of(context).colorScheme.surface,
                 ),
               Container(
                   padding: EdgeInsets.only(
@@ -869,7 +854,7 @@ class TakeInPageState extends State<TakeInPage> {
                           style: IconButton.styleFrom(
                             disabledBackgroundColor: Theme.of(context)
                                 .colorScheme
-                                .surfaceContainerLow,
+                                .surface,
                             backgroundColor:
                                 Theme.of(context).colorScheme.primary,
                             shape: RoundedRectangleBorder(
@@ -924,7 +909,7 @@ class TakeInPageState extends State<TakeInPage> {
                           style: IconButton.styleFrom(
                             disabledBackgroundColor: Theme.of(context)
                                 .colorScheme
-                                .surfaceContainerLow,
+                                .surface,
                             backgroundColor:
                                 Theme.of(context).colorScheme.primary,
                             shape: RoundedRectangleBorder(
@@ -960,7 +945,7 @@ class TakeInPageState extends State<TakeInPage> {
                           style: IconButton.styleFrom(
                             disabledBackgroundColor: Theme.of(context)
                                 .colorScheme
-                                .surfaceContainerLow,
+                                .surface,
                             backgroundColor:
                                 Theme.of(context).colorScheme.primary,
                             shape: RoundedRectangleBorder(
@@ -1002,7 +987,7 @@ class TakeInPageState extends State<TakeInPage> {
                             style: IconButton.styleFrom(
                               disabledBackgroundColor: Theme.of(context)
                                   .colorScheme
-                                  .surfaceContainerLow,
+                                  .surface,
                               backgroundColor:
                                   Theme.of(context).colorScheme.error,
                               shape: RoundedRectangleBorder(
@@ -1042,7 +1027,7 @@ class TakeInPageState extends State<TakeInPage> {
                   )),
               Divider(
                 height: 1,
-                color: Theme.of(context).colorScheme.surfaceDim,
+                color: Theme.of(context).colorScheme.surface,
               ),
               SizedBox(
                 height: regularPadding,
@@ -1069,8 +1054,7 @@ class TakeInPageState extends State<TakeInPage> {
       if (value) {
         setState(() {
           for (var item in myReportFeildsMap.keys) {
-            _tableState.visibleColumns[item]!.isSelect =
-                myReportFeildsMap[item]!;
+            _tableState.visibleColumns[item]?.isSelect = myReportFeildsMap[item] ?? false;
           }
         });
       }
@@ -1123,8 +1107,8 @@ class TakeInPageState extends State<TakeInPage> {
                         : (localizedStrings?.gTipWeightSummationMode ?? "gTipWeightSummationMode"),
                     style: Theme.of(context)
                         .textTheme
-                        .bodySmall!
-                        .apply(color: Theme.of(context).colorScheme.primary),
+                        .labelMedium
+                        ?.apply(color: Theme.of(context).colorScheme.primary),
                   ),
                   const SizedBox(
                     width: largePadding,
@@ -1139,7 +1123,7 @@ class TakeInPageState extends State<TakeInPage> {
           ),
           Divider(
             color:
-                Theme.of(context).colorScheme.surfaceContainerLow, // 设置分割线的颜色
+                Theme.of(context).colorScheme.surface, // 设置分割线的颜色
             height: 1, // 设置分割线的高度
             thickness: 1, // 设置分割线的粗细
           ),
@@ -1219,11 +1203,11 @@ void sendDataToDb(
 
   if (scaleWgtMapDetail.length == 1) {
     final scaleId = scaleWgtMapDetail.keys.first;
-    final tempScale = scaleIdToScaleMap[scaleId]!;
+    final tempScale = scaleIdToScaleMap[scaleId];
     newAddRec.headRec = headerCommon.copyWith(
-      scaleModel: tempScale.scaleModel,
-      scaleSn: tempScale.scaleSn,
-      scaleName: tempScale.scaleName,
+      scaleModel: tempScale?.scaleModel ?? '',
+      scaleSn: tempScale?.scaleSn ?? '',
+      scaleName: tempScale?.scaleName ?? '',
     );
     newAddRec.detailRec = [];
   } else {
@@ -1238,8 +1222,9 @@ void sendDataToDb(
     // 构建 detailRec
     int seq = 1;
     for (final scaleId in scaleWgtMapDetail.keys) {
-      final tempScale = scaleIdToScaleMap[scaleId]!;
-      final weightInfo = scaleWgtMapDetail[scaleId]!;
+      final tempScale = scaleIdToScaleMap[scaleId];
+      final weightInfo = scaleWgtMapDetail[scaleId];
+      if (tempScale == null || weightInfo == null) continue;
       final weight = weightInfo.weight;
 
       // baseUnit == 'g'

@@ -1,4 +1,4 @@
-﻿import 'dart:async';
+import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:t_max/data/home_page_common_data.dart';
@@ -171,7 +171,7 @@ class WeightModePageState extends State<WeightModePage> {
             pageHeadInfo(context, isMobile ? width : width - headWidthPadding,
                 localizedStrings?.menuWeighing ?? 'Weighing', '', () {
               formAppSetting = false;
-              Navigator.pop(context);
+              widget.onNavigate(widget.lastRouteName);
             },
                 leading: isMobile
                     ? Padding(

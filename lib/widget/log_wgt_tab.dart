@@ -1,4 +1,4 @@
-﻿import 'dart:convert';
+import 'dart:convert';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -378,7 +378,7 @@ class _ScaleWgtLogTabPageState extends State<ScaleWgtLogTabPage> {
           // 显示选中的记录数量
           Text(
             '${(localizedStrings?.selected ?? "selected")} ${allSelectedRecIds.length} ${(localizedStrings?.tipPageItems ?? "tipPageItems")}',
-            style: textTheme.bodySmall!.copyWith(
+            style: textTheme.bodySmall?.copyWith(
               color: colorScheme.primary,
             ),
           ),
@@ -471,7 +471,7 @@ class _ScaleWgtLogTabPageState extends State<ScaleWgtLogTabPage> {
           });
         },
         child: Container(
-          color: colorScheme.surfaceDim,
+          color: colorScheme.surface,
           padding: EdgeInsets.symmetric(horizontal: 8),
           alignment: Alignment.centerLeft,
           child: Row(
@@ -480,7 +480,7 @@ class _ScaleWgtLogTabPageState extends State<ScaleWgtLogTabPage> {
                 child: Text(
                   title,
                   style:
-                      textTheme.bodyMedium!.apply(color: colorScheme.onSurface),
+                      textTheme.bodyMedium?.apply(color: colorScheme.onSurface),
                   overflow: TextOverflow.ellipsis,
                   maxLines: 1,
                 ),
@@ -505,7 +505,7 @@ class _ScaleWgtLogTabPageState extends State<ScaleWgtLogTabPage> {
       allowSorting: false,
       columnName: columnName,
       label: Container(
-        color: colorScheme.surfaceDim,
+        color: colorScheme.surface,
         padding: EdgeInsets.symmetric(horizontal: 8),
         alignment: Alignment.centerLeft,
         child: Row(
@@ -514,7 +514,7 @@ class _ScaleWgtLogTabPageState extends State<ScaleWgtLogTabPage> {
               child: Text(
                 title,
                 style:
-                    textTheme.bodyMedium!.apply(color: colorScheme.onSurface),
+                    textTheme.bodyMedium?.apply(color: colorScheme.onSurface),
                 overflow: TextOverflow.ellipsis,
                 maxLines: 1,
               ),
@@ -538,7 +538,7 @@ class _ScaleWgtLogTabPageState extends State<ScaleWgtLogTabPage> {
         allowSorting: false,
         columnName: 'select',
         label: Container(
-          color: colorScheme.surfaceDim,
+          color: colorScheme.surface,
           alignment: Alignment.center,
           child: Checkbox(
             value: _selectAll,
@@ -584,7 +584,7 @@ class _ScaleWgtLogTabPageState extends State<ScaleWgtLogTabPage> {
             child: Align(
               alignment: Alignment.centerLeft,
               child: TextField(
-                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: Theme.of(context).colorScheme.onSurface,
                       ),
                   controller: operatorCtl,
@@ -606,12 +606,12 @@ class _ScaleWgtLogTabPageState extends State<ScaleWgtLogTabPage> {
                     ),
                     hintText: (localizedStrings?.operator ?? "operator"),
                     contentPadding: EdgeInsets.symmetric(vertical: 10),
-                    hintStyle: Theme.of(context).textTheme.bodySmall!.copyWith(
+                    hintStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
                           // 设置提示文本样式
                           fontSize: 12,
                           color: Theme.of(context)
                               .colorScheme
-                              .surfaceContainerHighest,
+                              .surface,
                         ),
                     border: const OutlineInputBorder(
                       borderRadius: BorderRadius.zero,
@@ -647,11 +647,11 @@ class _ScaleWgtLogTabPageState extends State<ScaleWgtLogTabPage> {
                 value: null,
                 child: Text(
                   (localizedStrings?.userRole ?? "userRole"),
-                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         fontSize: 12,
                         color: Theme.of(context)
                             .colorScheme
-                            .surfaceContainerHighest,
+                            .surface,
                       ),
                 ),
               ),
@@ -659,7 +659,7 @@ class _ScaleWgtLogTabPageState extends State<ScaleWgtLogTabPage> {
                 value: "1",
                 child: Text(
                   (localizedStrings?.superAdmin ?? "superAdmin"),
-                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: Theme.of(context).colorScheme.onSurface,
                       ),
                 ),
@@ -668,7 +668,7 @@ class _ScaleWgtLogTabPageState extends State<ScaleWgtLogTabPage> {
                 value: "2",
                 child: Text(
                   (localizedStrings?.admin ?? "admin"),
-                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: Theme.of(context).colorScheme.onSurface,
                       ),
                 ),
@@ -677,7 +677,7 @@ class _ScaleWgtLogTabPageState extends State<ScaleWgtLogTabPage> {
                 value: "3",
                 child: Text(
                   (localizedStrings?.operator ?? "operator"),
-                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: Theme.of(context).colorScheme.onSurface,
                       ),
                 ),
@@ -688,7 +688,7 @@ class _ScaleWgtLogTabPageState extends State<ScaleWgtLogTabPage> {
                 roleIdCtl.text = value ?? "";
               });
             },
-            style: Theme.of(context).textTheme.bodySmall!.copyWith(
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
                   color: Theme.of(context).colorScheme.onSurface,
                 ),
           ),
@@ -713,10 +713,10 @@ class _ScaleWgtLogTabPageState extends State<ScaleWgtLogTabPage> {
             readOnly: true,
             decoration: InputDecoration(
               hintText: (localizedStrings?.gBtnSelectDate ?? "gBtnSelectDate"),
-              hintStyle: Theme.of(context).textTheme.bodySmall!.copyWith(
+              hintStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
                     fontSize: 12,
                     color:
-                        Theme.of(context).colorScheme.surfaceContainerHighest,
+                        Theme.of(context).colorScheme.surface,
                   ),
               border: InputBorder.none,
               contentPadding: EdgeInsets.symmetric(vertical: 12),
@@ -731,7 +731,7 @@ class _ScaleWgtLogTabPageState extends State<ScaleWgtLogTabPage> {
                 },
               ),
             ),
-            style: Theme.of(context).textTheme.bodySmall!.copyWith(
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
                   color: Theme.of(context).colorScheme.onSurface,
                 ),
             onTap: () {
@@ -1079,7 +1079,7 @@ class WgtLogDataSource extends DataGridSource {
           icon: Icon(
             Icons.delete_outline_outlined,
             color: (mySysUser.roleId != superAdminRoleId)
-                ? colorScheme.surfaceContainerHighest
+                ? colorScheme.surface
                 : colorScheme.error,
           ),
           onPressed: () {

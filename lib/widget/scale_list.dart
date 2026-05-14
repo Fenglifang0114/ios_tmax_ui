@@ -1,4 +1,4 @@
-﻿// 鍏辩敤鐨勭Г鍒楄〃 widget
+// 鍏辩敤鐨勭Г鍒楄〃 widget
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -60,7 +60,7 @@ class _ScaleListWidgetState extends State<ScaleListWidget> {
                       child: Container(
                         height: scaleItemHeight,
                         color: !isSelect
-                            ? Theme.of(context).colorScheme.surfaceContainerLow
+                            ? Theme.of(context).colorScheme.surface
                             : Theme.of(context).colorScheme.primary,
                         child: Row(
                           children: [
@@ -75,7 +75,7 @@ class _ScaleListWidgetState extends State<ScaleListWidget> {
                                   color: !isSelect
                                       ? Theme.of(context)
                                           .colorScheme
-                                          .surfaceContainerLowest
+                                          .surface
                                       : Color.fromRGBO(255, 255, 255, 0.1),
                                 ),
                                 width: scaleInnerItemHeight,
@@ -160,7 +160,7 @@ showComScale(BuildContext context, int selScaleId, Function()? onTap) {
         child: Container(
           height: scaleItemHeight,
           color: (selScaleId != 1)
-              ? Theme.of(context).colorScheme.surfaceContainerLow
+              ? Theme.of(context).colorScheme.surface
               : Theme.of(context).colorScheme.primary,
           child: Row(
             children: [
@@ -172,7 +172,7 @@ showComScale(BuildContext context, int selScaleId, Function()? onTap) {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.all(Radius.circular(4)),
                     color: (selScaleId != 1)
-                        ? Theme.of(context).colorScheme.surfaceContainerLowest
+                        ? Theme.of(context).colorScheme.surface
                         : Color.fromRGBO(255, 255, 255, 0.1),
                   ),
                   width: scaleInnerItemHeight,
@@ -199,7 +199,7 @@ showComScale(BuildContext context, int selScaleId, Function()? onTap) {
                   children: [
                     Text(
                       myComScaleInfo.scaleName,
-                      style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
                             color: (selScaleId != 1)
                                 ? Theme.of(context).colorScheme.primary
                                 : Theme.of(context).colorScheme.onPrimary,
@@ -321,7 +321,7 @@ class _MutiScaleListWidgetState extends State<MutiScaleListWidget> {
                       child: Container(
                         height: scaleItemHeight,
                         color: !isSelect
-                            ? Theme.of(context).colorScheme.surfaceContainerLow
+                            ? Theme.of(context).colorScheme.surface
                             : Theme.of(context).colorScheme.primary,
                         child: Row(
                           children: [
@@ -336,7 +336,7 @@ class _MutiScaleListWidgetState extends State<MutiScaleListWidget> {
                                   color: !isSelect
                                       ? Theme.of(context)
                                           .colorScheme
-                                          .surfaceContainerLowest
+                                          .surface
                                       : Color.fromRGBO(255, 255, 255, 0.1),
                                 ),
                                 width: scaleInnerItemHeight,
@@ -422,7 +422,7 @@ showMutiComScale(
         child: Container(
           height: scaleItemHeight,
           color: (!selScaleList.contains(1))
-              ? Theme.of(context).colorScheme.surfaceContainerLow
+              ? Theme.of(context).colorScheme.surface
               : Theme.of(context).colorScheme.primary,
           child: Row(
             children: [
@@ -434,7 +434,7 @@ showMutiComScale(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.all(Radius.circular(4)),
                     color: (!selScaleList.contains(1))
-                        ? Theme.of(context).colorScheme.surfaceContainerLowest
+                        ? Theme.of(context).colorScheme.surface
                         : Color.fromRGBO(255, 255, 255, 0.1),
                   ),
                   width: scaleInnerItemHeight,
@@ -461,7 +461,7 @@ showMutiComScale(
                   children: [
                     Text(
                       myComScaleInfo.scaleName,
-                      style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
                             color: (!selScaleList.contains(1))
                                 ? Theme.of(context).colorScheme.primary
                                 : Theme.of(context).colorScheme.onPrimary,
@@ -544,7 +544,7 @@ class _NewAllScaleListWidgetState extends State<NewAllScaleListWidget> {
                                   color: !isSelect
                                       ? Theme.of(context)
                                           .colorScheme
-                                          .surfaceContainerLow
+                                          .surface
                                       : scale.isOnline
                                           ? Theme.of(context)
                                               .colorScheme
@@ -563,7 +563,7 @@ class _NewAllScaleListWidgetState extends State<NewAllScaleListWidget> {
                                                 color: !isSelect
                                                     ? Theme.of(context)
                                                         .colorScheme
-                                                        .surfaceContainerLowest
+                                                        .surface
                                                     : Theme.of(context)
                                                         .colorScheme
                                                         .surface
@@ -742,7 +742,7 @@ class _NewComScaleListWidgetState extends State<NewComScaleListWidget> {
                                   color: !isSelect
                                       ? Theme.of(context)
                                           .colorScheme
-                                          .surfaceContainerLow
+                                          .surface
                                       : scale.isOnline
                                           ? Theme.of(context)
                                               .colorScheme
@@ -761,7 +761,7 @@ class _NewComScaleListWidgetState extends State<NewComScaleListWidget> {
                                               color: !isSelect
                                                   ? Theme.of(context)
                                                       .colorScheme
-                                                      .surfaceContainerLowest
+                                                      .surface
                                                   : Theme.of(context)
                                                       .colorScheme
                                                       .surface
@@ -965,7 +965,7 @@ class _NewMutiScaleListWidgetState extends State<NewMutiScaleListWidget> {
                                   color: !isSelect
                                       ? Theme.of(context)
                                           .colorScheme
-                                          .surfaceContainerLow
+                                          .surface
                                       : scale.isOnline
                                           ? Theme.of(context)
                                               .colorScheme
@@ -984,7 +984,7 @@ class _NewMutiScaleListWidgetState extends State<NewMutiScaleListWidget> {
                                               color: !isSelect
                                                   ? Theme.of(context)
                                                       .colorScheme
-                                                      .surfaceContainerLowest
+                                                      .surface
                                                   : Theme.of(context)
                                                       .colorScheme
                                                       .surface
@@ -1077,7 +1077,7 @@ class _NewMutiScaleListWidgetState extends State<NewMutiScaleListWidget> {
                                                 Expanded(
                                                   child: Text(
                                                     detailInfo.isNotEmpty ? detailInfo : (scale.isOnline ? (localizedStrings?.gTipOnline ?? "gTipOnline") : (localizedStrings?.gTipOffline ?? "gTipOffline")),
-                                                    style: Theme.of(context).textTheme.bodySmall!.apply(
+                                                    style: Theme.of(context).textTheme.bodySmall?.apply(
                                                       color: isSelect ? Theme.of(context).colorScheme.onPrimary : scale.isOnline ? Theme.of(context).colorScheme.onTertiaryFixedVariant : Theme.of(context).colorScheme.error,
                                                     ),
                                                     overflow: TextOverflow.ellipsis,
@@ -1097,7 +1097,7 @@ class _NewMutiScaleListWidgetState extends State<NewMutiScaleListWidget> {
                                                     return BorderSide(
                                                         color: Theme.of(context)
                                                             .colorScheme
-                                                            .surfaceContainerHighest);
+                                                            .surface);
                                                   }),
                                                   fillColor: WidgetStateProperty
                                                       .resolveWith<Color>(
@@ -1213,7 +1213,7 @@ class _NewMutiScaleListWifiWidgetState
                                   color: !isSelect
                                       ? Theme.of(context)
                                           .colorScheme
-                                          .surfaceContainerLow
+                                          .surface
                                       : scale.isOnline
                                           ? Theme.of(context)
                                               .colorScheme
@@ -1232,7 +1232,7 @@ class _NewMutiScaleListWifiWidgetState
                                               color: !isSelect
                                                   ? Theme.of(context)
                                                       .colorScheme
-                                                      .surfaceContainerLowest
+                                                      .surface
                                                   : Theme.of(context)
                                                       .colorScheme
                                                       .surface
@@ -1365,7 +1365,7 @@ class _NewMutiScaleListWifiWidgetState
                                                     return BorderSide(
                                                         color: Theme.of(context)
                                                             .colorScheme
-                                                            .surfaceContainerHighest);
+                                                            .surface);
                                                   }),
                                                   fillColor: WidgetStateProperty
                                                       .resolveWith<Color>(

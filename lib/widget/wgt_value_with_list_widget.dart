@@ -1,4 +1,4 @@
-﻿//称重共用的重量显示界面 20250521
+//称重共用的重量显示界面 20250521
 
 import 'dart:async';
 import 'package:flutter/material.dart';
@@ -399,7 +399,7 @@ class _ScaleWgtWidgetState extends State<ScaleWgtWidget> {
     return Container(
         padding: EdgeInsets.only(bottom: regularPadding),
         height: 184,
-        color: Theme.of(context).colorScheme.surfaceContainerLow,
+        color: Theme.of(context).colorScheme.surface,
         child: Column(children: [
           Container(
             height: 169,
@@ -421,8 +421,8 @@ class _ScaleWgtWidgetState extends State<ScaleWgtWidget> {
                               widget.scaleName,
                               style: Theme.of(context)
                                   .textTheme
-                                  .labelMedium!
-                                  .apply(
+                                  .labelMedium
+                                  ?.apply(
                                     color:
                                         Theme.of(context).colorScheme.onSurface,
                                   ),
@@ -438,7 +438,7 @@ class _ScaleWgtWidgetState extends State<ScaleWgtWidget> {
                         ])),
                 Container(
                   height: 1,
-                  color: Theme.of(context).colorScheme.surfaceContainerLow,
+                  color: Theme.of(context).colorScheme.surface,
                 ),
                 Container(
                     height: 52,
@@ -523,7 +523,7 @@ class _ScaleWgtWidgetState extends State<ScaleWgtWidget> {
                                           disabledBackgroundColor:
                                               Theme.of(context)
                                                   .colorScheme
-                                                  .surfaceContainerLow,
+                                                  .surface,
                                           backgroundColor: Theme.of(context)
                                               .colorScheme
                                               .onTertiaryFixedVariant,
@@ -554,7 +554,7 @@ class _ScaleWgtWidgetState extends State<ScaleWgtWidget> {
                                                     .onPrimary
                                                 : Theme.of(context)
                                                     .colorScheme
-                                                    .surfaceContainerHighest))),
+                                                    .surface))),
                             ],
                           ),
                         )
@@ -562,7 +562,7 @@ class _ScaleWgtWidgetState extends State<ScaleWgtWidget> {
                     )),
                 Divider(
                   height: 1,
-                  color: Theme.of(context).colorScheme.surfaceContainerLow,
+                  color: Theme.of(context).colorScheme.surface,
                 ),
                 SizedBox(
                   height: 60,
@@ -599,7 +599,7 @@ class _ScaleWgtWidgetState extends State<ScaleWgtWidget> {
                         child: Text(weightInfo?.weightUnit ?? '----',
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: Theme.of(context).textTheme.bodyLarge!.apply(
+                            style: Theme.of(context).textTheme.bodyLarge?.apply(
                                   color:
                                       Theme.of(context).colorScheme.onSurface,
                                 )),
@@ -629,7 +629,7 @@ class _ScaleWgtWidgetState extends State<ScaleWgtWidget> {
             style: IconButton.styleFrom(
               // 当按钮不可用时，设置背景颜色为灰色
               disabledBackgroundColor:
-                  Theme.of(context).colorScheme.surfaceContainerLow,
+                  Theme.of(context).colorScheme.surface,
               backgroundColor: Theme.of(context).colorScheme.primary,
               shape: RoundedRectangleBorder(
                 // 设置为矩形形状
@@ -644,7 +644,7 @@ class _ScaleWgtWidgetState extends State<ScaleWgtWidget> {
                 iconBtnSize,
                 isStart
                     ? Theme.of(context).colorScheme.onPrimary
-                    : Theme.of(context).colorScheme.surfaceContainerHighest)));
+                    : Theme.of(context).colorScheme.surface)));
   }
 
   _changeSaveButton() {
@@ -748,10 +748,10 @@ class _ScaleWgtWidgetState extends State<ScaleWgtWidget> {
           24,
           20,
           isConditionMet == null
-              ? Theme.of(context).colorScheme.surfaceContainerHighest
+              ? Theme.of(context).colorScheme.surface
               : isConditionMet
                   ? Theme.of(context).colorScheme.onPrimary
-                  : Theme.of(context).colorScheme.surfaceContainerHighest),
+                  : Theme.of(context).colorScheme.surface),
     ));
   }
 }

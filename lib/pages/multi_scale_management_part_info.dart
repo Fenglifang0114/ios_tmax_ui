@@ -1,4 +1,4 @@
-﻿// ignore_for_file: invalid_use_of_protected_member
+// ignore_for_file: invalid_use_of_protected_member
 part of 'multi_scale_management_page.dart';
 
 extension MultiScaleManagementInfoExt on MultiScaleManagementState {
@@ -220,7 +220,17 @@ extension MultiScaleManagementInfoExt on MultiScaleManagementState {
             (localizedStrings?.gBtnTestConnect ?? "gBtnTestConnect"),
             !isAddScale && !isTesting && !isDel
                 ? () {
-                    showConnectionProgressDialog(context, macCtl.text, selScaleId);
+                    int scaleType = getScaleType();
+                    if (scaleType == btScaleType) {
+                      showConnectionProgressDialog(context, btScaleType, selScaleId, mac: macCtl.text);
+                    } else {
+                      // 网络秤或串口秤：不弹窗，直接显示 Tip 并发送指令
+                      setState(() {
+                        isTesting = true;
+                      });
+                      showTipInfo((localizedStrings?.gTipConnecting ?? "gTipConnecting"), context);
+                      PublicFunctions.checkSerialPort(selScaleId);
+                    }
                   }
                 : null,
             Theme.of(context).colorScheme.onPrimary,
@@ -266,10 +276,11 @@ extension MultiScaleManagementInfoExt on MultiScaleManagementState {
     );
   }
 
-  void showConnectionProgressDialog(BuildContext context, String mac, int scaleId) {
+  void showConnectionProgressDialog(BuildContext context, int type, int scaleId, {String? mac}) {
     List<String> logs = [];
     bool isDone = false;
     bool isSuccess = false;
+    StreamSubscription? subscription;
 
     showDialog(
       context: context,
@@ -279,20 +290,53 @@ extension MultiScaleManagementInfoExt on MultiScaleManagementState {
           builder: (context, setDialogState) {
             // 开始连接（仅执行一次）
             if (logs.isEmpty) {
-              bluetoothManager.connectToDevice(
-                mac, 
-                scaleId: scaleId,
-                onStatusUpdate: (status) {
+              if (type == btScaleType) {
+                logs.add("${DateTime.now().toString().split(' ')[1].substring(0, 8)}: 准备连接蓝牙设备...");
+                bluetoothManager.connectToDevice(
+                  mac ?? "", 
+                  scaleId: scaleId,
+                  onStatusUpdate: (status) {
+                    setDialogState(() {
+                      logs.add("${DateTime.now().toString().split(' ')[1].substring(0, 8)}: $status");
+                    });
+                  }
+                ).then((success) {
                   setDialogState(() {
-                    logs.add("${DateTime.now().toString().split(' ')[1].substring(0, 8)}: $status");
+                    isDone = true;
+                    isSuccess = success;
                   });
-                }
-              ).then((success) {
-                setDialogState(() {
-                  isDone = true;
-                  isSuccess = success;
                 });
-              });
+              } else {
+                // 网络连接或串口连接
+                String typeStr = type == netScaleType ? "网络" : "串口";
+                logs.add("${DateTime.now().toString().split(' ')[1].substring(0, 8)}: 准备发起$typeStr连接测试...");
+                
+                subscription = eventBus.on<EventRespCheckNetScale>().listen((event) {
+                  OnlineInfo info = event.obj;
+                  if (info.scaleId == scaleId) {
+                    setDialogState(() {
+                      isDone = true;
+                      isSuccess = info.factInfo?.modelName != null && info.factInfo!.modelName!.isNotEmpty;
+                      logs.add("${DateTime.now().toString().split(' ')[1].substring(0, 8)}: $typeStr测试完成，结果：${isSuccess ? "成功" : "失败"}");
+                    });
+                    subscription?.cancel();
+                  }
+                });
+
+                // 发送后端测试指令
+                PublicFunctions.checkSerialPort(scaleId);
+                setState(() {
+                   isTesting = true;
+                });
+              }
+            }
+
+            String titleText = "";
+            if (type == btScaleType) {
+              titleText = isDone ? (isSuccess ? "蓝牙连接成功" : "蓝牙连接失败") : "正在连接蓝牙...";
+            } else {
+              String typeStr = type == netScaleType ? "网络" : "串口";
+              titleText = isDone ? (isSuccess ? "$typeStr连接成功" : "$typeStr连接失败") : "正在测试$typeStr连接...";
             }
 
             return AlertDialog(
@@ -305,7 +349,7 @@ extension MultiScaleManagementInfoExt on MultiScaleManagementState {
                       child: CircularProgressIndicator(strokeWidth: 2),
                     ),
                   if (!isDone) SizedBox(width: 12),
-                  Text(isDone ? (isSuccess ? "连接成功" : "连接失败") : "正在连接蓝牙..."),
+                  Text(titleText),
                 ],
               ),
               content: SizedBox(
@@ -330,7 +374,7 @@ extension MultiScaleManagementInfoExt on MultiScaleManagementState {
                                 style: TextStyle(
                                   fontSize: 12,
                                   fontFamily: 'monospace',
-                                  color: logs[index].contains("错误") || logs[index].contains("异常") 
+                                  color: logs[index].contains("错误") || logs[index].contains("异常") || logs[index].contains("失败")
                                     ? Colors.red 
                                     : (logs[index].contains("成功") ? Colors.green : Colors.black87),
                                 ),
@@ -346,7 +390,12 @@ extension MultiScaleManagementInfoExt on MultiScaleManagementState {
               actions: [
                 if (isDone)
                   TextButton(
-                    onPressed: () => Navigator.of(context).pop(),
+                    onPressed: () {
+                      setState(() {
+                        isTesting = false;
+                      });
+                      Navigator.of(context).pop();
+                    },
                     child: Text("确定"),
                   ),
               ],
@@ -354,6 +403,13 @@ extension MultiScaleManagementInfoExt on MultiScaleManagementState {
           },
         );
       },
-    );
+    ).then((_) {
+      subscription?.cancel();
+      if (isTesting) {
+        setState(() {
+          isTesting = false;
+        });
+      }
+    });
   }
 }

@@ -403,8 +403,8 @@ void sendRptDataToDB(
   };
 
   Map<String, dynamic> cmdMap = {
-    "Mode": "add_rec",
-    "Data": jsonEncode(addRecMap),
+    "Req": "add_rec",
+    "ReqData": jsonEncode(addRecMap),
   };
 
   PublicFunctions.sendMsg(scaleId, jsonEncode(cmdMap));

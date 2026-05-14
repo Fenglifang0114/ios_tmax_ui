@@ -1,4 +1,4 @@
-﻿import 'dart:async';
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -28,7 +28,10 @@ const int step5 = 5; //步骤4
 const double thisScaleListWidth = 251;
 
 class CalibrationPage extends StatefulWidget {
-  const CalibrationPage({super.key});
+  final Function(String) onNavigate;
+  final String lastRouteName;
+  const CalibrationPage(
+      {super.key, required this.onNavigate, required this.lastRouteName});
   @override
   State<CalibrationPage> createState() => CalibrationPageState();
 }
@@ -676,7 +679,7 @@ class CalibrationPageState extends State<CalibrationPage> {
           children: [
             pageHeadInfo(context, width - headWidthPadding,
                 (localizedStrings?.menuCalibration ?? "menuCalibration"), '', () {
-              Navigator.pop(context);
+              widget.onNavigate(widget.lastRouteName);
             },
                 leading: isMobile
                     ? Padding(

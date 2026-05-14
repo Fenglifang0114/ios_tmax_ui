@@ -175,7 +175,7 @@ class _ScaleWgtTakeOutWidgetState extends State<ScaleWgtTakeOutWidget> {
             isStable: tempWeight.msgBody!.isStable,
             isZero: tempWeight.msgBody!.isZero,
           );
-          double? nowWeightVal = double.tryParse(weightInfo!.weightVal!);
+          double? nowWeightVal = double.tryParse((weightInfo?.weightVal ?? '0'));
           if (nowWeightVal == null || nowWeightVal < 0) {
             takeOutWgtvalue = 0.000;
           } else {
@@ -188,8 +188,8 @@ class _ScaleWgtTakeOutWidgetState extends State<ScaleWgtTakeOutWidget> {
             // 记录每台秤的增量
             scaleWeightMapCommon[widget.scaleId] = WeightInfo(
                 weight: takeOutWgtvalue.toString(),
-                unit: weightInfo!.weightUnit!,
-                stable: weightInfo!.isStable!);
+                unit: (weightInfo?.weightUnit ?? 'kg'),
+                stable: (weightInfo?.isStable ?? false));
             return;
           }
           _checkStableStatus();
@@ -329,10 +329,10 @@ class _ScaleWgtTakeOutWidgetState extends State<ScaleWgtTakeOutWidget> {
     // 判断是否为稳定保存模式且 _stableSaveTime 大于 0
     if (weightMode == cstStableSave && _stableSaveTime > 0) {
       // 检查是否经过 0 点 加法秤不需要过0点
-      if (weightInfo!.isStable!) {
+      if ((weightInfo?.isStable ?? false)) {
         _hasPassedZero = true;
       }
-      if (weightInfo!.isStable!) {
+      if ((weightInfo?.isStable ?? false)) {
         // 检查重量数据是否有效
         if (takeOutWgtvalue > 0 && _hasPassedZero) {
           if (_stableTimer == null) {
@@ -365,7 +365,7 @@ class _ScaleWgtTakeOutWidgetState extends State<ScaleWgtTakeOutWidget> {
 
   // 保存重量数据
   void _saveWeightData() {
-    if (_hasPassedZero && weightInfo!.isStable!) {
+    if (_hasPassedZero && (weightInfo?.isStable ?? false)) {
       if (takeOutWgtvalue > 0) {
         _changeSaveButton();
         _hasPassedZero = false; // 保存后重置经过 0 点标记
@@ -414,7 +414,7 @@ class _ScaleWgtTakeOutWidgetState extends State<ScaleWgtTakeOutWidget> {
     final isMobile = MediaQuery.of(context).size.width < 600;
     return Container(
         padding: EdgeInsets.only(bottom: isMobile ? 4 : regularPadding),
-        color: Theme.of(context).colorScheme.surfaceContainerLow,
+        color: Theme.of(context).colorScheme.surface,
         child: Column(children: [
           Container(
             color: Theme.of(context).colorScheme.surface,
@@ -430,13 +430,13 @@ class _ScaleWgtTakeOutWidgetState extends State<ScaleWgtTakeOutWidget> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           SizedBox(
-                            width: 170,
+                            width: 140, // 缩小宽度，原为 170
                             child: Text(
                               widget.scaleName,
                               style: Theme.of(context)
                                   .textTheme
-                                  .labelMedium!
-                                  .apply(
+                                  .labelMedium
+                                  ?.apply(
                                     color:
                                         Theme.of(context).colorScheme.onSurface,
                                   ),
@@ -452,7 +452,7 @@ class _ScaleWgtTakeOutWidgetState extends State<ScaleWgtTakeOutWidget> {
                         ])),
                 Container(
                   height: 1,
-                  color: Theme.of(context).colorScheme.surfaceContainerLow,
+                  color: Theme.of(context).colorScheme.surface,
                 ),
                 Container(
                     height: isMobile ? 40 : 52,
@@ -491,7 +491,7 @@ class _ScaleWgtTakeOutWidgetState extends State<ScaleWgtTakeOutWidget> {
                     )),
                 Divider(
                   height: 1,
-                  color: Theme.of(context).colorScheme.surfaceContainerLow,
+                  color: Theme.of(context).colorScheme.surface,
                 ),
                 SizedBox(
                   height: isMobile ? 40 : 50,
@@ -510,8 +510,7 @@ class _ScaleWgtTakeOutWidgetState extends State<ScaleWgtTakeOutWidget> {
                               textAlign: TextAlign.right,
                               style: Theme.of(context)
                                   .textTheme
-                                  .headlineLarge!
-                                  .copyWith(
+                                  .headlineLarge?.copyWith(
                                     fontSize: 40,
                                     color: isStart
                                         ? Theme.of(context).colorScheme.primary
@@ -526,7 +525,7 @@ class _ScaleWgtTakeOutWidgetState extends State<ScaleWgtTakeOutWidget> {
                         child: Text(weightInfo?.weightUnit ?? '----',
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: Theme.of(context).textTheme.bodyLarge!.apply(
+                            style: Theme.of(context).textTheme.bodyLarge?.apply(
                                   color:
                                       Theme.of(context).colorScheme.onSurface,
                                 )),
@@ -556,8 +555,7 @@ class _ScaleWgtTakeOutWidgetState extends State<ScaleWgtTakeOutWidget> {
                               textAlign: TextAlign.right,
                               style: Theme.of(context)
                                   .textTheme
-                                  .headlineLarge!
-                                  .copyWith(
+                                  .headlineLarge?.copyWith(
                                     fontSize: 28,
                                     color: isStart
                                         ? Theme.of(context)
@@ -574,7 +572,7 @@ class _ScaleWgtTakeOutWidgetState extends State<ScaleWgtTakeOutWidget> {
                         child: Text(weightInfo?.weightUnit ?? '----',
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: Theme.of(context).textTheme.bodyLarge!.apply(
+                            style: Theme.of(context).textTheme.bodyLarge?.apply(
                                   color:
                                       Theme.of(context).colorScheme.onSurface,
                                 )),
@@ -589,8 +587,9 @@ class _ScaleWgtTakeOutWidgetState extends State<ScaleWgtTakeOutWidget> {
   }
 
   Widget showBtnWidget() {
+    final isMobile = MediaQuery.of(context).size.width < 600;
     return SizedBox(
-      width: 200,
+      width: isMobile ? 200 : 165, // 缩小平板宽度，原为 200
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
@@ -604,7 +603,7 @@ class _ScaleWgtTakeOutWidgetState extends State<ScaleWgtTakeOutWidget> {
                   : null,
               Theme.of(context).colorScheme.primary),
           SizedBox(
-            width: smallPadding,
+            width: isMobile ? 4 : smallPadding,
           ),
           showPerformIconBtn(
               performZeroSvgIcon(),
@@ -616,7 +615,7 @@ class _ScaleWgtTakeOutWidgetState extends State<ScaleWgtTakeOutWidget> {
                   : null,
               Theme.of(context).colorScheme.primary),
           SizedBox(
-            width: smallPadding,
+            width: isMobile ? 4 : smallPadding,
           ),
           if (!startTakeOut)
             showPerformIconBtn(
@@ -653,7 +652,7 @@ class _ScaleWgtTakeOutWidgetState extends State<ScaleWgtTakeOutWidget> {
                 Theme.of(context).colorScheme.error),
           if (mySettingParam.wgtMode == 0)
             SizedBox(
-              width: smallPadding,
+              width: isMobile ? 4 : smallPadding,
             ),
           if (mySettingParam.wgtMode == 0)
             Tooltip(
@@ -668,7 +667,7 @@ class _ScaleWgtTakeOutWidgetState extends State<ScaleWgtTakeOutWidget> {
                     .withOpacity(0.1),
                 style: IconButton.styleFrom(
                   disabledBackgroundColor:
-                      Theme.of(context).colorScheme.surfaceContainerLow,
+                      Theme.of(context).colorScheme.surface,
                   backgroundColor:
                       Theme.of(context).colorScheme.onTertiaryFixedVariant,
                   shape: RoundedRectangleBorder(
@@ -677,7 +676,7 @@ class _ScaleWgtTakeOutWidgetState extends State<ScaleWgtTakeOutWidget> {
                   ),
                   fixedSize: const Size(28, 28), // 设置固定大小
                 ),
-                onPressed: isStart && _isSaveBtnEnable && weightInfo!.isStable!
+                onPressed: isStart && _isSaveBtnEnable && (weightInfo?.isStable ?? false)
                     ? () {
                         _changeSaveButton();
                       }
@@ -686,9 +685,9 @@ class _ScaleWgtTakeOutWidgetState extends State<ScaleWgtTakeOutWidget> {
                   saveSvgIcon(),
                   28,
                   28,
-                  isStart && _isSaveBtnEnable && weightInfo!.isStable!
+                  isStart && _isSaveBtnEnable && (weightInfo?.isStable ?? false)
                       ? Theme.of(context).colorScheme.onPrimary
-                      : Theme.of(context).colorScheme.surfaceContainerHighest,
+                      : Theme.of(context).colorScheme.surface,
                 ),
               ),
             ),
@@ -712,7 +711,7 @@ class _ScaleWgtTakeOutWidgetState extends State<ScaleWgtTakeOutWidget> {
             style: IconButton.styleFrom(
               // 当按钮不可用时，设置背景颜色为灰色
               disabledBackgroundColor:
-                  Theme.of(context).colorScheme.surfaceContainerLow,
+                  Theme.of(context).colorScheme.surface,
               backgroundColor: color,
               shape: RoundedRectangleBorder(
                 // 设置为矩形形状
@@ -727,13 +726,13 @@ class _ScaleWgtTakeOutWidgetState extends State<ScaleWgtTakeOutWidget> {
                 iconBtnSize,
                 isStart
                     ? Theme.of(context).colorScheme.onPrimary
-                    : Theme.of(context).colorScheme.surfaceContainerHighest)));
+                    : Theme.of(context).colorScheme.surface)));
   }
 
   _changeSaveButton() {
     setState(() {
       String wgtValue = '';
-      if (weightInfo!.weightVal!.contains('-')) {
+      if ((weightInfo?.weightVal ?? '0').contains('-')) {
         showTipInfo((localizedStrings?.gTipInvalidWeightData ?? "gTipInvalidWeightData"), context);
         return;
       }
@@ -742,7 +741,7 @@ class _ScaleWgtTakeOutWidgetState extends State<ScaleWgtTakeOutWidget> {
         return;
       }
       if (!startTakeOut) {
-        wgtValue = weightInfo!.weightVal!;
+        wgtValue = (weightInfo?.weightVal ?? '0');
         double temp = double.tryParse(wgtValue) ?? 0.0;
         if (temp <= 0) {
           showTipInfo((localizedStrings?.gTipInvalidWeightData ?? "gTipInvalidWeightData"), context);
@@ -752,7 +751,7 @@ class _ScaleWgtTakeOutWidgetState extends State<ScaleWgtTakeOutWidget> {
         wgtValue = weightInfo!.weightUnit == 'g'
             ? (takeOutWgtvalue).toStringAsFixed(0)
             : (takeOutWgtvalue).toStringAsFixed(3);
-        lastWgtValue = double.tryParse(weightInfo!.weightVal!) ?? 0.0;
+        lastWgtValue = double.tryParse((weightInfo?.weightVal ?? '0')) ?? 0.0;
       }
 
       _addWeightToReport(wgtValue);
@@ -802,7 +801,7 @@ class _ScaleWgtTakeOutWidgetState extends State<ScaleWgtTakeOutWidget> {
       (tempPlu.limitLow == null) ? "" : tempPlu.limitLow.toString(),
 
       wgtValue,
-      (weightInfo?.weightUnit == '----') ? (" ") : (weightInfo!.weightUnit!),
+      (weightInfo?.weightUnit == '----') ? (" ") : ((weightInfo?.weightUnit ?? 'kg')),
       mySysUser.userName ?? "",
       mySysUser.nickName ?? "",
       tempDefScaleInfo.scaleName, //此处应该是秤机种名
@@ -855,10 +854,10 @@ class _ScaleWgtTakeOutWidgetState extends State<ScaleWgtTakeOutWidget> {
           24,
           20,
           isConditionMet == null
-              ? Theme.of(context).colorScheme.surfaceContainerHighest
+              ? Theme.of(context).colorScheme.surface
               : isConditionMet
                   ? Theme.of(context).colorScheme.onPrimary
-                  : Theme.of(context).colorScheme.surfaceContainerHighest),
+                  : Theme.of(context).colorScheme.surface),
     ));
   }
 }

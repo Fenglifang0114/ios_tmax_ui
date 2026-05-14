@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:t_max/data/formula_from_db_data.dart';
 import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/data/language.dart';
@@ -129,7 +129,7 @@ class _SearchFmaBarcodeDialogState extends State<SearchFmaBarcodeDialog> {
                                     .onSurfaceVariant,
                               ),
                             ),
-                            style: Theme.of(context).textTheme.bodySmall!.apply(
+                            style: Theme.of(context).textTheme.bodySmall?.apply(
                                   color:
                                       Theme.of(context).colorScheme.onSurface,
                                 ),
@@ -153,7 +153,7 @@ class _SearchFmaBarcodeDialogState extends State<SearchFmaBarcodeDialog> {
                           alignment: Alignment.centerLeft,
                           child: Text(
                             errString,
-                            style: Theme.of(context).textTheme.bodySmall!.apply(
+                            style: Theme.of(context).textTheme.bodySmall?.apply(
                                   color: Theme.of(context).colorScheme.error,
                                 ),
                           ),
@@ -189,7 +189,7 @@ class _SearchFmaBarcodeDialogState extends State<SearchFmaBarcodeDialog> {
                             },
                       child: Text(
                         (localizedStrings?.gBtnConfirm ?? "gBtnConfirm"),
-                        style: Theme.of(context).textTheme.bodySmall!.apply(
+                        style: Theme.of(context).textTheme.bodySmall?.apply(
                               color: Theme.of(context).colorScheme.onPrimary,
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -204,7 +204,7 @@ class _SearchFmaBarcodeDialogState extends State<SearchFmaBarcodeDialog> {
                             Theme.of(context).colorScheme.onSurfaceVariant,
                         backgroundColor: Theme.of(context)
                             .colorScheme
-                            .surfaceContainerHighest,
+                            .surface,
                         fixedSize: const Size(double.infinity, 48),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.zero,
@@ -215,7 +215,7 @@ class _SearchFmaBarcodeDialogState extends State<SearchFmaBarcodeDialog> {
                       },
                       child: Text(
                         (localizedStrings?.gBtnCancel ?? "gBtnCancel"),
-                        style: Theme.of(context).textTheme.bodySmall!.apply(
+                        style: Theme.of(context).textTheme.bodySmall?.apply(
                               color: Theme.of(context).colorScheme.onPrimary,
                               overflow: TextOverflow.ellipsis,
                             ),

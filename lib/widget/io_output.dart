@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/data/language.dart';
@@ -243,7 +243,7 @@ class _SetOutputPortDialogState extends State<SetOutputPortDialog> {
                 return DropdownMenuItem<String>(
                   value: item,
                   child: Text(item,
-                      style: Theme.of(context).textTheme.bodySmall!.apply(
+                      style: Theme.of(context).textTheme.bodySmall?.apply(
                             color: Theme.of(context).colorScheme.onSurface,
                           )),
                 );
@@ -262,7 +262,7 @@ class _SetOutputPortDialogState extends State<SetOutputPortDialog> {
                 valueCtl.text = value.toString();
               });
             },
-            style: Theme.of(context).textTheme.bodySmall!.apply(
+            style: Theme.of(context).textTheme.bodySmall?.apply(
                   color: Theme.of(context).colorScheme.onSurface,
                 )));
   }
@@ -490,7 +490,7 @@ class _SetOutputPortDialogState extends State<SetOutputPortDialog> {
                                     const EdgeInsets.symmetric(horizontal: 8),
                                 hintText: "0",
                                 hintStyle: getTextStyle(
-                                  color: colorScheme.surfaceContainerHighest,
+                                  color: colorScheme.surface,
                                 ),
                                 suffixText: "ms",
                                 suffixStyle: getTextStyle(
@@ -528,7 +528,7 @@ class _SetOutputPortDialogState extends State<SetOutputPortDialog> {
                                     const EdgeInsets.symmetric(horizontal: 8),
                                 hintText: "0.0",
                                 hintStyle: getTextStyle(
-                                  color: colorScheme.surfaceContainerHighest,
+                                  color: colorScheme.surface,
                                 ),
                                 prefixText: "<     ",
                                 prefixStyle: getTextStyle(
@@ -567,7 +567,7 @@ class _SetOutputPortDialogState extends State<SetOutputPortDialog> {
                                     const EdgeInsets.symmetric(horizontal: 8),
                                 hintText: (localizedStrings?.fRemarkCol ?? "fRemarkCol"),
                                 hintStyle: getTextStyle(
-                                  color: colorScheme.surfaceContainerHighest,
+                                  color: colorScheme.surface,
                                 ),
                               ),
                               style: getTextStyle(),
@@ -639,7 +639,7 @@ class _SetOutputPortDialogState extends State<SetOutputPortDialog> {
                       },
                       child: Text(
                         (localizedStrings?.gBtnSave ?? "gBtnSave"),
-                        style: Theme.of(context).textTheme.bodySmall!.apply(
+                        style: Theme.of(context).textTheme.bodySmall?.apply(
                               color: Theme.of(context).colorScheme.onPrimary,
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -654,7 +654,7 @@ class _SetOutputPortDialogState extends State<SetOutputPortDialog> {
                             Theme.of(context).colorScheme.onSurfaceVariant,
                         backgroundColor: Theme.of(context)
                             .colorScheme
-                            .surfaceContainerHighest,
+                            .surface,
                         fixedSize: const Size(double.infinity, 48),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.zero,
@@ -665,7 +665,7 @@ class _SetOutputPortDialogState extends State<SetOutputPortDialog> {
                       },
                       child: Text(
                         (localizedStrings?.button_back ?? "button_back"),
-                        style: Theme.of(context).textTheme.bodySmall!.apply(
+                        style: Theme.of(context).textTheme.bodySmall?.apply(
                               color: Theme.of(context).colorScheme.onPrimary,
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -684,8 +684,8 @@ class _SetOutputPortDialogState extends State<SetOutputPortDialog> {
   ColorScheme get colorScheme => Theme.of(context).colorScheme;
 
   TextStyle getTextStyle({Color? color}) {
-    return Theme.of(context).textTheme.bodySmall!.apply(
+    return Theme.of(context).textTheme.bodySmall?.apply(
           color: color ?? colorScheme.onSurface,
-        );
+        ) ?? const TextStyle();
   }
 }

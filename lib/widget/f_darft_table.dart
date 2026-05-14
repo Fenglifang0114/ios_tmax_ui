@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import 'package:intl/intl.dart';
 import 'package:t_max/data/darf_fma_data_from_db.dart';
@@ -317,7 +317,7 @@ class _DarftFmaTableState extends State<DarftFmaTable> {
                 child: Text(
                   title,
                   style:
-                      textTheme.bodyMedium!.apply(color: colorScheme.onSurface),
+                      textTheme.bodyMedium?.apply(color: colorScheme.onSurface),
                   overflow: TextOverflow.ellipsis,
                   maxLines: 1,
                 ),
@@ -351,7 +351,7 @@ class _DarftFmaTableState extends State<DarftFmaTable> {
               child: Text(
                 title,
                 style:
-                    textTheme.bodyMedium!.apply(color: colorScheme.onSurface),
+                    textTheme.bodyMedium?.apply(color: colorScheme.onSurface),
                 overflow: TextOverflow.ellipsis,
                 maxLines: 1,
               ),
