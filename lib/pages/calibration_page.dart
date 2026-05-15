@@ -1,4 +1,4 @@
-import 'dart:async';
+﻿import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -19,11 +19,11 @@ import '../data/language.dart';
 import '../functions/adaptive.dart';
 import '../widget/page_head.dart';
 
-const int step1 = 1; //步骤1
-const int step2 = 2; //步骤2
-const int step3 = 3; //步骤2
-const int step4 = 4; //步骤3
-const int step5 = 5; //步骤4
+const int step1 = 1; //姝ラ1
+const int step2 = 2; //姝ラ2
+const int step3 = 3; //姝ラ2
+const int step4 = 4; //姝ラ3
+const int step5 = 5; //姝ラ4
 
 const double thisScaleListWidth = 251;
 
@@ -48,9 +48,9 @@ class CalibrationPageState extends State<CalibrationPage> {
   TextEditingController zeroTrackingCtl = TextEditingController(text: "0.5d");
   TextEditingController manualZeroCtl = TextEditingController(text: "0");
   TextEditingController unitCtl = TextEditingController(text: "kg");
-  TextEditingController gravAccCtl = TextEditingController(text: "9.8"); //重力加速度
+  TextEditingController gravAccCtl = TextEditingController(text: "9.8"); //閲嶅姏鍔犻€熷害
 
-  int selScaleId = -1; //选择的秤ID
+  int selScaleId = -1; //閫夋嫨鐨勭ГID
 
   DateTime customDate = DateTime.now();
   DateTime customTime = DateTime.now();
@@ -60,14 +60,14 @@ class CalibrationPageState extends State<CalibrationPage> {
 
   ReceiveWgtInfo? weightInfo;
 
-  int curStep = 1; //当前步骤
+  int curStep = 1; //褰撳墠姝ラ
   bool isManaul = false;
-  bool isFinish = false; //是否完成校准
-  bool isCnting = false; //是否正在计数
-  bool isStart = false; //是否开始
-  bool isCalibration = false; //是否校准
+  bool isFinish = false; //鏄惁瀹屾垚鏍″噯
+  bool isCnting = false; //鏄惁姝ｅ湪璁℃暟
+  bool isStart = false; //鏄惁寮€濮?
+  bool isCalibration = false; //鏄惁鏍″噯
 
-// 存储初始值
+// 瀛樺偍鍒濆鍊?
   String initialMaxRange1 = '';
   String initialWgtUnit = '';
   String initialInitZero = '';
@@ -78,22 +78,22 @@ class CalibrationPageState extends State<CalibrationPage> {
   String initialGaduation1 = '';
   String currentWgtUnit = '';
 
-  dynamic eventBus1; //接收秤数据
-  dynamic eventBus2; //接收秤数据
-  dynamic eventBus3; //接收秤数据
-  dynamic eventBus4; //接收秤数据
-  dynamic eventBus5; //接收秤数据
-  dynamic eventBus6; //接收秤数据
-  dynamic eventBus7; //接收秤数据
-  dynamic eventBus8; //接收秤数据
-  dynamic eventBus9; //接收秤数据
-  dynamic eventBus10; //接收秤数据
-  dynamic eventBus11; //接收秤数据
-  dynamic eventBus12; //接收秤数据
-  dynamic eventBus13; //接收秤数据
-  dynamic eventBus14; //接收秤数据
+  dynamic eventBus1; //鎺ユ敹绉ゆ暟鎹?
+  dynamic eventBus2; //鎺ユ敹绉ゆ暟鎹?
+  dynamic eventBus3; //鎺ユ敹绉ゆ暟鎹?
+  dynamic eventBus4; //鎺ユ敹绉ゆ暟鎹?
+  dynamic eventBus5; //鎺ユ敹绉ゆ暟鎹?
+  dynamic eventBus6; //鎺ユ敹绉ゆ暟鎹?
+  dynamic eventBus7; //鎺ユ敹绉ゆ暟鎹?
+  dynamic eventBus8; //鎺ユ敹绉ゆ暟鎹?
+  dynamic eventBus9; //鎺ユ敹绉ゆ暟鎹?
+  dynamic eventBus10; //鎺ユ敹绉ゆ暟鎹?
+  dynamic eventBus11; //鎺ユ敹绉ゆ暟鎹?
+  dynamic eventBus12; //鎺ユ敹绉ゆ暟鎹?
+  dynamic eventBus13; //鎺ユ敹绉ゆ暟鎹?
+  dynamic eventBus14; //鎺ユ敹绉ゆ暟鎹?
 
-  //定时发送秤还活着
+  //瀹氭椂鍙戦€佺Г杩樻椿鐫€
   Timer? _cntAliveTimer;
   bool _isCntAliveTiming = false;
   bool get isCntAliveTiming => _isCntAliveTiming;
@@ -136,7 +136,7 @@ class CalibrationPageState extends State<CalibrationPage> {
 
   void onStartTimer() {
     startTimer = Timer.periodic(Duration(seconds: 3), (timer) {
-      isCnting = false; // 重置计时器状态
+      isCnting = false; // 閲嶇疆璁℃椂鍣ㄧ姸鎬?
       innerTimer = Timer(Duration(milliseconds: 1000), () {
         if (!isCnting) {
           isStart = false;
@@ -234,7 +234,7 @@ class CalibrationPageState extends State<CalibrationPage> {
           } else {
             if (curStep == step5) {
               setState(() {
-                // 获取校准后的重量间隔200ms
+                // 鑾峰彇鏍″噯鍚庣殑閲嶉噺闂撮殧200ms
                 Future.delayed(Duration(milliseconds: 200), () {
                   setState(() {
                     isFinish = true;
@@ -245,7 +245,7 @@ class CalibrationPageState extends State<CalibrationPage> {
                     CalLog calLog = CalLog(
                         scaleId: selScaleId,
                         type: "single",
-                        mode: "1", //标定点数量
+                        mode: "1", //鏍囧畾鐐规暟閲?
                         unit: currentWgtUnit,
                         calValue: scaleRangeCtl.text,
                         before: oldWeight.toString(),
@@ -442,7 +442,7 @@ class CalibrationPageState extends State<CalibrationPage> {
         }
       }
     });
-    //获取重量单位
+    //鑾峰彇閲嶉噺鍗曚綅
     eventBus13 = eventBus.on<EventRevGetWeightUnit>().listen((event) {
       if (mounted) {
         ChannelResponse tempRespData = ChannelResponse('', '', 0);
@@ -475,7 +475,7 @@ class CalibrationPageState extends State<CalibrationPage> {
       }
     });
 
-    //获取秤的最大量程1
+    //鑾峰彇绉ょ殑鏈€澶ч噺绋?
     eventBus14 = eventBus.on<EventRevGetMaxRange1>().listen((event) {
       if (mounted) {
         ChannelResponse tempRespData = ChannelResponse('', '', 0);
@@ -495,7 +495,7 @@ class CalibrationPageState extends State<CalibrationPage> {
       }
     });
 
-    // 在页面构建完成后显示提示
+    // 鍦ㄩ〉闈㈡瀯寤哄畬鎴愬悗鏄剧ず鎻愮ず
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (myAllScalesList.isEmpty) {
         showTipInfo((localizedStrings?.gTipNoDeviceAddFirst ?? "gTipNoDeviceAddFirst"), context);
@@ -595,7 +595,7 @@ class CalibrationPageState extends State<CalibrationPage> {
     if (curStep != step1 && curStep != step5) {
       showDialog(
         context: context,
-        barrierDismissible: false, // 点击对话框外部不关闭对话框
+        barrierDismissible: false, // 鐐瑰嚮瀵硅瘽妗嗗閮ㄤ笉鍏抽棴瀵硅瘽妗?
         builder: (BuildContext ctx) {
           return ShowNormalTipDialog(
             title: (localizedStrings?.fTipTitle ?? "fTipTitle"),
@@ -852,7 +852,7 @@ class CalibrationPageState extends State<CalibrationPage> {
             ], (onValue) {
               showDialog(
                 context: context,
-                barrierDismissible: false, // 点击对话框外部不关闭对话框
+                barrierDismissible: false, // 鐐瑰嚮瀵硅瘽妗嗗閮ㄤ笉鍏抽棴瀵硅瘽妗?
                 builder: (BuildContext ctx) {
                   return ShowNormalTipDialog(
                     title: (localizedStrings?.fTipTitle ?? "fTipTitle"),
@@ -999,7 +999,7 @@ class CalibrationPageState extends State<CalibrationPage> {
                   ),
                 ),
                 onPressed: () {
-                  //取消的话重新获取下参数
+                  //鍙栨秷鐨勮瘽閲嶆柊鑾峰彇涓嬪弬鏁?
 
                   showTipInfo((localizedStrings?.gTipGettingParameter ?? "gTipGettingParameter"), context);
 
@@ -1023,7 +1023,7 @@ class CalibrationPageState extends State<CalibrationPage> {
   }
 
   void performModifyParameter() {
-    // 比较并发送修改协议
+    // 姣旇緝骞跺彂閫佷慨鏀瑰崗璁?
     if (scaleCap1Ctl.text != initialMaxRange1) {
       PublicFunctions.setMaxRange1(selScaleId, scaleCap1Ctl.text);
     }
@@ -1047,11 +1047,11 @@ class CalibrationPageState extends State<CalibrationPage> {
 
     if (initialZeroCtl.text != initialInitZero) {
       PublicFunctions.setInitialZero(
-          selScaleId, initialZeroCtl.text); // 假设存在此方法
+          selScaleId, initialZeroCtl.text); // 鍋囪瀛樺湪姝ゆ柟娉?
     }
 
     if (manualZeroCtl.text != initialManualZero) {
-      PublicFunctions.setManualZero(selScaleId, manualZeroCtl.text); // 假设存在此方法
+      PublicFunctions.setManualZero(selScaleId, manualZeroCtl.text); // 鍋囪瀛樺湪姝ゆ柟娉?
     }
 
     if (zeroTrackingCtl.text != initialZeroTracking) {
@@ -1119,13 +1119,13 @@ class CalibrationPageState extends State<CalibrationPage> {
         inputFormatters: [
           FilteringTextInputFormatter.digitsOnly,
           TextInputFormatter.withFunction((oldValue, newValue) {
-            if (newValue.text.isEmpty) return newValue; // 允许清空输入
+            if (newValue.text.isEmpty) return newValue; // 鍏佽娓呯┖杈撳叆
             if (newValue.text.startsWith('0') && newValue.text.length > 1) {
-              return oldValue; // 不允许以 0 开头且长度大于 1 的输入
+              return oldValue; // 涓嶅厑璁镐互 0 寮€澶翠笖闀垮害澶т簬 1 鐨勮緭鍏?
             }
             final intValue = int.tryParse(newValue.text);
             if (intValue != null && intValue > 0) {
-              return newValue; // 只允许正整数
+              return newValue; // 鍙厑璁告鏁存暟
             }
             return oldValue;
           }),
@@ -1155,10 +1155,10 @@ class CalibrationPageState extends State<CalibrationPage> {
       child: TextField(
         enabled: true,
         controller: gravAccCtl,
-        // 允许输入数字和小数点
+        // 鍏佽杈撳叆鏁板瓧鍜屽皬鏁扮偣
         keyboardType: const TextInputType.numberWithOptions(decimal: true),
         inputFormatters: [
-          // 修正后的正则表达式，允许9之后直接输入小数点
+          // 淇鍚庣殑姝ｅ垯琛ㄨ揪寮忥紝鍏佽9涔嬪悗鐩存帴杈撳叆灏忔暟鐐?
           FilteringTextInputFormatter.allow(
               RegExp(r'^9(\.?|(\.(7|8)\d{0,4})?)$')),
         ],
@@ -1210,9 +1210,9 @@ class CalibrationPageState extends State<CalibrationPage> {
             child: Row(
               children: [
                 Expanded(flex: 2, child: SizedBox()),
-                // 使用 Expanded 让输入框宽度随页面变化
+                // 浣跨敤 Expanded 璁╄緭鍏ユ瀹藉害闅忛〉闈㈠彉鍖?
                 Expanded(
-                    flex: 5, // 分配比例
+                    flex: 5, // 鍒嗛厤姣斾緥
                     child: Column(
                       children: [
                         Container(
@@ -1223,10 +1223,10 @@ class CalibrationPageState extends State<CalibrationPage> {
                           height: inputHeight,
                           child: TextField(
                             controller: scaleRangeCtl,
-                            // 只允许输入数字
+                            // 鍙厑璁歌緭鍏ユ暟瀛?
                             keyboardType: TextInputType.number,
                             inputFormatters: [
-                              FilteringTextInputFormatter.digitsOnly, // 只允许输入数字
+                              FilteringTextInputFormatter.digitsOnly, // 鍙厑璁歌緭鍏ユ暟瀛?
                               TextInputFormatter.withFunction(
                                   (oldValue, newValue) {
                                 if (newValue.text.isEmpty) return newValue;
@@ -1247,13 +1247,13 @@ class CalibrationPageState extends State<CalibrationPage> {
                               hintStyle: TextStyle(
                                 color: Theme.of(context)
                                     .colorScheme
-                                    .onSurface, // 设置提示文本颜色
+                                    .onSurface, // 璁剧疆鎻愮ず鏂囨湰棰滆壊
                               ),
                             ),
                             style: Theme.of(context).textTheme.bodySmall!.apply(
                                   color: Theme.of(context)
                                       .colorScheme
-                                      .onSurface, // 设置输入文本颜色
+                                      .onSurface, // 璁剧疆杈撳叆鏂囨湰棰滆壊
                                 ),
                             onChanged: (value) {
                               setState(() {});
@@ -1265,9 +1265,9 @@ class CalibrationPageState extends State<CalibrationPage> {
                 SizedBox(
                   width: largePadding,
                 ),
-                // 使用 Expanded 让下拉按钮宽度随页面变化
+                // 浣跨敤 Expanded 璁╀笅鎷夋寜閽搴﹂殢椤甸潰鍙樺寲
                 Expanded(
-                    flex: 2, // 分配比例
+                    flex: 2, // 鍒嗛厤姣斾緥
                     child: Column(
                       children: [
                         SizedBox(
@@ -1311,7 +1311,7 @@ class CalibrationPageState extends State<CalibrationPage> {
             child: Row(
               children: [
                 Expanded(
-                    flex: 5, // 分配比例
+                    flex: 5, // 鍒嗛厤姣斾緥
                     child: Column(
                       children: [
                         SizedBox(
@@ -1675,39 +1675,39 @@ class CalibrationPageState extends State<CalibrationPage> {
     Color circleTextColor = initColor;
 
     if (curStep == stepIndex) {
-      fillingColor = Theme.of(context).colorScheme.primary; // 已完成的步骤颜色
-      textColor = Theme.of(context).colorScheme.primary; // 已完成的步骤颜色
-      circleColor = Theme.of(context).colorScheme.primary; // 已完成的步骤颜色
-      circleTextColor = Theme.of(context).colorScheme.onPrimary; // 已完成的步骤文字颜色
-      leftLineColor = Theme.of(context).colorScheme.primary; // 已完成的步骤左线颜色
+      fillingColor = Theme.of(context).colorScheme.primary; // 宸插畬鎴愮殑姝ラ棰滆壊
+      textColor = Theme.of(context).colorScheme.primary; // 宸插畬鎴愮殑姝ラ棰滆壊
+      circleColor = Theme.of(context).colorScheme.primary; // 宸插畬鎴愮殑姝ラ棰滆壊
+      circleTextColor = Theme.of(context).colorScheme.onPrimary; // 宸插畬鎴愮殑姝ラ鏂囧瓧棰滆壊
+      leftLineColor = Theme.of(context).colorScheme.primary; // 宸插畬鎴愮殑姝ラ宸︾嚎棰滆壊
     } else if (curStep > stepIndex) {
       fillingColor =
-          Theme.of(context).colorScheme.onTertiaryFixedVariant; // 已完成的步骤颜色
+          Theme.of(context).colorScheme.onTertiaryFixedVariant; // 宸插畬鎴愮殑姝ラ棰滆壊
       textColor =
-          Theme.of(context).colorScheme.onTertiaryFixedVariant; // 已完成的步骤文字颜色
+          Theme.of(context).colorScheme.onTertiaryFixedVariant; // 宸插畬鎴愮殑姝ラ鏂囧瓧棰滆壊
       circleColor =
-          Theme.of(context).colorScheme.onTertiaryFixedVariant; // 已完成的步骤颜色
-      circleTextColor = Theme.of(context).colorScheme.onPrimary; // 已完成的步骤文字颜色
+          Theme.of(context).colorScheme.onTertiaryFixedVariant; // 宸插畬鎴愮殑姝ラ棰滆壊
+      circleTextColor = Theme.of(context).colorScheme.onPrimary; // 宸插畬鎴愮殑姝ラ鏂囧瓧棰滆壊
       leftLineColor =
-          Theme.of(context).colorScheme.onTertiaryFixedVariant; // 已完成的步骤左线颜色
+          Theme.of(context).colorScheme.onTertiaryFixedVariant; // 宸插畬鎴愮殑姝ラ宸︾嚎棰滆壊
 
       rightLineColor = curStep - stepIndex > 1
           ? Theme.of(context).colorScheme.onTertiaryFixedVariant
-          : Theme.of(context).colorScheme.primary; // 已完成的步骤左线颜色
+          : Theme.of(context).colorScheme.primary; // 宸插畬鎴愮殑姝ラ宸︾嚎棰滆壊
     }
 
     if (isFinish && curStep == step5) {
       fillingColor =
-          Theme.of(context).colorScheme.onTertiaryFixedVariant; // 已完成的步骤颜色
+          Theme.of(context).colorScheme.onTertiaryFixedVariant; // 宸插畬鎴愮殑姝ラ棰滆壊
       textColor =
-          Theme.of(context).colorScheme.onTertiaryFixedVariant; // 已完成的步骤文字颜色
+          Theme.of(context).colorScheme.onTertiaryFixedVariant; // 宸插畬鎴愮殑姝ラ鏂囧瓧棰滆壊
       circleColor =
-          Theme.of(context).colorScheme.onTertiaryFixedVariant; // 已完成的步骤颜色
-      circleTextColor = Theme.of(context).colorScheme.onPrimary; // 已完成的步骤文字颜色
+          Theme.of(context).colorScheme.onTertiaryFixedVariant; // 宸插畬鎴愮殑姝ラ棰滆壊
+      circleTextColor = Theme.of(context).colorScheme.onPrimary; // 宸插畬鎴愮殑姝ラ鏂囧瓧棰滆壊
       leftLineColor =
-          Theme.of(context).colorScheme.onTertiaryFixedVariant; // 已完成的步骤左线颜色
+          Theme.of(context).colorScheme.onTertiaryFixedVariant; // 宸插畬鎴愮殑姝ラ宸︾嚎棰滆壊
       rightLineColor =
-          Theme.of(context).colorScheme.onTertiaryFixedVariant; // 已完成的步骤左线颜色
+          Theme.of(context).colorScheme.onTertiaryFixedVariant; // 宸插畬鎴愮殑姝ラ宸︾嚎棰滆壊
     }
 
     if (stepIndex == step1) {
@@ -1729,7 +1729,7 @@ class CalibrationPageState extends State<CalibrationPage> {
                     height: 1,
                     color: leftLineColor,
 
-                    // 可根据需求修改横线颜色
+                    // 鍙牴鎹渶姹備慨鏀规í绾块鑹?
                   ),
                 ),
                 Container(
@@ -1737,23 +1737,23 @@ class CalibrationPageState extends State<CalibrationPage> {
                   height: 30,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: fillingColor, // 内部填充白色
+                    color: fillingColor, // 鍐呴儴濉厖鐧借壊
                     border: Border.all(
                       color: circleColor,
-                      width: 2, // 边框宽度为 2
+                      width: 2, // 杈规瀹藉害涓?2
                     ),
                   ),
                   child: Center(
                     child: Text(
-                      stepIndex.toString(), // 可根据需求修改数组，这里以数字 1 为例
+                      stepIndex.toString(), // 鍙牴鎹渶姹備慨鏀规暟缁勶紝杩欓噷浠ユ暟瀛?1 涓轰緥
                       style: Theme.of(context).textTheme.bodyMedium!.apply(
-                            color: circleTextColor, // 文字为灰色,
-                          ), // 文字为灰色,
+                            color: circleTextColor, // 鏂囧瓧涓虹伆鑹?
+                          ), // 鏂囧瓧涓虹伆鑹?
                     ),
                   ),
                 ),
                 Expanded(
-                  child: Container(height: 1, color: rightLineColor // 未完成的步骤颜色
+                  child: Container(height: 1, color: rightLineColor // 鏈畬鎴愮殑姝ラ棰滆壊
                       ),
                 ),
               ],
@@ -1765,9 +1765,9 @@ class CalibrationPageState extends State<CalibrationPage> {
                 child: Text(
                   getStepTitle(stepIndex),
                   style: Theme.of(context).textTheme.bodySmall!.apply(
-                        color: textColor, // 文字颜色
+                        color: textColor, // 鏂囧瓧棰滆壊
                       ),
-                  // overflow: TextOverflow.ellipsis, // 超出部分省略号处理
+                  // overflow: TextOverflow.ellipsis, // 瓒呭嚭閮ㄥ垎鐪佺暐鍙峰鐞?
                 ))
           ],
         ),

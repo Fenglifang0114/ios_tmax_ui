@@ -62,7 +62,8 @@ class _WgtDataTableState extends State<WgtDataTable> {
       }
     });
 
-    return LayoutBuilder(
+    return Expanded(
+      child: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints builder) {
           final double width = builder.maxWidth; // 获取当前可用宽度
           final double height = builder.maxHeight;
@@ -275,7 +276,8 @@ class _WgtDataTableState extends State<WgtDataTable> {
             ),
           );
         },
-      );
+      ),
+    );
   }
 
   int getItemNum(TableState tableState) {

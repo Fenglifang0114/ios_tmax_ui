@@ -1,4 +1,4 @@
-//蓝牙设置界面   蓝牙设置只能通过串口
+﻿//钃濈墮璁剧疆鐣岄潰   钃濈墮璁剧疆鍙兘閫氳繃涓插彛
 
 import 'dart:async';
 import 'package:flutter/material.dart';
@@ -94,7 +94,7 @@ class BluetoothPageState extends State<BluetoothPage> {
         });
       }
     });
-    // 在页面构建完成后显示提示
+    // 鍦ㄩ〉闈㈡瀯寤哄畬鎴愬悗鏄剧ず鎻愮ず
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (comScalesList.isEmpty) {
         showTipInfo((localizedStrings?.gTipNoDeviceAddFirst ?? "gTipNoDeviceAddFirst"), context);
@@ -258,7 +258,7 @@ class BluetoothPageState extends State<BluetoothPage> {
     );
   }
 
-  //切换的时候要修改掉秤的信息
+  //鍒囨崲鐨勬椂鍊欒淇敼鎺夌Г鐨勪俊鎭?
   void changeScale(int scaleId) {
     setState(() {
       selScaleId = scaleId;
@@ -320,8 +320,8 @@ class BluetoothPageState extends State<BluetoothPage> {
                           border: Border.all(
                               color: Theme.of(context)
                                   .colorScheme
-                                  .outlineVariant), // 设置边框颜色
-                          borderRadius: BorderRadius.circular(0), // 设置圆角
+                                  .outlineVariant), // 璁剧疆杈规棰滆壊
+                          borderRadius: BorderRadius.circular(0), // 璁剧疆鍦嗚
                         ),
                         child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -330,7 +330,7 @@ class BluetoothPageState extends State<BluetoothPage> {
                                 child: TextField(
                                   controller: _deviceNameController,
                                   decoration: InputDecoration(
-                                    border: InputBorder.none, // 移除默认边框
+                                    border: InputBorder.none, // 绉婚櫎榛樿杈规
                                   ),
                                   onChanged: (value) {
                                     setState(() {});
@@ -424,20 +424,20 @@ class BluetoothPageState extends State<BluetoothPage> {
                                           borderSide: BorderSide(
                                             color: Theme.of(context)
                                                 .colorScheme
-                                                .outlineVariant, // 设置边框颜色
-                                            width: 1.0, // 设置边框宽度
+                                                .outlineVariant, // 璁剧疆杈规棰滆壊
+                                            width: 1.0, // 璁剧疆杈规瀹藉害
                                           ),
                                           borderRadius: BorderRadius.all(
                                               Radius.circular(0.0))),
                                       border: OutlineInputBorder()),
-                                  // 设置默认值
+                                  // 璁剧疆榛樿鍊?
                                   value: emissionPowerVale,
-                                  // 选择回调
+                                  // 閫夋嫨鍥炶皟
                                   onChanged: (String? newPosition) {
                                     emissionPowerVale = newPosition.toString();
                                     setState(() {});
                                   },
-                                  // 传入可选的数组
+                                  // 浼犲叆鍙€夌殑鏁扮粍
 
                                   items: emissionPowerMap.entries
                                       .map<DropdownMenuItem<String>>((entry) {
@@ -514,6 +514,6 @@ class BluetoothPageState extends State<BluetoothPage> {
 
   void _stopTimer() {
     isSetting = false;
-    _timer?.cancel(); // 停止计时器
+    _timer?.cancel(); // 鍋滄璁℃椂鍣?
   }
 }

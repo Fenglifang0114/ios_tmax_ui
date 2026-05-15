@@ -1,4 +1,4 @@
-import 'dart:async';
+﻿import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:t_max/data/home_page_common_data.dart';
@@ -37,21 +37,21 @@ class WeightModePageState extends State<WeightModePage> {
   dynamic eventBus6;
   dynamic eventBus7;
 
-  // 添加定时器变量
+  // 娣诲姞瀹氭椂鍣ㄥ彉閲?
   Timer? _scaleCheckTimer;
 
   @override
   void initState() {
     super.initState();
-    // 确保秤列表已从后端获取
+    // 纭繚绉ゅ垪琛ㄥ凡浠庡悗绔幏鍙?
     PublicFunctions.getScaleList();
 
-    // 初始化定时器，每隔5秒执行一次检查
+    // 鍒濆鍖栧畾鏃跺櫒锛屾瘡闅?绉掓墽琛屼竴娆℃鏌?
     _scaleCheckTimer = Timer.periodic(Duration(seconds: 5), (timer) {
       checkSameScale();
     });
 
-    // 初始加载时立即检查一次
+    // 鍒濆鍔犺浇鏃剁珛鍗虫鏌ヤ竴娆?
     WidgetsBinding.instance.addPostFrameCallback((_) {
       checkSameScale();
     });
@@ -71,7 +71,7 @@ class WeightModePageState extends State<WeightModePage> {
       }
     });
 
-    // 监听秤列表更新事件，确保数据加载后刷新 UI
+    // 鐩戝惉绉ゅ垪琛ㄦ洿鏂颁簨浠讹紝纭繚鏁版嵁鍔犺浇鍚庡埛鏂?UI
     eventBus7 = eventBus.on<EventRespAddScale>().listen((event) {
       if (mounted) {
         getSelScaleInApp();
@@ -98,7 +98,7 @@ class WeightModePageState extends State<WeightModePage> {
     _scaleCheckTimer?.cancel();
 
     for (var item in mySelScaleIdList) {
-      debugPrint("WeightMode: 正在停止秤 $item 的数据推送...");
+      debugPrint("WeightMode: 姝ｅ湪鍋滄绉?$item 鐨勬暟鎹帹閫?..");
       PublicFunctions.stopWeight(item);
     }
 
@@ -125,7 +125,7 @@ class WeightModePageState extends State<WeightModePage> {
     final bool isMobile = Adaptive.isMobile(context);
 
     return Scaffold(
-      // key: _scaffoldKey, // 移除全局键以避免布局切换时的断言错误
+      // key: _scaffoldKey, // 绉婚櫎鍏ㄥ眬閿互閬垮厤甯冨眬鍒囨崲鏃剁殑鏂█閿欒
       drawer: isMobile
           ? Drawer(
               width: scaleListWidth + 20,
@@ -231,7 +231,7 @@ class WeightModePageState extends State<WeightModePage> {
         scaleMap[scale.scaleId] = scale;
       }
 
-      // 根据物理设备（型号 + 序列号）对选中的秤进行分组
+      // 鏍规嵁鐗╃悊璁惧锛堝瀷鍙?+ 搴忓垪鍙凤級瀵归€変腑鐨勭Г杩涜鍒嗙粍
       Map<String, List<Scale>> groups = {};
       for (var scaleId in mySelScaleIdList) {
         var scale = scaleMap[scaleId];
@@ -243,19 +243,19 @@ class WeightModePageState extends State<WeightModePage> {
 
       for (var group in groups.values) {
         if (group.length > 1) {
-          // 冲突：同一个物理设备选择了多种连接方式
+          // 鍐茬獊锛氬悓涓€涓墿鐞嗚澶囬€夋嫨浜嗗绉嶈繛鎺ユ柟寮?
           showTipInfo((localizedStrings?.tipSameScale ?? "tipSameScale"), context);
 
-          // 优先级：串口(0) > 网口(1) > 蓝牙(2)。排序并保留最高优先级的连接。
+          // 浼樺厛绾э細涓插彛(0) > 缃戝彛(1) > 钃濈墮(2)銆傛帓搴忓苟淇濈暀鏈€楂樹紭鍏堢骇鐨勮繛鎺ャ€?
           group.sort((a, b) => a.tMedia.compareTo(b.tMedia));
 
-          // 移除除第一个（优先级最高）之外的所有连接
+          // 绉婚櫎闄ょ涓€涓紙浼樺厛绾ф渶楂橈級涔嬪鐨勬墍鏈夎繛鎺?
           for (int i = 1; i < group.length; i++) {
             if (mySelScaleIdList.contains(group[i].scaleId)) {
               addOrRemoveSelScale(group[i].scaleId);
             }
           }
-          break; // 每个检查周期只显示一次提示
+          break; // 姣忎釜妫€鏌ュ懆鏈熷彧鏄剧ず涓€娆℃彁绀?
         }
       }
     }
@@ -264,7 +264,7 @@ class WeightModePageState extends State<WeightModePage> {
 
   void addOrRemoveSelScale(int scaleId) async {
     if (_processingScaleIds.contains(scaleId)) {
-      debugPrint("WeightMode: 秤 $scaleId 正在处理中，忽略操作");
+      debugPrint("WeightMode: 绉?$scaleId 姝ｅ湪澶勭悊涓紝蹇界暐鎿嶄綔");
       return;
     }
 
@@ -274,7 +274,7 @@ class WeightModePageState extends State<WeightModePage> {
       if (mySelScaleIdList.contains(scaleId)) {
         mySelScaleIdList.remove(scaleId);
         PublicFunctions.stopWeight(scaleId);
-        // 给予一点时间让指令在链路上处理完
+        // 缁欎簣涓€鐐规椂闂磋鎸囦护鍦ㄩ摼璺笂澶勭悊瀹?
         await Future.delayed(const Duration(milliseconds: 300));
       } else {
         mySelScaleIdList.add(scaleId);
@@ -283,7 +283,7 @@ class WeightModePageState extends State<WeightModePage> {
       }
       
       if (mounted) {
-        setState(() {}); // 强制刷新界面
+        setState(() {}); // 寮哄埗鍒锋柊鐣岄潰
         checkSameScale();
       }
     } finally {
@@ -324,8 +324,8 @@ class WeightModePageState extends State<WeightModePage> {
             const SizedBox(height: smallPadding),
             Text(
               Adaptive.isMobile(context)
-                  ? '请点击左上角菜单选择设备'
-                  : '请在左侧列表选择设备',
+                  ? '璇风偣鍑诲乏涓婅鑿滃崟閫夋嫨璁惧'
+                  : '璇峰湪宸︿晶鍒楄〃閫夋嫨璁惧',
               style: Theme.of(context).textTheme.bodySmall!.copyWith(
                     color: Theme.of(context).colorScheme.outline,
                   ),

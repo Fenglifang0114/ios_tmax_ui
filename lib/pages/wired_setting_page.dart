@@ -1,4 +1,4 @@
-// wifi 设置界面 只能用串口设置
+﻿// wifi 璁剧疆鐣岄潰 鍙兘鐢ㄤ覆鍙ｈ缃?
 
 import 'dart:async';
 import 'dart:convert';
@@ -42,9 +42,9 @@ class WiredSettingPageState extends State<WiredSettingPage> {
   bool _isStatic = false;
   bool _isPressing = false;
   bool alreadyConnected = false;
-  bool isBusy = false; //WIFI列表进来只获取一次
+  bool isBusy = false; //WIFI鍒楄〃杩涙潵鍙幏鍙栦竴娆?
 
-  bool isSetting = false; //正在操作
+  bool isSetting = false; //姝ｅ湪鎿嶄綔
 
   dynamic _eventbus1;
   dynamic _eventbus2;
@@ -168,7 +168,7 @@ class WiredSettingPageState extends State<WiredSettingPage> {
       }
     });
 
-    // 在页面构建完成后显示提示
+    // 鍦ㄩ〉闈㈡瀯寤哄畬鎴愬悗鏄剧ず鎻愮ず
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (comScalesList.isEmpty) {
         showTipInfo((localizedStrings?.gTipNoDeviceAddFirst ?? "gTipNoDeviceAddFirst"), context);

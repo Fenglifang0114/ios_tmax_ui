@@ -1,4 +1,4 @@
-﻿// ignore_for_file: invalid_use_of_protected_member
+// ignore_for_file: invalid_use_of_protected_member
 part of 'multi_scale_management_page.dart';
 
 extension MultiScaleManagementListExt on MultiScaleManagementState {
@@ -273,12 +273,6 @@ extension MultiScaleManagementListExt on MultiScaleManagementState {
                               scale.mediaConfig as BluetoothMediaConfig;
                           macCtl.text = bluetoothConfig.mac;
                           btNameCtl.text = bluetoothConfig.name;
-                        }
-                        if ((scale.scaleModel == 'T-Max' ||
-                                scale.scaleModel == 'TMax') &&
-                            scale.scaleSn.length == 10) {
-                          scaleModelCtl.text = '';
-                          snCtl.text = '';
                         }
                       });
                     },

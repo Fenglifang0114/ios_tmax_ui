@@ -1,6 +1,6 @@
-// //主页
+﻿// //涓婚〉
 
-//首页   测试首页
+//棣栭〉   娴嬭瘯棣栭〉
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
@@ -41,10 +41,10 @@ class MyHomePage extends StatefulWidget {
 class MyHomePageState extends State<MyHomePage>
     with WindowLifecycleMixin {
   String _selectedNavRoute = '/';
-  String lastRouteName = defualtSelectPage; //除了设置外的最后一个路由
+  String lastRouteName = defualtSelectPage; //闄や簡璁剧疆澶栫殑鏈€鍚庝竴涓矾鐢?
 
   bool isLeftBarCollapsed = false;
-  // isResize 已经在 WindowLifecycleMixin 中定义
+  // isResize 宸茬粡鍦?WindowLifecycleMixin 涓畾涔?
   DateTime dataTimeNow = DateTime.now();
 
   dynamic _eventbus1;
@@ -56,7 +56,7 @@ class MyHomePageState extends State<MyHomePage>
   dynamic _eventbus8;
   dynamic _eventbus9;
   ScrollController scrollController = ScrollController();
-  bool isHovering = false; // 用于控制鼠标悬停状态
+  bool isHovering = false; // 鐢ㄤ簬鎺у埗榧犳爣鎮仠鐘舵€?
 
   bool _isInitialized = false;
 
@@ -173,7 +173,7 @@ class MyHomePageState extends State<MyHomePage>
               myComScaleInfo.isOnline = false;
               ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                   content: Text('The serial port disconnected.',
-                      style: const TextStyle(fontSize: 20)), ////此处需要秤回复
+                      style: const TextStyle(fontSize: 20)), ////姝ゅ闇€瑕佺Г鍥炲
                   duration: const Duration(seconds: 5),
                   backgroundColor: Theme.of(context).colorScheme.error));
             }
@@ -189,7 +189,7 @@ class MyHomePageState extends State<MyHomePage>
       });
     });
 
-    // 所有初始化完成后设置默认页面
+    // 鎵€鏈夊垵濮嬪寲瀹屾垚鍚庤缃粯璁ら〉闈?
   }
 
   @override
@@ -212,7 +212,7 @@ class MyHomePageState extends State<MyHomePage>
   void _navigateContent(String routeName) {
     setState(() {
       _selectedNavRoute = routeName;
-      showLeftNavigationBar = !routeName.startsWith('/settings'); // 控制导航栏显示
+      showLeftNavigationBar = !routeName.startsWith('/settings'); // 鎺у埗瀵艰埅鏍忔樉绀?
     });
 
     if (routeName.contains('/settings')) {
@@ -225,7 +225,7 @@ class MyHomePageState extends State<MyHomePage>
           builder: (context) =>
               buildPageContent(_navigateContent, routeName, null),
         ),
-        (route) => false, // 这个条件永远返回 false，表示移除所有现有路由
+        (route) => false, // 杩欎釜鏉′欢姘歌繙杩斿洖 false锛岃〃绀虹Щ闄ゆ墍鏈夌幇鏈夎矾鐢?
       );
     } else {
       lastRouteName = routeName;
@@ -235,13 +235,13 @@ class MyHomePageState extends State<MyHomePage>
           builder: (context) =>
               buildPageContent(_navigateContent, routeName, null),
         ),
-        (route) => false, // 这个条件永远返回 false，表示移除所有现有路由
+        (route) => false, // 杩欎釜鏉′欢姘歌繙杩斿洖 false锛岃〃绀虹Щ闄ゆ墍鏈夌幇鏈夎矾鐢?
       );
     }
   }
 
   Widget showNavigationBar() {
-    // 获取层级菜单数据
+    // 鑾峰彇灞傜骇鑿滃崟鏁版嵁
     final hierarchicalMenus = getHierarchicalConfigMenus();
 
     return ListView.builder(
@@ -255,15 +255,15 @@ class MyHomePageState extends State<MyHomePage>
 
   final Map<int, bool> _expandedStates = {};
 
-// 构建菜单组
+// 鏋勫缓鑿滃崟缁?
   Widget _buildMenuGroup(RouteDataGroup group, int groupIndex) {
     if (group.children.isEmpty) {
       return Container();
     }
 
-    // 特殊处理"多台秤管理"组 - 直接作为菜单项跳转
+    // 鐗规畩澶勭悊"澶氬彴绉ょ鐞?缁?- 鐩存帴浣滀负鑿滃崟椤硅烦杞?
     if (group.title == (localizedStrings?.menuMultiScaleManagement ?? "menuMultiScaleManagement")) {
-      // 获取第一个有效路由项
+      // 鑾峰彇绗竴涓湁鏁堣矾鐢遍」
       final effectiveRoute = group.children.firstWhere(
         (item) => item is RouteData,
         orElse: () => RouteData(
@@ -309,8 +309,8 @@ class MyHomePageState extends State<MyHomePage>
         (_expandedStates[groupIndex] ?? false)
             ? Icons.expand_less
             : Icons.expand_more,
-        color: Theme.of(context).colorScheme.onPrimary, // 设置图标颜色
-        size: 20, // 可选：调整图标大小
+        color: Theme.of(context).colorScheme.onPrimary, // 璁剧疆鍥炬爣棰滆壊
+        size: 20, // 鍙€夛細璋冩暣鍥炬爣澶у皬
       ),
       onExpansionChanged: (isExpanded) {
         setState(() {
@@ -318,9 +318,9 @@ class MyHomePageState extends State<MyHomePage>
         });
       },
       children: group.children.map((item) {
-        // 判断子项类型并构建
+        // 鍒ゆ柇瀛愰」绫诲瀷骞舵瀯寤?
         if (item is RouteDataGroup) {
-          return _buildMenuGroup(item, groupIndex); // 支持嵌套组
+          return _buildMenuGroup(item, groupIndex); // 鏀寔宓屽缁?
         } else if (item is RouteData) {
           return _buildMenuItem(item, isSubMenu: true);
         }
@@ -329,17 +329,17 @@ class MyHomePageState extends State<MyHomePage>
     );
   }
 
-// 构建菜单项（增加isSubMenu参数）
+// 鏋勫缓鑿滃崟椤癸紙澧炲姞isSubMenu鍙傛暟锛?
   Widget _buildMenuItem(RouteData item,
       {bool showIcon = false, bool isSubMenu = false}) {
     return ShowMenuItem(
       showIcon: showIcon,
       demo: item,
       isExpanded: true,
-      isSelected: item.routeName == _selectedNavRoute, // 选中状态
+      isSelected: item.routeName == _selectedNavRoute, // 閫変腑鐘舵€?
       onTap: () {
         _navigateContent(item.routeName!);
-      }, // 点击回调
+      }, // 鐐瑰嚮鍥炶皟
     );
   }
 
@@ -484,7 +484,7 @@ class MyHomePageState extends State<MyHomePage>
             child: Text(
               (localizedStrings?.userManagement ?? "userManagement"),
               style: textTheme.bodySmall!.apply(
-                // 根据选中状态改变颜色
+                // 鏍规嵁閫変腑鐘舵€佹敼鍙橀鑹?
                 color: colorScheme.surface,
               ),
             ),
@@ -505,7 +505,7 @@ class MyHomePageState extends State<MyHomePage>
             child: Text(
               (localizedStrings?.logManagement ?? "logManagement"),
               style: textTheme.bodySmall!.apply(
-                // 根据选中状态改变颜色
+                // 鏍规嵁閫変腑鐘舵€佹敼鍙橀鑹?
                 color: colorScheme.surface,
               ),
             ),
@@ -526,7 +526,7 @@ class MyHomePageState extends State<MyHomePage>
             child: Text(
               (localizedStrings?.gBtnConfigSetting ?? "gBtnConfigSetting"),
               style: textTheme.bodySmall!.apply(
-                // 根据选中状态改变颜色
+                // 鏍规嵁閫変腑鐘舵€佹敼鍙橀鑹?
                 color: colorScheme.surface,
               ),
             ),
@@ -548,7 +548,7 @@ class MyHomePageState extends State<MyHomePage>
             child: Text(
               (localizedStrings?.titleChangePassword ?? "titleChangePassword"),
               style: textTheme.bodySmall!.apply(
-                // 根据选中状态改变颜色
+                // 鏍规嵁閫変腑鐘舵€佹敼鍙橀鑹?
                 color: colorScheme.surface,
               ),
             ),
@@ -567,7 +567,7 @@ class MyHomePageState extends State<MyHomePage>
           child: Text(
             (localizedStrings?.menuLanguageSetting ?? "menuLanguageSetting"),
             style: textTheme.bodySmall!.apply(
-              // 根据选中状态改变颜色
+              // 鏍规嵁閫変腑鐘舵€佹敼鍙橀鑹?
               color: colorScheme.surface,
             ),
           ),
@@ -590,7 +590,7 @@ class MyHomePageState extends State<MyHomePage>
             child: Text(
               (localizedStrings?.titleLogout ?? "titleLogout"),
               style: textTheme.bodySmall!.apply(
-                // 根据选中状态改变颜色
+                // 鏍规嵁閫変腑鐘舵€佹敼鍙橀鑹?
                 color: colorScheme.surface,
               ),
             ),
@@ -741,7 +741,7 @@ class MyHomePageState extends State<MyHomePage>
   void showSetLanguageDialog() {
     showDialog(
       context: context,
-      barrierDismissible: false, // 允许点击空白处关闭对话框
+      barrierDismissible: false, // 鍏佽鐐瑰嚮绌虹櫧澶勫叧闂璇濇
       builder: (context) {
         return const LanguageSettingPage();
       },
@@ -760,7 +760,7 @@ class MyHomePageState extends State<MyHomePage>
   void showModifyPwdDialog() {
     showDialog(
       context: context,
-      barrierDismissible: false, // 允许点击空白处关闭对话框
+      barrierDismissible: false, // 鍏佽鐐瑰嚮绌虹櫧澶勫叧闂璇濇
       builder: (context) {
         return const ModifyPwdPage();
       },

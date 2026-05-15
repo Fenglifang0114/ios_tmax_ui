@@ -1,4 +1,4 @@
-//称重共用的重量显示界面 20250521
+﻿//绉伴噸鍏辩敤鐨勯噸閲忔樉绀虹晫�?20250521
 
 import 'dart:async';
 import 'package:flutter/material.dart';
@@ -57,9 +57,9 @@ class _ScaleWgtWidgetState extends State<ScaleWgtWidget> {
   List<WeightReportData> wgtRptDataList = [];
   final DataGridController _dataGridController = DataGridController();
 
-  PluData? selectedPluData; // 用于存储选中的PluData
+  PluData? selectedPluData; // 鐢ㄤ簬瀛樺偍閫変腑鐨凱luData
 
-  late int weightMode; // 手动保存，1 ，2，稳定保存
+  late int weightMode; // 鎵嬪姩淇濆瓨�? �?锛岀ǔ瀹氫繚�?
 
   final int cstManualSave = 1;
   final int cstStableSave = 2;
@@ -70,22 +70,22 @@ class _ScaleWgtWidgetState extends State<ScaleWgtWidget> {
 
   bool lastStableStatus = false;
   int maxRecId = 0;
-  late Scale tempDefScaleInfo;
+  Scale? tempDefScaleInfo;
 
   final ScrollController _horizontalScrollController = ScrollController();
 
   GetScaleRecords currGetScaleRecords = GetScaleRecords(weightRecords: []);
 
-  //定时发送秤还活着
+  //瀹氭椂鍙戦€佺Г杩樻椿鐫€
   Timer? _cntAliveTimer;
   bool _isCntAliveTiming = false;
   bool get isCntAliveTiming => _isCntAliveTiming;
 
   final _searchRawIdCtl = TextEditingController();
 
-  bool _hasPassedZero = false; // 标记是否经过 0 点
-  Timer? _stableTimer; // 稳定状态计时器
-  int _currentStableDuration = 0; // 当前稳定状态持续时间
+  bool _hasPassedZero = false; // 鏍囪鏄惁缁忚�?0 �?
+  Timer? _stableTimer; // 绋冲畾鐘舵€佽鏃跺�?
+  int _currentStableDuration = 0; // 褰撳墠绋冲畾鐘舵€佹寔缁椂�?
 
   void startCntAliveTimer(int time) {
     if (_cntAliveTimer != null) {
@@ -94,7 +94,7 @@ class _ScaleWgtWidgetState extends State<ScaleWgtWidget> {
 
     _isCntAliveTiming = true;
     _cntAliveTimer = Timer(Duration(seconds: time), () {
-      PublicFunctions.sendScaleAlive(widget.scaleId); //只管串口
+      PublicFunctions.sendScaleAlive(widget.scaleId); //鍙涓插彛
       if (!isStart) {
         PublicFunctions.getWeight(widget.scaleId);
       }
@@ -159,7 +159,7 @@ class _ScaleWgtWidgetState extends State<ScaleWgtWidget> {
       if (tempWeight.scaleId == widget.scaleId &&
           mounted &&
           tempWeight.msgBody != null) {
-        setState(() {
+        if (mounted) setState(() {
           isCnting = true;
           isStart = true;
           weightInfo = ReceiveWgtInfo(
@@ -175,7 +175,7 @@ class _ScaleWgtWidgetState extends State<ScaleWgtWidget> {
       if (mounted) {
         for (var scale in myAllScalesList) {
           if (scale.scaleId == tempWeight.scaleId && scale.isOnline == false) {
-            setState(() {
+            if (mounted) setState(() {
               scale.isOnline = true;
             });
           }
@@ -185,7 +185,7 @@ class _ScaleWgtWidgetState extends State<ScaleWgtWidget> {
 
     eventBus3 = eventBus.on<EventSettingParam>().listen((event) {
       if (mounted) {
-        setState(() {
+        if (mounted) setState(() {
           mySettingParam = event.obj;
           weightMode = (mySettingParam.recMode == msgManual)
               ? cstManualSave
@@ -209,17 +209,18 @@ class _ScaleWgtWidgetState extends State<ScaleWgtWidget> {
 
     eventBus4 = eventBus.on<EventGetScaleRecords>().listen((event) {
       if (mounted) {
-        setState(() {
+        if (mounted) setState(() {
           currGetScaleRecords = event.obj;
           if ((currGetScaleRecords.weightRecords ?? []).isNotEmpty) {
-            late Scale tempScale;
+            Scale? tempScale;
             for (var scale in myAllScalesList) {
               if (scale.scaleId == widget.scaleId) {
                 tempScale = scale;
               }
             }
 
-            if (currGetScaleRecords.weightRecords![0].scaleModel ==
+            if (tempScale != null &&
+                currGetScaleRecords.weightRecords![0].scaleModel ==
                     tempScale.scaleModel &&
                 currGetScaleRecords.weightRecords![0].scaleSn ==
                     tempScale.scaleSn) {
@@ -231,7 +232,7 @@ class _ScaleWgtWidgetState extends State<ScaleWgtWidget> {
                     int.parse(currGetScaleRecords.weightRecords![0].id!);
                 maxRecId = maxId;
 
-                // 遍历 weightRecords 列表
+                // 閬嶅�?weightRecords 鍒楄�?
                 for (var record in (currGetScaleRecords.weightRecords ?? [])) {
                   int currentId = int.parse(record.id!);
                   if (currentId > maxId) {
@@ -253,7 +254,7 @@ class _ScaleWgtWidgetState extends State<ScaleWgtWidget> {
       if (mounted) {
         myRespDataFromScale = event.obj;
         if (myRespDataFromScale.msgBody.contains(msgOk)) {
-          setState(() {
+          if (mounted) setState(() {
             isStart = true;
           });
         } else {}
@@ -292,19 +293,19 @@ class _ScaleWgtWidgetState extends State<ScaleWgtWidget> {
     super.dispose();
   }
 
-  //稳定保存逻辑
+  //绋冲畾淇濆瓨閫昏�?
 
   void _checkStableStatus() {
-    // 检查是否经过 0 点
+    // 妫€鏌ユ槸鍚︾粡�?0 �?
 
-    // 判断是否为稳定保存模式且 _stableSaveTime 大于 0
+    // 鍒ゆ柇鏄惁涓虹ǔ瀹氫繚瀛樻ā寮忎�?_stableSaveTime 澶т簬 0
     if (weightMode == cstStableSave && _stableSaveTime > 0) {
-      // 检查是否经过 0 点
+      // 妫€鏌ユ槸鍚︾粡�?0 �?
       if ((weightInfo?.isZero ?? false) && (weightInfo?.isStable ?? false)) {
         _hasPassedZero = true;
       }
       if ((weightInfo?.isStable ?? false)) {
-        // 检查重量数据是否有效
+        // 妫€鏌ラ噸閲忔暟鎹槸鍚︽湁�?
         final weightValue = double.tryParse((weightInfo?.weightVal ?? "0")) ?? 0;
         if (weightValue > 0 && _hasPassedZero) {
           if (_stableTimer == null) {
@@ -328,20 +329,20 @@ class _ScaleWgtWidgetState extends State<ScaleWgtWidget> {
     }
   }
 
-  // 重置稳定状态计时器
+  // 閲嶇疆绋冲畾鐘舵€佽鏃跺櫒
   void _resetStableTimer() {
     _stableTimer?.cancel();
     _stableTimer = null;
     _currentStableDuration = 0;
   }
 
-  // 保存重量数据
+  // 淇濆瓨閲嶉噺鏁版�?
   void _saveWeightData() {
     if (_hasPassedZero && (weightInfo?.isStable ?? false)) {
       final weightValue = double.tryParse((weightInfo?.weightVal ?? "0")) ?? 0;
       if (weightValue > 0) {
         _changeSaveButton();
-        _hasPassedZero = false; // 保存后重置经过 0 点标记
+        _hasPassedZero = false; // 淇濆瓨鍚庨噸缃粡杩?0 鐐规爣璁?
       }
     }
   }
@@ -356,7 +357,7 @@ class _ScaleWgtWidgetState extends State<ScaleWgtWidget> {
 
   void _addDBdataToReport() {
     addDBdataToReport(wgtRptDataList, mySettingParam, dateformat);
-    // setState(() {
+    // if (mounted) setState(() {
     //   _weightReportDataSource =
     //       WeightReportDataSource(_weightReportDatas, weighingMode);
     //   Future.delayed(const Duration(milliseconds: 100), () {
@@ -368,11 +369,11 @@ class _ScaleWgtWidgetState extends State<ScaleWgtWidget> {
 
   void onStartTimer() {
     startTimer = Timer.periodic(Duration(seconds: 3), (timer) {
-      isCnting = false; // 重置计时器状态
+      isCnting = false; // 閲嶇疆璁℃椂鍣ㄧ姸鎬?
       innerTimer = Timer(Duration(milliseconds: 2500), () {
         if (!isCnting) {
           isStart = false;
-          setState(() {
+          if (mounted) setState(() {
             weightInfo = ReceiveWgtInfo(
               weightVal: '---------',
               weightUnit: '----',
@@ -383,7 +384,7 @@ class _ScaleWgtWidgetState extends State<ScaleWgtWidget> {
           });
           for (var scale in myAllScalesList) {
             if (scale.scaleId == widget.scaleId && scale.isOnline == true) {
-              setState(() {
+              if (mounted) setState(() {
                 scale.isOnline = false;
               });
               break;
@@ -431,7 +432,7 @@ class _ScaleWgtWidgetState extends State<ScaleWgtWidget> {
                           ),
                           if (mySettingParam.wgtMode == 0)
                             showSelPluWidget(140, 40, (value) {
-                              setState(() {
+                              if (mounted) setState(() {
                                 selectedPluData = value;
                               });
                             }),
@@ -528,12 +529,12 @@ class _ScaleWgtWidgetState extends State<ScaleWgtWidget> {
                                               .colorScheme
                                               .onTertiaryFixedVariant,
                                           shape: RoundedRectangleBorder(
-                                            // 设置为矩形形状
+                                            // 璁剧疆涓虹煩褰㈠舰鐘?
                                             borderRadius:
-                                                BorderRadius.zero, // 没有圆角，即正方形
+                                                BorderRadius.zero, // 娌℃湁鍦嗚锛屽嵆姝ｆ柟�?
                                           ),
                                           fixedSize:
-                                              const Size(28, 28), // 设置固定大小
+                                              const Size(28, 28), // 璁剧疆鍥哄畾澶у皬
                                         ),
                                         onPressed: isStart &&
                                                 _isSaveBtnEnable &&
@@ -573,7 +574,7 @@ class _ScaleWgtWidgetState extends State<ScaleWgtWidget> {
                           child: Container(
                         alignment: Alignment.centerRight,
                         child: FittedBox(
-                          fit: BoxFit.scaleDown, // 当文字溢出时缩小字体
+                          fit: BoxFit.scaleDown, // 褰撴枃瀛楁孩鍑烘椂缂╁皬瀛椾�?
                           alignment: Alignment.centerRight,
                           child: Text(weightInfo?.weightVal ?? '---------',
                               maxLines: 1,
@@ -627,15 +628,15 @@ class _ScaleWgtWidgetState extends State<ScaleWgtWidget> {
             hoverColor:
                 Theme.of(context).colorScheme.onPrimary.withOpacity(0.1),
             style: IconButton.styleFrom(
-              // 当按钮不可用时，设置背景颜色为灰色
+              // 褰撴寜閽笉鍙敤鏃讹紝璁剧疆鑳屾櫙棰滆壊涓虹伆�?
               disabledBackgroundColor:
                   Theme.of(context).colorScheme.surface,
               backgroundColor: Theme.of(context).colorScheme.primary,
               shape: RoundedRectangleBorder(
-                // 设置为矩形形状
-                borderRadius: BorderRadius.zero, // 没有圆角，即正方形
+                // 璁剧疆涓虹煩褰㈠舰鐘?
+                borderRadius: BorderRadius.zero, // 娌℃湁鍦嗚锛屽嵆姝ｆ柟�?
               ),
-              fixedSize: Size(iconBtnSize, iconBtnSize), // 设置固定大小
+              fixedSize: Size(iconBtnSize, iconBtnSize), // 璁剧疆鍥哄畾澶у皬
             ),
             onPressed: onPressed,
             icon: getSvgIcon(
@@ -648,7 +649,7 @@ class _ScaleWgtWidgetState extends State<ScaleWgtWidget> {
   }
 
   _changeSaveButton() {
-    setState(() {
+    if (mounted) setState(() {
       _addWeightToReport();
       sendReportDataToDB();
     });
@@ -668,8 +669,8 @@ class _ScaleWgtWidgetState extends State<ScaleWgtWidget> {
     maxRecId++;
     WeightReportData addData = WeightReportData(
       (maxRecId).toString(),
-      tempDefScaleInfo.scaleModel,
-      tempDefScaleInfo.scaleSn,
+      tempDefScaleInfo?.scaleModel ?? '',
+      tempDefScaleInfo?.scaleSn ?? '',
       (tempPlu!.plu == null) ? "" : tempPlu.plu.toString(),
       (tempPlu.productCode == null) ? "" : tempPlu.productCode.toString(),
 
@@ -698,7 +699,7 @@ class _ScaleWgtWidgetState extends State<ScaleWgtWidget> {
       mySysUser.userName ?? "",
       mySysUser.nickName ?? "",
 
-      tempDefScaleInfo.scaleName, //此处应该是秤机种名
+      tempDefScaleInfo?.scaleName ?? '', //姝ゅ搴旇鏄Г鏈虹鍚?
       getDateTime(mySettingParam.dateSeparator, dateformat),
     );
     wgtRptDataList.add(addData);
@@ -715,10 +716,10 @@ class _ScaleWgtWidgetState extends State<ScaleWgtWidget> {
           style: IconButton.styleFrom(
             backgroundColor: bkColor,
             shape: RoundedRectangleBorder(
-              // 设置为矩形形状
-              borderRadius: BorderRadius.zero, // 没有圆角，即正方形
+              // 璁剧疆涓虹煩褰㈠舰鐘?
+              borderRadius: BorderRadius.zero, // 娌℃湁鍦嗚锛屽嵆姝ｆ柟�?
             ),
-            fixedSize: const Size(40, 40), // 设置固定大小
+            fixedSize: const Size(40, 40), // 璁剧疆鍥哄畾澶у皬
           ),
           onPressed: onPressed,
           icon: icon,

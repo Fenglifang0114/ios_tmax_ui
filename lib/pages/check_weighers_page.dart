@@ -43,7 +43,7 @@ class CheckWeighersPage extends StatefulWidget {
 class CheckWeighersPageState extends State<CheckWeighersPage> {
 
   TextEditingController totalWgtUnitCtl = TextEditingController(text: 'kg');
-// 使用 ValueNotifier 来存储总重量和稳定状态
+// 使用 ValueNotifier 来存储总重量和稳定状�?
   final ValueNotifier<double> totalWeightNotifier = ValueNotifier<double>(0);
   final ValueNotifier<bool> totalWgtStableNotifier = ValueNotifier<bool>(false);
 
@@ -51,16 +51,17 @@ class CheckWeighersPageState extends State<CheckWeighersPage> {
   ReqWeightCountine tempWeight = ReqWeightCountine();
   final Map<int, Widget> _scaleWidgetCache = {};
   Map<int, WeightInfo> scaleWeightMap = {}; // 存储每台秤的最新称重数据，键为秤的 ID，值为包含重量和单位的对象
-  Map<int, WeightInfo> scaleWgtMapDetail = {}; //存储每台秤的详细数据，组成total weight 的明细数据
+  Map<int, WeightInfo> scaleWgtMapDetail = {}; //存储每台秤的详细数据，组成total weight 的明细数�?
   List<int> mySelScaleIdList = [];
   List<ScaleRecInfo> allWgtRecList = [];
 
+  final double scaleWgtWidth = 400;
   late TableState _tableState;
 
   bool firstGetRec = true;
   bool totalWgtStble = false;
   bool needUpdate = false;
-  // 添加定时器变量
+  // 添加定时器变�?
   Timer? _scaleCheckTimer;
   bool firstGetSelScale = true;
 
@@ -80,25 +81,25 @@ class CheckWeighersPageState extends State<CheckWeighersPage> {
   void initState() {
     super.initState();
     myPluInfoList.clear();
-    // 初始化 TableState
+    // 初始�?TableState
     mySettingParam.scaleMode = 1;
-    _tableState = TableState(mode: int.tryParse(wgtCheckMode) ?? 0);
+    _tableState = TableState();
     _tableState.loadPage(1);
 
     PublicFunctions.getUIConfNormal(wgtCheckMode);
     PublicFunctions.getProductList();
-// 初始化定时器，每隔10秒执行一次检查
+// 初始化定时器，每�?0秒执行一次检�?
     _scaleCheckTimer = Timer.periodic(Duration(seconds: 10), (timer) {
-      checkSameScale();
+      if (mounted) checkSameScale();
     });
 
-    // 初始加载时立即检查一次
+    // 初始加载时立即检查一�?
     WidgetsBinding.instance.addPostFrameCallback((_) {
       checkSameScale();
     });
     eventBus1 = eventBus.on<EventUpdateSettingParam>().listen((event) {
       if (mounted) {
-        setState(() {
+        if (mounted) setState(() {
           PublicFunctions.getUIConfNormal(wgtCheckMode);
         });
       }
@@ -106,7 +107,7 @@ class CheckWeighersPageState extends State<CheckWeighersPage> {
 
     eventBus2 = eventBus.on<EventSettingParam>().listen((event) {
       if (mounted) {
-        setState(() {
+        if (mounted) setState(() {
           mySettingParam = event.obj;
           if (firstGetSelScale) {
             firstGetSelScale = false;
@@ -132,15 +133,15 @@ class CheckWeighersPageState extends State<CheckWeighersPage> {
 
           allWgtRecList.clear();
 
-          allWgtRecList = List<ScaleRecInfo>.from(scaleRecInfos!);
+          allWgtRecList = List<ScaleRecInfo>.from(scaleRecInfos ?? []);
 
           _tableState.addData(allWgtRecList);
           _tableState.setTotalCount(getAllWgtInfo.totalCount ?? 0);
           // _tableState.loadPage(1);
         } else {
           allWgtRecList.clear();
-          // wgtRptDataList.clear();
-          // updateTableData(getWeightReportData());
+          _tableState.addData([]);
+          _tableState.setTotalCount(0);
         }
       }
     });
@@ -162,7 +163,7 @@ class CheckWeighersPageState extends State<CheckWeighersPage> {
 
     eventBus7 = eventBus.on<EventDelAllWgtRecs>().listen((event) {
       if (mounted) {
-        setState(() {
+        if (mounted) setState(() {
           _tableState.allData.clear();
           _tableState.loadPage(1);
         });
@@ -171,7 +172,7 @@ class CheckWeighersPageState extends State<CheckWeighersPage> {
 
     eventBus9 = eventBus.on<EventProductRecList>().listen((event) {
       if (mounted) {
-        setState(() {
+        if (mounted) setState(() {
           List<PluDataFromDb> pluInfoList = event.obj;
           for (int i = 0; i < pluInfoList.length; i++) {
             PluData newPlu = PluData(0, 0, 0, 0, '', '', 0, 0, 0, 0, 0, 0, 0,
@@ -233,7 +234,7 @@ class CheckWeighersPageState extends State<CheckWeighersPage> {
           showExportDialog(filePath, context);
         } else {
           showTipInfo(
-              '${(localizedStrings?.gTipExportFail ?? "gTipExportFail")} ：$resString', context);
+              '${localizedStrings?.gTipExportFail ?? ""} �?resString', context);
         }
       }
     });
@@ -241,7 +242,7 @@ class CheckWeighersPageState extends State<CheckWeighersPage> {
 
   @override
   void didChangeDependencies() {
-    setState(() {
+    if (mounted) setState(() {
       for (var item in myReportFeildsMap.keys) {
         _tableState.visibleColumns[item]!.isSelect = myReportFeildsMap[item]!;
       }
@@ -269,13 +270,11 @@ class CheckWeighersPageState extends State<CheckWeighersPage> {
       PublicFunctions.stopWeight(item);
     }
     myPluInfoList.clear();
-    totalWgtUnitCtl.clear();
+    totalWgtUnitCtl.dispose();
     totalWeightNotifier.dispose();
     totalWgtStableNotifier.dispose();
     _tableState.dispose();
     _scaleCheckTimer?.cancel();
-
-    totalWgtUnitCtl.dispose();
     super.dispose();
   }
 
@@ -292,7 +291,7 @@ class CheckWeighersPageState extends State<CheckWeighersPage> {
     }
   }
 
-  // 更新总重量和稳定状态
+  // 更新总重量和稳定状�?
   void updateTotalWeightAndStable() {
     double totalWeight = calculateTotalWeight();
     bool totalWgtStable = getTotalWgtStable();
@@ -305,7 +304,7 @@ class CheckWeighersPageState extends State<CheckWeighersPage> {
       return false;
     }
 
-    // 提前构建一个设备 ID 到设备对象的映射，避免在循环中多次查找
+    // 提前构建一个设�?ID 到设备对象的映射，避免在循环中多次查�?
     final scaleIdToScaleMap = <int, Scale>{};
     for (final scale in myAllScalesList) {
       scaleIdToScaleMap[scale.scaleId] = scale;
@@ -316,7 +315,7 @@ class CheckWeighersPageState extends State<CheckWeighersPage> {
     for (final entry in scaleWeightMap.entries) {
       final scaleId = entry.key;
 
-      // 判断选择的设备是不是当前的设备
+      // 判断选择的设备是不是当前的设�?
       if (!mySelScaleIdList.contains(scaleId)) {
         continue;
       }
@@ -328,7 +327,7 @@ class CheckWeighersPageState extends State<CheckWeighersPage> {
       }
 
       final info = entry.value;
-      // 判断这个 value 是不是正的数据
+      // 判断这个 value 是不是正的数�?
       if (info.weight.contains('-')) {
         continue;
       }
@@ -339,11 +338,11 @@ class CheckWeighersPageState extends State<CheckWeighersPage> {
       }
     }
 
-    // 没有有效设备则返回 false
+    // 没有有效设备则返�?false
     return validScaleCount > 0;
   }
 
-  // 计算总重量
+  // 计算总重�?
   double calculateTotalWeight() {
     double totalWeight = 0;
     scaleWgtMapDetail = {}; //每次计算都先清空明细数据
@@ -353,7 +352,7 @@ class CheckWeighersPageState extends State<CheckWeighersPage> {
     for (var entry in scaleWeightMap.entries) {
       int scaleId = entry.key;
 
-      //判断选择的设备是不是当前的设备
+      //判断选择的设备是不是当前的设�?
       if (!mySelScaleIdList.contains(scaleId)) {
         continue;
       }
@@ -370,29 +369,36 @@ class CheckWeighersPageState extends State<CheckWeighersPage> {
       }
 
       WeightInfo info = entry.value;
-      //判断这个value是不是正的数据
+      //判断这个value是不是正的数�?
       if (info.weight.contains('-')) {
         continue;
       }
-      //转换为double类型的，最多三位小数
-      double weight = (double.tryParse(info.weight) ?? 0.0);
-      // 转换为三位小数
-      weight = (double.tryParse(weight.toStringAsFixed(3)) ?? 0.0);
+      //转换为double类型的，最多三位小�?
+      double weight = double.parse(info.weight);
+      // 转换为三位小�?
+      weight = double.parse(weight.toStringAsFixed(3));
       double convertedWeight =
           convertUnit(weight, info.unit, totalWgtUnitCtl.text);
-      double tmpWeight = (double.tryParse(convertedWeight.toStringAsFixed(3)) ?? 0.0);
+      double tmpWeight = double.parse(convertedWeight.toStringAsFixed(3));
       totalWeight += tmpWeight;
       scaleWgtMapDetail[scaleId] = WeightInfo(
           weight: tmpWeight.toStringAsFixed(3),
           unit: totalWgtUnitCtl.text,
           stable: info.stable);
     }
-    totalWeight = (double.tryParse(totalWeight.toStringAsFixed(3)) ?? 0.0);
+    totalWeight = double.parse(totalWeight.toStringAsFixed(3));
 
     return totalWeight;
   }
   @override
   Widget build(BuildContext context) {
+    if (myAllScalesList.isEmpty) {
+      return Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
     final width = MediaQuery.of(context).size.width;
     final bool isMobile = Adaptive.isMobile(context);
 
@@ -411,8 +417,8 @@ class CheckWeighersPageState extends State<CheckWeighersPage> {
                           const EdgeInsets.only(left: regularPadding, top: 40),
                       alignment: Alignment.centerLeft,
                       child: Text(
-                        (localizedStrings?.gTitleDeviceList ?? "gTitleDeviceList"),
-                        style: Theme.of(context).textTheme.bodyLarge?.apply(
+                        localizedStrings?.gTitleDeviceList ?? "",
+                        style: Theme.of(context).textTheme.labelLarge!.apply(
                               color: Theme.of(context).colorScheme.primary,
                             ),
                       ),
@@ -423,7 +429,7 @@ class CheckWeighersPageState extends State<CheckWeighersPage> {
                         listWidth: appScaleListWidth,
                         selScaleList: mySelScaleIdList,
                         clickScale: (scale) {
-                          setState(() {
+                          if (mounted) setState(() {
                             addOrRemoveSelScale(scale.scaleId);
                           });
                         },
@@ -439,7 +445,7 @@ class CheckWeighersPageState extends State<CheckWeighersPage> {
         child: Column(
           children: [
             pageHeadInfo(context, width - headWidthPadding,
-                (localizedStrings?.menuCheckWeighing ?? "menuCheckWeighing"), '', () {
+                localizedStrings?.menuCheckWeighing ?? "", '', () {
               widget.onNavigate(widget.lastRouteName);
             },
                 leading: isMobile
@@ -457,69 +463,50 @@ class CheckWeighersPageState extends State<CheckWeighersPage> {
                     : null),
             Container(
               height: regularPadding,
-              color: Theme.of(context).colorScheme.surface,
+              color: Theme.of(context).colorScheme.surfaceContainerLow,
             ),
             Expanded(
               child: Container(
-                color: Theme.of(context).colorScheme.surface,
-                child: isMobile ? _buildMobileBody() : _buildDesktopBody(),
-              ),
-            ),
+                color: Theme.of(context).colorScheme.surfaceTint,
+                child: Row(
+                  children: [
+                    if (!isMobile)
+                      Container(
+                        width: appScaleListWidth,
+                        color: Theme.of(context).colorScheme.surfaceTint,
+                        child: NewMutiScaleListWidget(
+                          listWidth: appScaleListWidth,
+                          selScaleList: mySelScaleIdList,
+                          clickScale: (scale) {
+                            if (mounted) setState(() {
+                              addOrRemoveSelScale(scale.scaleId);
+                            });
+                          },
+                        ),
+                      ),
+                    if (!isMobile)
+                      Container(
+                        width: regularPadding,
+                        color: Theme.of(context).colorScheme.surfaceContainerLow,
+                      ),
+                      Container(
+                        width: regularPadding,
+                        color:
+                            Theme.of(context).colorScheme.surfaceContainerLow,
+                      ),
+                      if (mySelScaleIdList.isNotEmpty)
+                        showScaleWgt(context, scaleWgtWidth),
+                      if (mySelScaleIdList.isNotEmpty)
+                        Container(
+                          width: regularPadding,
+                          color:
+                              Theme.of(context).colorScheme.surfaceContainerLow,
+                        ),
+                      showWgtTable(context) // width - 591 - 36)
+                    ],
+                  ),
+                )),
               ])),
-    );
-  }
-
-  Widget _buildMobileBody() {
-    return Column(
-      children: [
-        if (mySelScaleIdList.isNotEmpty)
-          SizedBox(
-            height: 200, // 降低高度，给表格留出更多空间
-            child: showScaleWgt(context, MediaQuery.of(context).size.width),
-          ),
-        Expanded(
-          child: Container(
-            color: Theme.of(context).colorScheme.surface,
-            child: showWgtTable(context),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildDesktopBody() {
-    return Row(
-      children: [
-        // 左侧：秤列表
-        Container(
-          width: 260,
-          decoration: BoxDecoration(
-            border: Border(right: BorderSide(color: Theme.of(context).dividerColor.withOpacity(0.5))),
-          ),
-          child: NewMutiScaleListWidget(
-            listWidth: 260,
-            selScaleList: mySelScaleIdList,
-            clickScale: (scale) {
-              setState(() {
-                addOrRemoveSelScale(scale.scaleId);
-              });
-            },
-          ),
-        ),
-        // 中间：称重显示与操作
-        Container(
-          width: 340,
-          decoration: BoxDecoration(
-            border: Border(right: BorderSide(color: Theme.of(context).dividerColor.withOpacity(0.5))),
-            color: Theme.of(context).colorScheme.surface,
-          ),
-          child: showScaleWgt(context, 340),
-        ),
-        // 右侧：数据表格
-        Expanded(
-          child: showWgtTable(context),
-        ),
-      ],
     );
   }
 
@@ -534,7 +521,7 @@ class CheckWeighersPageState extends State<CheckWeighersPage> {
     return scaleName;
   }
 
-//实时查看是否是同一台秤，如果是的话，给出提示，并去掉一个
+//实时查看是否是同一台秤，如果是的话，给出提示，并去掉一�?
   void checkSameScale() {
     if (mySelScaleIdList.length > 1) {
       Map<int, dynamic> scaleMap = {};
@@ -542,7 +529,7 @@ class CheckWeighersPageState extends State<CheckWeighersPage> {
         scaleMap[scale.scaleId] = scale;
       }
 
-      // 根据物理设备（型号 + 序列号）对选中的秤进行分组
+      // 根据物理设备（型�?+ 序列号）对选中的秤进行分组
       Map<String, List<Scale>> groups = {};
       for (var scaleId in mySelScaleIdList) {
         var scale = scaleMap[scaleId];
@@ -554,19 +541,18 @@ class CheckWeighersPageState extends State<CheckWeighersPage> {
 
       for (var group in groups.values) {
         if (group.length > 1) {
-          // 冲突：同一个物理设备选择了多种连接方式
-          showTipInfo((localizedStrings?.tipSameScale ?? "tipSameScale"), context);
-
-          // 优先级：串口(0) > 网口(1) > 蓝牙(2)。排序并保留最高优先级的连接。
+          // 冲突：同一个物理设备选择了多种连接方�?
+          showTipInfo(localizedStrings?.tipSameScale ?? "", context);
+          // 优先级：串口(0) > 网口(1) > 蓝牙(2)。排序并保留最高优先级的连接�?
           group.sort((a, b) => a.tMedia.compareTo(b.tMedia));
 
-          // 移除除第一个（优先级最高）之外的所有连接
+          // 移除除第一个（优先级最高）之外的所有连�?
           for (int i = 1; i < group.length; i++) {
             if (mySelScaleIdList.contains(group[i].scaleId)) {
               addOrRemoveSelScale(group[i].scaleId);
             }
           }
-          break; // 每个检查周期只显示一次提示
+          break; // 每个检查周期只显示一次提�?
         }
       }
     }
@@ -576,7 +562,7 @@ class CheckWeighersPageState extends State<CheckWeighersPage> {
     if (mySelScaleIdList.contains(scaleId)) {
       mySelScaleIdList.remove(scaleId);
       PublicFunctions.stopWeight(scaleId);
-      // 从缓存和keys中移除
+      // 从缓存和keys中移�?
       _scaleWidgetCache.remove(scaleId);
       _scaleWidgetKeys.remove(scaleId);
       // debugPrint('Removed scale widget cache for scaleId: $scaleId');
@@ -584,7 +570,7 @@ class CheckWeighersPageState extends State<CheckWeighersPage> {
       mySelScaleIdList.add(scaleId);
       PublicFunctions.getWeight(scaleId);
     }
-    setState(() {}); // 强制刷新界面
+    if (mounted) setState(() {}); // 强制刷新界面
     checkSameScale();
   }
 
@@ -597,7 +583,7 @@ class CheckWeighersPageState extends State<CheckWeighersPage> {
               child: Container(
             width: width,
             padding: const EdgeInsets.only(bottom: regularPadding),
-            color: Theme.of(context).colorScheme.surface,
+            color: Theme.of(context).colorScheme.surfaceContainerLow,
             child: ListView.builder(
               itemCount: mySelScaleIdList.length,
               itemBuilder: (context, index) {
@@ -627,9 +613,10 @@ class CheckWeighersPageState extends State<CheckWeighersPage> {
     );
   }
 
-  Widget showWgtTable(BuildContext context) {
-    return Container(
-      color: Theme.of(context).colorScheme.surface,
+  showWgtTable(BuildContext context) {
+    return Expanded(
+      child: Container(
+          color: Theme.of(context).colorScheme.surface,
           child: Column(
             children: [
               Container(
@@ -640,7 +627,7 @@ class CheckWeighersPageState extends State<CheckWeighersPage> {
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       Tooltip(
-                        message: (localizedStrings?.gBtnExport ?? "gBtnExport"),
+                        message: localizedStrings?.gBtnExport ?? "",
                         child: IconButton(
                           iconSize: 28,
                           color: Theme.of(context).colorScheme.onPrimary,
@@ -652,12 +639,12 @@ class CheckWeighersPageState extends State<CheckWeighersPage> {
                           style: IconButton.styleFrom(
                             disabledBackgroundColor: Theme.of(context)
                                 .colorScheme
-                                .surface,
+                                .surfaceContainerLow,
                             backgroundColor:
                                 Theme.of(context).colorScheme.primary,
                             shape: RoundedRectangleBorder(
-                              // 设置为矩形形状
-                              borderRadius: BorderRadius.zero, // 没有圆角，即正方形
+                              // 设置为矩形形�?
+                              borderRadius: BorderRadius.zero, // 没有圆角，即正方�?
                             ),
                             fixedSize: const Size(28, 28), // 设置固定大小
                           ),
@@ -695,7 +682,7 @@ class CheckWeighersPageState extends State<CheckWeighersPage> {
                         width: regularPadding,
                       ),
                       Tooltip(
-                        message: (localizedStrings?.gBtnReportSetting ?? "gBtnReportSetting"),
+                        message: localizedStrings?.gBtnReportSetting ?? "",
                         child: IconButton(
                           iconSize: 28,
                           color: Theme.of(context).colorScheme.onPrimary,
@@ -707,12 +694,12 @@ class CheckWeighersPageState extends State<CheckWeighersPage> {
                           style: IconButton.styleFrom(
                             disabledBackgroundColor: Theme.of(context)
                                 .colorScheme
-                                .surface,
+                                .surfaceContainerLow,
                             backgroundColor:
                                 Theme.of(context).colorScheme.primary,
                             shape: RoundedRectangleBorder(
-                              // 设置为矩形形状
-                              borderRadius: BorderRadius.zero, // 没有圆角，即正方形
+                              // 设置为矩形形�?
+                              borderRadius: BorderRadius.zero, // 没有圆角，即正方�?
                             ),
                             fixedSize: const Size(28, 28), // 设置固定大小
                           ),
@@ -731,7 +718,7 @@ class CheckWeighersPageState extends State<CheckWeighersPage> {
                         width: regularPadding,
                       ),
                       Tooltip(
-                        message: (localizedStrings?.gParameterSettingsTitle ?? "gParameterSettingsTitle"),
+                        message: localizedStrings?.gParameterSettingsTitle ?? "",
                         child: IconButton(
                           iconSize: 28,
                           color: Theme.of(context).colorScheme.onPrimary,
@@ -743,12 +730,12 @@ class CheckWeighersPageState extends State<CheckWeighersPage> {
                           style: IconButton.styleFrom(
                             disabledBackgroundColor: Theme.of(context)
                                 .colorScheme
-                                .surface,
+                                .surfaceContainerLow,
                             backgroundColor:
                                 Theme.of(context).colorScheme.primary,
                             shape: RoundedRectangleBorder(
-                              // 设置为矩形形状
-                              borderRadius: BorderRadius.zero, // 没有圆角，即正方形
+                              // 设置为矩形形�?
+                              borderRadius: BorderRadius.zero, // 没有圆角，即正方�?
                             ),
                             fixedSize: const Size(28, 28), // 设置固定大小
                           ),
@@ -773,7 +760,7 @@ class CheckWeighersPageState extends State<CheckWeighersPage> {
                         ),
                       if (mySysUser.roleId != operatorRoleId)
                         Tooltip(
-                          message: (localizedStrings?.gBtnDeleteAll ?? "gBtnDeleteAll"),
+                          message: localizedStrings?.gBtnDeleteAll ?? "",
                           child: IconButton(
                             iconSize: 28,
                             color: Theme.of(context).colorScheme.onPrimary,
@@ -785,28 +772,28 @@ class CheckWeighersPageState extends State<CheckWeighersPage> {
                             style: IconButton.styleFrom(
                               disabledBackgroundColor: Theme.of(context)
                                   .colorScheme
-                                  .surface,
+                                  .surfaceContainerLow,
                               backgroundColor:
                                   Theme.of(context).colorScheme.error,
                               shape: RoundedRectangleBorder(
-                                // 设置为矩形形状
-                                borderRadius: BorderRadius.zero, // 没有圆角，即正方形
+                                // 设置为矩形形�?
+                                borderRadius: BorderRadius.zero, // 没有圆角，即正方�?
                               ),
                               fixedSize: const Size(28, 28), // 设置固定大小
                             ),
                             onPressed: () {
                               showDialog(
                                 context: context,
-                                barrierDismissible: false, // 点击对话框外部不关闭对话框
+                                barrierDismissible: false, // 点击对话框外部不关闭对话�?
                                 builder: (BuildContext context) {
                                   return ShowDeleteTipDialog(
-                                    title: (localizedStrings?.fTipTitle ?? "fTipTitle"),
-                                    msg: (localizedStrings?.gTipConfirmDeleteAll ?? "gTipConfirmDeleteAll"),
+                                    title: localizedStrings?.fTipTitle ?? "",
+                                    msg: localizedStrings?.gTipConfirmDeleteAll ?? "",
                                   );
                                 },
                               ).then((value) {
                                 if (value) {
-                                  setState(() {
+                                  if (mounted) setState(() {
                                     PublicFunctions.newDeleteAllRecords(
                                         mySettingParam.scaleMode);
                                   });
@@ -825,21 +812,19 @@ class CheckWeighersPageState extends State<CheckWeighersPage> {
                   )),
               Divider(
                 height: 1,
-                color: Theme.of(context).colorScheme.surface,
+                color: Theme.of(context).colorScheme.surfaceDim,
               ),
               SizedBox(
                 height: regularPadding,
               ),
-              Expanded(
-                child: ChangeNotifierProvider<TableState>.value(
-                  value: _tableState,
-                  child: WgtDataTable(),
-                ),
+              ChangeNotifierProvider<TableState>.value(
+                value: _tableState,
+                child: WgtDataTable(),
               ),
             ],
-          ),
+          )),
     );
-}
+  }
 
   void reportFieldsSettingDialog(BuildContext context) {
     showDialog(
@@ -850,9 +835,10 @@ class CheckWeighersPageState extends State<CheckWeighersPage> {
       },
     ).then((value) {
       if (value) {
-        setState(() {
+        if (mounted) setState(() {
           for (var item in myReportFeildsMap.keys) {
-            _tableState.visibleColumns[item]?.isSelect = myReportFeildsMap[item] ?? false;
+            _tableState.visibleColumns[item]!.isSelect =
+                myReportFeildsMap[item]!;
           }
         });
       }
@@ -896,7 +882,7 @@ class CheckWeighersPageState extends State<CheckWeighersPage> {
           ),
           Divider(
             color:
-                Theme.of(context).colorScheme.surface, // 设置分割线的颜色
+                Theme.of(context).colorScheme.surfaceContainerLow, // 设置分割线的颜色
             height: 1, // 设置分割线的高度
             thickness: 1, // 设置分割线的粗细
           ),
@@ -911,10 +897,10 @@ void sendDataToDb(
   String baseUnit,
   PluData? selPlu,
 ) {
-  // 检查必要参数是否为空
+  // 检查必要参数是否为�?
   if (selScaleList.isEmpty || scaleWgtMapDetail.isEmpty) return;
 
-  // 提前构建 scaleId 到 Scale 对象的映射
+  // 提前构建 scaleId �?Scale 对象的映�?
   final scaleIdToScaleMap = <int, Scale>{};
   for (final scale in myAllScalesList) {
     scaleIdToScaleMap[scale.scaleId] = scale;
@@ -977,11 +963,11 @@ void sendDataToDb(
 
   if (scaleWgtMapDetail.length == 1) {
     final scaleId = scaleWgtMapDetail.keys.first;
-    final tempScale = scaleIdToScaleMap[scaleId];
+    final tempScale = scaleIdToScaleMap[scaleId]!;
     newAddRec.headRec = headerCommon.copyWith(
-      scaleModel: tempScale?.scaleModel ?? '',
-      scaleSn: tempScale?.scaleSn ?? '',
-      scaleName: tempScale?.scaleName ?? '',
+      scaleModel: tempScale.scaleModel,
+      scaleSn: tempScale.scaleSn,
+      scaleName: tempScale.scaleName,
     );
     newAddRec.detailRec = [];
   } else {
@@ -996,12 +982,11 @@ void sendDataToDb(
     // 构建 detailRec
     int seq = 1;
     for (final scaleId in scaleWgtMapDetail.keys) {
-      final tempScale = scaleIdToScaleMap[scaleId];
-      final weightInfo = scaleWgtMapDetail[scaleId];
-      if (tempScale == null || weightInfo == null) continue;
+      final tempScale = scaleIdToScaleMap[scaleId]!;
+      final weightInfo = scaleWgtMapDetail[scaleId]!;
       final weight = weightInfo.weight;
       // baseUnit == 'g'
-      //     ? ((double.tryParse() ?? 0.0).toStringAsFixed(0)
+      //     ? double.parse(weightInfo.weight).toStringAsFixed(0)
       //     : weightInfo.weight;
 
       newAddRec.detailRec!.add(NewWgtDetail(
@@ -1016,12 +1001,32 @@ void sendDataToDb(
     }
   }
 
-  // 发送数据
+  // 发送数�?
   final jsonString = reqAddWgtRecToJson(newAddRec);
   PublicFunctions.addSummaryData(jsonString);
 }
 
 Scale getScaleFormAll(int scaleId) {
+  if (myAllScalesList.isEmpty) {
+    return UnifiedScale(
+      scaleId: 0,
+      scaleName: '',
+      scaleModel: '',
+      scaleSn: '',
+      tMedia: 0,
+      isOnline: false,
+      scaleCat: 0,
+      isDefault: false,
+      sendService: false,
+      mediaConfig: SerialMediaConfig(
+        devPath: '',
+        baudRate: 0,
+        dataBits: 0,
+        stopBits: 0,
+        parity: 0,
+      ),
+    );
+  }
   for (var item in myAllScalesList) {
     if (item.scaleId == scaleId) {
       return item;

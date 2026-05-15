@@ -1,4 +1,4 @@
-// wifi 设置界面 只能用串口设置
+﻿// wifi 璁剧疆鐣岄潰 鍙兘鐢ㄤ覆鍙ｈ缃?
 
 import 'dart:async';
 import 'dart:convert';
@@ -63,9 +63,9 @@ class WifiSettingPageState extends State<WifiSettingPage> {
   String connectedMac = '';
   bool isConnecting = false;
   bool alreadyConnected = false;
-  bool firstGetApList = true; //WIFI列表进来只获取一次
+  bool firstGetApList = true; //WIFI鍒楄〃杩涙潵鍙幏鍙栦竴娆?
 
-  bool isSetting = false; //正在操作
+  bool isSetting = false; //姝ｅ湪鎿嶄綔
 
   Timer? getIpTimer;
 
@@ -104,7 +104,7 @@ class WifiSettingPageState extends State<WifiSettingPage> {
   }
 
   void _stopGetIp() {
-    getIpTimer?.cancel(); // 停止计时器
+    getIpTimer?.cancel(); // 鍋滄璁℃椂鍣?
   }
 
   bool _isValidIpAddress(bool tempValid, String value) {
@@ -374,7 +374,7 @@ class WifiSettingPageState extends State<WifiSettingPage> {
         PublicFunctions.getWifiPwdList();
       }
     });
-    // 在页面构建完成后显示提示
+    // 鍦ㄩ〉闈㈡瀯寤哄畬鎴愬悗鏄剧ず鎻愮ず
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (comScalesList.isEmpty) {
         showTipInfo((localizedStrings?.gTipNoDeviceAddFirst ?? "gTipNoDeviceAddFirst"), context);
@@ -448,7 +448,7 @@ class WifiSettingPageState extends State<WifiSettingPage> {
             title: SizedBox(
               child: Text(
                 displayedItems[index],
-                maxLines: 1, // 设置文本最大行数为1
+                maxLines: 1, // 璁剧疆鏂囨湰鏈€澶ц鏁颁负1
                 overflow: TextOverflow.ellipsis,
                 style: Theme.of(context).textTheme.bodySmall!.apply(
                       color: selectedIndex == index
@@ -461,7 +461,7 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                 padding: EdgeInsets.only(top: smallPadding),
                 child: Text(
                   bssidList[index],
-                  maxLines: 1, // 设置文本最大行数为1
+                  maxLines: 1, // 璁剧疆鏂囨湰鏈€澶ц鏁颁负1
 
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
@@ -729,8 +729,8 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                                 borderSide: BorderSide(
                                   color: Theme.of(context)
                                       .colorScheme
-                                      .onPrimary, // 设置边框颜色
-                                  width: 1.0, // 设置边框宽度
+                                      .onPrimary, // 璁剧疆杈规棰滆壊
+                                  width: 1.0, // 璁剧疆杈规瀹藉害
                                 ),
                                 borderRadius:
                                     const BorderRadius.all(Radius.circular(0)),
@@ -752,7 +752,7 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                           width: smallPadding,
                         ),
                         Container(
-                          width: 38, // 为Container指定一个固定的宽度
+                          width: 38, // 涓篊ontainer鎸囧畾涓€涓浐瀹氱殑瀹藉害
                           height: 38,
                           color:
                               Theme.of(context).colorScheme.surfaceContainerLow,
@@ -1234,7 +1234,7 @@ class WifiSettingPageState extends State<WifiSettingPage> {
     myScaleCmd.cmdMode = 'connect_ap';
     myConnectApInfo.ssid = ssidController.text;
     myConnectApInfo.password = passwordController.text;
-    myConnectApInfo.bssid = bssId; //手动输入的如何处理？id写-1
+    myConnectApInfo.bssid = bssId; //鎵嬪姩杈撳叆鐨勫浣曞鐞嗭紵id鍐?1
     myScaleCmd.cmdData = jsonEncode(myConnectApInfo).toString();
 
     PublicFunctions.sendMsg(selScaleId, jsonEncode(myScaleCmd));

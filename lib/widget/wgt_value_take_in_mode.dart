@@ -1,4 +1,4 @@
-//称重共用的重量显示界面 20250521
+//称重共用的重量显示界�?20250521
 
 import 'dart:async';
 import 'package:flutter/material.dart';
@@ -25,8 +25,8 @@ import 'package:t_max/eventbus/eventbus.dart';
 import 'package:t_max/functions/methods.dart';
 import 'package:t_max/widget/plu_select.dart';
 
-/// 入库/进料模式核心面板视图 (Take-In Weighing View)。
-/// 用于处理物料进入仓库或装调时的动态重量获取，附带轮询记录与锁定操作。
+/// 入库/进料模式核心面板视图 (Take-In Weighing View)�?
+/// 用于处理物料进入仓库或装调时的动态重量获取，附带轮询记录与锁定操作�?
 class ScaleWgtTakeInWidget extends StatefulWidget {
   final int scaleId;
   final String scaleName;
@@ -65,7 +65,7 @@ class _ScaleWgtTakeInWidgetState extends State<ScaleWgtTakeInWidget> {
 
   PluData? selectedPluData; // 用于存储选中的PluData
 
-  late int weightMode; // 手动保存，1 ，2，稳定保存
+  late int weightMode; // 手动保存�? �?，稳定保�?
 
   final int cstManualSave = 1;
   final int cstStableSave = 2;
@@ -75,7 +75,7 @@ class _ScaleWgtTakeInWidgetState extends State<ScaleWgtTakeInWidget> {
   late bool _isSaveBtnEnable;
   bool lastStableStatus = false;
   int maxRecId = 0;
-  late Scale tempDefScaleInfo;
+  Scale? tempDefScaleInfo;
 
   final ScrollController _horizontalScrollController = ScrollController();
 
@@ -83,12 +83,12 @@ class _ScaleWgtTakeInWidgetState extends State<ScaleWgtTakeInWidget> {
 
   bool _isCntAliveTiming = false;
   bool get isCntAliveTiming => _isCntAliveTiming;
-  bool _hasPassedZero = false; // 标记是否经过 0 点
+  bool _hasPassedZero = false; // 标记是否经过 0 �?
 
 //定时发送秤还活着
   Timer? _cntAliveTimer;
   Timer? _stableTimer; // 稳定状态计时器
-  int _currentStableDuration = 0; // 当前稳定状态持续时间
+  int _currentStableDuration = 0; // 当前稳定状态持续时�?
 
   double lastWgtValue = 0.000;
   double takeInWgtvalue = 0.000;
@@ -165,7 +165,7 @@ class _ScaleWgtTakeInWidgetState extends State<ScaleWgtTakeInWidget> {
       if (tempWeight.scaleId == widget.scaleId &&
           mounted &&
           tempWeight.msgBody != null) {
-        setState(() {
+        if (mounted) setState(() {
           isCnting = true;
           isStart = true;
           weightInfo = ReceiveWgtInfo(
@@ -198,7 +198,7 @@ class _ScaleWgtTakeInWidgetState extends State<ScaleWgtTakeInWidget> {
       if (mounted) {
         for (var scale in myAllScalesList) {
           if (scale.scaleId == tempWeight.scaleId && scale.isOnline == false) {
-            setState(() {
+            if (mounted) setState(() {
               scale.isOnline = true;
             });
           }
@@ -215,7 +215,7 @@ class _ScaleWgtTakeInWidgetState extends State<ScaleWgtTakeInWidget> {
 
     eventBus3 = eventBus.on<EventSettingParam>().listen((event) {
       if (mounted) {
-        setState(() {
+        if (mounted) setState(() {
           mySettingParam = event.obj;
           weightMode = (mySettingParam.recMode == msgManual)
               ? cstManualSave
@@ -239,17 +239,18 @@ class _ScaleWgtTakeInWidgetState extends State<ScaleWgtTakeInWidget> {
 
     eventBus4 = eventBus.on<EventGetScaleRecords>().listen((event) {
       if (mounted) {
-        setState(() {
+        if (mounted) setState(() {
           currGetScaleRecords = event.obj;
           if (currGetScaleRecords.weightRecords!.isNotEmpty) {
-            late Scale tempScale;
+            Scale? tempScale;
             for (var scale in myAllScalesList) {
               if (scale.scaleId == widget.scaleId) {
                 tempScale = scale;
               }
             }
 
-            if (currGetScaleRecords.weightRecords![0].scaleModel ==
+            if (tempScale != null &&
+                currGetScaleRecords.weightRecords![0].scaleModel ==
                     tempScale.scaleModel &&
                 currGetScaleRecords.weightRecords![0].scaleSn ==
                     tempScale.scaleSn) {
@@ -284,7 +285,7 @@ class _ScaleWgtTakeInWidgetState extends State<ScaleWgtTakeInWidget> {
       if (mounted) {
         myRespDataFromScale = event.obj;
         if (myRespDataFromScale.msgBody.contains(msgOk)) {
-          setState(() {
+          if (mounted) setState(() {
             isStart = true;
           });
         } else {}
@@ -325,16 +326,16 @@ class _ScaleWgtTakeInWidgetState extends State<ScaleWgtTakeInWidget> {
   //稳定保存逻辑
 
   void _checkStableStatus() {
-    // 检查是否经过 0 点
+    // 检查是否经�?0 �?
 
     // 判断是否为稳定保存模式且 _stableSaveTime 大于 0
     if (weightMode == cstStableSave && _stableSaveTime > 0) {
-      // 检查是否经过 0 点 加法秤不需要过0点
+      // 检查是否经�?0 �?加法秤不需要过0�?
       if ((weightInfo?.isStable ?? false)) {
         _hasPassedZero = true;
       }
       if ((weightInfo?.isStable ?? false)) {
-        // 检查重量数据是否有效
+        // 检查重量数据是否有�?
         if (takeInWgtvalue > 0 && _hasPassedZero) {
           if (_stableTimer == null) {
             _currentStableDuration = 0;
@@ -369,7 +370,7 @@ class _ScaleWgtTakeInWidgetState extends State<ScaleWgtTakeInWidget> {
     if (_hasPassedZero && (weightInfo?.isStable ?? false)) {
       if (takeInWgtvalue > 0) {
         _changeSaveButton();
-        _hasPassedZero = false; // 保存后重置经过 0 点标记
+        _hasPassedZero = false; // 保存后重置经�?0 点标�?
       }
     }
   }
@@ -384,11 +385,11 @@ class _ScaleWgtTakeInWidgetState extends State<ScaleWgtTakeInWidget> {
 
   void onStartTimer() {
     startTimer = Timer.periodic(Duration(seconds: 3), (timer) {
-      isCnting = false; // 重置计时器状态
+      isCnting = false; // 重置计时器状�?
       innerTimer = Timer(Duration(milliseconds: 2500), () {
         if (!isCnting) {
           isStart = false;
-          setState(() {
+          if (mounted) setState(() {
             weightInfo = ReceiveWgtInfo(
               weightVal: '---------',
               weightUnit: '----',
@@ -399,7 +400,7 @@ class _ScaleWgtTakeInWidgetState extends State<ScaleWgtTakeInWidget> {
           });
           for (var scale in myAllScalesList) {
             if (scale.scaleId == widget.scaleId && scale.isOnline == true) {
-              setState(() {
+              if (mounted) setState(() {
                 scale.isOnline = false;
               });
               break;
@@ -430,8 +431,7 @@ class _ScaleWgtTakeInWidgetState extends State<ScaleWgtTakeInWidget> {
                     child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          SizedBox(
-                            width: 140, // 缩小宽度，原为 170
+                          Expanded(
                             child: Text(
                               widget.scaleName,
                               style: Theme.of(context)
@@ -445,8 +445,10 @@ class _ScaleWgtTakeInWidgetState extends State<ScaleWgtTakeInWidget> {
                             ),
                           ),
                           if (mySettingParam.wgtMode == 0)
+                            const SizedBox(width: smallPadding),
+                          if (mySettingParam.wgtMode == 0)
                             showSelPluWidget(140, 40, (value) {
-                              setState(() {
+                              if (mounted) setState(() {
                                 selectedPluData = value;
                               });
                             }),
@@ -590,7 +592,7 @@ class _ScaleWgtTakeInWidgetState extends State<ScaleWgtTakeInWidget> {
   Widget showBtnWidget() {
     final isMobile = MediaQuery.of(context).size.width < 600;
     return SizedBox(
-      width: isMobile ? 200 : 165, // 缩小平板宽度，原为 200
+      width: isMobile ? 240 : 280, // 增加宽度以确保按钮显示完整，并减小间距
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
@@ -624,7 +626,7 @@ class _ScaleWgtTakeInWidgetState extends State<ScaleWgtTakeInWidget> {
                 (localizedStrings?.gBtnStart ?? "gBtnStart"),
                 isStart
                     ? () {
-                        setState(() {
+                        if (mounted) setState(() {
                           startTakeIn = true;
                           lastWgtValue = (double.tryParse(
                                   weightInfo?.weightVal ?? '0.000') ??
@@ -639,7 +641,7 @@ class _ScaleWgtTakeInWidgetState extends State<ScaleWgtTakeInWidget> {
                 (localizedStrings?.gBtnEnd ?? "gBtnEnd"),
                 isStart
                     ? () {
-                        setState(() {
+                        if (mounted) setState(() {
                           startTakeIn = false;
                           lastWgtValue = 0.000;
                         });
@@ -667,8 +669,8 @@ class _ScaleWgtTakeInWidgetState extends State<ScaleWgtTakeInWidget> {
                   backgroundColor:
                       Theme.of(context).colorScheme.onTertiaryFixedVariant,
                   shape: RoundedRectangleBorder(
-                    // 设置为矩形形状
-                    borderRadius: BorderRadius.zero, // 没有圆角，即正方形
+                    // 设置为矩形形�?
+                    borderRadius: BorderRadius.zero, // 没有圆角，即正方�?
                   ),
                   fixedSize: const Size(28, 28), // 设置固定大小
                 ),
@@ -705,13 +707,13 @@ class _ScaleWgtTakeInWidgetState extends State<ScaleWgtTakeInWidget> {
             hoverColor:
                 Theme.of(context).colorScheme.onPrimary.withOpacity(0.1),
             style: IconButton.styleFrom(
-              // 当按钮不可用时，设置背景颜色为灰色
+              // 当按钮不可用时，设置背景颜色为灰�?
               disabledBackgroundColor:
                   Theme.of(context).colorScheme.surface,
               backgroundColor: color,
               shape: RoundedRectangleBorder(
-                // 设置为矩形形状
-                borderRadius: BorderRadius.zero, // 没有圆角，即正方形
+                // 设置为矩形形�?
+                borderRadius: BorderRadius.zero, // 没有圆角，即正方�?
               ),
               fixedSize: Size(iconBtnSize, iconBtnSize), // 设置固定大小
             ),
@@ -726,7 +728,7 @@ class _ScaleWgtTakeInWidgetState extends State<ScaleWgtTakeInWidget> {
   }
 
   _changeSaveButton() {
-    setState(() {
+    if (mounted) setState(() {
       String wgtValue = '';
       if ((weightInfo?.weightVal ?? '0').contains('-')) {
         showTipInfo((localizedStrings?.gTipInvalidWeightData ?? "gTipInvalidWeightData"), context);
@@ -771,8 +773,8 @@ class _ScaleWgtTakeInWidgetState extends State<ScaleWgtTakeInWidget> {
 
     WeightReportData addData = WeightReportData(
       (maxRecId).toString(),
-      tempDefScaleInfo.scaleModel,
-      tempDefScaleInfo.scaleSn,
+      tempDefScaleInfo?.scaleModel ?? '',
+      tempDefScaleInfo?.scaleSn ?? '',
       (tempPlu!.plu == null) ? "" : tempPlu.plu.toString(),
       (tempPlu.productCode == null) ? "" : tempPlu.productCode.toString(),
 
@@ -801,7 +803,7 @@ class _ScaleWgtTakeInWidgetState extends State<ScaleWgtTakeInWidget> {
       mySysUser.userName ?? "",
       mySysUser.nickName ?? "",
 
-      tempDefScaleInfo.scaleName, //此处应该是秤机种名
+      tempDefScaleInfo?.scaleName ?? '', //此处应该是秤机种�?
       getDateTime(mySettingParam.dateSeparator, dateformat),
     );
     wgtRptDataList.add(addData);
@@ -818,8 +820,8 @@ class _ScaleWgtTakeInWidgetState extends State<ScaleWgtTakeInWidget> {
           style: IconButton.styleFrom(
             backgroundColor: bkColor,
             shape: RoundedRectangleBorder(
-              // 设置为矩形形状
-              borderRadius: BorderRadius.zero, // 没有圆角，即正方形
+              // 设置为矩形形�?
+              borderRadius: BorderRadius.zero, // 没有圆角，即正方�?
             ),
             fixedSize: const Size(40, 40), // 设置固定大小
           ),

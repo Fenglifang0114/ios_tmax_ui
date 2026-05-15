@@ -41,23 +41,23 @@ class TakeInPage extends StatefulWidget {
 }
 
 class TakeInPageState extends State<TakeInPage> {
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   TextEditingController totalWgtUnitCtl = TextEditingController(text: 'kg');
-// 使用 ValueNotifier 来存储总重量和稳定状态
+// 使用 ValueNotifier 来存储总重量和稳定状�?
   final ValueNotifier<double> totalWeightNotifier = ValueNotifier<double>(0);
   final ValueNotifier<bool> totalWgtStableNotifier = ValueNotifier<bool>(false);
 
-  final Map<int, GlobalKey> _scaleWidgetKeys = {};
+  final Map<int, GlobalKey<TakeInPageState>> _scaleWidgetKeys = {};
   ReqWeightCountine tempWeight = ReqWeightCountine();
   final Map<int, Widget> _scaleWidgetCache = {};
-  Map<int, WeightInfo> scaleWgtMapDetail = {}; //存储每台秤的详细数据，组成total weight 的明细数据
+  Map<int, WeightInfo> scaleWgtMapDetail = {}; //存储每台秤的详细数据，组成total weight 的明细数�?
   List<int> mySelScaleIdList = [];
   List<ScaleRecInfo> allWgtRecList = [];
 
   PluData? selectedPluData; // 用于存储选中的PluData
 
+  final double scaleWgtWidth = 400;
   late Timer updateTimer; //刷新数据
-  // 添加定时器变量
+  // 添加定时器变�?
   Timer? _scaleCheckTimer;
   late TableState _tableState;
 
@@ -83,9 +83,9 @@ class TakeInPageState extends State<TakeInPage> {
   void initState() {
     super.initState();
     myPluInfoList.clear();
-    // 初始化 TableState
-    mySettingParam.scaleMode = (int.tryParse(wgtTakeInMode) ?? 0);
-    _tableState = TableState(mode: int.tryParse(wgtTakeInMode) ?? 0);
+    // 初始�?TableState
+    mySettingParam.scaleMode = int.parse(wgtTakeInMode);
+    _tableState = TableState();
     _tableState.loadPage(1);
 
     PublicFunctions.getUIConfNormal(wgtTakeInMode);
@@ -93,18 +93,18 @@ class TakeInPageState extends State<TakeInPage> {
 
     startTimer();
     scaleWeightMapCommon = {};
-    // 初始化定时器，每隔10秒执行一次检查
+    // 初始化定时器，每�?0秒执行一次检�?
     _scaleCheckTimer = Timer.periodic(Duration(seconds: 10), (timer) {
-      checkSameScale();
+      if (mounted) checkSameScale();
     });
 
-    // 初始加载时立即检查一次
+    // 初始加载时立即检查一�?
     WidgetsBinding.instance.addPostFrameCallback((_) {
       checkSameScale();
     });
     eventBus1 = eventBus.on<EventUpdateSettingParam>().listen((event) {
       if (mounted) {
-        setState(() {
+        if (mounted) setState(() {
           PublicFunctions.getUIConfNormal(wgtTakeInMode);
         });
       }
@@ -112,7 +112,7 @@ class TakeInPageState extends State<TakeInPage> {
 
     eventBus2 = eventBus.on<EventSettingParam>().listen((event) {
       if (mounted) {
-        setState(() {
+        if (mounted) setState(() {
           mySettingParam = event.obj;
           if (firstGetSelScale) {
             firstGetSelScale = false;
@@ -138,15 +138,15 @@ class TakeInPageState extends State<TakeInPage> {
 
           allWgtRecList.clear();
 
-          allWgtRecList = List<ScaleRecInfo>.from(scaleRecInfos!);
+          allWgtRecList = List<ScaleRecInfo>.from(scaleRecInfos ?? []);
 
           _tableState.addData(allWgtRecList);
           _tableState.setTotalCount(getAllWgtInfo.totalCount ?? 0);
           // _tableState.loadPage(1);
         } else {
           allWgtRecList.clear();
-          // wgtRptDataList.clear();
-          // updateTableData(getWeightReportData());
+          _tableState.addData([]);
+          _tableState.setTotalCount(0);
         }
       }
     });
@@ -168,7 +168,7 @@ class TakeInPageState extends State<TakeInPage> {
 
     eventBus7 = eventBus.on<EventDelAllWgtRecs>().listen((event) {
       if (mounted) {
-        setState(() {
+        if (mounted) setState(() {
           _tableState.allData.clear();
           _tableState.loadPage(1);
         });
@@ -178,7 +178,7 @@ class TakeInPageState extends State<TakeInPage> {
     eventBus8 = eventBus.on<EventReqWeightCountine>().listen((event) {
       if (mounted) {
         if (mySettingParam.wgtMode == 0) {
-          // 独立模式直接退出
+          // 独立模式直接退�?
           return;
         }
         tempWeight = event.obj;
@@ -193,7 +193,7 @@ class TakeInPageState extends State<TakeInPage> {
 
     eventBus9 = eventBus.on<EventProductRecList>().listen((event) {
       if (mounted) {
-        setState(() {
+        if (mounted) setState(() {
           List<PluDataFromDb> pluInfoList = event.obj;
           for (int i = 0; i < pluInfoList.length; i++) {
             PluData newPlu = PluData(0, 0, 0, 0, '', '', 0, 0, 0, 0, 0, 0, 0,
@@ -258,7 +258,7 @@ class TakeInPageState extends State<TakeInPage> {
           showExportDialog(filePath, context);
         } else {
           showTipInfo(
-              '${(localizedStrings?.gTipExportFail ?? "gTipExportFail")} ：$resString', context);
+              '${localizedStrings?.gTipExportFail ?? ""} �?resString', context);
         }
       }
     });
@@ -266,7 +266,7 @@ class TakeInPageState extends State<TakeInPage> {
 
   @override
   void didChangeDependencies() {
-    setState(() {
+    if (mounted) setState(() {
       for (var item in myReportFeildsMap.keys) {
         _tableState.visibleColumns[item]!.isSelect = myReportFeildsMap[item]!;
       }
@@ -296,15 +296,13 @@ class TakeInPageState extends State<TakeInPage> {
     myPluInfoList.clear();
     updateTimer.cancel();
 
-    totalWgtUnitCtl.clear();
+    totalWgtUnitCtl.dispose();
     totalWeightNotifier.dispose();
     totalWgtStableNotifier.dispose();
 
     _tableState.dispose();
 
     _scaleCheckTimer?.cancel();
-
-    totalWgtUnitCtl.dispose();
     super.dispose();
   }
 
@@ -321,7 +319,7 @@ class TakeInPageState extends State<TakeInPage> {
     }
   }
 
-  // 添加定时器，每 2 秒计算一次总重量
+  // 添加定时器，�?2 秒计算一次总重�?
   void startTimer() {
     updateTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (mounted) {
@@ -332,13 +330,13 @@ class TakeInPageState extends State<TakeInPage> {
           needUpdate = true;
           return;
         }
-        // 更新总重量和稳定状态
+        // 更新总重量和稳定状�?
         updateTotalWeightAndStable();
       }
     });
   }
 
-  // 更新总重量和稳定状态
+  // 更新总重量和稳定状�?
   void updateTotalWeightAndStable() {
     double totalWeight = calculateTotalWeight();
     bool totalWgtStable = getTotalWgtStable();
@@ -351,7 +349,7 @@ class TakeInPageState extends State<TakeInPage> {
       return false;
     }
 
-    // 提前构建一个设备 ID 到设备对象的映射，避免在循环中多次查找
+    // 提前构建一个设�?ID 到设备对象的映射，避免在循环中多次查�?
     final scaleIdToScaleMap = <int, Scale>{};
     for (final scale in myAllScalesList) {
       scaleIdToScaleMap[scale.scaleId] = scale;
@@ -362,7 +360,7 @@ class TakeInPageState extends State<TakeInPage> {
     for (final entry in scaleWeightMapCommon.entries) {
       final scaleId = entry.key;
 
-      // 判断选择的设备是不是当前的设备
+      // 判断选择的设备是不是当前的设�?
       if (!mySelScaleIdList.contains(scaleId)) {
         continue;
       }
@@ -374,7 +372,7 @@ class TakeInPageState extends State<TakeInPage> {
       }
 
       final info = entry.value;
-      // 判断这个 value 是不是正的数据
+      // 判断这个 value 是不是正的数�?
       if (info.weight.contains('-')) {
         continue;
       }
@@ -385,11 +383,11 @@ class TakeInPageState extends State<TakeInPage> {
       }
     }
 
-    // 没有有效设备则返回 false
+    // 没有有效设备则返�?false
     return validScaleCount > 0;
   }
 
-  // 计算总重量
+  // 计算总重�?
   double calculateTotalWeight() {
     double totalWeight = 0;
     scaleWgtMapDetail = {}; //每次计算都先清空明细数据
@@ -399,7 +397,7 @@ class TakeInPageState extends State<TakeInPage> {
     for (var entry in scaleWeightMapCommon.entries) {
       int scaleId = entry.key;
 
-      //判断选择的设备是不是当前的设备
+      //判断选择的设备是不是当前的设�?
       if (!mySelScaleIdList.contains(scaleId)) {
         continue;
       }
@@ -416,69 +414,39 @@ class TakeInPageState extends State<TakeInPage> {
       }
 
       WeightInfo info = entry.value;
-      //判断这个value是不是正的数据
+      //判断这个value是不是正的数�?
       if (info.weight.contains('-')) {
         continue;
       }
-      //转换为double类型的，最多三位小数
-      double weight = (double.tryParse(info.weight) ?? 0.0);
-      // 转换为三位小数
-      weight = (double.tryParse(weight.toStringAsFixed(3)) ?? 0.0);
+      //转换为double类型的，最多三位小�?
+      double weight = double.parse(info.weight);
+      // 转换为三位小�?
+      weight = double.parse(weight.toStringAsFixed(3));
       double convertedWeight =
           convertUnit(weight, info.unit, totalWgtUnitCtl.text);
-      double tmpWeight = (double.tryParse(convertedWeight.toStringAsFixed(3)) ?? 0.0);
+      double tmpWeight = double.parse(convertedWeight.toStringAsFixed(3));
       totalWeight += tmpWeight;
       scaleWgtMapDetail[scaleId] = WeightInfo(
           weight: tmpWeight.toStringAsFixed(3),
           unit: totalWgtUnitCtl.text,
           stable: info.stable);
     }
-    totalWeight = (double.tryParse(totalWeight.toStringAsFixed(3)) ?? 0.0);
+    totalWeight = double.parse(totalWeight.toStringAsFixed(3));
 
     return totalWeight;
   }
 
   @override
   Widget build(BuildContext context) {
+    if (myAllScalesList.isEmpty) {
+      return Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
     final width = MediaQuery.of(context).size.width;
-    final isMobile = width < 600;
     return Scaffold(
-      key: _scaffoldKey,
-      drawer: isMobile
-          ? Drawer(
-              width: appScaleListWidth + 20,
-              child: Container(
-                color: Theme.of(context).colorScheme.surface,
-                child: Column(
-                  children: [
-                    Container(
-                      height: btnHeight + 40,
-                      padding: const EdgeInsets.only(left: regularPadding, top: 40),
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        (localizedStrings?.gTitleDeviceList ?? "gTitleDeviceList"),
-                        style: Theme.of(context).textTheme.bodyLarge?.apply(
-                              color: Theme.of(context).colorScheme.primary,
-                            ),
-                      ),
-                    ),
-                    const Divider(),
-                    Expanded(
-                      child: NewMutiScaleListWidget(
-                        listWidth: appScaleListWidth,
-                        selScaleList: mySelScaleIdList,
-                        clickScale: (scale) {
-                          setState(() {
-                            addOrRemoveSelScale(scale.scaleId);
-                          });
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            )
-          : null,
       body: Container(
           width: width,
           decoration:
@@ -490,69 +458,61 @@ class TakeInPageState extends State<TakeInPage> {
                 myPageHeadInfo(
                     context,
                     width - headWidthPadding,
-                    (localizedStrings?.menuIncrementWeighing ?? "menuIncrementWeighing"),
-                    (localizedStrings?.gTipIncrementWgtPageHelp ?? "gTipIncrementWgtPageHelp"),
-                    isMobile),
+                    localizedStrings?.menuIncrementWeighing ?? "",
+                    localizedStrings?.gTipIncrementWgtPageHelp ?? ""),
                 Container(
                   height: regularPadding,
-                  color: Theme.of(context).colorScheme.surface,
+                  color: Theme.of(context).colorScheme.surfaceContainerLow,
                 ),
                 Expanded(
                     child: Container(
-                  color: Theme.of(context).colorScheme.surface,
-                  child: isMobile ? _buildMobileBody() : _buildDesktopBody(),
+                  color: Theme.of(context).colorScheme.surfaceTint,
+                  child: Row(
+                    children: [
+                      Container(
+                        width: appScaleListWidth,
+                        color: Theme.of(context).colorScheme.surfaceTint,
+                        child: SizedBox(
+                          height: MediaQuery.of(context).size.height,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.max,
+                            children: [
+                              SizedBox(
+                                height: regularPadding,
+                              ),
+                              Expanded(
+                                child: NewMutiScaleListWidget(
+                                  listWidth: appScaleListWidth, // 列表宽度
+                                  selScaleList: mySelScaleIdList,
+                                  clickScale: (scale) {
+                                    if (mounted) setState(() {
+                                      addOrRemoveSelScale(scale.scaleId);
+                                    });
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Container(
+                        width: regularPadding,
+                        color:
+                            Theme.of(context).colorScheme.surfaceContainerLow,
+                      ),
+                      if (mySelScaleIdList.isNotEmpty)
+                        showScaleWgt(context, scaleWgtWidth),
+                      if (mySelScaleIdList.isNotEmpty)
+                        Container(
+                          width: regularPadding,
+                          color:
+                              Theme.of(context).colorScheme.surfaceContainerLow,
+                        ),
+                      showWgtTable(context) // width - 591 - 36)
+                    ],
+                  ),
                 )),
               ])),
-    );
-  }
-
-  Widget _buildMobileBody() {
-    return Column(
-      children: [
-        if (mySelScaleIdList.isNotEmpty)
-          SizedBox(
-            height: 180, // 压缩高度
-            child: showScaleWgt(context, MediaQuery.of(context).size.width),
-          ),
-        Expanded(
-          child: Container(
-            color: Theme.of(context).colorScheme.surface,
-            child: showWgtTable(context),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildDesktopBody() {
-    return Row(
-      children: [
-        // 左侧：秤列表
-        Container(
-          width: 260,
-          decoration: BoxDecoration(
-            border: Border(right: BorderSide(color: Theme.of(context).dividerColor.withOpacity(0.5))),
-          ),
-          child: NewMutiScaleListWidget(
-            listWidth: 260,
-            selScaleList: mySelScaleIdList,
-            clickScale: (scale) => addOrRemoveSelScale(scale.scaleId),
-          ),
-        ),
-        // 中间：称重显示与操作
-        Container(
-          width: 340,
-          decoration: BoxDecoration(
-            border: Border(right: BorderSide(color: Theme.of(context).dividerColor.withOpacity(0.5))),
-            color: Theme.of(context).colorScheme.surface,
-          ),
-          child: showScaleWgt(context, 340),
-        ),
-        // 右侧：数据表格
-        Expanded(
-          child: showWgtTable(context),
-        ),
-      ],
     );
   }
 
@@ -576,7 +536,7 @@ class TakeInPageState extends State<TakeInPage> {
         scaleMap[scale.scaleId] = scale;
       }
 
-      // 根据物理设备（型号 + 序列号）对选中的秤进行分组
+      // 根据物理设备（型�?+ 序列号）对选中的秤进行分组
       Map<String, List<Scale>> groups = {};
       for (var scaleId in mySelScaleIdList) {
         var scale = scaleMap[scaleId];
@@ -588,19 +548,19 @@ class TakeInPageState extends State<TakeInPage> {
 
       for (var group in groups.values) {
         if (group.length > 1) {
-          // 冲突：同一个物理设备选择了多种连接方式
-          showTipInfo((localizedStrings?.tipSameScale ?? "tipSameScale"), context);
+          // 冲突：同一个物理设备选择了多种连接方�?
+          showTipInfo(localizedStrings?.tipSameScale ?? "", context);
 
-          // 优先级：串口(0) > 网口(1) > 蓝牙(2)。排序并保留最高优先级的连接。
+          // 优先级：串口(0) > 网口(1) > 蓝牙(2)。排序并保留最高优先级的连接�?
           group.sort((a, b) => a.tMedia.compareTo(b.tMedia));
 
-          // 移除除第一个（优先级最高）之外的所有连接
+          // 移除除第一个（优先级最高）之外的所有连�?
           for (int i = 1; i < group.length; i++) {
             if (mySelScaleIdList.contains(group[i].scaleId)) {
               addOrRemoveSelScale(group[i].scaleId);
             }
           }
-          break; // 每个检查周期只显示一次提示
+          break; // 每个检查周期只显示一次提�?
         }
       }
     }
@@ -612,7 +572,7 @@ class TakeInPageState extends State<TakeInPage> {
       mySelScaleIdList.remove(scaleId);
       PublicFunctions.stopWeight(scaleId);
 
-      // 从缓存和keys中移除
+      // 从缓存和keys中移�?
       _scaleWidgetCache.remove(scaleId);
       _scaleWidgetKeys.remove(scaleId);
 
@@ -621,7 +581,7 @@ class TakeInPageState extends State<TakeInPage> {
       mySelScaleIdList.add(scaleId);
       PublicFunctions.getWeight(scaleId);
     }
-    setState(() {}); // 强制刷新界面
+    if (mounted) setState(() {}); // 强制刷新界面
     checkSameScale();
   }
 
@@ -639,7 +599,7 @@ class TakeInPageState extends State<TakeInPage> {
                 children: [
                   showSelPluWidget(width - 2 * regularPadding, 40,
                       (PluData pluData) {
-                    setState(() {
+                    if (mounted) setState(() {
                       selectedPluData = pluData;
                     });
                   })
@@ -649,13 +609,13 @@ class TakeInPageState extends State<TakeInPage> {
           if (mySettingParam.wgtMode == 1)
             Container(
               height: regularPadding,
-              color: Theme.of(context).colorScheme.surface,
+              color: Theme.of(context).colorScheme.surfaceContainerLow,
             ),
           Expanded(
               child: Container(
             width: width,
             padding: const EdgeInsets.only(bottom: regularPadding),
-            color: Theme.of(context).colorScheme.surface,
+            color: Theme.of(context).colorScheme.surfaceContainerLow,
             child: ListView.builder(
               itemCount: mySelScaleIdList.length,
               itemBuilder: (context, index) {
@@ -663,7 +623,7 @@ class TakeInPageState extends State<TakeInPage> {
 
                 // 如果key不存在，创建新的GlobalKey
                 if (!_scaleWidgetKeys.containsKey(scaleId)) {
-                  _scaleWidgetKeys[scaleId] = GlobalKey();
+                  _scaleWidgetKeys[scaleId] = GlobalKey<TakeInPageState>();
                 }
 
                 // 如果缓存不存在，使用稳定的GlobalKey创建新Widget
@@ -687,9 +647,10 @@ class TakeInPageState extends State<TakeInPage> {
     );
   }
 
-  Widget showWgtTable(BuildContext context) {
-    return Container(
-      color: Theme.of(context).colorScheme.surface,
+  showWgtTable(BuildContext context) {
+    return Expanded(
+      child: Container(
+          color: Theme.of(context).colorScheme.surface,
           child: Column(
             children: [
               if (mySettingParam.wgtMode == 1)
@@ -700,8 +661,8 @@ class TakeInPageState extends State<TakeInPage> {
                   child: Row(
                     children: [
                       Text(
-                        (localizedStrings?.fTotalWeight ?? "fTotalWeight"),
-                        style: Theme.of(context).textTheme.labelMedium?.apply(
+                        localizedStrings?.fTotalWeight ?? "",
+                        style: Theme.of(context).textTheme.labelMedium!.apply(
                             color: Theme.of(context).colorScheme.onSurface),
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -724,7 +685,8 @@ class TakeInPageState extends State<TakeInPage> {
                                 textAlign: TextAlign.right,
                                 style: Theme.of(context)
                                     .textTheme
-                                    .headlineLarge?.copyWith(
+                                    .headlineLarge!
+                                    .copyWith(
                                       fontSize: 40,
                                       color: mySelScaleIdList.isNotEmpty
                                           ? Theme.of(context)
@@ -750,7 +712,8 @@ class TakeInPageState extends State<TakeInPage> {
                                 child: Text(value,
                                     style: Theme.of(context)
                                         .textTheme
-                                        .bodyLarge?.apply(
+                                        .bodyLarge!
+                                        .apply(
                                           color: Theme.of(context)
                                               .colorScheme
                                               .onSurface,
@@ -760,11 +723,11 @@ class TakeInPageState extends State<TakeInPage> {
                             }).toList(),
                             onChanged: (newValue) {
                               if (newValue != null) {
-                                setState(() {
+                                if (mounted) setState(() {
                                   totalWgtUnitCtl.text = newValue;
                                 });
 
-                                // 更新总重量和稳定状态
+                                // 更新总重量和稳定状�?
                                 updateTotalWeightAndStable();
                               }
                             },
@@ -778,7 +741,7 @@ class TakeInPageState extends State<TakeInPage> {
                         valueListenable: totalWgtStableNotifier,
                         builder: (context, totalWgtStable, _) {
                           return Tooltip(
-                            message: (localizedStrings?.gBtnSave ?? "gBtnSave"),
+                            message: localizedStrings?.gBtnSave ?? "",
                             child: IconButton(
                               iconSize: 28,
                               color: Theme.of(context).colorScheme.primary,
@@ -790,13 +753,13 @@ class TakeInPageState extends State<TakeInPage> {
                               style: IconButton.styleFrom(
                                 disabledBackgroundColor: Theme.of(context)
                                     .colorScheme
-                                    .surface,
+                                    .surfaceContainerLow,
                                 backgroundColor: Theme.of(context)
                                     .colorScheme
                                     .onTertiaryFixedVariant,
                                 shape: RoundedRectangleBorder(
-                                  // 设置为矩形形状
-                                  borderRadius: BorderRadius.zero, // 没有圆角，即正方形
+                                  // 设置为矩形形�?
+                                  borderRadius: BorderRadius.zero, // 没有圆角，即正方�?
                                 ),
                                 fixedSize: const Size(28, 28), // 设置固定大小
                               ),
@@ -832,7 +795,7 @@ class TakeInPageState extends State<TakeInPage> {
               if (mySettingParam.wgtMode == 1)
                 Container(
                   height: regularPadding,
-                  color: Theme.of(context).colorScheme.surface,
+                  color: Theme.of(context).colorScheme.surfaceContainerLow,
                 ),
               Container(
                   padding: EdgeInsets.only(
@@ -842,7 +805,7 @@ class TakeInPageState extends State<TakeInPage> {
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       Tooltip(
-                        message: (localizedStrings?.gBtnExport ?? "gBtnExport"),
+                        message: localizedStrings?.gBtnExport ?? "",
                         child: IconButton(
                           iconSize: 28,
                           color: Theme.of(context).colorScheme.onPrimary,
@@ -854,12 +817,12 @@ class TakeInPageState extends State<TakeInPage> {
                           style: IconButton.styleFrom(
                             disabledBackgroundColor: Theme.of(context)
                                 .colorScheme
-                                .surface,
+                                .surfaceContainerLow,
                             backgroundColor:
                                 Theme.of(context).colorScheme.primary,
                             shape: RoundedRectangleBorder(
-                              // 设置为矩形形状
-                              borderRadius: BorderRadius.zero, // 没有圆角，即正方形
+                              // 设置为矩形形�?
+                              borderRadius: BorderRadius.zero, // 没有圆角，即正方�?
                             ),
                             fixedSize: const Size(28, 28), // 设置固定大小
                           ),
@@ -897,7 +860,7 @@ class TakeInPageState extends State<TakeInPage> {
                         width: regularPadding,
                       ),
                       Tooltip(
-                        message: (localizedStrings?.gBtnReportSetting ?? "gBtnReportSetting"),
+                        message: localizedStrings?.gBtnReportSetting ?? "",
                         child: IconButton(
                           iconSize: 28,
                           color: Theme.of(context).colorScheme.onPrimary,
@@ -909,12 +872,12 @@ class TakeInPageState extends State<TakeInPage> {
                           style: IconButton.styleFrom(
                             disabledBackgroundColor: Theme.of(context)
                                 .colorScheme
-                                .surface,
+                                .surfaceContainerLow,
                             backgroundColor:
                                 Theme.of(context).colorScheme.primary,
                             shape: RoundedRectangleBorder(
-                              // 设置为矩形形状
-                              borderRadius: BorderRadius.zero, // 没有圆角，即正方形
+                              // 设置为矩形形�?
+                              borderRadius: BorderRadius.zero, // 没有圆角，即正方�?
                             ),
                             fixedSize: const Size(28, 28), // 设置固定大小
                           ),
@@ -933,7 +896,7 @@ class TakeInPageState extends State<TakeInPage> {
                         width: regularPadding,
                       ),
                       Tooltip(
-                        message: (localizedStrings?.gParameterSettingsTitle ?? "gParameterSettingsTitle"),
+                        message: localizedStrings?.gParameterSettingsTitle ?? "",
                         child: IconButton(
                           iconSize: 28,
                           color: Theme.of(context).colorScheme.onPrimary,
@@ -945,12 +908,12 @@ class TakeInPageState extends State<TakeInPage> {
                           style: IconButton.styleFrom(
                             disabledBackgroundColor: Theme.of(context)
                                 .colorScheme
-                                .surface,
+                                .surfaceContainerLow,
                             backgroundColor:
                                 Theme.of(context).colorScheme.primary,
                             shape: RoundedRectangleBorder(
-                              // 设置为矩形形状
-                              borderRadius: BorderRadius.zero, // 没有圆角，即正方形
+                              // 设置为矩形形�?
+                              borderRadius: BorderRadius.zero, // 没有圆角，即正方�?
                             ),
                             fixedSize: const Size(28, 28), // 设置固定大小
                           ),
@@ -975,7 +938,7 @@ class TakeInPageState extends State<TakeInPage> {
                         ),
                       if (mySysUser.roleId != operatorRoleId)
                         Tooltip(
-                          message: (localizedStrings?.gBtnDeleteAll ?? "gBtnDeleteAll"),
+                          message: localizedStrings?.gBtnDeleteAll ?? "",
                           child: IconButton(
                             iconSize: 28,
                             color: Theme.of(context).colorScheme.onPrimary,
@@ -987,28 +950,28 @@ class TakeInPageState extends State<TakeInPage> {
                             style: IconButton.styleFrom(
                               disabledBackgroundColor: Theme.of(context)
                                   .colorScheme
-                                  .surface,
+                                  .surfaceContainerLow,
                               backgroundColor:
                                   Theme.of(context).colorScheme.error,
                               shape: RoundedRectangleBorder(
-                                // 设置为矩形形状
-                                borderRadius: BorderRadius.zero, // 没有圆角，即正方形
+                                // 设置为矩形形�?
+                                borderRadius: BorderRadius.zero, // 没有圆角，即正方�?
                               ),
                               fixedSize: const Size(28, 28), // 设置固定大小
                             ),
                             onPressed: () {
                               showDialog(
                                 context: context,
-                                barrierDismissible: false, // 点击对话框外部不关闭对话框
+                                barrierDismissible: false, // 点击对话框外部不关闭对话�?
                                 builder: (BuildContext context) {
                                   return ShowDeleteTipDialog(
-                                    title: (localizedStrings?.fTipTitle ?? "fTipTitle"),
-                                    msg: (localizedStrings?.gTipConfirmDeleteAll ?? "gTipConfirmDeleteAll"),
+                                    title: localizedStrings?.fTipTitle ?? "",
+                                    msg: localizedStrings?.gTipConfirmDeleteAll ?? "",
                                   );
                                 },
                               ).then((value) {
                                 if (value) {
-                                  setState(() {
+                                  if (mounted) setState(() {
                                     PublicFunctions.newDeleteAllRecords(
                                         mySettingParam.scaleMode);
                                   });
@@ -1027,21 +990,19 @@ class TakeInPageState extends State<TakeInPage> {
                   )),
               Divider(
                 height: 1,
-                color: Theme.of(context).colorScheme.surface,
+                color: Theme.of(context).colorScheme.surfaceDim,
               ),
               SizedBox(
                 height: regularPadding,
               ),
-              Expanded(
-                child: ChangeNotifierProvider<TableState>.value(
-                  value: _tableState,
-                  child: WgtDataTable(),
-                ),
+              ChangeNotifierProvider<TableState>.value(
+                value: _tableState,
+                child: WgtDataTable(),
               ),
             ],
-          ),
+          )),
     );
-}
+  }
 
   void reportFieldsSettingDialog(BuildContext context) {
     showDialog(
@@ -1052,9 +1013,10 @@ class TakeInPageState extends State<TakeInPage> {
       },
     ).then((value) {
       if (value) {
-        setState(() {
+        if (mounted) setState(() {
           for (var item in myReportFeildsMap.keys) {
-            _tableState.visibleColumns[item]?.isSelect = myReportFeildsMap[item] ?? false;
+            _tableState.visibleColumns[item]!.isSelect =
+                myReportFeildsMap[item]!;
           }
         });
       }
@@ -1071,8 +1033,8 @@ class TakeInPageState extends State<TakeInPage> {
     );
   }
 
-  Widget myPageHeadInfo(dynamic context, double maxWidth, String pageTitle,
-      String helpInfo, bool showMenu) {
+  Widget myPageHeadInfo(
+      dynamic context, double maxWidth, String pageTitle, String helpInfo) {
     return Container(
         height: pageTopTitleHeight,
         color: Theme.of(context).colorScheme.surface,
@@ -1083,32 +1045,16 @@ class TakeInPageState extends State<TakeInPage> {
               children: [
                 subTitle(context, pageTitle, () {
                   widget.onNavigate(widget.lastRouteName);
-                },
-                    leading: showMenu
-                        ? Padding(
-                            padding:
-                                const EdgeInsets.only(left: regularPadding),
-                            child: Builder(
-                              builder: (context) => IconButton(
-                                icon: Icon(Icons.menu_open,
-                                    color:
-                                        Theme.of(context).colorScheme.primary,
-                                    size: 28),
-                                onPressed: () =>
-                                    _scaffoldKey.currentState?.openDrawer(),
-                              ),
-                            ),
-                          )
-                        : null),
+                }),
                 Row(mainAxisAlignment: MainAxisAlignment.end, children: [
                   Text(
                     mySettingParam.wgtMode == 0
-                        ? (localizedStrings?.gTipStandaloneMode ?? "gTipStandaloneMode")
-                        : (localizedStrings?.gTipWeightSummationMode ?? "gTipWeightSummationMode"),
+                        ? localizedStrings?.gTipStandaloneMode ?? ""
+                        : localizedStrings?.gTipWeightSummationMode ?? "",
                     style: Theme.of(context)
                         .textTheme
-                        .labelMedium
-                        ?.apply(color: Theme.of(context).colorScheme.primary),
+                        .bodySmall!
+                        .apply(color: Theme.of(context).colorScheme.primary),
                   ),
                   const SizedBox(
                     width: largePadding,
@@ -1123,7 +1069,7 @@ class TakeInPageState extends State<TakeInPage> {
           ),
           Divider(
             color:
-                Theme.of(context).colorScheme.surface, // 设置分割线的颜色
+                Theme.of(context).colorScheme.surfaceContainerLow, // 设置分割线的颜色
             height: 1, // 设置分割线的高度
             thickness: 1, // 设置分割线的粗细
           ),
@@ -1138,10 +1084,10 @@ void sendDataToDb(
   String baseUnit,
   PluData? selPlu,
 ) {
-  // 检查必要参数是否为空
+  // 检查必要参数是否为�?
   if (selScaleList.isEmpty || scaleWgtMapDetail.isEmpty) return;
 
-  // 提前构建 scaleId 到 Scale 对象的映射
+  // 提前构建 scaleId �?Scale 对象的映�?
   final scaleIdToScaleMap = <int, Scale>{};
   for (final scale in myAllScalesList) {
     scaleIdToScaleMap[scale.scaleId] = scale;
@@ -1203,11 +1149,11 @@ void sendDataToDb(
 
   if (scaleWgtMapDetail.length == 1) {
     final scaleId = scaleWgtMapDetail.keys.first;
-    final tempScale = scaleIdToScaleMap[scaleId];
+    final tempScale = scaleIdToScaleMap[scaleId]!;
     newAddRec.headRec = headerCommon.copyWith(
-      scaleModel: tempScale?.scaleModel ?? '',
-      scaleSn: tempScale?.scaleSn ?? '',
-      scaleName: tempScale?.scaleName ?? '',
+      scaleModel: tempScale.scaleModel,
+      scaleSn: tempScale.scaleSn,
+      scaleName: tempScale.scaleName,
     );
     newAddRec.detailRec = [];
   } else {
@@ -1222,13 +1168,12 @@ void sendDataToDb(
     // 构建 detailRec
     int seq = 1;
     for (final scaleId in scaleWgtMapDetail.keys) {
-      final tempScale = scaleIdToScaleMap[scaleId];
-      final weightInfo = scaleWgtMapDetail[scaleId];
-      if (tempScale == null || weightInfo == null) continue;
+      final tempScale = scaleIdToScaleMap[scaleId]!;
+      final weightInfo = scaleWgtMapDetail[scaleId]!;
       final weight = weightInfo.weight;
 
       // baseUnit == 'g'
-      //     ? ((double.tryParse() ?? 0.0).toStringAsFixed(0)
+      //     ? double.parse(weightInfo.weight).toStringAsFixed(0)
       //     : weightInfo.weight;
 
       newAddRec.detailRec!.add(NewWgtDetail(
@@ -1243,7 +1188,7 @@ void sendDataToDb(
     }
   }
 
-  // 发送数据
+  // 发送数�?
   final jsonString = reqAddWgtRecToJson(newAddRec);
   PublicFunctions.addSummaryData(jsonString);
 
@@ -1251,6 +1196,26 @@ void sendDataToDb(
 }
 
 Scale getScaleFormAll(int scaleId) {
+  if (myAllScalesList.isEmpty) {
+    return UnifiedScale(
+      scaleId: 0,
+      scaleName: '',
+      scaleModel: '',
+      scaleSn: '',
+      tMedia: 0,
+      isOnline: false,
+      scaleCat: 0,
+      isDefault: false,
+      sendService: false,
+      mediaConfig: SerialMediaConfig(
+        devPath: '',
+        baudRate: 0,
+        dataBits: 0,
+        stopBits: 0,
+        parity: 0,
+      ),
+    );
+  }
   for (var item in myAllScalesList) {
     if (item.scaleId == scaleId) {
       return item;

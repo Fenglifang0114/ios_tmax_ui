@@ -58,7 +58,7 @@ class _ScaleWgtCheckModeWidgetState extends State<ScaleWgtCheckModeWidget> {
 
   PluData? selectedPluData; // 用于存储选中的PluData
 
-  late int weightMode; // 手动保存，1 ，2，稳定保存
+  late int weightMode; // 手动保存�? �?，稳定保�?
 
   final int cstManualSave = 1;
   final int cstStableSave = 2;
@@ -66,7 +66,7 @@ class _ScaleWgtCheckModeWidgetState extends State<ScaleWgtCheckModeWidget> {
   int _stableSaveTime = 0;
 
   int maxRecId = 0;
-  late Scale tempDefScaleInfo;
+  Scale? tempDefScaleInfo;
 
   bool firstGetRec = true;
   bool _isSaveBtnEnable = false;
@@ -88,9 +88,9 @@ class _ScaleWgtCheckModeWidgetState extends State<ScaleWgtCheckModeWidget> {
 
   final _searchRawIdCtl = TextEditingController();
 
-  bool _hasPassedZero = false; // 标记是否经过 0 点
+  bool _hasPassedZero = false; // 标记是否经过 0 �?
   Timer? _stableTimer; // 稳定状态计时器
-  int _currentStableDuration = 0; // 当前稳定状态持续时间
+  int _currentStableDuration = 0; // 当前稳定状态持续时�?
   double highValue = 0.0;
   double lowValue = 0.0;
 
@@ -141,12 +141,12 @@ class _ScaleWgtCheckModeWidgetState extends State<ScaleWgtCheckModeWidget> {
         : (mySettingParam.recMode == msgAuto)
             ? cstStableSave
             : cstManualSave;
-    dateformat = int.parse(mySettingParam.dateFormat);
-    zeroRange = double.tryParse(mySettingParam.zeroRange)!;
+    dateformat = int.tryParse(mySettingParam.dateFormat) ?? 0;
+    zeroRange = double.tryParse(mySettingParam.zeroRange) ?? 0.0;
     String timeString = (mySettingParam.stableTime == "")
         ? "0"
         : mySettingParam.stableTime.toString();
-    _stableSaveTime = int.parse(timeString);
+    _stableSaveTime = int.tryParse(timeString) ?? 0;
     if (weightMode == cstStableSave) {
       _isSaveBtnEnable = false;
     } else {
@@ -166,39 +166,10 @@ class _ScaleWgtCheckModeWidgetState extends State<ScaleWgtCheckModeWidget> {
       if (tempWeight.scaleId == widget.scaleId &&
           mounted &&
           tempWeight.msgBody != null) {
-        setState(() {
-          isCnting = true;
-          isStart = true;
-          weightInfo = ReceiveWgtInfo(
-            weightVal: tempWeight.msgBody!.weightVal,
-            weightUnit: tempWeight.msgBody!.weightUnit,
-            isNet: tempWeight.msgBody!.isNet,
-            isStable: tempWeight.msgBody!.isStable,
-            isZero: tempWeight.msgBody!.isZero,
-          );
-          _checkStableStatus();
-        });
-      } else {}
-      if (mounted) {
-        for (var scale in myAllScalesList) {
-          if (scale.scaleId == tempWeight.scaleId && scale.isOnline == false) {
-            setState(() {
-              scale.isOnline = true;
-            });
-          }
-        }
-      }
-    });
-
-    eventBus1 = eventBus.on<EventReqWeightCountine>().listen((event) {
-      tempWeight = event.obj;
-      if (tempWeight.scaleId == widget.scaleId &&
-          mounted &&
-          tempWeight.msgBody != null) {
         _isLow = false;
         _isOK = false;
         _isHigh = false;
-        setState(() {
+        if (mounted) setState(() {
           isCnting = true;
           isStart = true;
           weightInfo = ReceiveWgtInfo(
@@ -235,7 +206,7 @@ class _ScaleWgtCheckModeWidgetState extends State<ScaleWgtCheckModeWidget> {
       if (mounted) {
         for (var scale in myAllScalesList) {
           if (scale.scaleId == tempWeight.scaleId && scale.isOnline == false) {
-            setState(() {
+            if (mounted) setState(() {
               scale.isOnline = true;
             });
           }
@@ -245,19 +216,19 @@ class _ScaleWgtCheckModeWidgetState extends State<ScaleWgtCheckModeWidget> {
 
     eventBus3 = eventBus.on<EventSettingParam>().listen((event) {
       if (mounted) {
-        setState(() {
+        if (mounted) setState(() {
           mySettingParam = event.obj;
           weightMode = (mySettingParam.recMode == msgManual)
               ? cstManualSave
               : (mySettingParam.recMode == msgAuto)
                   ? cstStableSave
                   : cstManualSave;
-          dateformat = int.parse(mySettingParam.dateFormat);
-          zeroRange = double.tryParse(mySettingParam.zeroRange)!;
+          dateformat = int.tryParse(mySettingParam.dateFormat) ?? 0;
+          zeroRange = double.tryParse(mySettingParam.zeroRange) ?? 0.0;
           String timeString = (mySettingParam.stableTime == "")
               ? "0"
               : mySettingParam.stableTime.toString();
-          _stableSaveTime = int.parse(timeString);
+          _stableSaveTime = int.tryParse(timeString) ?? 0;
           if (weightMode == cstStableSave) {
             _isSaveBtnEnable = false;
           } else {
@@ -271,7 +242,7 @@ class _ScaleWgtCheckModeWidgetState extends State<ScaleWgtCheckModeWidget> {
       if (mounted) {
         myRespDataFromScale = event.obj;
         if (myRespDataFromScale.msgBody.contains(msgOk)) {
-          setState(() {
+          if (mounted) setState(() {
             isStart = true;
           });
         } else {}
@@ -300,16 +271,16 @@ class _ScaleWgtCheckModeWidgetState extends State<ScaleWgtCheckModeWidget> {
   //稳定保存逻辑
 
   void _checkStableStatus() {
-    // 检查是否经过 0 点
+    // 检查是否经�?0 �?
 
     // 判断是否为稳定保存模式且 _stableSaveTime 大于 0
     if (weightMode == cstStableSave && _stableSaveTime > 0) {
-      // 检查是否经过 0 点
+      // 检查是否经�?0 �?
       if (weightInfo!.isZero! && (weightInfo?.isStable ?? false)) {
         _hasPassedZero = true;
       }
       if ((weightInfo?.isStable ?? false)) {
-        // 检查重量数据是否有效
+        // 检查重量数据是否有�?
         final weightValue = double.tryParse((weightInfo?.weightVal ?? '0')) ?? 0;
         if (weightValue > 0 && _hasPassedZero) {
           if (_stableTimer == null) {
@@ -347,16 +318,16 @@ class _ScaleWgtCheckModeWidgetState extends State<ScaleWgtCheckModeWidget> {
       if (weightValue > 0) {
         if (mySettingParam.saveMode == hiMode && _isHigh) {
           _changeSaveButton();
-          _hasPassedZero = false; // 保存后重置经过 0 点标记
+          _hasPassedZero = false; // 保存后重置经�?0 点标�?
         } else if (mySettingParam.saveMode == okMode && _isOK) {
           _changeSaveButton();
-          _hasPassedZero = false; // 保存后重置经过 0 点标记
+          _hasPassedZero = false; // 保存后重置经�?0 点标�?
         } else if (mySettingParam.saveMode == lowMode && _isLow) {
           _changeSaveButton();
-          _hasPassedZero = false; // 保存后重置经过 0 点标记
+          _hasPassedZero = false; // 保存后重置经�?0 点标�?
         } else if (mySettingParam.saveMode == allMode) {
           _changeSaveButton();
-          _hasPassedZero = false; // 保存后重置经过 0 点标记
+          _hasPassedZero = false; // 保存后重置经�?0 点标�?
         }
       }
     }
@@ -372,11 +343,11 @@ class _ScaleWgtCheckModeWidgetState extends State<ScaleWgtCheckModeWidget> {
 
   void onStartTimer() {
     startTimer = Timer.periodic(Duration(seconds: 3), (timer) {
-      isCnting = false; // 重置计时器状态
+      isCnting = false; // 重置计时器状�?
       innerTimer = Timer(Duration(milliseconds: 2500), () {
         if (!isCnting) {
           isStart = false;
-          setState(() {
+          if (mounted) setState(() {
             weightInfo = ReceiveWgtInfo(
               weightVal: '---------',
               weightUnit: '----',
@@ -387,7 +358,7 @@ class _ScaleWgtCheckModeWidgetState extends State<ScaleWgtCheckModeWidget> {
           });
           for (var scale in myAllScalesList) {
             if (scale.scaleId == widget.scaleId && scale.isOnline == true) {
-              setState(() {
+              if (mounted) setState(() {
                 scale.isOnline = false;
               });
               break;
@@ -418,8 +389,7 @@ class _ScaleWgtCheckModeWidgetState extends State<ScaleWgtCheckModeWidget> {
                     child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          SizedBox(
-                            width: 140, // 缩小宽度，原为 170
+                          Expanded(
                             child: Text(
                               widget.scaleName,
                               style: Theme.of(context)
@@ -433,8 +403,10 @@ class _ScaleWgtCheckModeWidgetState extends State<ScaleWgtCheckModeWidget> {
                             ),
                           ),
                           if (mySettingParam.wgtMode == 0)
+                            const SizedBox(width: smallPadding),
+                          if (mySettingParam.wgtMode == 0)
                             showSelPluWidget(140, 40, (value) {
-                              setState(() {
+                              if (mounted) setState(() {
                                 selectedPluData = value;
                                 highValue = selectedPluData?.limitHigh ?? 0;
                                 lowValue = selectedPluData?.limitLow ?? 0;
@@ -478,7 +450,7 @@ class _ScaleWgtCheckModeWidgetState extends State<ScaleWgtCheckModeWidget> {
                         ),
                         Spacer(),
                         SizedBox(
-                          width: isMobile ? 200 : 160, // 缩小平板宽度，原为 190
+                          width: isMobile ? 240 : 280, // 增加宽度以确保保存按钮显示，并减小中间间距
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
@@ -541,9 +513,9 @@ class _ScaleWgtCheckModeWidgetState extends State<ScaleWgtCheckModeWidget> {
                                             .colorScheme
                                             .onTertiaryFixedVariant,
                                         shape: RoundedRectangleBorder(
-                                          // 设置为矩形形状
+                                          // 设置为矩形形�?
                                           borderRadius:
-                                              BorderRadius.zero, // 没有圆角，即正方形
+                                              BorderRadius.zero, // 没有圆角，即正方�?
                                         ),
                                         fixedSize: const Size(28, 28), // 设置固定大小
                                       ),
@@ -644,7 +616,7 @@ class _ScaleWgtCheckModeWidgetState extends State<ScaleWgtCheckModeWidget> {
       },
     ).then((value) {
       if (value != null) {
-        setState(() {
+        if (mounted) setState(() {
           highValue = value.highValue;
           lowValue = value.lowValue;
         });
@@ -666,13 +638,13 @@ class _ScaleWgtCheckModeWidgetState extends State<ScaleWgtCheckModeWidget> {
             hoverColor:
                 Theme.of(context).colorScheme.onPrimary.withOpacity(0.1),
             style: IconButton.styleFrom(
-              // 当按钮不可用时，设置背景颜色为灰色
+              // 当按钮不可用时，设置背景颜色为灰�?
               disabledBackgroundColor:
                   Theme.of(context).colorScheme.surface,
               backgroundColor: Theme.of(context).colorScheme.primary,
               shape: RoundedRectangleBorder(
-                // 设置为矩形形状
-                borderRadius: BorderRadius.zero, // 没有圆角，即正方形
+                // 设置为矩形形�?
+                borderRadius: BorderRadius.zero, // 没有圆角，即正方�?
               ),
               fixedSize: Size(iconBtnSize, iconBtnSize), // 设置固定大小
             ),
@@ -687,7 +659,7 @@ class _ScaleWgtCheckModeWidgetState extends State<ScaleWgtCheckModeWidget> {
   }
 
   _changeSaveButton() {
-    setState(() {
+    if (mounted) setState(() {
       wgtRptDataList.clear();
       _addWeightToReport();
       sendReportDataToDB();
@@ -709,8 +681,8 @@ class _ScaleWgtCheckModeWidgetState extends State<ScaleWgtCheckModeWidget> {
     maxRecId++;
     WeightReportData addData = WeightReportData(
       (maxRecId).toString(),
-      tempDefScaleInfo.scaleModel,
-      tempDefScaleInfo.scaleSn,
+      tempDefScaleInfo?.scaleModel ?? '',
+      tempDefScaleInfo?.scaleSn ?? '',
       (tempPlu!.plu == null) ? "" : tempPlu.plu.toString(),
       (tempPlu.productCode == null) ? "" : tempPlu.productCode.toString(),
 
@@ -738,7 +710,7 @@ class _ScaleWgtCheckModeWidgetState extends State<ScaleWgtCheckModeWidget> {
       (weightInfo?.weightUnit == '----') ? (" ") : ((weightInfo?.weightUnit ?? 'kg')),
       mySysUser.userName ?? "",
       mySysUser.nickName ?? "",
-      tempDefScaleInfo.scaleName, //此处应该是秤机种名
+      tempDefScaleInfo?.scaleName ?? '', //此处应该是秤机种�?
       getDateTime(mySettingParam.dateSeparator, dateformat),
     );
     wgtRptDataList.add(addData);
@@ -755,8 +727,8 @@ class _ScaleWgtCheckModeWidgetState extends State<ScaleWgtCheckModeWidget> {
           style: IconButton.styleFrom(
             backgroundColor: bkColor,
             shape: RoundedRectangleBorder(
-              // 设置为矩形形状
-              borderRadius: BorderRadius.zero, // 没有圆角，即正方形
+              // 设置为矩形形�?
+              borderRadius: BorderRadius.zero, // 没有圆角，即正方�?
             ),
             fixedSize: const Size(40, 40), // 设置固定大小
           ),
