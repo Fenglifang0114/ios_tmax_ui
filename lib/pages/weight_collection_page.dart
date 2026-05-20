@@ -43,7 +43,7 @@ class WeightDataCollectionPage extends StatefulWidget {
 
 class WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
   TextEditingController totalWgtUnitCtl = TextEditingController(text: 'kg');
-// 使用 ValueNotifier 来存储总重量和稳定状�?
+// 使用 ValueNotifier 来存储总重量和稳定
   final ValueNotifier<double> totalWeightNotifier = ValueNotifier<double>(0);
   final ValueNotifier<bool> totalWgtStableNotifier = ValueNotifier<bool>(false);
 
@@ -52,7 +52,7 @@ class WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
   ReqWeightCountine tempWeight = ReqWeightCountine();
   final Map<int, Widget> _scaleWidgetCache = {};
   Map<int, WeightInfo> scaleWeightMap = {}; // 存储每台秤的最新称重数据，键为秤的 ID，值为包含重量和单位的对象
-  Map<int, WeightInfo> scaleWgtMapDetail = {}; //存储每台秤的详细数据，组成total weight 的明细数�?
+  Map<int, WeightInfo> scaleWgtMapDetail = {}; //存储每台秤的详细数据，组成total weight 的明细
   List<int> mySelScaleIdList = [];
   List<ScaleRecInfo> allWgtRecList = [];
 
@@ -60,7 +60,7 @@ class WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
 
   final double scaleWgtWidth = 351;
   late Timer updateTimer; //刷新数据
-  // 添加定时器变�?
+  // 添加定时器
   Timer? scaleCheckTimer;
 
   late TableState _tableState;
@@ -87,7 +87,7 @@ class WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
   void initState() {
     super.initState();
     myPluInfoList.clear();
-    // 初始�?TableState
+    // 初始化
     _tableState = TableState();
     mySettingParam.scaleMode = 0;
     _tableState.loadPage(1);
@@ -96,33 +96,37 @@ class WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
     PublicFunctions.getProductList();
 
     startTimer();
-    // 初始化定时器，每�?0秒执行一次检�?
+    // 初始化定时器，每10秒执行一次
     scaleCheckTimer = Timer.periodic(Duration(seconds: 10), (timer) {
       if (mounted) checkSameScale();
     });
 
-    // 初始加载时立即检查一�?
+    // 初始加载时立即检查
     WidgetsBinding.instance.addPostFrameCallback((_) {
       checkSameScale();
     });
 
     eventBus1 = eventBus.on<EventUpdateSettingParam>().listen((event) {
       if (mounted) {
-        if (mounted) setState(() {
-          PublicFunctions.getUIConfNormal(wgtCollectionMode);
-        });
+        if (mounted) {
+          setState(() {
+            PublicFunctions.getUIConfNormal(wgtCollectionMode);
+          });
+        }
       }
     });
 
     eventBus2 = eventBus.on<EventSettingParam>().listen((event) {
       if (mounted) {
-        if (mounted) setState(() {
-          mySettingParam = event.obj;
-          if (firstGetSelScale) {
-            firstGetSelScale = false;
-            getSelScaleInApp();
-          }
-        });
+        if (mounted) {
+          setState(() {
+            mySettingParam = event.obj;
+            if (firstGetSelScale) {
+              firstGetSelScale = false;
+              getSelScaleInApp();
+            }
+          });
+        }
       }
     });
 
@@ -172,24 +176,26 @@ class WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
 
     eventBus7 = eventBus.on<EventDelAllWgtRecs>().listen((event) {
       if (mounted) {
-        if (mounted) setState(() {
-          _tableState.allData.clear();
-          _tableState.loadPage(1);
-        });
+        if (mounted) {
+          setState(() {
+            _tableState.allData.clear();
+            _tableState.loadPage(1);
+          });
+        }
       }
     });
 
     eventBus8 = eventBus.on<EventReqWeightCountine>().listen((event) {
       if (mounted) {
         if (mySettingParam.wgtMode == 0) {
-          // 独立模式直接退�?
+          // 独立模式直接退出
           return;
         }
         tempWeight = event.obj;
         if (tempWeight.scaleId != null &&
             mounted &&
             tempWeight.msgBody != null) {
-          // 记录每台秤的最新称重数�?
+          // 记录每台秤的最新称重
           scaleWeightMap[tempWeight.scaleId!] = WeightInfo(
               weight: tempWeight.msgBody!.weightVal.toString(),
               unit: tempWeight.msgBody!.weightUnit,
@@ -203,46 +209,50 @@ class WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
 
     eventBus9 = eventBus.on<EventProductRecList>().listen((event) {
       if (mounted) {
-        if (mounted) setState(() {
-          List<PluDataFromDb> pluInfoList = event.obj;
-          for (int i = 0; i < pluInfoList.length; i++) {
-            PluData newPlu = PluData(0, 0, 0, 0, '', '', 0, 0, 0, 0, 0, 0, 0,
-                '', false, '', 0, 0, '', '');
-            newPlu.enabled = pluInfoList[i].enabled ?? true;
-            if (!pluInfoList[i].enabled!) {
-              continue;
+        if (mounted) {
+          setState(() {
+            List<PluDataFromDb> pluInfoList = event.obj;
+            for (int i = 0; i < pluInfoList.length; i++) {
+              PluData newPlu = PluData(0, 0, 0, 0, '', '', 0, 0, 0, 0, 0, 0, 0,
+                  '', false, '', 0, 0, '', '');
+              newPlu.enabled = pluInfoList[i].enabled ?? true;
+              if (!pluInfoList[i].enabled!) {
+                continue;
+              }
+              newPlu.recId = pluInfoList[i].recId;
+              newPlu.plu = int.tryParse(pluInfoList[i].plu ?? '0') ?? 0;
+              newPlu.productCode =
+                  int.tryParse(pluInfoList[i].productCode ?? '0') ?? 0;
+              newPlu.itemCode =
+                  int.tryParse(pluInfoList[i].itemCode ?? '0') ?? 0;
+              newPlu.category = pluInfoList[i].category;
+              newPlu.productName = pluInfoList[i].productName;
+              newPlu.price = double.tryParse(pluInfoList[i].price ?? '0') ?? 0;
+              newPlu.taxType = int.tryParse(pluInfoList[i].taxType ?? '0') ?? 0;
+              newPlu.generalUnit =
+                  int.tryParse(pluInfoList[i].generalUnit ?? '0') ?? 0;
+              newPlu.unitWeight =
+                  double.tryParse(pluInfoList[i].unitWeight ?? '0') ?? 0;
+              newPlu.pretare =
+                  double.tryParse(pluInfoList[i].pretare ?? '0') ?? 0;
+              newPlu.limitHigh =
+                  double.tryParse(pluInfoList[i].limitHigh ?? '0') ?? 0;
+              newPlu.limitLow =
+                  double.tryParse(pluInfoList[i].limitLow ?? '0') ?? 0;
+              newPlu.creatAt =
+                  pluInfoList[i].createdAt?.toIso8601String() ?? " ";
+              newPlu.updateAt =
+                  pluInfoList[i].updatedAt?.toIso8601String() ?? " ";
+              newPlu.createBy = pluInfoList[i].createBy;
+              newPlu.updateBy = pluInfoList[i].updateBy;
+              myPluInfoList.add(newPlu);
             }
-            newPlu.recId = pluInfoList[i].recId;
-            newPlu.plu = int.tryParse(pluInfoList[i].plu ?? '0') ?? 0;
-            newPlu.productCode =
-                int.tryParse(pluInfoList[i].productCode ?? '0') ?? 0;
-            newPlu.itemCode = int.tryParse(pluInfoList[i].itemCode ?? '0') ?? 0;
-            newPlu.category = pluInfoList[i].category;
-            newPlu.productName = pluInfoList[i].productName;
-            newPlu.price = double.tryParse(pluInfoList[i].price ?? '0') ?? 0;
-            newPlu.taxType = int.tryParse(pluInfoList[i].taxType ?? '0') ?? 0;
-            newPlu.generalUnit =
-                int.tryParse(pluInfoList[i].generalUnit ?? '0') ?? 0;
-            newPlu.unitWeight =
-                double.tryParse(pluInfoList[i].unitWeight ?? '0') ?? 0;
-            newPlu.pretare =
-                double.tryParse(pluInfoList[i].pretare ?? '0') ?? 0;
-            newPlu.limitHigh =
-                double.tryParse(pluInfoList[i].limitHigh ?? '0') ?? 0;
-            newPlu.limitLow =
-                double.tryParse(pluInfoList[i].limitLow ?? '0') ?? 0;
-            newPlu.creatAt = pluInfoList[i].createdAt?.toIso8601String() ?? " ";
-            newPlu.updateAt =
-                pluInfoList[i].updatedAt?.toIso8601String() ?? " ";
-            newPlu.createBy = pluInfoList[i].createBy;
-            newPlu.updateBy = pluInfoList[i].updateBy;
-            myPluInfoList.add(newPlu);
-          }
 
-          // getProductNameList();
-          // getWeight();
-          // getRecords();
-        });
+            // getProductNameList();
+            // getWeight();
+            // getRecords();
+          });
+        }
       }
     });
     eventBus10 = eventBus.on<EventAddWgtRec>().listen((event) {
@@ -264,8 +274,7 @@ class WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
           String filePath = resString.split(',')[1];
           showExportDialog(filePath, context);
         } else {
-          showTipInfo(
-              '${localizedStrings?.gTipExportFail ?? ""} �?resString', context);
+          showTipInfo('${localizedStrings?.gTipExportFail ?? ""}  ', context);
         }
       }
     });
@@ -273,11 +282,13 @@ class WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
 
   @override
   void didChangeDependencies() {
-    if (mounted) setState(() {
-      for (var item in myReportFeildsMap.keys) {
-        _tableState.visibleColumns[item]!.isSelect = myReportFeildsMap[item]!;
-      }
-    });
+    if (mounted) {
+      setState(() {
+        for (var item in myReportFeildsMap.keys) {
+          _tableState.visibleColumns[item]!.isSelect = myReportFeildsMap[item]!;
+        }
+      });
+    }
 
     super.didChangeDependencies();
   }
@@ -492,9 +503,11 @@ class WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
                                   selScaleList: mySelScaleIdList,
                                   clickScale: (scale) {
                                     if (mounted) {
-                                      if (mounted) setState(() {
-                                        addOrRemoveSelScale(scale.scaleId);
-                                      });
+                                      if (mounted) {
+                                        setState(() {
+                                          addOrRemoveSelScale(scale.scaleId);
+                                        });
+                                      }
                                     }
                                   },
                                 ),
@@ -514,7 +527,7 @@ class WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
                         Container(
                           width: regularPadding,
                           color:
-                            Theme.of(context).colorScheme.surfaceContainerLow,
+                              Theme.of(context).colorScheme.surfaceContainerLow,
                         ),
                       showWgtTable(context) // width - 591 - 36)
                     ],
@@ -574,7 +587,6 @@ class WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
     }
   }
 
-
   void addOrRemoveSelScale(int scaleId) {
     if (mySelScaleIdList.contains(scaleId)) {
       mySelScaleIdList.remove(scaleId);
@@ -602,9 +614,11 @@ class WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
               child: Row(
                 children: [
                   showSelPluWidget(width - 2 * regularPadding, 40, (value) {
-                    if (mounted) setState(() {
-                      selectedPluData = value;
-                    });
+                    if (mounted) {
+                      setState(() {
+                        selectedPluData = value;
+                      });
+                    }
                   }),
                 ],
               ),
@@ -724,9 +738,11 @@ class WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
                             }).toList(),
                             onChanged: (newValue) {
                               if (newValue != null) {
-                                if (mounted) setState(() {
-                                  totalWgtUnitCtl.text = newValue;
-                                });
+                                if (mounted) {
+                                  setState(() {
+                                    totalWgtUnitCtl.text = newValue;
+                                  });
+                                }
 
                                 // 更新总重量和稳定状�?
                                 updateTotalWeightAndStable();
@@ -759,8 +775,7 @@ class WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
                                     .colorScheme
                                     .onTertiaryFixedVariant,
                                 shape: RoundedRectangleBorder(
-                                  // 设置为矩形形�?
-                                  borderRadius: BorderRadius.zero, // 没有圆角，即正方�?
+                                  borderRadius: BorderRadius.zero,
                                 ),
                                 fixedSize: const Size(28, 28), // 设置固定大小
                               ),
@@ -821,8 +836,7 @@ class WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
                             backgroundColor:
                                 Theme.of(context).colorScheme.primary,
                             shape: RoundedRectangleBorder(
-                              // 设置为矩形形�?
-                              borderRadius: BorderRadius.zero, // 没有圆角，即正方�?
+                              borderRadius: BorderRadius.zero,
                             ),
                             fixedSize: const Size(28, 28), // 设置固定大小
                           ),
@@ -877,8 +891,7 @@ class WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
                             backgroundColor:
                                 Theme.of(context).colorScheme.primary,
                             shape: RoundedRectangleBorder(
-                              // 设置为矩形形�?
-                              borderRadius: BorderRadius.zero, // 没有圆角，即正方�?
+                              borderRadius: BorderRadius.zero,
                             ),
                             fixedSize: const Size(28, 28), // 设置固定大小
                           ),
@@ -897,7 +910,8 @@ class WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
                         width: regularPadding,
                       ),
                       Tooltip(
-                        message: localizedStrings?.gParameterSettingsTitle ?? "",
+                        message:
+                            localizedStrings?.gParameterSettingsTitle ?? "",
                         child: IconButton(
                           iconSize: 28,
                           color: Theme.of(context).colorScheme.onPrimary,
@@ -913,8 +927,7 @@ class WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
                             backgroundColor:
                                 Theme.of(context).colorScheme.primary,
                             shape: RoundedRectangleBorder(
-                              // 设置为矩形形�?
-                              borderRadius: BorderRadius.zero, // 没有圆角，即正方�?
+                              borderRadius: BorderRadius.zero,
                             ),
                             fixedSize: const Size(28, 28), // 设置固定大小
                           ),
@@ -923,7 +936,11 @@ class WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
                                 context: context,
                                 builder: (context) {
                                   return ParameterSettingDialog();
-                                });
+                                }).then((value) {
+                              if (mounted) {
+                                setState(() {});
+                              }
+                            });
                           },
                           icon: getSvgIcon(
                             settingSvgIcon(),
@@ -955,26 +972,29 @@ class WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
                               backgroundColor:
                                   Theme.of(context).colorScheme.error,
                               shape: RoundedRectangleBorder(
-                                // 设置为矩形形�?
-                                borderRadius: BorderRadius.zero, // 没有圆角，即正方�?
+                                borderRadius: BorderRadius.zero,
                               ),
                               fixedSize: const Size(28, 28), // 设置固定大小
                             ),
                             onPressed: () {
                               showDialog(
                                 context: context,
-                                barrierDismissible: false, // 点击对话框外部不关闭对话�?
+                                barrierDismissible: false,
                                 builder: (BuildContext context) {
                                   return ShowDeleteTipDialog(
                                     title: localizedStrings?.fTipTitle ?? "",
-                                    msg: localizedStrings?.gTipConfirmDeleteAll ?? "",
+                                    msg: localizedStrings
+                                            ?.gTipConfirmDeleteAll ??
+                                        "",
                                   );
                                 },
                               ).then((value) {
                                 if (value) {
-                                  if (mounted) setState(() {
-                                    PublicFunctions.newDeleteAllRecords(0);
-                                  });
+                                  if (mounted) {
+                                    setState(() {
+                                      PublicFunctions.newDeleteAllRecords(0);
+                                    });
+                                  }
                                 }
                               });
                             },
@@ -1013,12 +1033,14 @@ class WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
       },
     ).then((value) {
       if (value) {
-        if (mounted) setState(() {
-          for (var item in myReportFeildsMap.keys) {
-            _tableState.visibleColumns[item]!.isSelect =
-                myReportFeildsMap[item]!;
-          }
-        });
+        if (mounted) {
+          setState(() {
+            for (var item in myReportFeildsMap.keys) {
+              _tableState.visibleColumns[item]!.isSelect =
+                  myReportFeildsMap[item]!;
+            }
+          });
+        }
       }
     });
   }
@@ -1086,10 +1108,9 @@ void sendDataToDb(
   String baseUnit,
   PluData? selPlu,
 ) {
-  // 检查必要参数是否为�?
   if (selScaleList.isEmpty || scaleWgtMapDetail.isEmpty) return;
 
-  // 提前构建 scaleId �?Scale 对象的映�?
+  // 提前构建 scaleId
   final scaleIdToScaleMap = <int, Scale>{};
   for (final scale in myAllScalesList) {
     scaleIdToScaleMap[scale.scaleId] = scale;
@@ -1170,7 +1191,7 @@ void sendDataToDb(
     }
   }
 
-  // 发送数�?
+  // 发送数据
   final jsonString = reqAddWgtRecToJson(newAddRec);
   PublicFunctions.addSummaryData(jsonString);
 }

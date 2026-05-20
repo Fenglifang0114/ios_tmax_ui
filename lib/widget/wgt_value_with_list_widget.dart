@@ -1,4 +1,4 @@
-﻿//绉伴噸鍏辩敤鐨勯噸閲忔樉绀虹晫�?20250521
+// 称重共用的重量显示界面 20250521
 
 import 'dart:async';
 import 'package:flutter/material.dart';
@@ -57,9 +57,9 @@ class _ScaleWgtWidgetState extends State<ScaleWgtWidget> {
   List<WeightReportData> wgtRptDataList = [];
   final DataGridController _dataGridController = DataGridController();
 
-  PluData? selectedPluData; // 鐢ㄤ簬瀛樺偍閫変腑鐨凱luData
+  PluData? selectedPluData; // 用于存储选中的 PluData
 
-  late int weightMode; // 鎵嬪姩淇濆瓨�? �?锛岀ǔ瀹氫繚�?
+  late int weightMode; // 手动保存 或 稳定保存
 
   final int cstManualSave = 1;
   final int cstStableSave = 2;
@@ -76,16 +76,16 @@ class _ScaleWgtWidgetState extends State<ScaleWgtWidget> {
 
   GetScaleRecords currGetScaleRecords = GetScaleRecords(weightRecords: []);
 
-  //瀹氭椂鍙戦€佺Г杩樻椿鐫€
+  // 定时发送秤还活着
   Timer? _cntAliveTimer;
   bool _isCntAliveTiming = false;
   bool get isCntAliveTiming => _isCntAliveTiming;
 
   final _searchRawIdCtl = TextEditingController();
 
-  bool _hasPassedZero = false; // 鏍囪鏄惁缁忚�?0 �?
-  Timer? _stableTimer; // 绋冲畾鐘舵€佽鏃跺�?
-  int _currentStableDuration = 0; // 褰撳墠绋冲畾鐘舵€佹寔缁椂�?
+  bool _hasPassedZero = false; // 标记是否经过 0 点
+  Timer? _stableTimer; // 稳定状态计时器
+  int _currentStableDuration = 0; // 当前稳定状态持续时间
 
   void startCntAliveTimer(int time) {
     if (_cntAliveTimer != null) {
@@ -94,7 +94,7 @@ class _ScaleWgtWidgetState extends State<ScaleWgtWidget> {
 
     _isCntAliveTiming = true;
     _cntAliveTimer = Timer(Duration(seconds: time), () {
-      PublicFunctions.sendScaleAlive(widget.scaleId); //鍙涓插彛
+      PublicFunctions.sendScaleAlive(widget.scaleId); // 只管串口
       if (!isStart) {
         PublicFunctions.getWeight(widget.scaleId);
       }
@@ -232,7 +232,7 @@ class _ScaleWgtWidgetState extends State<ScaleWgtWidget> {
                     int.parse(currGetScaleRecords.weightRecords![0].id!);
                 maxRecId = maxId;
 
-                // 閬嶅�?weightRecords 鍒楄�?
+                // 遍历 weightRecords 列表
                 for (var record in (currGetScaleRecords.weightRecords ?? [])) {
                   int currentId = int.parse(record.id!);
                   if (currentId > maxId) {
@@ -293,19 +293,19 @@ class _ScaleWgtWidgetState extends State<ScaleWgtWidget> {
     super.dispose();
   }
 
-  //绋冲畾淇濆瓨閫昏�?
+  // 稳定保存逻辑
 
   void _checkStableStatus() {
-    // 妫€鏌ユ槸鍚︾粡�?0 �?
+    // 检查是否经过 0 点
 
-    // 鍒ゆ柇鏄惁涓虹ǔ瀹氫繚瀛樻ā寮忎�?_stableSaveTime 澶т簬 0
+    // 判断是否为稳定保存模式且 _stableSaveTime 大于 0
     if (weightMode == cstStableSave && _stableSaveTime > 0) {
-      // 妫€鏌ユ槸鍚︾粡�?0 �?
+      // 检查是否经过 0 点
       if ((weightInfo?.isZero ?? false) && (weightInfo?.isStable ?? false)) {
         _hasPassedZero = true;
       }
       if ((weightInfo?.isStable ?? false)) {
-        // 妫€鏌ラ噸閲忔暟鎹槸鍚︽湁�?
+        // 检查重量数据是否有值
         final weightValue = double.tryParse((weightInfo?.weightVal ?? "0")) ?? 0;
         if (weightValue > 0 && _hasPassedZero) {
           if (_stableTimer == null) {
@@ -329,20 +329,20 @@ class _ScaleWgtWidgetState extends State<ScaleWgtWidget> {
     }
   }
 
-  // 閲嶇疆绋冲畾鐘舵€佽鏃跺櫒
+  // 重置稳定状态计时器
   void _resetStableTimer() {
     _stableTimer?.cancel();
     _stableTimer = null;
     _currentStableDuration = 0;
   }
 
-  // 淇濆瓨閲嶉噺鏁版�?
+  // 保存重量数据
   void _saveWeightData() {
     if (_hasPassedZero && (weightInfo?.isStable ?? false)) {
       final weightValue = double.tryParse((weightInfo?.weightVal ?? "0")) ?? 0;
       if (weightValue > 0) {
         _changeSaveButton();
-        _hasPassedZero = false; // 淇濆瓨鍚庨噸缃粡杩?0 鐐规爣璁?
+        _hasPassedZero = false; // 保存后重置经过 0 点标记
       }
     }
   }
@@ -369,7 +369,7 @@ class _ScaleWgtWidgetState extends State<ScaleWgtWidget> {
 
   void onStartTimer() {
     startTimer = Timer.periodic(Duration(seconds: 3), (timer) {
-      isCnting = false; // 閲嶇疆璁℃椂鍣ㄧ姸鎬?
+      isCnting = false; // 重置计时器状态
       innerTimer = Timer(Duration(milliseconds: 2500), () {
         if (!isCnting) {
           isStart = false;
@@ -529,12 +529,12 @@ class _ScaleWgtWidgetState extends State<ScaleWgtWidget> {
                                               .colorScheme
                                               .onTertiaryFixedVariant,
                                           shape: RoundedRectangleBorder(
-                                            // 璁剧疆涓虹煩褰㈠舰鐘?
+                                            // 设置为矩形形状
                                             borderRadius:
-                                                BorderRadius.zero, // 娌℃湁鍦嗚锛屽嵆姝ｆ柟�?
+                                                BorderRadius.zero, // 没有圆角，即正方形
                                           ),
                                           fixedSize:
-                                              const Size(28, 28), // 璁剧疆鍥哄畾澶у皬
+                                              const Size(28, 28), // 设置固定大小
                                         ),
                                         onPressed: isStart &&
                                                 _isSaveBtnEnable &&
@@ -574,7 +574,7 @@ class _ScaleWgtWidgetState extends State<ScaleWgtWidget> {
                           child: Container(
                         alignment: Alignment.centerRight,
                         child: FittedBox(
-                          fit: BoxFit.scaleDown, // 褰撴枃瀛楁孩鍑烘椂缂╁皬瀛椾�?
+                          fit: BoxFit.scaleDown, // 当文字溢出时缩小字体
                           alignment: Alignment.centerRight,
                           child: Text(weightInfo?.weightVal ?? '---------',
                               maxLines: 1,
@@ -628,15 +628,15 @@ class _ScaleWgtWidgetState extends State<ScaleWgtWidget> {
             hoverColor:
                 Theme.of(context).colorScheme.onPrimary.withOpacity(0.1),
             style: IconButton.styleFrom(
-              // 褰撴寜閽笉鍙敤鏃讹紝璁剧疆鑳屾櫙棰滆壊涓虹伆�?
+              // 当按钮不可用时，设置背景颜色为灰色
               disabledBackgroundColor:
                   Theme.of(context).colorScheme.surface,
               backgroundColor: Theme.of(context).colorScheme.primary,
               shape: RoundedRectangleBorder(
-                // 璁剧疆涓虹煩褰㈠舰鐘?
-                borderRadius: BorderRadius.zero, // 娌℃湁鍦嗚锛屽嵆姝ｆ柟�?
+                // 设置为矩形形状
+                borderRadius: BorderRadius.zero, // 没有圆角，即正方形
               ),
-              fixedSize: Size(iconBtnSize, iconBtnSize), // 璁剧疆鍥哄畾澶у皬
+              fixedSize: Size(iconBtnSize, iconBtnSize), // 设置固定大小
             ),
             onPressed: onPressed,
             icon: getSvgIcon(
@@ -699,7 +699,7 @@ class _ScaleWgtWidgetState extends State<ScaleWgtWidget> {
       mySysUser.userName ?? "",
       mySysUser.nickName ?? "",
 
-      tempDefScaleInfo?.scaleName ?? '', //姝ゅ搴旇鏄Г鏈虹鍚?
+      tempDefScaleInfo?.scaleName ?? '', // 此处应该是秤名
       getDateTime(mySettingParam.dateSeparator, dateformat),
     );
     wgtRptDataList.add(addData);
@@ -716,10 +716,10 @@ class _ScaleWgtWidgetState extends State<ScaleWgtWidget> {
           style: IconButton.styleFrom(
             backgroundColor: bkColor,
             shape: RoundedRectangleBorder(
-              // 璁剧疆涓虹煩褰㈠舰鐘?
-              borderRadius: BorderRadius.zero, // 娌℃湁鍦嗚锛屽嵆姝ｆ柟�?
+              // 设置为矩形形状
+              borderRadius: BorderRadius.zero, // 没有圆角，即正方形
             ),
-            fixedSize: const Size(40, 40), // 璁剧疆鍥哄畾澶у皬
+            fixedSize: const Size(40, 40), // 设置固定大小
           ),
           onPressed: onPressed,
           icon: icon,

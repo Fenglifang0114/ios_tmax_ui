@@ -1,4 +1,4 @@
-﻿import 'dart:convert';
+import 'dart:convert';
 
 class ReqWeightCountine {
   int? scaleId;
@@ -11,13 +11,15 @@ class ReqWeightCountine {
     scaleId = json['ScaleId'];
     msgType = json['MsgType'];
     if (json['MsgBody'] is String) {
-      msgBody = MsgBody.fromJson(jsonDecode(json['MsgBody']));
+      try {
+        msgBody = MsgBody.fromJson(jsonDecode(json['MsgBody']));
+      } catch (e) {
+        msgBody = null;
+      }
     } else {
       msgBody =
           json['MsgBody'] != null ? MsgBody.fromJson(json['MsgBody']) : null;
     }
-    // msgBody =
-    //     json['MsgBody'] != null ? MsgBody.fromJson(json['MsgBody']) : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -41,11 +43,11 @@ class MsgBody {
   MsgBody(
       this.isZero, this.isStable, this.isNet, this.weightVal, this.weightUnit);
   MsgBody.fromJson(Map<String, dynamic> json)
-      : isZero = json['IsZero'],
-        isStable = json['IsStable'],
-        isNet = json['IsNet'],
-        weightVal = json['WeightVal'],
-        weightUnit = json['WeightUnit'];
+      : isZero = json['IsZero'] ?? false,
+        isStable = json['IsStable'] ?? false,
+        isNet = json['IsNet'] ?? false,
+        weightVal = json['WeightVal']?.toString() ?? '',
+        weightUnit = json['WeightUnit']?.toString() ?? '';
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};

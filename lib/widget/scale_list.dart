@@ -233,7 +233,7 @@ showComScale(BuildContext context, int selScaleId, Function()? onTap) {
   );
 }
 
-// 闁诲繐绻嬪ù鍥夋繝鍥х?StatefulWidget
+// 串口秤列表组件 StatefulWidget
 class ScaleListComWidget extends StatefulWidget {
   final double listWidth;
   final int selScaleId;
@@ -269,8 +269,7 @@ class _ScaleListComWidgetState extends State<ScaleListComWidget> {
   }
 }
 
-//婵犮垼鍩栭懝鎹愩亹鐎靛摜鐭撻柕鍫濇噹閻忔瑩鎮?
-// 闁诲繐绻嬪ù鍥夋繝鍥х?StatefulWidget
+// 多秤列表组件 StatefulWidget
 class MutiScaleListWidget extends StatefulWidget {
   final double listWidth;
   final List<NetScaleInfoLocal> scaleNetItems;
@@ -372,24 +371,12 @@ class _MutiScaleListWidgetState extends State<MutiScaleListWidget> {
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                   Builder(builder: (context) {
-                                    String detailInfo = "";
-                                    if (scale.ip != null && scale.ip!.isNotEmpty) {
-                                      detailInfo = "${scale.ip}:${scale.port}";
-                                      if ((scale.scaleModel ?? "").isNotEmpty ||
-                                          (scale.scaleSn ?? "").isNotEmpty) {
-                                        detailInfo +=
-                                            " (${scale.scaleModel}${ (scale.scaleSn ?? "").isNotEmpty ? " / " + scale.scaleSn! : ""})";
-                                      }
-                                    }
-
                                     return Text(
-                                      detailInfo.isNotEmpty
-                                          ? detailInfo
-                                          : (scale.isOnline!
-                                              ? (localizedStrings?.gTipOnline ??
-                                                  "gTipOnline")
-                                              : (localizedStrings?.gTipOffline ??
-                                                  "gTipOffline")),
+                                      scale.isOnline!
+                                          ? (localizedStrings?.gTipOnline ??
+                                              "gTipOnline")
+                                          : (localizedStrings?.gTipOffline ??
+                                              "gTipOffline"),
                                       style: Theme.of(context)
                                           .textTheme
                                           .bodySmall!
@@ -510,9 +497,8 @@ showMutiComScale(
   );
 }
 
-//婵炴垶鎸搁澶婎焽娴兼潙鍙婃い鏍ㄥ嚬濡鈽夐幘鏉戠祷鐟滅増绋掗弲鍫曟倷閹绘帩娼遍梺鍛婅壘濞村嘲鈻撻幋鐘电煋闁靛牆鎳庨悘娆撴偠?
-
-// 闁诲繐绻嬪ù鍥夋繝鍥х?StatefulWidget
+// 所有秤列表显示组件 widget
+// 所有秤列表组件 StatefulWidget
 class NewAllScaleListWidget extends StatefulWidget {
   final double listWidth;
   final int selScaleId;

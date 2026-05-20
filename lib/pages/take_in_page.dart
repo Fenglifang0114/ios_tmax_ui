@@ -104,21 +104,25 @@ class TakeInPageState extends State<TakeInPage> {
     });
     eventBus1 = eventBus.on<EventUpdateSettingParam>().listen((event) {
       if (mounted) {
-        if (mounted) setState(() {
+        if (mounted) {
+          setState(() {
           PublicFunctions.getUIConfNormal(wgtTakeInMode);
         });
+        }
       }
     });
 
     eventBus2 = eventBus.on<EventSettingParam>().listen((event) {
       if (mounted) {
-        if (mounted) setState(() {
+        if (mounted) {
+          setState(() {
           mySettingParam = event.obj;
           if (firstGetSelScale) {
             firstGetSelScale = false;
             getSelScaleInApp();
           }
         });
+        }
       }
     });
 
@@ -168,10 +172,12 @@ class TakeInPageState extends State<TakeInPage> {
 
     eventBus7 = eventBus.on<EventDelAllWgtRecs>().listen((event) {
       if (mounted) {
-        if (mounted) setState(() {
+        if (mounted) {
+          setState(() {
           _tableState.allData.clear();
           _tableState.loadPage(1);
         });
+        }
       }
     });
 
@@ -193,7 +199,8 @@ class TakeInPageState extends State<TakeInPage> {
 
     eventBus9 = eventBus.on<EventProductRecList>().listen((event) {
       if (mounted) {
-        if (mounted) setState(() {
+        if (mounted) {
+          setState(() {
           List<PluDataFromDb> pluInfoList = event.obj;
           for (int i = 0; i < pluInfoList.length; i++) {
             PluData newPlu = PluData(0, 0, 0, 0, '', '', 0, 0, 0, 0, 0, 0, 0,
@@ -236,6 +243,7 @@ class TakeInPageState extends State<TakeInPage> {
           // getWeight();
           // getRecords();
         });
+        }
       }
     });
     eventBus10 = eventBus.on<EventAddWgtRec>().listen((event) {
@@ -266,11 +274,13 @@ class TakeInPageState extends State<TakeInPage> {
 
   @override
   void didChangeDependencies() {
-    if (mounted) setState(() {
+    if (mounted) {
+      setState(() {
       for (var item in myReportFeildsMap.keys) {
         _tableState.visibleColumns[item]!.isSelect = myReportFeildsMap[item]!;
       }
     });
+    }
     super.didChangeDependencies();
   }
 
@@ -485,9 +495,11 @@ class TakeInPageState extends State<TakeInPage> {
                                   listWidth: appScaleListWidth, // 列表宽度
                                   selScaleList: mySelScaleIdList,
                                   clickScale: (scale) {
-                                    if (mounted) setState(() {
+                                    if (mounted) {
+                                      setState(() {
                                       addOrRemoveSelScale(scale.scaleId);
                                     });
+                                    }
                                   },
                                 ),
                               ),
@@ -599,9 +611,11 @@ class TakeInPageState extends State<TakeInPage> {
                 children: [
                   showSelPluWidget(width - 2 * regularPadding, 40,
                       (PluData pluData) {
-                    if (mounted) setState(() {
+                    if (mounted) {
+                      setState(() {
                       selectedPluData = pluData;
                     });
+                    }
                   })
                 ],
               ),
@@ -723,9 +737,11 @@ class TakeInPageState extends State<TakeInPage> {
                             }).toList(),
                             onChanged: (newValue) {
                               if (newValue != null) {
-                                if (mounted) setState(() {
+                                if (mounted) {
+                                  setState(() {
                                   totalWgtUnitCtl.text = newValue;
                                 });
+                                }
 
                                 // 更新总重量和稳定状�?
                                 updateTotalWeightAndStable();
@@ -922,7 +938,11 @@ class TakeInPageState extends State<TakeInPage> {
                                 context: context,
                                 builder: (context) {
                                   return ParameterSettingDialog();
-                                });
+                                }).then((value) {
+                              if (mounted) {
+                                setState(() {});
+                              }
+                            });
                           },
                           icon: getSvgIcon(
                             settingSvgIcon(),
@@ -971,10 +991,12 @@ class TakeInPageState extends State<TakeInPage> {
                                 },
                               ).then((value) {
                                 if (value) {
-                                  if (mounted) setState(() {
+                                  if (mounted) {
+                                    setState(() {
                                     PublicFunctions.newDeleteAllRecords(
                                         mySettingParam.scaleMode);
                                   });
+                                  }
                                 }
                               });
                             },
@@ -1013,12 +1035,14 @@ class TakeInPageState extends State<TakeInPage> {
       },
     ).then((value) {
       if (value) {
-        if (mounted) setState(() {
+        if (mounted) {
+          setState(() {
           for (var item in myReportFeildsMap.keys) {
             _tableState.visibleColumns[item]!.isSelect =
                 myReportFeildsMap[item]!;
           }
         });
+        }
       }
     });
   }

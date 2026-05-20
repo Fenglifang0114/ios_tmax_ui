@@ -1,4 +1,4 @@
-﻿import 'dart:convert';
+import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -60,7 +60,7 @@ class ParameterSettingDialogState extends State<ParameterSettingDialog> {
         ? 1
         : int.parse(mySettingParam.dateFormat);
     tempCurrentPort = myCurrentPort;
-    _checkHiLow = int.parse(mySettingParam.saveMode);
+    _checkHiLow = int.tryParse(mySettingParam.saveMode) ?? 1;
     _wgtMode = mySettingParam.wgtMode;
     if (mySettingParam.scaleMode.toString() == wgtCheckMode) {
       _wgtMode = 0;
@@ -150,46 +150,61 @@ class ParameterSettingDialogState extends State<ParameterSettingDialog> {
                                   height: 42,
                                   child: Row(
                                     children: [
-                                      Container(
-                                        alignment: Alignment.centerLeft,
-                                        width: 120,
-                                        child: Row(
-                                          children: [
-                                            wgtModeSingleRadio(1),
-                                            Expanded(
-                                                child: Text(
-                                              'Yes',
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .bodySmall!
-                                                  .apply(
-                                                      color: Theme.of(context)
-                                                          .colorScheme
-                                                          .onSurfaceVariant),
-                                              overflow: TextOverflow.ellipsis,
-                                            ))
-                                          ],
+                                      GestureDetector(
+                                        onTap: () {
+                                          setState(() {
+                                            _wgtMode = 1;
+                                            _checkSaveMode = 1;
+                                          });
+                                        },
+                                        child: Container(
+                                          alignment: Alignment.centerLeft,
+                                          width: 120,
+                                          child: Row(
+                                            children: [
+                                              wgtModeSingleRadio(1),
+                                              Expanded(
+                                                  child: Text(
+                                                'Yes',
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodySmall!
+                                                    .apply(
+                                                        color: Theme.of(context)
+                                                            .colorScheme
+                                                            .onSurfaceVariant),
+                                                overflow: TextOverflow.ellipsis,
+                                              ))
+                                            ],
+                                          ),
                                         ),
                                       ),
-                                      Container(
-                                        alignment: Alignment.centerLeft,
-                                        width: 120,
-                                        child: Row(
-                                          children: [
-                                            wgtModeSingleRadio(0),
-                                            Expanded(
-                                                child: Text(
-                                              'No',
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .bodySmall!
-                                                  .apply(
-                                                      color: Theme.of(context)
-                                                          .colorScheme
-                                                          .onSurfaceVariant),
-                                              overflow: TextOverflow.ellipsis,
-                                            ))
-                                          ],
+                                      GestureDetector(
+                                        onTap: () {
+                                          setState(() {
+                                            _wgtMode = 0;
+                                          });
+                                        },
+                                        child: Container(
+                                          alignment: Alignment.centerLeft,
+                                          width: 120,
+                                          child: Row(
+                                            children: [
+                                              wgtModeSingleRadio(0),
+                                              Expanded(
+                                                  child: Text(
+                                                'No',
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodySmall!
+                                                    .apply(
+                                                        color: Theme.of(context)
+                                                            .colorScheme
+                                                            .onSurfaceVariant),
+                                                overflow: TextOverflow.ellipsis,
+                                              ))
+                                            ],
+                                          ),
                                         ),
                                       ),
                                     ],
@@ -598,7 +613,7 @@ class ParamSettingDialogState extends State<ParamSettingDialog> {
         ? 1
         : int.parse(mySettingParam.dateFormat);
     tempCurrentPort = myCurrentPort;
-    _checkHiLow = int.parse(mySettingParam.saveMode);
+    _checkHiLow = int.tryParse(mySettingParam.saveMode) ?? 1;
   }
 
   @override

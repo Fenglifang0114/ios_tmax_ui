@@ -1,4 +1,4 @@
-﻿// ignore_for_file: invalid_use_of_protected_member
+// ignore_for_file: invalid_use_of_protected_member
 part of 'multi_scale_management_page.dart';
 
 extension MultiScaleManagementAddExt on MultiScaleManagementState {
@@ -18,7 +18,7 @@ extension MultiScaleManagementAddExt on MultiScaleManagementState {
             if (!isBtSearching)
               TextButton(
                 onPressed: () {
-                  debugPrint("BT: 点击刷新/开始搜索");
+                  debugPrint("BT: Refresh clicked / Starting search");
                   PublicFunctions.getBtList();
                   setState(() {
                     btInfoList.clear();
@@ -344,7 +344,7 @@ extension MultiScaleManagementAddExt on MultiScaleManagementState {
                 width: 300,
                 child: showTextButton(context, btnHeight,
                     (localizedStrings?.startSearchBluetoothDevices ?? "startSearchBluetoothDevices"), () {
-                  debugPrint("BT: 点击开始搜索");
+                  debugPrint("BT: Start search clicked");
                   PublicFunctions.getBtList();
                   setState(() {
                     isBtSearching = true;

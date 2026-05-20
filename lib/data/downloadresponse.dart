@@ -1,4 +1,4 @@
-﻿// 9. {"MsgType":13,"MsgBody":"no response, time out","ScaleId":1}  下载后秤反馈的消息
+// 9. {"MsgType":13,"MsgBody":"no response, time out","ScaleId":1}  下载后秤反馈的消息
 //10.{"MsgType":14,"MsgBody":"serial port error","ScaleId":1}  串口报错后的反馈
 
 class ChannelResponse {
@@ -11,9 +11,9 @@ class ChannelResponse {
     this.scaleId,
   );
   ChannelResponse.fromJson(Map<String, dynamic> json)
-      : msgType = json['MsgType'],
-        msgBody = json['MsgBody'],
-        scaleId = json['ScaleId'];
+      : msgType = json['MsgType']?.toString() ?? '',
+        msgBody = json['MsgBody']?.toString() ?? '',
+        scaleId = json['ScaleId'] is int ? json['ScaleId'] : (int.tryParse(json['ScaleId']?.toString() ?? '0') ?? 0);
 
   Map<String, dynamic> toJson() {
     return {

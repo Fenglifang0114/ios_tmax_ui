@@ -1,0 +1,189 @@
+﻿Analyzing TMaxPcServiceUI...                                    
+
+   info - The import of 'package:flutter/foundation.dart' is unnecessary because all of the used elements are also provided by the import of 'package:flutter/material.dart' - lib\bluetooth\bluetooth_manager.dart:3:8 - unnecessary_import
+warning - The value of the field '_connectionStateSub' isn't used - lib\bluetooth\bluetooth_manager.dart:27:49 - unused_field
+warning - The left operand can't be null, so the right operand is never executed - lib\data\routes_data.dart:480:39 - dead_null_aware_expression
+warning - The left operand can't be null, so the right operand is never executed - lib\data\routes_data.dart:485:39 - dead_null_aware_expression
+warning - The left operand can't be null, so the right operand is never executed - lib\data\routes_data.dart:490:39 - dead_null_aware_expression
+warning - The left operand can't be null, so the right operand is never executed - lib\data\routes_data.dart:570:39 - dead_null_aware_expression
+warning - Unused import: 'scalecmd_data.dart' - lib\data\weight_rpt.dart:9:8 - unused_import
+warning - The left operand can't be null, so the right operand is never executed - lib\data\weight_rpt.dart:382:29 - dead_null_aware_expression
+warning - The left operand can't be null, so the right operand is never executed - lib\data\weight_rpt.dart:383:45 - dead_null_aware_expression
+warning - The left operand can't be null, so the right operand is never executed - lib\data\weight_rpt.dart:384:39 - dead_null_aware_expression
+warning - The left operand can't be null, so the right operand is never executed - lib\data\weight_rpt.dart:385:31 - dead_null_aware_expression
+warning - The left operand can't be null, so the right operand is never executed - lib\data\weight_rpt.dart:386:47 - dead_null_aware_expression
+warning - The left operand can't be null, so the right operand is never executed - lib\data\weight_rpt.dart:387:41 - dead_null_aware_expression
+warning - The left operand can't be null, so the right operand is never executed - lib\data\weight_rpt.dart:388:41 - dead_null_aware_expression
+warning - The left operand can't be null, so the right operand is never executed - lib\data\weight_rpt.dart:389:47 - dead_null_aware_expression
+warning - The left operand can't be null, so the right operand is never executed - lib\data\weight_rpt.dart:390:47 - dead_null_aware_expression
+warning - The left operand can't be null, so the right operand is never executed - lib\data\weight_rpt.dart:391:39 - dead_null_aware_expression
+warning - The left operand can't be null, so the right operand is never executed - lib\data\weight_rpt.dart:392:35 - dead_null_aware_expression
+warning - The left operand can't be null, so the right operand is never executed - lib\data\weight_rpt.dart:393:45 - dead_null_aware_expression
+warning - The left operand can't be null, so the right operand is never executed - lib\data\weight_rpt.dart:394:39 - dead_null_aware_expression
+warning - The left operand can't be null, so the right operand is never executed - lib\data\weight_rpt.dart:395:43 - dead_null_aware_expression
+warning - The left operand can't be null, so the right operand is never executed - lib\data\weight_rpt.dart:396:41 - dead_null_aware_expression
+warning - The left operand can't be null, so the right operand is never executed - lib\data\weight_rpt.dart:397:37 - dead_null_aware_expression
+warning - The left operand can't be null, so the right operand is never executed - lib\data\weight_rpt.dart:398:45 - dead_null_aware_expression
+warning - The left operand can't be null, so the right operand is never executed - lib\data\weight_rpt.dart:401:43 - dead_null_aware_expression
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\dialog\sel_scale_dialog.dart:103:36 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\dialog\show_fma_detail_dialog.dart:337:40 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\labeldesign\ai_design_dialog.dart:234:55 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\pages\add_formula_page.dart:996:49 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\pages\add_formula_page.dart:1091:38 - deprecated_member_use
+   info - Statements in an if should be enclosed in a block - lib\pages\check_weighers_page.dart:102:22 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\pages\check_weighers_page.dart:110:22 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\pages\check_weighers_page.dart:166:22 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\pages\check_weighers_page.dart:175:22 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\pages\check_weighers_page.dart:245:18 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\pages\check_weighers_page.dart:432:40 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\pages\check_weighers_page.dart:481:42 - curly_braces_in_flow_control_structures
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\pages\check_weighers_page.dart:638:32 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\pages\check_weighers_page.dart:693:32 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\pages\check_weighers_page.dart:729:32 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\pages\check_weighers_page.dart:771:34 - deprecated_member_use
+   info - Statements in an if should be enclosed in a block - lib\pages\check_weighers_page.dart:796:48 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\pages\check_weighers_page.dart:838:22 - curly_braces_in_flow_control_structures
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\pages\edit_darft_fma_page.dart:755:50 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\pages\edit_darft_fma_page.dart:790:50 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\pages\edit_darft_fma_page.dart:822:50 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\pages\edit_darft_fma_page.dart:855:50 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\pages\edit_darft_fma_page.dart:911:42 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\pages\edit_darft_fma_page.dart:1003:40 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\pages\edit_formula_page.dart:781:50 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\pages\edit_formula_page.dart:816:50 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\pages\edit_formula_page.dart:848:50 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\pages\edit_formula_page.dart:881:50 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\pages\edit_formula_page.dart:931:36 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\pages\edit_formula_page.dart:1019:40 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\pages\flow_rate_page.dart:1948:42 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\pages\formula_scale_page.dart:993:41 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\pages\formula_scale_page.dart:1076:41 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\pages\home_page.dart:707:32 - deprecated_member_use
+warning - Unused import: 'package:t_max/pages/gif.dart' - lib\pages\multi_scale_management_page.dart:15:8 - unused_import
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\pages\multi_scale_management_part_info.dart:364:47 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\pages\multi_scale_management_part_list.dart:309:46 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\pages\start_darft_fma_pct_page.dart:1722:38 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\pages\start_darft_fma_pct_page.dart:1727:42 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\pages\start_darft_fma_pct_page.dart:1731:42 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\pages\start_fma_pct_page.dart:1731:38 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\pages\start_fma_pct_page.dart:1736:42 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\pages\start_fma_pct_page.dart:1740:42 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\pages\start_fma_secret_page.dart:940:55 - deprecated_member_use
+   info - Statements in an if should be enclosed in a block - lib\pages\take_in_page.dart:107:22 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\pages\take_in_page.dart:115:22 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\pages\take_in_page.dart:171:22 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\pages\take_in_page.dart:196:22 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\pages\take_in_page.dart:269:18 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\pages\take_in_page.dart:488:50 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\pages\take_in_page.dart:602:34 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\pages\take_in_page.dart:726:46 - curly_braces_in_flow_control_structures
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\pages\take_in_page.dart:752:36 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\pages\take_in_page.dart:816:32 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\pages\take_in_page.dart:871:32 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\pages\take_in_page.dart:907:32 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\pages\take_in_page.dart:949:34 - deprecated_member_use
+   info - Statements in an if should be enclosed in a block - lib\pages\take_in_page.dart:974:48 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\pages\take_in_page.dart:1016:22 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\pages\take_out_page.dart:108:22 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\pages\take_out_page.dart:116:22 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\pages\take_out_page.dart:172:22 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\pages\take_out_page.dart:197:22 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\pages\take_out_page.dart:268:18 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\pages\take_out_page.dart:487:50 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\pages\take_out_page.dart:603:34 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\pages\take_out_page.dart:727:46 - curly_braces_in_flow_control_structures
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\pages\take_out_page.dart:753:36 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\pages\take_out_page.dart:817:32 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\pages\take_out_page.dart:872:32 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\pages\take_out_page.dart:908:32 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\pages\take_out_page.dart:950:34 - deprecated_member_use
+   info - Statements in an if should be enclosed in a block - lib\pages\take_out_page.dart:975:48 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\pages\take_out_page.dart:1017:22 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\pages\weight_collection_page.dart:111:22 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\pages\weight_collection_page.dart:119:22 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\pages\weight_collection_page.dart:175:22 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\pages\weight_collection_page.dart:206:22 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\pages\weight_collection_page.dart:276:18 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\pages\weight_collection_page.dart:495:52 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\pages\weight_collection_page.dart:605:34 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\pages\weight_collection_page.dart:727:46 - curly_braces_in_flow_control_structures
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\pages\weight_collection_page.dart:753:36 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\pages\weight_collection_page.dart:816:32 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\pages\weight_collection_page.dart:872:32 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\pages\weight_collection_page.dart:908:32 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\pages\weight_collection_page.dart:950:34 - deprecated_member_use
+   info - Statements in an if should be enclosed in a block - lib\pages\weight_collection_page.dart:975:48 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\pages\weight_collection_page.dart:1016:22 - curly_braces_in_flow_control_structures
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\pages\wifi_setting_page.dart:973:94 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\pages\wired_setting_page.dart:444:76 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\widget\home_widget.dart:46:32 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\widget\home_widget.dart:103:55 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\widget\page_head.dart:427:47 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\widget\page_head.dart:493:47 - deprecated_member_use
+   info - Use interpolation to compose strings and values - lib\widget\scale_list.dart:119:105 - prefer_interpolation_to_compose_strings
+   info - Use interpolation to compose strings and values - lib\widget\scale_list.dart:395:105 - prefer_interpolation_to_compose_strings
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\widget\scale_list.dart:599:58 - deprecated_member_use
+   info - Use interpolation to compose strings and values - lib\widget\scale_list.dart:689:106 - prefer_interpolation_to_compose_strings
+   info - Use interpolation to compose strings and values - lib\widget\scale_list.dart:695:104 - prefer_interpolation_to_compose_strings
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\widget\scale_list.dart:823:56 - deprecated_member_use
+   info - Use interpolation to compose strings and values - lib\widget\scale_list.dart:1015:84 - prefer_interpolation_to_compose_strings
+   info - Use interpolation to compose strings and values - lib\widget\scale_list.dart:1021:82 - prefer_interpolation_to_compose_strings
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\widget\scale_list.dart:1058:56 - deprecated_member_use
+   info - Use interpolation to compose strings and values - lib\widget\scale_list.dart:1302:84 - prefer_interpolation_to_compose_strings
+   info - Use interpolation to compose strings and values - lib\widget\scale_list.dart:1308:82 - prefer_interpolation_to_compose_strings
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\widget\scale_list.dart:1346:56 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\widget\total_wgt_common.dart:187:79 - deprecated_member_use
+   info - The 'if' statement could be replaced by a null-aware assignment - lib\widget\total_wgt_common.dart:907:5 - prefer_conditional_assignment
+   info - Statements in an if should be enclosed in a block - lib\widget\wgt_value_check_mode.dart:172:22 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\widget\wgt_value_check_mode.dart:209:26 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\widget\wgt_value_check_mode.dart:219:22 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\widget\wgt_value_check_mode.dart:245:24 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\widget\wgt_value_check_mode.dart:350:24 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\widget\wgt_value_check_mode.dart:361:28 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\widget\wgt_value_check_mode.dart:409:44 - curly_braces_in_flow_control_structures
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\widget\wgt_value_check_mode.dart:506:44 - deprecated_member_use
+   info - Statements in an if should be enclosed in a block - lib\widget\wgt_value_check_mode.dart:619:22 - curly_braces_in_flow_control_structures
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\widget\wgt_value_check_mode.dart:639:57 - deprecated_member_use
+   info - Statements in an if should be enclosed in a block - lib\widget\wgt_value_check_mode.dart:662:18 - curly_braces_in_flow_control_structures
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\widget\wgt_value_check_mode.dart:726:55 - deprecated_member_use
+   info - Statements in an if should be enclosed in a block - lib\widget\wgt_value_take_in_mode.dart:168:22 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\widget\wgt_value_take_in_mode.dart:201:26 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\widget\wgt_value_take_in_mode.dart:218:22 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\widget\wgt_value_take_in_mode.dart:242:22 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\widget\wgt_value_take_in_mode.dart:288:24 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\widget\wgt_value_take_in_mode.dart:392:24 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\widget\wgt_value_take_in_mode.dart:403:28 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\widget\wgt_value_take_in_mode.dart:451:44 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\widget\wgt_value_take_in_mode.dart:629:38 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\widget\wgt_value_take_in_mode.dart:644:38 - curly_braces_in_flow_control_structures
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\widget\wgt_value_take_in_mode.dart:665:22 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\widget\wgt_value_take_in_mode.dart:708:57 - deprecated_member_use
+   info - Statements in an if should be enclosed in a block - lib\widget\wgt_value_take_in_mode.dart:731:18 - curly_braces_in_flow_control_structures
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\widget\wgt_value_take_in_mode.dart:819:55 - deprecated_member_use
+   info - Statements in an if should be enclosed in a block - lib\widget\wgt_value_take_out_mode.dart:168:22 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\widget\wgt_value_take_out_mode.dart:201:26 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\widget\wgt_value_take_out_mode.dart:218:22 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\widget\wgt_value_take_out_mode.dart:242:22 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\widget\wgt_value_take_out_mode.dart:287:24 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\widget\wgt_value_take_out_mode.dart:391:24 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\widget\wgt_value_take_out_mode.dart:402:28 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\widget\wgt_value_take_out_mode.dart:450:44 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\widget\wgt_value_take_out_mode.dart:634:38 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\widget\wgt_value_take_out_mode.dart:648:38 - curly_braces_in_flow_control_structures
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\widget\wgt_value_take_out_mode.dart:669:22 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\widget\wgt_value_take_out_mode.dart:712:57 - deprecated_member_use
+   info - Statements in an if should be enclosed in a block - lib\widget\wgt_value_take_out_mode.dart:735:18 - curly_braces_in_flow_control_structures
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\widget\wgt_value_take_out_mode.dart:822:55 - deprecated_member_use
+   info - Statements in an if should be enclosed in a block - lib\widget\wgt_value_with_list_widget.dart:162:22 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\widget\wgt_value_with_list_widget.dart:178:26 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\widget\wgt_value_with_list_widget.dart:188:22 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\widget\wgt_value_with_list_widget.dart:212:22 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\widget\wgt_value_with_list_widget.dart:257:24 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\widget\wgt_value_with_list_widget.dart:376:24 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\widget\wgt_value_with_list_widget.dart:387:28 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\widget\wgt_value_with_list_widget.dart:435:44 - curly_braces_in_flow_control_structures
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\widget\wgt_value_with_list_widget.dart:522:46 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\widget\wgt_value_with_list_widget.dart:629:57 - deprecated_member_use
+   info - Statements in an if should be enclosed in a block - lib\widget\wgt_value_with_list_widget.dart:652:18 - curly_braces_in_flow_control_structures
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\widget\wgt_value_with_list_widget.dart:715:55 - deprecated_member_use
+

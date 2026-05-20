@@ -1,6 +1,5 @@
-﻿import 'dart:async';
+import 'dart:async';
 import 'dart:io';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:t_max/common/web_socket_mgr.dart';
@@ -66,7 +65,6 @@ class BluetoothManager {
       
       // 强制发指令给 Go 激活机种名查询
       debugPrint("BLE: [测试连接] 物理在线，强制发起型号查询...");
-      Fluttertoast.showToast(msg: "连接有效，正在索要机种名/序列号...", backgroundColor: Colors.blueAccent);
       
       ScaleCmd cmdInfo = ScaleCmd("get_factory_info", "");
       if (!WebSocketScaleManager().isConnected(currentScaleId!)) {
@@ -247,7 +245,6 @@ class BluetoothManager {
             
             // 1. 请求工厂信息
             debugPrint("BLE -> Go (Shot ${i+1}): 发起 [get_factory_info]");
-            Fluttertoast.showToast(msg: "正在激活秤 (第 ${i+1} 次)...");
             
             if (!WebSocketScaleManager().isConnected(currentScaleId!)) {
               WebSocketScaleManager().connect(currentScaleId!, "ws://127.0.0.1:7878/tmax?scaleid=$currentScaleId");
@@ -368,13 +365,7 @@ class BluetoothManager {
 
     String hex = _toHex(data);
     try {
-      // 实时调试：显示发送的具体指令内容
-      Fluttertoast.showToast(
-        msg: "Go -> 秤: $hex",
-        backgroundColor: Colors.blue,
-        textColor: Colors.white,
-        toastLength: Toast.LENGTH_LONG,
-      );
+      // 实时调试：显示发送的具体指令内容 (已移除高频 Toast 以防崩溃)
       
       // 尝试写入（RK3288 及普通安卓兼容处理）
       await _writeChar!.write(data, withoutResponse: true).timeout(Duration(seconds: 2));
@@ -386,11 +377,7 @@ class BluetoothManager {
         await _writeChar!.write(data, withoutResponse: false);
         debugPrint("BLE <- Go (兼容模式): 已写入 $hex");
       } catch (e2) {
-        Fluttertoast.showToast(
-          msg: "写入秤失败: $e2\n内容: $hex", 
-          backgroundColor: Colors.red,
-          toastLength: Toast.LENGTH_LONG,
-        );
+        debugPrint("写入秤失败: $e2 内容: $hex");
       }
     }
   }
@@ -400,13 +387,7 @@ class BluetoothManager {
     if (data.isEmpty) return;
     
     String hex = _toHex(data);
-    // 实时调试：显示接收的具体数据内容
-    Fluttertoast.showToast(
-      msg: "秤 -> Go: $hex",
-      backgroundColor: Colors.green,
-      textColor: Colors.white,
-      toastLength: Toast.LENGTH_LONG,
-    );
+    // 实时调试：显示接收的具体数据内容 (已移除高频 Toast 以防崩溃)
     
     _forwardDataToGo(data);
   }

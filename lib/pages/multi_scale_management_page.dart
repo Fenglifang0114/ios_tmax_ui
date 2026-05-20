@@ -1,4 +1,4 @@
-import 'dart:async';
+﻿import 'dart:async';
 import 'dart:convert';
 import 'package:t_max/bluetooth/bluetooth_manager.dart';
 import 'package:flutter/material.dart';
@@ -69,12 +69,12 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
   bool _isModifyName = false;
   bool isEditing = false;
   bool _isNetPort = false;
-  bool isDel = false; //鏄惁鎵ц鍒犻櫎
-  bool isDC500 = false; //鏄惁鏄棫鐨勭増鏈殑绉?
+  bool isDel = false; //是否执行删除
+  bool isDC500 = false; //是否是旧版本的秤
   bool isAddNewScale = false;
-  bool editWifiInfo = false; //鏄惁鏄慨鏀箇ifi淇℃伅
-  bool isBtSearching = false; //鏄惁姝ｅ湪鎼滅储钃濈墮璁惧
-  bool isBtSearched = false; //鏄惁鎼滅储瀹岃摑鐗欒澶?
+  bool editWifiInfo = false; //是否是修改wifi信息
+  bool isBtSearching = false; //是否正在搜索蓝牙设备
+  bool isBtSearched = false; //是否搜索完蓝牙设备
 
   List<BtInfo> btInfoList = [];
   BtInfo selectBtInfo = BtInfo();
@@ -106,7 +106,7 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
   ];
   List<String> scaleModelList = ['TMax'];
   String scaleModel = myModifyScale.scaleModel.toString();
-  List<String> dataBitsList = ['8']; //鍘绘帀5,6,7,8
+  List<String> dataBitsList = ['8']; //去掉5,6,7,8
   List<String> stopBitsList = ['1']; //, '1.5', '2'
   List<String> checkBitsList = ['None']; //, 'Odd', 'Even'
   //'Xon/Xoff', 'None', 'Rts/Cts', 'Dsr/Dtr'
@@ -182,7 +182,7 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
               if (isAddNewScale) {
                 isAddNewScale = false;
                 for (Scale tempScale in myAllScalesList) {
-                  //鎵惧嚭scaleId鏈€澶х殑
+                  //找出scaleId最大的
                   if (tempScale.scaleId > selScaleId) {
                     selScaleId = tempScale.scaleId;
                   }
@@ -286,12 +286,12 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
             btInfoList = btInfoFromJson(data);
             // print(btInfoList);
 
-            //鎸変俊鍙峰己搴︽帓搴?
+            //按信号强度排序
             btInfoList.sort((a, b) {
-              // 澶勭悊null鍊硷細null鍊艰涓烘渶寮变俊鍙?
+              // 处理null值：null值视为最弱信号
               int rssiA = a.rssi ?? -999;
               int rssiB = b.rssi ?? -999;
-              // 闄嶅簭鎺掑垪锛歜.compareTo(a) 鎴?b.rssi - a.rssi
+              // 降序排列：b.compareTo(a) 或 b.rssi - a.rssi
               return rssiB.compareTo(rssiA);
             });
           }
@@ -437,7 +437,7 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
   }
 
   int getScaleType() {
-    //妫€鏌ユ槸涓嶆槸涓插彛鐨勭Г
+    //检查是不是串口的秤
     for (int i = 0; i < myAllScalesList.length; i++) {
       if (selScaleId == myAllScalesList[i].scaleId) {
         return myAllScalesList[i].tMedia;
@@ -447,7 +447,7 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
   }
 
   void modifyComInfo() {
-    //涓插彛涓嶈兘琚叾浠栫Г浣跨敤
+    //串口不能被其他秤使用
 
     CurrentPort tempPort = CurrentPort();
     tempPort.baud = int.tryParse(baudRateCtl.text);
@@ -492,7 +492,7 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
     myNetInfo.ip = ipCtl.text;
     myNetInfo.port = int.tryParse(portCtl.text)!;
 
-    //鏌ユ壘鏄惁鏈変竴鏍风殑绔彛鍜孖P
+    //查找是否有一样的端口和IP
     for (var scale in myAllScalesList) {
       if (scale.tMedia == netScaleType) {
         final netConfig = scale.mediaConfig as NetworkMediaConfig;
@@ -607,14 +607,14 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
     }
 
     if (delScaleInfo!.mediaConfig.type == btScaleType) {
-      int scaleIdToDel = selScaleId; // 棰勫厛鎹曡幏 ID锛岄槻姝㈠欢鏃舵湡闂?UI 鐘舵€佹敼鍙?
+      int scaleIdToDel = selScaleId; // 预先捕获 ID，防止延时期间 UI 状态改变
       
-      // 鍒犻櫎涔嬪墠鍏堝叧闂繛缁彂閫?
+      // 删除之前先关闭连续发送
       PublicFunctions.stopWeight(scaleIdToDel);
       
-      // 寤惰繜涓€涓嬬‘淇濆叧闂寚浠ゅ彂鍑猴紝鐒跺悗鍐嶆柇寮€钃濈墮杩炴帴骞跺垹闄?
+      // 延迟一下确保关闭指令发出，然后再断开蓝牙连接并删除
       Future.delayed(const Duration(milliseconds: 500), () {
-        // 鏄惧紡鏂紑钃濈墮鐗╃悊杩炴帴
+        // 显式断开蓝牙物理连接
         bluetoothManager.disconnect();
         
         Future.delayed(const Duration(seconds: 2), () {

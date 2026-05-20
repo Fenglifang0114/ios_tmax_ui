@@ -1,4 +1,4 @@
-﻿//绉伴噸鍏辩敤鐨勯噸閲忔樉绀虹晫闈?20250521
+// 称重共用的重量显示界面 20250521
 
 import 'dart:async';
 import 'package:flutter/material.dart';
@@ -36,7 +36,7 @@ class _ScaleItemWidgetState extends State<ScaleItemWidget> {
   bool isStart = false;
   dynamic eventBus1;
 
-  //瀹氭椂鍙戦€佺Г杩樻椿鐫€
+  // 定时发送秤还活着
   Timer? _cntAliveTimer;
   bool _isCntAliveTiming = false;
   bool get isCntAliveTiming => _isCntAliveTiming;
@@ -114,7 +114,7 @@ class _ScaleItemWidgetState extends State<ScaleItemWidget> {
 
   void onStartTimer() {
     startTimer = Timer.periodic(Duration(seconds: 3), (timer) {
-      isCnting = false; // 閲嶇疆璁℃椂鍣ㄧ姸鎬?
+      isCnting = false; // 重置计时器状态
       innerTimer = Timer(Duration(milliseconds: 2500), () {
         if (!isCnting) {
           isStart = false;
@@ -172,7 +172,7 @@ class _ScaleItemWidgetState extends State<ScaleItemWidget> {
                 color: Theme.of(context).colorScheme.surface,
                 child: Row(
                   children: [
-                    // 鐘舵€佸浘鏍囧尯
+                    // 状态图标区
                     Container(
                         padding: EdgeInsets.symmetric(
                             horizontal: isMobile ? 8.0 : largePadding),
@@ -203,7 +203,7 @@ class _ScaleItemWidgetState extends State<ScaleItemWidget> {
                             ],
                           ),
                         )),
-                    // 閲嶉噺鏁板€煎尯
+                    // 重量数值区
                     Expanded(
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -255,7 +255,7 @@ class _ScaleItemWidgetState extends State<ScaleItemWidget> {
                         ],
                       ),
                     ),
-                    // 鎸夐挳鎿嶄綔鍖?
+                    // 按钮操作区
                     Container(
                       padding: EdgeInsets.symmetric(
                           horizontal: isMobile ? 8.0 : largePadding),

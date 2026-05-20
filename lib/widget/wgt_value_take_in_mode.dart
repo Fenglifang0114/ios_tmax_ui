@@ -63,7 +63,7 @@ class _ScaleWgtTakeInWidgetState extends State<ScaleWgtTakeInWidget> {
   List<WeightReportData> wgtRptDataList = [];
   final DataGridController _dataGridController = DataGridController();
 
-  PluData? selectedPluData; // 用于存储选中的PluData
+  PluData? selectedPluData; // 用于存储选中的 PluData
 
   late int weightMode; // 手动保存�? �?，稳定保�?
 
@@ -85,7 +85,7 @@ class _ScaleWgtTakeInWidgetState extends State<ScaleWgtTakeInWidget> {
   bool get isCntAliveTiming => _isCntAliveTiming;
   bool _hasPassedZero = false; // 标记是否经过 0 �?
 
-//定时发送秤还活着
+// 定时发送秤还活着
   Timer? _cntAliveTimer;
   Timer? _stableTimer; // 稳定状态计时器
   int _currentStableDuration = 0; // 当前稳定状态持续时�?
@@ -100,7 +100,7 @@ class _ScaleWgtTakeInWidgetState extends State<ScaleWgtTakeInWidget> {
 
     _isCntAliveTiming = true;
     _cntAliveTimer = Timer(Duration(seconds: time), () {
-      PublicFunctions.sendScaleAlive(widget.scaleId); //只管串口
+      PublicFunctions.sendScaleAlive(widget.scaleId); // 只管串口
       if (!isStart) {
         PublicFunctions.getWeight(widget.scaleId);
       }

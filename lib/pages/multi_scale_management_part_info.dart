@@ -1,4 +1,4 @@
-﻿// ignore_for_file: invalid_use_of_protected_member
+// ignore_for_file: invalid_use_of_protected_member
 part of 'multi_scale_management_page.dart';
 
 extension MultiScaleManagementInfoExt on MultiScaleManagementState {
@@ -22,7 +22,7 @@ extension MultiScaleManagementInfoExt on MultiScaleManagementState {
                           scaleNameCtl,
                           '',
                           IconButton(
-                            icon: Icon(Icons.edit_outlined), // 娓呴櫎鎸夐挳鍥炬爣
+                            icon: Icon(Icons.edit_outlined), // 编辑按钮图标
                             onPressed: () {
                               setState(() {
                                 isRename = true;
@@ -115,7 +115,7 @@ extension MultiScaleManagementInfoExt on MultiScaleManagementState {
                           scaleNameCtl,
                           '',
                           IconButton(
-                            icon: Icon(Icons.edit_outlined), // 娓呴櫎鎸夐挳鍥炬爣
+                            icon: Icon(Icons.edit_outlined), // 编辑按钮图标
                             onPressed: () {
                               setState(() {
                                 isRename = true;
@@ -224,7 +224,7 @@ extension MultiScaleManagementInfoExt on MultiScaleManagementState {
                     if (scaleType == btScaleType) {
                       showConnectionProgressDialog(context, btScaleType, selScaleId, mac: macCtl.text);
                     } else {
-                      // 缃戠粶绉ゆ垨涓插彛绉わ細涓嶅脊绐楋紝鐩存帴鏄剧ず Tip 骞跺彂閫佹寚浠?
+                      // 网络秤或串口秤：不弹窗，直接显示 Tip 并发送指令
                       setState(() {
                         isTesting = true;
                       });
@@ -245,7 +245,7 @@ extension MultiScaleManagementInfoExt on MultiScaleManagementState {
                 ? () {
                     setState(() {
                       isDel = true;
-                      // 鍒犻櫎鍓嶅厛鍋滄杩炵画鍙戦€?
+                      // 删除前先停止连续发送
                       PublicFunctions.stopWeight(selScaleId);
                       delScale();
                       selScaleId = -1;
@@ -288,10 +288,10 @@ extension MultiScaleManagementInfoExt on MultiScaleManagementState {
       builder: (context) {
         return StatefulBuilder(
           builder: (context, setDialogState) {
-            // 寮€濮嬭繛鎺ワ紙浠呮墽琛屼竴娆★級
+            // 开始连接（仅执行一次）
             if (logs.isEmpty) {
               if (type == btScaleType) {
-                logs.add("${DateTime.now().toString().split(' ')[1].substring(0, 8)}: 鍑嗗杩炴帴钃濈墮璁惧...");
+                logs.add("${DateTime.now().toString().split(' ')[1].substring(0, 8)}: ${localizedStrings?.gTipConnecting ?? 'Connecting'} ${localizedStrings?.bluetooth ?? 'Bluetooth'}...");
                 bluetoothManager.connectToDevice(
                   mac ?? "", 
                   scaleId: scaleId,
@@ -307,23 +307,26 @@ extension MultiScaleManagementInfoExt on MultiScaleManagementState {
                   });
                 });
               } else {
-                // 缃戠粶杩炴帴鎴栦覆鍙ｈ繛鎺?
-                String typeStr = type == netScaleType ? "缃戠粶" : "涓插彛";
-                logs.add("${DateTime.now().toString().split(' ')[1].substring(0, 8)}: 鍑嗗鍙戣捣$typeStr杩炴帴娴嬭瘯...");
+                // 网络连接或串口连接
+                // 网络连接或串口连接
+                String typeLabel = type == netScaleType ? "Network" : "Serial";
+                String typeDisplay = type == netScaleType ? (localizedStrings?.gNetwork ?? "Network") : (localizedStrings?.gSerialPort ?? "Serial Port");
+                logs.add("${DateTime.now().toString().split(' ')[1].substring(0, 8)}: [$typeLabel] Preparing connection test ($typeDisplay)...");
                 
                 subscription = eventBus.on<EventRespCheckNetScale>().listen((event) {
                   OnlineInfo info = event.obj;
                   if (info.scaleId == scaleId) {
-                    setDialogState(() {
+                      setDialogState(() {
                       isDone = true;
                       isSuccess = info.factInfo?.modelName != null && info.factInfo!.modelName!.isNotEmpty;
-                      logs.add("${DateTime.now().toString().split(' ')[1].substring(0, 8)}: $typeStr娴嬭瘯瀹屾垚锛岀粨鏋滐細${isSuccess ? "鎴愬姛" : "澶辫触"}");
+                      String resultLabel = isSuccess ? (localizedStrings?.success ?? "Success") : (localizedStrings?.failure ?? "Failure");
+                      logs.add("${DateTime.now().toString().split(' ')[1].substring(0, 8)}: [$typeLabel] Test completed. Result: $resultLabel");
                     });
                     subscription?.cancel();
                   }
                 });
 
-                // 鍙戦€佸悗绔祴璇曟寚浠?
+                // 发送后端测试指令
                 PublicFunctions.checkSerialPort(scaleId);
                 setState(() {
                    isTesting = true;
@@ -333,10 +336,16 @@ extension MultiScaleManagementInfoExt on MultiScaleManagementState {
 
             String titleText = "";
             if (type == btScaleType) {
-              titleText = isDone ? (isSuccess ? "钃濈墮杩炴帴鎴愬姛" : "钃濈墮杩炴帴澶辫触") : "姝ｅ湪杩炴帴钃濈墮...";
+              titleText = isDone 
+                ? (isSuccess 
+                    ? "${localizedStrings?.bluetooth ?? 'Bluetooth'} ${localizedStrings?.success ?? 'Success'}" 
+                    : "${localizedStrings?.bluetooth ?? 'Bluetooth'} ${localizedStrings?.failure ?? 'Failure'}") 
+                : "${localizedStrings?.gTipConnecting ?? 'Connecting'} ${localizedStrings?.bluetooth ?? 'Bluetooth'}...";
             } else {
-              String typeStr = type == netScaleType ? "缃戠粶" : "涓插彛";
-              titleText = isDone ? (isSuccess ? "$typeStr杩炴帴鎴愬姛" : "$typeStr杩炴帴澶辫触") : "姝ｅ湪娴嬭瘯$typeStr杩炴帴...";
+              String typeDisplay = type == netScaleType ? (localizedStrings?.gNetwork ?? "Network") : (localizedStrings?.gSerialPort ?? "Serial Port");
+              titleText = isDone 
+                ? (isSuccess ? "$typeDisplay ${localizedStrings?.success ?? 'Success'}" : "$typeDisplay ${localizedStrings?.failure ?? 'Failure'}") 
+                : "${localizedStrings?.gTipConnecting ?? 'Connecting'} $typeDisplay...";
             }
 
             return AlertDialog(
@@ -369,14 +378,14 @@ extension MultiScaleManagementInfoExt on MultiScaleManagementState {
                           itemBuilder: (context, index) {
                             return Padding(
                               padding: const EdgeInsets.symmetric(vertical: 2),
-                              child: Text(
+                                child: Text(
                                 logs[index],
                                 style: TextStyle(
                                   fontSize: 12,
                                   fontFamily: 'monospace',
-                                  color: logs[index].contains("閿欒") || logs[index].contains("寮傚父") || logs[index].contains("澶辫触")
+                                  color: logs[index].contains(localizedStrings?.failure ?? "Failure") || logs[index].contains("Error") || logs[index].contains("Fail") || logs[index].contains("失败") || logs[index].contains("错误")
                                     ? Colors.red 
-                                    : (logs[index].contains("鎴愬姛") ? Colors.green : Colors.black87),
+                                    : (logs[index].contains(localizedStrings?.success ?? "Success") || logs[index].contains("Success") || logs[index].contains("成功") ? Colors.green : Colors.black87),
                                 ),
                               ),
                             );
@@ -396,7 +405,7 @@ extension MultiScaleManagementInfoExt on MultiScaleManagementState {
                       });
                       Navigator.of(context).pop();
                     },
-                    child: Text("纭畾"),
+                    child: Text(localizedStrings?.gBtnConfirm ?? "Confirm"),
                   ),
               ],
             );

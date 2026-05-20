@@ -744,7 +744,11 @@ class CheckWeighersPageState extends State<CheckWeighersPage> {
                                 context: context,
                                 builder: (context) {
                                   return ParameterSettingDialog();
-                                });
+                                }).then((value) {
+                              if (mounted) {
+                                setState(() {});
+                              }
+                            });
                           },
                           icon: getSvgIcon(
                             settingSvgIcon(),
