@@ -1,4 +1,7 @@
-﻿import 'dart:convert';
+import 'dart:convert';
+import 'dart:io';
+import 'package:file_picker/file_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:t_max/data/new_get_recs.dart';
 import 'package:t_max/data/req_formula_data.dart';
 import 'package:t_max/data/scale_info_from_db.dart';
@@ -24,6 +27,36 @@ const String weighingTakeOutMode = '3';
 /// 封装了所有底层向硬件及数据库请求的方法指令（基于 [WebSocket] JSON 通信格式）。
 /// 方法命名主要由动词开头，调用 [sendMsgChan0] 统一打包分发至主通道。
 class PublicFunctions {
+  /// 跨平台文件选择器，解决 Android 上 file_picker saveFile 返回 null 的问题
+  static Future<String?> pickSaveFilePath(String defaultFileName) async {
+    if (Platform.isAndroid) {
+      if (await Permission.manageExternalStorage.isDenied) {
+        await Permission.manageExternalStorage.request();
+      }
+      if (await Permission.storage.isDenied) {
+        await Permission.storage.request();
+      }
+
+      String? selectedDirectory = await FilePicker.platform.getDirectoryPath(dialogTitle: 'Select Output Folder');
+      if (selectedDirectory != null) {
+        return "$selectedDirectory/$defaultFileName";
+      }
+      return null;
+    } else {
+      String? outputFile = await FilePicker.platform.saveFile(
+        initialDirectory: Directory.current.path,
+        type: FileType.custom,
+        dialogTitle: 'Output file:',
+        allowedExtensions: ["csv"],
+        fileName: defaultFileName,
+      );
+      if (outputFile != null && !outputFile.contains(".csv")) {
+        outputFile = "$outputFile.csv";
+      }
+      return outputFile;
+    }
+  }
+
   static void function1() {}
 
   /// 基础消息下发方法。用于向指定的离散辅秤 [scaleId] 通信。

@@ -828,20 +828,9 @@ class TakeOutPageState extends State<TakeOutPage> {
                             fixedSize: const Size(28, 28), // 设置固定大小
                           ),
                           onPressed: () async {
-                            final directory = Directory.current.path;
-                            String? outputFile =
-                                (await FilePicker.platform.saveFile(
-                              initialDirectory: directory,
-                              type: FileType.custom,
-                              dialogTitle: 'Output file:',
-                              allowedExtensions: ["csv"],
-                              fileName: 'report.csv',
-                            ));
+                            String? outputFile = await PublicFunctions.pickSaveFilePath('report.csv');
 
                             if (outputFile != null) {
-                              if (!outputFile.contains(".csv")) {
-                                outputFile = "$outputFile.csv";
-                              }
                               PublicFunctions.exportAllRecords(
                                   mySettingParam.scaleMode,
                                   outputFile,

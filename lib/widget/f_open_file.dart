@@ -1,4 +1,4 @@
-﻿import 'dart:io';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:t_max/data/home_page_common_data.dart';
@@ -82,49 +82,52 @@ void showExportDialog(String filePath, BuildContext context) {
                       SizedBox(
                         width: 20,
                       ),
-                      showTextButton(context, btnHeight,
-                          (localizedStrings?.gBtnOpenFileLocation ?? "gBtnOpenFileLocation"), () async {
-                        // 打开文件所在文件夹或直接打开文件
-                        if (Platform.isWindows) {
-                          // Windows: 打开文件所在文件夹并选中文件
-                          await Process.run(
-                              'explorer.exe', ['/select,', filePath]);
-                        } else if (Platform.isMacOS) {
-                          // macOS: 在Finder中显示文件
-                          await Process.run('open', ['-R', filePath]);
-                        } else if (Platform.isLinux) {
-                          // Linux: 打开文件所在目录
-                          String directory = Directory(filePath).parent.path;
-                          await Process.run('xdg-open', [directory]);
-                        }
-                        if (context.mounted) {
-                          Navigator.pop(context);
-                        }
-                      }, colorScheme.onPrimary, colorScheme.primary,
-                          colorScheme.onPrimary),
-                      SizedBox(
-                        width: 20,
-                      ),
-                      showTextButton(
-                          context, btnHeight, (localizedStrings?.gBtnOpenFile ?? "gBtnOpenFile"),
-                          () async {
-                        // 直接打开文件
-                        final Uri fileUri = Uri.file(filePath);
-                        if (await canLaunchUrl(fileUri)) {
-                          await launchUrl(fileUri);
-                        } else {
-                          // 如果无法直接打开，则打开文件所在目录
-                          String directory = Directory(filePath).parent.path;
-                          final Uri dirUri = Uri.file(directory);
-                          if (await canLaunchUrl(dirUri)) {
-                            await launchUrl(dirUri);
+                      if (!Platform.isAndroid)
+                        showTextButton(context, btnHeight,
+                            (localizedStrings?.gBtnOpenFileLocation ?? "gBtnOpenFileLocation"), () async {
+                          // 打开文件所在文件夹或直接打开文件
+                          if (Platform.isWindows) {
+                            // Windows: 打开文件所在文件夹并选中文件
+                            await Process.run(
+                                'explorer.exe', ['/select,', filePath]);
+                          } else if (Platform.isMacOS) {
+                            // macOS: 在Finder中显示文件
+                            await Process.run('open', ['-R', filePath]);
+                          } else if (Platform.isLinux) {
+                            // Linux: 打开文件所在目录
+                            String directory = Directory(filePath).parent.path;
+                            await Process.run('xdg-open', [directory]);
                           }
-                        }
-                        if (context.mounted) {
-                          Navigator.pop(context);
-                        }
-                      }, colorScheme.onPrimary, colorScheme.primary,
-                          colorScheme.onPrimary),
+                          if (context.mounted) {
+                            Navigator.pop(context);
+                          }
+                        }, colorScheme.onPrimary, colorScheme.primary,
+                            colorScheme.onPrimary),
+                      if (!Platform.isAndroid)
+                        SizedBox(
+                          width: 20,
+                        ),
+                      if (!Platform.isAndroid)
+                        showTextButton(
+                            context, btnHeight, (localizedStrings?.gBtnOpenFile ?? "gBtnOpenFile"),
+                            () async {
+                          // 直接打开文件
+                          final Uri fileUri = Uri.file(filePath);
+                          if (await canLaunchUrl(fileUri)) {
+                            await launchUrl(fileUri);
+                          } else {
+                            // 如果无法直接打开，则打开文件所在目录
+                            String directory = Directory(filePath).parent.path;
+                            final Uri dirUri = Uri.file(directory);
+                            if (await canLaunchUrl(dirUri)) {
+                              await launchUrl(dirUri);
+                            }
+                          }
+                          if (context.mounted) {
+                            Navigator.pop(context);
+                          }
+                        }, colorScheme.onPrimary, colorScheme.primary,
+                            colorScheme.onPrimary),
                     ],
                   ),
                 ),

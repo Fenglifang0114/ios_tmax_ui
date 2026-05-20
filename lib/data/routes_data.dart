@@ -337,7 +337,7 @@ List<int> allPaidAppMenu = [
 ];
 
 List<RouteData> getAllAppsMenus() {
-  return [
+  List<RouteData> appsMenus = [
     RouteData(
       id: MenuId.weightModePage,
       title: (localizedStrings?.menuWeighing ?? "menuWeighing"),
@@ -403,6 +403,12 @@ List<RouteData> getAllAppsMenus() {
       iconPath: reciptDesignSvgIcon(),
     ),
   ];
+
+  if (Platform.isAndroid || Platform.isIOS) {
+    appsMenus.removeWhere((menu) => menu.id == MenuId.retailReportPage);
+  }
+
+  return appsMenus;
 }
 
 bool getUserPermission(int id) {
