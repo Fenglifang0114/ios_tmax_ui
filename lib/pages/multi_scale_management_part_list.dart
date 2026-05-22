@@ -407,27 +407,10 @@ extension MultiScaleManagementListExt on MultiScaleManagementState {
 
   Widget buildItemInfo(
       Widget title1, Widget content1, Widget title2, Widget content2) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    bool isMobile = screenWidth < 700;
-
-    if (isMobile) {
-      return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: regularPadding),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            title1,
-            content1,
-            const SizedBox(height: regularPadding),
-            title2,
-            content2,
-          ],
-        ),
-      );
-    }
-
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    return Wrap(
+      alignment: WrapAlignment.spaceEvenly,
+      spacing: regularPadding,
+      runSpacing: regularPadding,
       children: [
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           SizedBox(width: inputWidth, child: title1),

@@ -1,4 +1,4 @@
-﻿import 'dart:async';
+import 'dart:async';
 import 'dart:convert';
 import 'package:fast_gbk/fast_gbk.dart';
 import 'dart:io';
@@ -7,6 +7,8 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:path/path.dart' as path;
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import 'package:t_max/data/download_prt_fmt.dart';
 import 'package:t_max/data/g_data.dart';
@@ -541,17 +543,19 @@ class _PluEidtPageState extends State<PluEidtPage> {
   Widget buildButtonRow() {
     // 收集所有按钮的文本
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        showSearchBox(),
-        Spacer(),
-        Container(
-          // width: regularPadding * 4 + 40 * 4,
-          alignment: Alignment.centerRight,
-          child: checkSelectPlu() ? showCancelBtnList() : showSelectBtnList(),
-        ),
-      ],
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          showSearchBox(),
+          const SizedBox(width: 20),
+          Container(
+            alignment: Alignment.centerRight,
+            child: checkSelectPlu() ? showCancelBtnList() : showSelectBtnList(),
+          ),
+        ],
+      ),
     );
   }
 
@@ -1209,37 +1213,61 @@ class _PluEidtPageState extends State<PluEidtPage> {
           colorScheme.primary,
           dataModels.isNotEmpty
               ? () async {
-                  final directory = Directory.current.path;
-                  String? outputFile = (await FilePicker.platform.saveFile(
-                    initialDirectory: directory,
-                    type: FileType.custom,
-                    dialogTitle: 'Output file:',
-                    allowedExtensions: ["csv"],
-                    fileName: 'export_product.csv',
-                  ));
-                  if (outputFile == null) {
-                    return;
+                  try {
+                    String? outputFile;
+                    if (Platform.isAndroid) {
+                      if (await Permission.manageExternalStorage.isGranted == false) {
+                        await Permission.manageExternalStorage.request();
+                      }
+                      if (await Permission.storage.isGranted == false) {
+                        await Permission.storage.request();
+                      }
+                      final Directory dir = Directory('/storage/emulated/0/Download');
+                      if (!await dir.exists()) {
+                        await dir.create(recursive: true);
+                      }
+                      outputFile = path.join(dir.path, 'export_product_${DateTime.now().millisecondsSinceEpoch}.csv');
+
+                    } else if (Platform.isIOS) {
+                      final dir = await getApplicationDocumentsDirectory();
+                      outputFile = path.join(dir.path, 'export_product_${DateTime.now().millisecondsSinceEpoch}.csv');
+                    } else {
+                      String? directory = Directory.current.path;
+                      outputFile = await FilePicker.platform.saveFile(
+                        initialDirectory: directory,
+                        type: FileType.custom,
+                        dialogTitle: 'Output file:',
+                        allowedExtensions: ["csv"],
+                        fileName: 'export_product.csv',
+                      );
+                    }
+                    
+                    if (outputFile == null) return;
+                    if (!outputFile.contains(".csv")) {
+                      outputFile = "$outputFile.csv";
+                    }
+                    
+                    SearchPlu searchPluInfo = SearchPlu(
+                      plu: pluCtl.text,
+                      category: categoryCtl.text,
+                      pluName: pluNameCtl.text,
+                      setEnabled: false,
+                      enabled: false,
+                    );
+
+                    ExportPlu exportPluInfo = ExportPlu(
+                      translation: getTranslationMap(),
+                      searchPlu: searchPluInfo,
+                      path: outputFile,
+                    );
+
+                    String jsonStr = jsonEncode(exportPluInfo);
+                    PublicFunctions.exportProduct(jsonStr);
+                  } catch (e) {
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Export error: $e')));
+                    }
                   }
-                  if (!outputFile.contains(".csv")) {
-                    outputFile = "$outputFile.csv";
-                  }
-
-                  SearchPlu searchPluInfo = SearchPlu(
-                    plu: pluCtl.text,
-                    category: categoryCtl.text,
-                    pluName: pluNameCtl.text,
-                    setEnabled: false,
-                    enabled: false,
-                  );
-
-                  ExportPlu exportPluInfo = ExportPlu(
-                    translation: getTranslationMap(),
-                    searchPlu: searchPluInfo,
-                    path: outputFile,
-                  );
-
-                  String jsonStr = jsonEncode(exportPluInfo);
-                  PublicFunctions.exportProduct(jsonStr);
                 }
               : null,
         ),
@@ -1924,6 +1952,10 @@ class _PluEidtPageState extends State<PluEidtPage> {
   }
 
   Future<String> getAppFilePath() async {
+    if (Platform.isAndroid || Platform.isIOS) {
+      final directory = await getApplicationDocumentsDirectory();
+      return directory.path;
+    }
     String appDirectory = Platform.resolvedExecutable;
     var directory = path.dirname(appDirectory);
     return directory;

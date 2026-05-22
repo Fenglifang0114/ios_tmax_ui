@@ -343,7 +343,7 @@ class ShowDeleteTipDialogState extends State<ShowDeleteTipDialog> {
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.normal,
-                          color: Theme.of(context).colorScheme.onPrimary,
+                          color: Theme.of(context).colorScheme.onSurface,
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),

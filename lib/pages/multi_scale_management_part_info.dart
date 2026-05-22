@@ -53,8 +53,10 @@ extension MultiScaleManagementInfoExt on MultiScaleManagementState {
                   const SizedBox(
                     height: regularPadding,
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  Wrap(
+                    alignment: WrapAlignment.spaceEvenly,
+                    spacing: regularPadding,
+                    runSpacing: regularPadding,
                     children: [
                       Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -169,8 +171,10 @@ extension MultiScaleManagementInfoExt on MultiScaleManagementState {
 
   Widget showRenameConfirmBtn() {
     return isRename
-        ? Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+        ? Wrap(
+            alignment: WrapAlignment.center,
+            spacing: regularPadding,
+            runSpacing: regularPadding,
             children: [
               showTextButton(
                   context,
@@ -185,7 +189,6 @@ extension MultiScaleManagementInfoExt on MultiScaleManagementState {
                   Theme.of(context).colorScheme.onPrimary,
                   Theme.of(context).colorScheme.primary,
                   Theme.of(context).colorScheme.onPrimary),
-              const SizedBox(width: regularPadding),
               showTextButton(context, btnHeight, (localizedStrings?.gBtnCancel ?? "gBtnCancel"),
                   () {
                 setState(() {
@@ -211,8 +214,10 @@ extension MultiScaleManagementInfoExt on MultiScaleManagementState {
   }
 
   Widget buttonRow({bool showModify = false}) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+    return Wrap(
+      alignment: WrapAlignment.center,
+      spacing: regularPadding,
+      runSpacing: regularPadding,
       children: [
         showTextButton(
             context,
@@ -236,7 +241,6 @@ extension MultiScaleManagementInfoExt on MultiScaleManagementState {
             Theme.of(context).colorScheme.onPrimary,
             Theme.of(context).colorScheme.onTertiaryFixedVariant,
             Theme.of(context).colorScheme.onPrimary),
-        const SizedBox(width: regularPadding),
         showTextButton(
             context,
             btnHeight,
@@ -256,7 +260,6 @@ extension MultiScaleManagementInfoExt on MultiScaleManagementState {
             Theme.of(context).colorScheme.error,
             Theme.of(context).colorScheme.onPrimary),
         if (showModify) ...[
-          const SizedBox(width: regularPadding),
           showTextButton(
               context,
               btnHeight,
