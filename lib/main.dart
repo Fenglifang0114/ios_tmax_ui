@@ -1,4 +1,4 @@
-﻿import 'dart:io';
+import 'dart:io';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -31,7 +31,7 @@ Future<void> main() async {
     // 增加启动后端的稳定性，先等待系统资源准备就绪
     Future.microtask(() async {
       await Future.delayed(const Duration(seconds: 3));
-      const platform = MethodChannel('com.example.t_max/backend');
+      const platform = MethodChannel('com.tmax.service/backend');
       try {
         final String result = await platform.invokeMethod('startBackend');
         debugPrint("Backend started: $result");

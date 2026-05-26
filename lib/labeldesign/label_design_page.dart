@@ -1,5 +1,6 @@
-﻿import 'dart:convert';
+import 'dart:convert';
 import 'dart:io';
+import 'dart:math' as math;
 
 import 'package:csv/csv.dart';
 import 'package:flutter/material.dart';
@@ -66,6 +67,12 @@ class LabelDesignPageState extends State<LabelDesignPage> {
       TextEditingController();
   TextEditingController maxLenthController = TextEditingController();
 
+  bool _panelsInitialized = false;
+  bool _showLeftPanel = true;
+  bool _showRightPanel = true;
+  bool _showTopPanel = true;
+  bool _isCanvasLocked = false;
+
   dynamic localizedStrings;
   String _selectedPrintDirection = '0';
   String text = "";
@@ -115,7 +122,7 @@ class LabelDesignPageState extends State<LabelDesignPage> {
   final double btnWidth = 150;
   final double textWidth = 120;
   final double topTitleHeight = 300;
-  final double topBtnHeight = 120;
+  final double topBtnHeight = 140;
   final double leftBtnWidth = 280;
   final double rightBtnWidth = 288;
 
@@ -1797,39 +1804,41 @@ class LabelDesignPageState extends State<LabelDesignPage> {
       height: topBtnHeight,
       width: width - 10,
       color: Theme.of(context).colorScheme.onPrimary,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          SizedBox(
-            child: Row(children: [
-              Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Row(
-                    children: [
-                      SizedBox(
-                        height: 40,
-                        child: Row(
-                          children: [
-                            SizedBox(
-                              width: 150,
-                              child: Text(
-                                (localizedStrings?.gPrinter ?? "gPrinter"),
-                                textAlign: TextAlign.right,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodySmall!
-                                    .apply(
-                                      color:
-                                          Theme.of(context).colorScheme.primary,
-                                    ),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            SizedBox(
+              child: Row(children: [
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Row(
+                      children: [
+                        SizedBox(
+                          height: 50,
+                          child: Row(
+                            children: [
+                              Container(
+                                constraints: const BoxConstraints(minWidth: 100),
+                                child: Text(
+                                  (localizedStrings?.gPrinter ?? "gPrinter"),
+                                  textAlign: TextAlign.right,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall!
+                                      .apply(
+                                        color:
+                                            Theme.of(context).colorScheme.primary,
+                                      ),
+                                ),
                               ),
-                            ),
                             const SizedBox(
                               width: 10,
                             ),
                             SizedBox(
-                              width: 150, // 设置固定宽度
+                              width: 250, // 增加宽度以防文字截断
                               child: showDropDownButton(
                                   context, '', printerCtl, _printers,
                                   (String? newValue) {
@@ -1846,11 +1855,11 @@ class LabelDesignPageState extends State<LabelDesignPage> {
                   Row(
                     children: [
                       SizedBox(
-                        height: 40,
+                        height: 50,
                         child: Row(
                           children: [
-                            SizedBox(
-                              width: 150,
+                            Container(
+                              constraints: const BoxConstraints(minWidth: 100),
                               child: Text(
                                 (localizedStrings?.gPrintDirection ?? "gPrintDirection"),
                                 textAlign: TextAlign.right,
@@ -1867,7 +1876,7 @@ class LabelDesignPageState extends State<LabelDesignPage> {
                               width: 10,
                             ),
                             SizedBox(
-                              width: 150, // 设置固定宽度
+                              width: 250, // 增加宽度以防文字截断
                               child: showDropDownButton(
                                   context,
                                   '',
@@ -1894,7 +1903,7 @@ class LabelDesignPageState extends State<LabelDesignPage> {
                   Row(
                     children: [
                       SizedBox(
-                        height: 40,
+                        height: 50,
                         child: Row(
                           children: [
                             buildBtnText((localizedStrings?.gPageWidth ?? "gPageWidth") + '(mm):'),
@@ -1916,7 +1925,7 @@ class LabelDesignPageState extends State<LabelDesignPage> {
                   Row(
                     children: [
                       SizedBox(
-                        height: 40,
+                        height: 50,
                         child: Row(
                           children: [
                             buildBtnText(
@@ -2002,15 +2011,16 @@ class LabelDesignPageState extends State<LabelDesignPage> {
                             context, 40, (localizedStrings?.gOpenJson ?? "gOpenJson"), () async {
                           String filePath = '';
                           try {
-                            String executablePath = Platform.resolvedExecutable;
-                            var directory = p.dirname(executablePath);
-
-                            final formatfilePath =
-                                Directory('$directory\\format');
-                            if (!await formatfilePath.exists()) {
-                              await formatfilePath.create(recursive: true);
+                            String? directory;
+                            if (Platform.isWindows) {
+                              String executablePath = Platform.resolvedExecutable;
+                              var execDir = p.dirname(executablePath);
+                              final formatfilePath = Directory(p.join(execDir, 'format'));
+                              if (!await formatfilePath.exists()) {
+                                await formatfilePath.create(recursive: true);
+                              }
+                              directory = formatfilePath.path;
                             }
-                            directory = formatfilePath.path;
                             FilePickerResult? result =
                                 await FilePicker.platform.pickFiles(
                               initialDirectory: directory,
@@ -2075,23 +2085,36 @@ class LabelDesignPageState extends State<LabelDesignPage> {
                         child: showTextButton(
                             context, 40, (localizedStrings?.gSaveFormat ?? "gSaveFormat"),
                             () async {
-                          String executablePath = Platform.resolvedExecutable;
-                          var directory = p.dirname(executablePath);
-                          final formatfilePath =
-                              Directory('$directory\\format');
-                          if (!await formatfilePath.exists()) {
-                            await formatfilePath.create(recursive: true);
+                          String? directory;
+                          if (Platform.isWindows) {
+                            String executablePath = Platform.resolvedExecutable;
+                            var execDir = p.dirname(executablePath);
+                            final formatfilePath = Directory(p.join(execDir, 'format'));
+                            if (!await formatfilePath.exists()) {
+                              await formatfilePath.create(recursive: true);
+                            }
+                            directory = formatfilePath.path;
                           }
-                          directory = formatfilePath.path;
 
-                          String? outputFile =
-                              (await FilePicker.platform.saveFile(
-                            initialDirectory: directory,
-                            dialogTitle: 'Output file:',
-                            type: FileType.custom,
-                            allowedExtensions: ['fmt'],
-                            fileName: 'format.fmt',
-                          ));
+                          String? outputFile;
+                          if (Platform.isWindows) {
+                            outputFile = await FilePicker.platform.saveFile(
+                              initialDirectory: directory,
+                              dialogTitle: 'Output file:',
+                              type: FileType.custom,
+                              allowedExtensions: ['fmt'],
+                              fileName: 'format.fmt',
+                            );
+                          } else {
+                            String? selectedDir = await FilePicker.platform.getDirectoryPath(
+                              dialogTitle: 'Select Output Folder:',
+                            );
+                            if (selectedDir != null) {
+                              outputFile = p.join(selectedDir, 'format.fmt');
+                              // Notify user since they didn't explicitly type a file name
+                              showTipInfo('Files saved to folder: $selectedDir', context);
+                            }
+                          }
                           if (outputFile != null) {
                             if (!outputFile.contains(".fmt")) {
                               outputFile = "$outputFile.fmt";
@@ -2117,6 +2140,7 @@ class LabelDesignPageState extends State<LabelDesignPage> {
           ),
         ],
       ),
+      )
     );
   }
 
@@ -2962,6 +2986,17 @@ class LabelDesignPageState extends State<LabelDesignPage> {
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
 
+    if (!_panelsInitialized) {
+      if (width < 1200) {
+        _showLeftPanel = false;
+        _showRightPanel = false;
+      }
+      if (height < 700) {
+        _showTopPanel = false;
+      }
+      _panelsInitialized = true;
+    }
+
     final verticalScrollController = ScrollController();
     final horizontalScrollController = ScrollController();
     return KeyboardListener(
@@ -2993,7 +3028,19 @@ class LabelDesignPageState extends State<LabelDesignPage> {
                         color: Theme.of(context).colorScheme.surfaceBright,
                         child: Column(
                           children: [
-                            showHeadWidget(width),
+                            if (_showTopPanel) showHeadWidget(width),
+                            // 顶部折叠控制条
+                            InkWell(
+                              onTap: () => setState(() => _showTopPanel = !_showTopPanel),
+                              child: Container(
+                                height: 20,
+                                width: double.infinity,
+                                color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                                child: Center(
+                                  child: Icon(_showTopPanel ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down, size: 20, color: Theme.of(context).colorScheme.onSurfaceVariant),
+                                ),
+                              ),
+                            ),
                             Container(
                               height: 1,
                               color:
@@ -3009,17 +3056,30 @@ class LabelDesignPageState extends State<LabelDesignPage> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   //左侧变量部分
-                                  Container(
-                                    width: leftBtnWidth,
-                                    color:
-                                        Theme.of(context).colorScheme.surface,
-                                    child: Focus(
-                                      autofocus: false,
-                                      onKeyEvent: (node, event) {
-                                        return KeyEventResult.handled;
-                                      },
-                                      child: ListView(
-                                        children: _buildList(context),
+                                  if (_showLeftPanel)
+                                    Container(
+                                      width: leftBtnWidth,
+                                      color:
+                                          Theme.of(context).colorScheme.surface,
+                                      child: Focus(
+                                        autofocus: false,
+                                        onKeyEvent: (node, event) {
+                                          return KeyEventResult.handled;
+                                        },
+                                        child: ListView(
+                                          children: _buildList(context),
+                                        ),
+                                      ),
+                                    ),
+                                    
+                                  // 左侧折叠控制条
+                                  InkWell(
+                                    onTap: () => setState(() => _showLeftPanel = !_showLeftPanel),
+                                    child: Container(
+                                      width: 20,
+                                      color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                                      child: Center(
+                                        child: Icon(_showLeftPanel ? Icons.arrow_left : Icons.arrow_right, size: 20, color: Theme.of(context).colorScheme.onSurfaceVariant),
                                       ),
                                     ),
                                   ),
@@ -3034,6 +3094,7 @@ class LabelDesignPageState extends State<LabelDesignPage> {
                                       child: SingleChildScrollView(
                                         scrollDirection:
                                             Axis.horizontal, // 垂直滚动
+                                        physics: _isCanvasLocked ? const NeverScrollableScrollPhysics() : const AlwaysScrollableScrollPhysics(),
                                         controller: horizontalScrollController,
                                         child: Scrollbar(
                                           controller: verticalScrollController,
@@ -3041,6 +3102,7 @@ class LabelDesignPageState extends State<LabelDesignPage> {
                                           child: SingleChildScrollView(
                                             scrollDirection:
                                                 Axis.vertical, // 水平滚动
+                                            physics: _isCanvasLocked ? const NeverScrollableScrollPhysics() : const AlwaysScrollableScrollPhysics(),
                                             controller:
                                                 verticalScrollController,
                                             child: Container(
@@ -3058,7 +3120,12 @@ class LabelDesignPageState extends State<LabelDesignPage> {
                                                       .onSurface,
                                                 ),
                                               ),
-                                              child: buildCanvasPart(),
+                                              child: Listener(
+                                                onPointerDown: (_) => setState(() => _isCanvasLocked = true),
+                                                onPointerUp: (_) => setState(() => _isCanvasLocked = false),
+                                                onPointerCancel: (_) => setState(() => _isCanvasLocked = false),
+                                                child: buildCanvasPart(),
+                                              ),
                                             ),
                                           ),
                                         ),
@@ -3066,40 +3133,53 @@ class LabelDesignPageState extends State<LabelDesignPage> {
                                     ),
                                   ),
 
-                                  //右侧属性部分
-                                  Container(
-                                    width: rightBtnWidth,
-                                    alignment: Alignment.topLeft,
-                                    padding: const EdgeInsets.only(
-                                        left: 10, right: 10),
-                                    color:
-                                        Theme.of(context).colorScheme.surface,
-                                    child: Focus(
-                                      autofocus: false,
-                                      onKeyEvent: (node, event) {
-                                        if ((event.logicalKey ==
-                                                LogicalKeyboardKey.arrowUp ||
-                                            event.logicalKey ==
-                                                LogicalKeyboardKey.arrowDown)) {
-                                          // 处理左箭头键按下事件
-
-                                          return KeyEventResult.handled;
-                                        } else {
-                                          return KeyEventResult.ignored;
-                                        }
-                                      },
-                                      child: Row(
-                                        children: [
-                                          const SizedBox(
-                                            width: 5,
-                                          ),
-                                          Expanded(
-                                            child: showAttributeInfo(),
-                                          )
-                                        ],
+                                  // 右侧折叠控制条
+                                  InkWell(
+                                    onTap: () => setState(() => _showRightPanel = !_showRightPanel),
+                                    child: Container(
+                                      width: 20,
+                                      color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                                      child: Center(
+                                        child: Icon(_showRightPanel ? Icons.arrow_right : Icons.arrow_left, size: 20, color: Theme.of(context).colorScheme.onSurfaceVariant),
                                       ),
                                     ),
                                   ),
+
+                                  //右侧属性部分
+                                  if (_showRightPanel)
+                                    Container(
+                                      width: rightBtnWidth,
+                                      alignment: Alignment.topLeft,
+                                      padding: const EdgeInsets.only(
+                                          left: 10, right: 10),
+                                      color:
+                                          Theme.of(context).colorScheme.surface,
+                                      child: Focus(
+                                        autofocus: false,
+                                        onKeyEvent: (node, event) {
+                                          if ((event.logicalKey ==
+                                                  LogicalKeyboardKey.arrowUp ||
+                                              event.logicalKey ==
+                                                  LogicalKeyboardKey.arrowDown)) {
+                                            // 处理左箭头键按下事件
+
+                                            return KeyEventResult.handled;
+                                          } else {
+                                            return KeyEventResult.ignored;
+                                          }
+                                        },
+                                        child: Row(
+                                          children: [
+                                            const SizedBox(
+                                              width: 5,
+                                            ),
+                                            Expanded(
+                                              child: showAttributeInfo(),
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    ),
                                 ],
                               ),
                             ),

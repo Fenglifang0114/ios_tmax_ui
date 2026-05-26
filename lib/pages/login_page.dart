@@ -1,4 +1,4 @@
-﻿import 'dart:async';
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -205,10 +205,12 @@ class LoginPageState extends State<LoginPage> with WindowLifecycleMixin {
       );
     }
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(40), // 自定义高度
-        child: DraggableTitleBar(title: ''),
-      ),
+      appBar: Platform.isAndroid
+          ? null
+          : PreferredSize(
+              preferredSize: Size.fromHeight(40), // 自定义高度
+              child: DraggableTitleBar(title: ''),
+            ),
       body: Stack(
         children: [
           // 背景图
@@ -466,9 +468,11 @@ class _WindowButtonsState extends State<WindowButtons> with WindowListener {
   @override
   void initState() {
     super.initState();
-    // 注册监听器
-    windowManager.addListener(this);
-    _initMaximizedState();
+    if (!Platform.isAndroid) {
+      // 注册监听器
+      windowManager.addListener(this);
+      _initMaximizedState();
+    }
   }
 
   Future<void> _initMaximizedState() async {
@@ -489,8 +493,10 @@ class _WindowButtonsState extends State<WindowButtons> with WindowListener {
 
   @override
   void dispose() {
-    // 移除监听器
-    windowManager.removeListener(this);
+    if (!Platform.isAndroid) {
+      // 移除监听器
+      windowManager.removeListener(this);
+    }
     _maximizedStreamController.close();
     super.dispose();
   }
@@ -630,10 +636,13 @@ class DraggableTitleBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       // 关键：添加拖拽事件处理
-      onPanStart: (details) => windowManager.startDragging(),
+      onPanStart: (details) {
+        if (!Platform.isAndroid) windowManager.startDragging();
+      },
 
       // 双击标题栏时切换窗口最大化/还原
       onDoubleTap: () async {
+        if (Platform.isAndroid) return;
         if (await windowManager.isMaximized()) {
           windowManager.unmaximize();
         } else {

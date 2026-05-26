@@ -1,6 +1,7 @@
-﻿import 'dart:async';
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:t_max/pages/update_firmware_page.dart';
@@ -107,7 +108,7 @@ class _DownReciptPageState extends State<DownReciptPage> {
   Widget _buildMainContent() {
     return Stack(children: [
       SizedBox(
-        width: MediaQuery.of(context).size.width - 300,
+        width: math.max(MediaQuery.of(context).size.width - 300, 950.0),
         child: Column(
           children: [
             const SizedBox(
@@ -480,8 +481,8 @@ class _DownReciptPageState extends State<DownReciptPage> {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       // initialDirectory: directory,
       allowMultiple: false,
-      type: FileType.custom,
-      allowedExtensions: ['fmt'],
+      type: Platform.isAndroid ? FileType.any : FileType.custom,
+      allowedExtensions: Platform.isAndroid ? null : ['fmt'],
     );
     if (result != null) {
       setState(() {

@@ -1,4 +1,4 @@
-﻿import 'dart:async';
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -138,6 +138,7 @@ class WebSocketManager {
 
   // 发送消息
   void sendMessage(String message) {
+    debugPrint("WebSocketManager sending: $message");
     if (!_isConnected || _channel == null) {
       _log('connect not connected, can not send message: $message');
       return;
@@ -205,12 +206,15 @@ class WebSocketManager {
   }
 
   // 连接成功后的初始化
-  void _onConnected() {
+  void _onConnected() async {
     // 获取必要数据
     PublicFunctions.getLicense();
+    await Future.delayed(const Duration(milliseconds: 200));
     PublicFunctions.getScaleList();
+    await Future.delayed(const Duration(milliseconds: 200));
     PublicFunctions.getAllSysUsers();
 
+    await Future.delayed(const Duration(milliseconds: 200));
     // 发送初始心跳
     _sendHeartbeat();
   }

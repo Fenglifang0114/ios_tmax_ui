@@ -1,6 +1,7 @@
-﻿import 'dart:async';
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:t_max/pages/update_firmware_page.dart';
@@ -106,7 +107,7 @@ class _DownloadPageState extends State<DownloadLabelPage> {
   Widget _buildMainContent(double width) {
     return Stack(children: [
       SizedBox(
-        width: width - 280,
+        width: math.max(width - 280, 950.0),
         child: Column(
           children: [
             const SizedBox(
@@ -602,8 +603,8 @@ class _DownloadPageState extends State<DownloadLabelPage> {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       // initialDirectory: directory,
       allowMultiple: false,
-      type: FileType.custom,
-      allowedExtensions: ['fmt'],
+      type: Platform.isAndroid ? FileType.any : FileType.custom,
+      allowedExtensions: Platform.isAndroid ? null : ['fmt'],
     );
     if (result != null) {
       setState(() {

@@ -1,7 +1,9 @@
-﻿//更新软件界面
+//更新软件界面
 
 import 'dart:async';
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:t_max/data/comscaleinfo_data.dart';
 import 'package:t_max/data/home_page_common_data.dart';
@@ -86,20 +88,20 @@ class _UpdateFirmwarePageState extends State<UpdateFirmwarePage> {
                       const SizedBox(
                         width: regularPadding,
                       ),
-                      Container(
-                        width: 500,
-                        height: btnHeight,
-                        padding: const EdgeInsets.only(
-                            left: smallPadding, right: smallPadding),
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(0),
-                            border: Border.all(
-                                width: 1,
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .outlineVariant)),
-                        alignment: Alignment.centerLeft,
-                        child: SelectableText(
+                      Expanded(
+                        child: Container(
+                          height: btnHeight,
+                          padding: const EdgeInsets.only(
+                              left: smallPadding, right: smallPadding),
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(0),
+                              border: Border.all(
+                                  width: 1,
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .outlineVariant)),
+                          alignment: Alignment.centerLeft,
+                          child: SelectableText(
                           zipFileCtl.text,
                           textAlign: TextAlign.left,
                           style:
@@ -109,6 +111,7 @@ class _UpdateFirmwarePageState extends State<UpdateFirmwarePage> {
                                         .onSurfaceVariant,
                                   ),
                         ),
+                      ),
                       ),
                       const SizedBox(
                         width: smallPadding,
@@ -336,21 +339,32 @@ class _UpdateFirmwarePageState extends State<UpdateFirmwarePage> {
   }
 
   Future pickFiles(TextEditingController showFilePath) async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles(
-      allowMultiple: false,
-      type: FileType.custom,
-      allowedExtensions: ['zip'],
-    );
-    if (result != null) {
-      setState(() {
-        showFilePath.text = result.files.single.path!;
-        filePath = showFilePath.text;
-      });
-    } else {
-      setState(() {
-        showFilePath.text = '';
-        filePath = '';
-      });
+    try {
+      if (Platform.isAndroid) {
+        if (await Permission.storage.isGranted == false) {
+          await Permission.storage.request();
+        }
+      }
+      FilePickerResult? result = await FilePicker.platform.pickFiles(
+        allowMultiple: false,
+        type: FileType.custom,
+        allowedExtensions: ['zip'],
+      );
+      if (result != null) {
+        setState(() {
+          showFilePath.text = result.files.single.path!;
+          filePath = showFilePath.text;
+        });
+      } else {
+        setState(() {
+          showFilePath.text = '';
+          filePath = '';
+        });
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('File picker error: $e')));
+      }
     }
   }
 }

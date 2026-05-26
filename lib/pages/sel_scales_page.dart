@@ -1,4 +1,4 @@
-﻿import 'dart:async';
+import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:t_max/functions/methods.dart';
@@ -187,7 +187,9 @@ class SelectScalesPageState extends State<SelectScalesPage> {
 //根据收到的结果处理
   void parseRecInfo(int scaleId) {
     if (scaleResMap.containsKey(scaleId)) {
-      scaleTimerMap[scaleId]!.cancel();
+      if (!myRespDataFromScale.msgBody.startsWith("Step:")) {
+        scaleTimerMap[scaleId]!.cancel();
+      }
       if (myRespDataFromScale.msgBody.contains('ok')) {
         scaleResMap[scaleId]!.process = 1;
       }
@@ -562,7 +564,7 @@ class SelectScalesPageState extends State<SelectScalesPage> {
   void buildProcessTimer(int downTime) {
     scaleResMap.forEach((int id, ScaleDownRes value) {
       final timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-        if (scaleResMap[id]!.res != "") {
+        if (scaleResMap[id]!.res != "" && !scaleResMap[id]!.res.startsWith("Step:")) {
           // setState(() {
           scaleResMap[id]!.process = 1;
           // });

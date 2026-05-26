@@ -1,4 +1,4 @@
-﻿import 'dart:convert';
+import 'dart:convert';
 import 'dart:io';
 import 'package:data_table_2/data_table_2.dart';
 import 'package:file_picker/file_picker.dart';
@@ -275,6 +275,7 @@ class CalibrationSealPageState extends State<CalibrationSealPage> {
   }
 
   Widget firstLayout(context, width) {
+    double currentScaleListWidth = width > 1000 ? scaleListWidth : 200.0;
     return Container(
         width: width,
         decoration: BoxDecoration(color: Theme.of(context).colorScheme.surface),
@@ -286,7 +287,7 @@ class CalibrationSealPageState extends State<CalibrationSealPage> {
               child:
                   Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Container(
-                  width: scaleListWidth,
+                  width: currentScaleListWidth,
                   color: Theme.of(context).colorScheme.surfaceTint,
                   child: SizedBox(
                     height: MediaQuery.of(context).size.height,
@@ -298,7 +299,7 @@ class CalibrationSealPageState extends State<CalibrationSealPage> {
                         ),
                         Expanded(
                           child: NewAllScaleListWidget(
-                            listWidth: scaleListWidth, // 列表宽度
+                            listWidth: currentScaleListWidth, // 列表宽度
                             selScaleId: selScaleId,
                             clickScale: (scale) {
                               if (!enabledGetInfo) {
@@ -327,10 +328,16 @@ class CalibrationSealPageState extends State<CalibrationSealPage> {
                         child: Container(
                         padding: const EdgeInsets.all(largePadding),
                         child: Column(children: [
-                          SizedBox(
-                              height: 230,
-                              child: Column(children: [
-                                Row(
+                          Flexible(
+                            flex: 6,
+                            child: SingleChildScrollView(
+                              child: Container(
+                                  padding: const EdgeInsets.only(bottom: largePadding),
+                                  child: Column(children: [
+                                Wrap(
+                                  spacing: largePadding,
+                                  runSpacing: largePadding,
+                                  alignment: WrapAlignment.center,
                                   children: [
                                     SizedBox(
                                       width: 300,
@@ -429,7 +436,6 @@ class CalibrationSealPageState extends State<CalibrationSealPage> {
                                         ),
                                       ),
                                     ),
-                                    SizedBox(width: largePadding),
                                     SizedBox(
                                       width: 300,
                                       child: Container(
@@ -529,11 +535,14 @@ class CalibrationSealPageState extends State<CalibrationSealPage> {
                                     )
                                   ],
                                 ),
-                                Spacer(),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
+                                SizedBox(height: largePadding * 2),
+                                Wrap(
+                                  spacing: 14,
+                                  runSpacing: 14,
+                                  alignment: WrapAlignment.center,
                                   children: [
-                                    Container(
+                                    SizedBox(
+                                      width: 180,
                                       child: showTextButton(
                                           context,
                                           btnHeight,
@@ -563,9 +572,7 @@ class CalibrationSealPageState extends State<CalibrationSealPage> {
                                               .onPrimary),
                                     ),
                                     SizedBox(
-                                      width: 14,
-                                    ),
-                                    Container(
+                                      width: 180,
                                       child: showTextButton(
                                           context,
                                           btnHeight,
@@ -594,9 +601,7 @@ class CalibrationSealPageState extends State<CalibrationSealPage> {
                                               .onPrimary),
                                     ),
                                     SizedBox(
-                                      width: 14,
-                                    ),
-                                    Container(
+                                      width: 180,
                                       child: showTextButton(
                                           context,
                                           btnHeight,
@@ -635,8 +640,11 @@ class CalibrationSealPageState extends State<CalibrationSealPage> {
                                   height: 1,
                                 ),
                                 SizedBox(height: largePadding),
-                              ])),
+                                  ])),
+                            ),
+                          ),
                           Expanded(
+                            flex: 4,
                             child: DataTable2(
                               columnSpacing: 12,
                               horizontalMargin: 12,

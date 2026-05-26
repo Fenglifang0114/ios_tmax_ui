@@ -1,4 +1,4 @@
-﻿import 'dart:io';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:tray_manager/tray_manager.dart';
 import 'package:window_manager/window_manager.dart';
@@ -13,6 +13,7 @@ mixin WindowLifecycleMixin<T extends StatefulWidget> on State<T>
 
   /// 初始化窗口监听和设置
   void initWindowLifecycle() {
+    if (Platform.isAndroid) return;
     trayManager.addListener(this);
     windowManager.addListener(this);
 
@@ -22,6 +23,7 @@ mixin WindowLifecycleMixin<T extends StatefulWidget> on State<T>
 
   /// 销毁窗口监听
   void disposeWindowLifecycle() {
+    if (Platform.isAndroid) return;
     trayManager.removeListener(this);
     windowManager.removeListener(this);
   }
@@ -73,6 +75,7 @@ mixin WindowLifecycleMixin<T extends StatefulWidget> on State<T>
 
   @override
   void onWindowClose() async {
+    if (Platform.isAndroid) return;
     bool isPreventClose = await windowManager.isPreventClose();
     if (isPreventClose) {
       if (mounted) {

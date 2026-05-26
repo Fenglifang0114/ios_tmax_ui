@@ -1,5 +1,6 @@
-﻿import 'dart:convert';
+import 'dart:convert';
 import 'dart:io';
+import 'dart:math' as math;
 import 'dart:ui';
 import 'package:csv/csv.dart';
 import 'package:file_picker/file_picker.dart';
@@ -118,6 +119,13 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
   List<ReceiptItem> receiptItemList = [];
   List<ReceiptDraggableFloating> floatButtonList = [];
   GlobalKey _parentKey = GlobalKey();
+  
+  bool _panelsInitialized = false;
+  bool _showLeftPanel = true;
+  bool _showRightPanel = true;
+  bool _showTopPanel = true;
+  bool _isCanvasLocked = false;
+
   List<int> num = [0];
   dynamic name = "Text,TEXT";
   String text = "";
@@ -154,7 +162,7 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
   final double btnWidth = 220;
   final double textWidth = 120;
   final double topTitleHeight = 300;
-  final double topBtnHeight = 120;
+  final double topBtnHeight = 140;
   final double leftBtnWidth = 280;
   final double rightBtnWidth = 288;
 
@@ -439,6 +447,17 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
     final height = MediaQuery.of(context).size.height;
     ScrollController scrollController = ScrollController();
     ScrollController scrollController1 = ScrollController();
+    if (!_panelsInitialized) {
+      if (width < 1200) {
+        _showLeftPanel = false;
+        _showRightPanel = false;
+      }
+      if (height < 700) {
+        _showTopPanel = false;
+      }
+      _panelsInitialized = true;
+    }
+
     return Scaffold(
       body: Container(
           width: width,
@@ -462,8 +481,19 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
                 Expanded(
                     child: Column(
                   children: [
-                    showHeadWidget(width), //顶部标题栏
-
+                    if (_showTopPanel) showHeadWidget(width), //顶部标题栏
+                    // 顶部折叠控制条
+                    InkWell(
+                      onTap: () => setState(() => _showTopPanel = !_showTopPanel),
+                      child: Container(
+                        height: 20,
+                        width: double.infinity,
+                        color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                        child: Center(
+                          child: Icon(_showTopPanel ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down, size: 20, color: Theme.of(context).colorScheme.onSurfaceVariant),
+                        ),
+                      ),
+                    ),
                     Divider(
                       height: 1,
                       color: Theme.of(context).colorScheme.outlineVariant,
@@ -473,10 +503,22 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          SizedBox(
-                            width: leftBtnWidth,
-                            child: ListView(
-                              children: _buildList(),
+                          if (_showLeftPanel)
+                            SizedBox(
+                              width: leftBtnWidth,
+                              child: ListView(
+                                children: _buildList(),
+                              ),
+                            ),
+                          // 左侧折叠控制条
+                          InkWell(
+                            onTap: () => setState(() => _showLeftPanel = !_showLeftPanel),
+                            child: Container(
+                              width: 20,
+                              color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                              child: Center(
+                                child: Icon(_showLeftPanel ? Icons.arrow_left : Icons.arrow_right, size: 20, color: Theme.of(context).colorScheme.onSurfaceVariant),
+                              ),
                             ),
                           ),
                           Expanded(
@@ -490,11 +532,12 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
 
                                 child: SingleChildScrollView(
                                   scrollDirection: Axis.horizontal,
+                                  physics: _isCanvasLocked ? const NeverScrollableScrollPhysics() : const AlwaysScrollableScrollPhysics(),
                                   controller: scrollController,
                                   child: Container(
                                     padding: const EdgeInsets.all(10),
-                                    width: 1700,
-                                    height: 1000,
+                                    width: math.max(_getPageWidth() + 100, 300.0),
+                                    height: math.max(_getPageHeight() + 100, 300.0),
                                     decoration: BoxDecoration(
                                         color: Theme.of(context)
                                             .colorScheme
@@ -509,33 +552,39 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
                                       behavior: _ScrollbarOnlyScrollBehavior(),
                                       child: SingleChildScrollView(
                                         scrollDirection: Axis.vertical, // 水平滚动
+                                        physics: _isCanvasLocked ? const NeverScrollableScrollPhysics() : const AlwaysScrollableScrollPhysics(),
                                         controller: scrollController1,
                                         child: Row(
                                           mainAxisAlignment:
                                               MainAxisAlignment.start,
                                           children: [
-                                            Container(
-                                              padding: EdgeInsets.fromLTRB(
-                                                  28, 0, 28, 0),
-                                              //60mmX60
-                                              width: _getPageWidth(),
-                                              height: _getPageHeight(),
-                                              decoration: BoxDecoration(
-                                                  color: Theme.of(context)
-                                                      .colorScheme
-                                                      .surfaceTint,
-                                                  border: Border.all(
-                                                      width: 0.5,
-                                                      color: Theme.of(context)
-                                                          .colorScheme
-                                                          .onSurface)),
-                                              child: Stack(
-                                                clipBehavior: Clip.none,
-                                                key: _parentKey,
-                                                children: [
-                                                  _buildLines(), //屏蔽横线
-                                                  ...floatButtonList,
-                                                ],
+                                            Listener(
+                                              onPointerDown: (_) => setState(() => _isCanvasLocked = true),
+                                              onPointerUp: (_) => setState(() => _isCanvasLocked = false),
+                                              onPointerCancel: (_) => setState(() => _isCanvasLocked = false),
+                                              child: Container(
+                                                padding: EdgeInsets.fromLTRB(
+                                                    28, 0, 28, 0),
+                                                //60mmX60
+                                                width: _getPageWidth(),
+                                                height: _getPageHeight(),
+                                                decoration: BoxDecoration(
+                                                    color: Theme.of(context)
+                                                        .colorScheme
+                                                        .surfaceTint,
+                                                    border: Border.all(
+                                                        width: 0.5,
+                                                        color: Theme.of(context)
+                                                            .colorScheme
+                                                            .onSurface)),
+                                                child: Stack(
+                                                  clipBehavior: Clip.none,
+                                                  key: _parentKey,
+                                                  children: [
+                                                    _buildLines(), //屏蔽横线
+                                                    ...floatButtonList,
+                                                  ],
+                                                ),
                                               ),
                                             )
                                           ],
@@ -547,12 +596,24 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
                               ),
                             ),
                           ),
-                          Container(
-                              width: rightBtnWidth,
-                              alignment: Alignment.topLeft,
-                              padding:
-                                  const EdgeInsets.only(left: 10, right: 10),
-                              child: showAttributePart()),
+                          // 右侧折叠控制条
+                          InkWell(
+                            onTap: () => setState(() => _showRightPanel = !_showRightPanel),
+                            child: Container(
+                              width: 20,
+                              color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                              child: Center(
+                                child: Icon(_showRightPanel ? Icons.arrow_right : Icons.arrow_left, size: 20, color: Theme.of(context).colorScheme.onSurfaceVariant),
+                              ),
+                            ),
+                          ),
+                          if (_showRightPanel)
+                            Container(
+                                width: rightBtnWidth,
+                                alignment: Alignment.topLeft,
+                                padding:
+                                    const EdgeInsets.only(left: 10, right: 10),
+                                child: showAttributePart()),
                           const SizedBox(width: 10)
                         ],
                       ),
@@ -593,8 +654,10 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
       height: topBtnHeight,
       width: width - 10,
       color: Theme.of(context).colorScheme.onPrimary,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
           SizedBox(
             child: Row(children: [
@@ -604,7 +667,7 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
                   Row(
                     children: [
                       SizedBox(
-                        height: 40,
+                        height: 50,
                         child: Row(
                           children: [
                             SizedBox(
@@ -643,7 +706,7 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
                   Row(
                     children: [
                       SizedBox(
-                        height: 40,
+                        height: 50,
                         child: Row(
                           children: [
                             SizedBox(
@@ -692,7 +755,7 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
                   Row(
                     children: [
                       SizedBox(
-                        height: 40,
+                        height: 50,
                         child: Row(
                           children: [
                             buildBtnText((localizedStrings?.gPageWidth ?? "gPageWidth") + '(mm):'),
@@ -714,7 +777,7 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
                   Row(
                     children: [
                       SizedBox(
-                        height: 40,
+                        height: 50,
                         child: Row(
                           children: [
                             buildBtnText(
@@ -780,23 +843,35 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
                         child: showTextButton(
                             context, 40, (localizedStrings?.gSaveFormat ?? "gSaveFormat"),
                             () async {
-                          String executablePath = Platform.resolvedExecutable;
-                          var directory = p.dirname(executablePath);
-                          final formatfilePath =
-                              Directory('$directory\\format');
-                          if (!await formatfilePath.exists()) {
-                            await formatfilePath.create(recursive: true);
+                          String? directory;
+                          if (Platform.isWindows) {
+                            String executablePath = Platform.resolvedExecutable;
+                            directory = p.dirname(executablePath);
+                            final formatfilePath = Directory('$directory\\format');
+                            if (!await formatfilePath.exists()) {
+                              await formatfilePath.create(recursive: true);
+                            }
+                            directory = formatfilePath.path;
                           }
-                          directory = formatfilePath.path;
 
-                          String? outputFile =
-                              (await FilePicker.platform.saveFile(
-                            initialDirectory: directory,
-                            dialogTitle: 'Output file:',
-                            type: FileType.custom,
-                            allowedExtensions: ['fmt'],
-                            fileName: 'format.fmt',
-                          ));
+                          String? outputFile;
+                          if (Platform.isWindows) {
+                            outputFile = await FilePicker.platform.saveFile(
+                              initialDirectory: directory,
+                              dialogTitle: 'Output file:',
+                              type: FileType.custom,
+                              allowedExtensions: ['fmt'],
+                              fileName: 'format.fmt',
+                            );
+                          } else {
+                            String? selectedDir = await FilePicker.platform.getDirectoryPath(
+                              dialogTitle: 'Select Output Folder:',
+                            );
+                            if (selectedDir != null) {
+                              outputFile = p.join(selectedDir, 'format.fmt');
+                              showTipInfo('Files saved to folder: $selectedDir', context);
+                            }
+                          }
                           if (outputFile != null) {
                             if (!outputFile.contains(".fmt")) {
                               outputFile = "$outputFile.fmt";
@@ -823,15 +898,16 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
                             context, 40, (localizedStrings?.gOpenJson ?? "gOpenJson"), () async {
                           String filePath = '';
                           try {
-                            String executablePath = Platform.resolvedExecutable;
-                            var directory = p.dirname(executablePath);
-
-                            final formatfilePath =
-                                Directory('$directory\\format');
-                            if (!await formatfilePath.exists()) {
-                              await formatfilePath.create(recursive: true);
+                            String? directory;
+                            if (Platform.isWindows) {
+                              String executablePath = Platform.resolvedExecutable;
+                              directory = p.dirname(executablePath);
+                              final formatfilePath = Directory('$directory\\format');
+                              if (!await formatfilePath.exists()) {
+                                await formatfilePath.create(recursive: true);
+                              }
+                              directory = formatfilePath.path;
                             }
-                            directory = formatfilePath.path;
                             FilePickerResult? result =
                                 await FilePicker.platform.pickFiles(
                               initialDirectory: directory,
@@ -861,7 +937,7 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
           ),
         ],
       ),
-    );
+    ));
   }
 
   ButtonStyle buildBtnStyle() {
