@@ -4,6 +4,7 @@ import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
 import tmaxbackend.Tmaxbackend
+import android.provider.Settings
 import android.os.Bundle
 import android.util.Log
 
@@ -21,8 +22,9 @@ class MainActivity: FlutterActivity() {
         backendStarted = true
         Thread {
             try {
-                Log.d("Tmax", "Starting backend with path: ${filesDir.absolutePath}")
-                Tmaxbackend.startBackend(filesDir.absolutePath)
+                val androidId = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID) ?: ""
+                Log.d("Tmax", "Starting backend with path: ${filesDir.absolutePath} and androidId: $androidId")
+                Tmaxbackend.startBackend(filesDir.absolutePath, androidId)
                 Log.d("Tmax", "Backend startBackend returned")
             } catch (e: Exception) {
                 Log.e("Tmax", "Failed to start backend", e)

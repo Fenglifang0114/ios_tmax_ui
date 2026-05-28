@@ -1,4 +1,4 @@
-﻿const String tConfigLic = "T-Config";
+const String tConfigLic = "T-Config";
 const String redeLic = "rede";
 const String wedaLic = "weda";
 const String chweLic = "chwe";
@@ -27,28 +27,26 @@ class LicenseInfo {
   String pId;
   String liceseDate;
   String moduleName;
-  LicenseInfo(bool valid, this.pId, this.liceseDate, this.moduleName)
-      : isValid = true;
+  LicenseInfo(this.isValid, this.pId, this.liceseDate, this.moduleName);
   LicenseInfo.fromJson(Map<String, dynamic> json)
       : pId = json['Id'],
         moduleName = json['ModuleName'],
-        isValid = true,
+        isValid = json['IsValid'],
         liceseDate = json['ValidDate'];
 }
 
 String myConfigCode = ''; //高级配置中的配置代码
 
-LicenseInfo myLicenseInfo = LicenseInfo(true, '', '', '');
-LicenseInfo myTConLicInfo = LicenseInfo(true, '', '', '');
-LicenseInfo myRedeLicInfo = LicenseInfo(true, '', '', ''); //receipt_design
-LicenseInfo myWedaLicInfo =
-    LicenseInfo(true, '', '', ''); //weight Data collection
-LicenseInfo myChweLicInfo = LicenseInfo(true, '', '', ''); //check weighing
-LicenseInfo myInWeLicInfo = LicenseInfo(true, '', '', ''); //Increment weighing
-LicenseInfo myTaouLicInfo = LicenseInfo(true, '', '', ''); //take out scale
-LicenseInfo myFaSpInfo = LicenseInfo(true, '', '', ''); //fateSpeed scale
-LicenseInfo myFoScLicInfo = LicenseInfo(true, '', '', ''); //formula scale
-LicenseInfo myLadeLicInfo = LicenseInfo(true, '', '', ''); //label design
+LicenseInfo myLicenseInfo = LicenseInfo(false, '', '', '');
+LicenseInfo myTConLicInfo = LicenseInfo(false, '', '', '');
+LicenseInfo myRedeLicInfo = LicenseInfo(false, '', '', ''); //receipt_design
+LicenseInfo myWedaLicInfo = LicenseInfo(false, '', '', ''); //weight Data collection
+LicenseInfo myChweLicInfo = LicenseInfo(false, '', '', ''); //check weighing
+LicenseInfo myInWeLicInfo = LicenseInfo(false, '', '', ''); //Increment weighing
+LicenseInfo myTaouLicInfo = LicenseInfo(false, '', '', ''); //take out scale
+LicenseInfo myFaSpInfo = LicenseInfo(false, '', '', ''); //fateSpeed scale
+LicenseInfo myFoScLicInfo = LicenseInfo(false, '', '', ''); //formula scale
+LicenseInfo myLadeLicInfo = LicenseInfo(false, '', '', ''); //label design
 
 class LicenseSetting {
   void setLicInfo() {
