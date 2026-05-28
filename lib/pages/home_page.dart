@@ -1,9 +1,12 @@
-﻿// //涓婚〉
+// //涓婚〉
 
 //棣栭〉   娴嬭瘯棣栭〉
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'dart:io';
+import 'package:tray_manager/tray_manager.dart';
+import 'package:window_manager/window_manager.dart';
 import 'package:t_max/data/company_info.dart';
 import 'package:t_max/data/comscaleinfo_data.dart';
 import 'package:t_max/data/dialog_data.dart';
@@ -350,7 +353,35 @@ class MyHomePageState extends State<MyHomePage>
     TextTheme textTheme = Theme.of(context).textTheme;
     localizedStrings = S.of(context);
     
-    return Scaffold(
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) return;
+        if (mounted) {
+          showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (context) {
+              return CustomAlertDialog(
+                titleText: (localizedStrings?.gTipExitApp ?? "gTipExitApp"),
+                onNoPressed: () {
+                  Navigator.of(context).pop();
+                },
+                onYesPressed: () async {
+                  Navigator.of(context).pop();
+                  dispose();
+                  if (!Platform.isAndroid) {
+                    await trayManager.destroy();
+                    await windowManager.destroy();
+                  }
+                  exit(0);
+                },
+              );
+            },
+          );
+        }
+      },
+      child: Scaffold(
       drawer: isMobile ? Drawer(
         child: Container(
           color: colorScheme.primary,
@@ -376,7 +407,21 @@ class MyHomePageState extends State<MyHomePage>
         child: isMobile ? AppBar(
           backgroundColor: colorScheme.primary,
           foregroundColor: colorScheme.onPrimary,
-          title: Text(generateTitle(getPageId(_selectedNavRoute))),
+          title: Row(
+            children: [
+              Image.asset(logoIconPath, width: 28, height: 28),
+              const SizedBox(width: 8),
+              Text(myAppName.appName!, style: textTheme.titleMedium!.copyWith(color: colorScheme.onPrimary, fontWeight: FontWeight.bold)),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  "- ${generateTitle(getPageId(_selectedNavRoute))}",
+                  style: textTheme.titleMedium!.copyWith(color: colorScheme.onPrimary),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
           actions: [
              _buildTopBarActions(colorScheme, textTheme),
           ],
@@ -430,7 +475,18 @@ class MyHomePageState extends State<MyHomePage>
                       children: [
                         Container(
                           padding: EdgeInsets.only(left: largePadding),
-                          child: Text(generateTitle(getPageId(_selectedNavRoute)), style: textTheme.bodySmall!.copyWith(color: colorScheme.onSurface)),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              if (!showLeftNavigationBar) ...[
+                                Image.asset(logoIconPath, width: 24, height: 24),
+                                const SizedBox(width: 8),
+                                Text(myAppName.appName!, style: textTheme.titleMedium!.copyWith(color: colorScheme.primary, fontWeight: FontWeight.bold)),
+                                const SizedBox(width: 16),
+                              ],
+                              Text(generateTitle(getPageId(_selectedNavRoute)), style: textTheme.bodySmall!.copyWith(color: colorScheme.onSurface)),
+                            ],
+                          ),
                         ),
                         _buildTopBarActions(colorScheme, textTheme),
                       ],
@@ -461,7 +517,7 @@ class MyHomePageState extends State<MyHomePage>
           ),
         ],
       ),
-    );
+    ));
   }
 
   Widget showSysSetting(ColorScheme colorScheme, TextTheme textTheme) {
