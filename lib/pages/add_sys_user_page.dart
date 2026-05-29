@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:t_max/data/g_data.dart';
 import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/data/routes_data.dart';
@@ -991,6 +991,7 @@ class AddSysUserPageState extends State<AddSysUserPage> {
     final double widthFor3Item =
         (width - 300) / 3 > 380 ? 380 : (width - 300) / 3;
     return Scaffold(
+        resizeToAvoidBottomInset: false,
         backgroundColor: colorScheme.surfaceContainerLow,
         body: Container(
           color: colorScheme.surface,
