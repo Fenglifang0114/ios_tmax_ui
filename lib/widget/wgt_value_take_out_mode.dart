@@ -415,7 +415,7 @@ class _ScaleWgtTakeOutWidgetState extends State<ScaleWgtTakeOutWidget> {
     final isMobile = MediaQuery.of(context).size.width < 600;
     return Container(
         padding: EdgeInsets.only(bottom: isMobile ? 4 : regularPadding),
-        color: Theme.of(context).colorScheme.surface,
+        color: Colors.transparent,
         child: Column(children: [
           Container(
             color: Theme.of(context).colorScheme.surface,
@@ -454,7 +454,7 @@ class _ScaleWgtTakeOutWidgetState extends State<ScaleWgtTakeOutWidget> {
                         ])),
                 Container(
                   height: 1,
-                  color: Theme.of(context).colorScheme.surface,
+                  color: Theme.of(context).colorScheme.outlineVariant,
                 ),
                 Container(
                     height: isMobile ? 40 : 52,
@@ -493,7 +493,7 @@ class _ScaleWgtTakeOutWidgetState extends State<ScaleWgtTakeOutWidget> {
                     )),
                 Divider(
                   height: 1,
-                  color: Theme.of(context).colorScheme.surface,
+                  color: Theme.of(context).colorScheme.outlineVariant,
                 ),
                 SizedBox(
                   height: isMobile ? 40 : 50,

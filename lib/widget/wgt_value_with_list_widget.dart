@@ -400,7 +400,7 @@ class _ScaleWgtWidgetState extends State<ScaleWgtWidget> {
     return Container(
         padding: EdgeInsets.only(bottom: regularPadding),
         height: 184,
-        color: Theme.of(context).colorScheme.surface,
+        color: Colors.transparent,
         child: Column(children: [
           Container(
             height: 169,
@@ -439,7 +439,7 @@ class _ScaleWgtWidgetState extends State<ScaleWgtWidget> {
                         ])),
                 Container(
                   height: 1,
-                  color: Theme.of(context).colorScheme.surface,
+                  color: Theme.of(context).colorScheme.outlineVariant,
                 ),
                 Container(
                     height: 52,
@@ -563,7 +563,7 @@ class _ScaleWgtWidgetState extends State<ScaleWgtWidget> {
                     )),
                 Divider(
                   height: 1,
-                  color: Theme.of(context).colorScheme.surface,
+                  color: Theme.of(context).colorScheme.outlineVariant,
                 ),
                 SizedBox(
                   height: 60,

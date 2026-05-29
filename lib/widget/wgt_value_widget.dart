@@ -145,7 +145,7 @@ class _ScaleItemWidgetState extends State<ScaleItemWidget> {
     final bool isMobile = MediaQuery.of(context).size.width < 600;
     return Container(
       height: 160,
-      color: Theme.of(context).colorScheme.surface,
+      color: Colors.transparent,
       child: Column(
         children: [
           Container(
@@ -164,7 +164,7 @@ class _ScaleItemWidgetState extends State<ScaleItemWidget> {
           ),
           Container(
             height: 1,
-            color: Theme.of(context).colorScheme.surface,
+            color: Theme.of(context).colorScheme.outlineVariant,
           ),
           Expanded(
             child: Container(
@@ -296,7 +296,7 @@ class _ScaleItemWidgetState extends State<ScaleItemWidget> {
           ),
           Container(
             height: regularPadding,
-            color: Theme.of(context).colorScheme.surface,
+            color: Colors.transparent,
           ),
         ],
       ),

@@ -60,7 +60,7 @@ class _ScaleListWidgetState extends State<ScaleListWidget> {
                       child: Container(
                         height: scaleItemHeight,
                         color: !isSelect
-                            ? Theme.of(context).colorScheme.surface
+                            ? Theme.of(context).colorScheme.surfaceContainerLow
                             : Theme.of(context).colorScheme.primary,
                         child: Row(
                           children: [
@@ -73,7 +73,7 @@ class _ScaleListWidgetState extends State<ScaleListWidget> {
                                   borderRadius:
                                       BorderRadius.all(Radius.circular(4)),
                                   color: !isSelect
-                                      ? Theme.of(context).colorScheme.surface
+                                      ? Theme.of(context).colorScheme.surfaceContainerLowest
                                       : Color.fromRGBO(255, 255, 255, 0.1),
                                 ),
                                 width: scaleInnerItemHeight,
@@ -161,7 +161,7 @@ showComScale(BuildContext context, int selScaleId, Function()? onTap) {
         child: Container(
           height: scaleItemHeight,
           color: (selScaleId != 1)
-              ? Theme.of(context).colorScheme.surface
+              ? Theme.of(context).colorScheme.surfaceContainerLow
               : Theme.of(context).colorScheme.primary,
           child: Row(
             children: [
@@ -173,7 +173,7 @@ showComScale(BuildContext context, int selScaleId, Function()? onTap) {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.all(Radius.circular(4)),
                     color: (selScaleId != 1)
-                        ? Theme.of(context).colorScheme.surface
+                        ? Theme.of(context).colorScheme.surfaceContainerLowest
                         : Color.fromRGBO(255, 255, 255, 0.1),
                   ),
                   width: scaleInnerItemHeight,
@@ -321,7 +321,7 @@ class _MutiScaleListWidgetState extends State<MutiScaleListWidget> {
                       child: Container(
                         height: scaleItemHeight,
                         color: !isSelect
-                            ? Theme.of(context).colorScheme.surface
+                            ? Theme.of(context).colorScheme.surfaceContainerLow
                             : Theme.of(context).colorScheme.primary,
                         child: Row(
                           children: [
@@ -334,7 +334,7 @@ class _MutiScaleListWidgetState extends State<MutiScaleListWidget> {
                                   borderRadius:
                                       BorderRadius.all(Radius.circular(4)),
                                   color: !isSelect
-                                      ? Theme.of(context).colorScheme.surface
+                                      ? Theme.of(context).colorScheme.surfaceContainerLowest
                                       : Color.fromRGBO(255, 255, 255, 0.1),
                                 ),
                                 width: scaleInnerItemHeight,
@@ -425,7 +425,7 @@ showMutiComScale(
         child: Container(
           height: scaleItemHeight,
           color: (!selScaleList.contains(1))
-              ? Theme.of(context).colorScheme.surface
+              ? Theme.of(context).colorScheme.surfaceContainerLow
               : Theme.of(context).colorScheme.primary,
           child: Row(
             children: [
@@ -437,7 +437,7 @@ showMutiComScale(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.all(Radius.circular(4)),
                     color: (!selScaleList.contains(1))
-                        ? Theme.of(context).colorScheme.surface
+                        ? Theme.of(context).colorScheme.surfaceContainerLowest
                         : Color.fromRGBO(255, 255, 255, 0.1),
                   ),
                   width: scaleInnerItemHeight,
@@ -545,7 +545,7 @@ class _NewAllScaleListWidgetState extends State<NewAllScaleListWidget> {
                                   constraints: BoxConstraints(
                                       minHeight: scaleItemHeight),
                                   color: !isSelect
-                                      ? Theme.of(context).colorScheme.surface
+                                      ? Theme.of(context).colorScheme.surfaceContainerLow
                                       : scale.isOnline
                                           ? Theme.of(context)
                                               .colorScheme
@@ -564,7 +564,7 @@ class _NewAllScaleListWidgetState extends State<NewAllScaleListWidget> {
                                                 color: !isSelect
                                                     ? Theme.of(context)
                                                         .colorScheme
-                                                        .surface
+                                                        .surfaceContainerLowest
                                                     : Theme.of(context)
                                                         .colorScheme
                                                         .surface
@@ -746,7 +746,7 @@ class _NewComScaleListWidgetState extends State<NewComScaleListWidget> {
                                   constraints: BoxConstraints(
                                       minHeight: scaleItemHeight),
                                   color: !isSelect
-                                      ? Theme.of(context).colorScheme.surface
+                                      ? Theme.of(context).colorScheme.surfaceContainerLow
                                       : scale.isOnline
                                           ? Theme.of(context)
                                               .colorScheme
@@ -765,7 +765,7 @@ class _NewComScaleListWidgetState extends State<NewComScaleListWidget> {
                                               color: !isSelect
                                                   ? Theme.of(context)
                                                       .colorScheme
-                                                      .surface
+                                                      .surfaceContainerLowest
                                                   : Theme.of(context)
                                                       .colorScheme
                                                       .surface
@@ -964,7 +964,7 @@ class _NewMutiScaleListWidgetState extends State<NewMutiScaleListWidget> {
                                   constraints: BoxConstraints(
                                       minHeight: scaleItemHeight),
                                   color: !isSelect
-                                      ? Theme.of(context).colorScheme.surface
+                                      ? Theme.of(context).colorScheme.surfaceContainerLow
                                       : scale.isOnline
                                           ? Theme.of(context)
                                               .colorScheme
@@ -983,7 +983,7 @@ class _NewMutiScaleListWidgetState extends State<NewMutiScaleListWidget> {
                                               color: !isSelect
                                                   ? Theme.of(context)
                                                       .colorScheme
-                                                      .surface
+                                                      .surfaceContainerLowest
                                                   : Theme.of(context)
                                                       .colorScheme
                                                       .surface
@@ -1231,7 +1231,7 @@ class _NewMutiScaleListWifiWidgetState
                                   constraints: BoxConstraints(
                                       minHeight: scaleItemHeight),
                                   color: !isSelect
-                                      ? Theme.of(context).colorScheme.surface
+                                      ? Theme.of(context).colorScheme.surfaceContainerLow
                                       : scale.isOnline
                                           ? Theme.of(context)
                                               .colorScheme
@@ -1250,7 +1250,7 @@ class _NewMutiScaleListWifiWidgetState
                                               color: !isSelect
                                                   ? Theme.of(context)
                                                       .colorScheme
-                                                      .surface
+                                                      .surfaceContainerLowest
                                                   : Theme.of(context)
                                                       .colorScheme
                                                       .surface

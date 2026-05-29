@@ -374,7 +374,7 @@ class _ScaleWgtCheckModeWidgetState extends State<ScaleWgtCheckModeWidget> {
     final isMobile = MediaQuery.of(context).size.width < 600;
     return Container(
         padding: EdgeInsets.only(bottom: isMobile ? 4 : regularPadding),
-        color: Theme.of(context).colorScheme.surface,
+        color: Colors.transparent,
         child: Column(children: [
           Container(
             color: Theme.of(context).colorScheme.surface,
@@ -415,7 +415,7 @@ class _ScaleWgtCheckModeWidgetState extends State<ScaleWgtCheckModeWidget> {
                         ])),
                 Container(
                   height: 1,
-                  color: Theme.of(context).colorScheme.surface,
+                  color: Theme.of(context).colorScheme.outlineVariant,
                 ),
                 Container(
                     height: isMobile ? 40 : 52,
@@ -546,7 +546,7 @@ class _ScaleWgtCheckModeWidgetState extends State<ScaleWgtCheckModeWidget> {
                     )),
                 Divider(
                   height: 1,
-                  color: Theme.of(context).colorScheme.surface,
+                  color: Theme.of(context).colorScheme.outlineVariant,
                 ),
                 Container(
                   height: isMobile ? 50 : 60,
