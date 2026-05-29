@@ -9065,6 +9065,16 @@ class S {
       args: [],
     );
   }
+
+  /// `Loading Data...`
+  String get tipLoadingData {
+    return Intl.message(
+      'Loading Data...',
+      name: 'tipLoadingData',
+      desc: 'Prompt for loading data',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

@@ -93,7 +93,8 @@ class LoginPageState extends State<LoginPage> with WindowLifecycleMixin {
                 _passwordController.text, _rememberController.text == "true");
           } else {
             _isLoading = false;
-            showTipInfo((localizedStrings?.tipLoginError ?? "tipLoginError"), context);
+            showTipInfo(
+                (localizedStrings?.tipLoginError ?? "tipLoginError"), context);
           }
         });
       }
@@ -111,12 +112,14 @@ class LoginPageState extends State<LoginPage> with WindowLifecycleMixin {
               mySysUser.pageIdList = allPageIdList;
             }
           } catch (e) {
-            showTipInfo((localizedStrings?.tipLoginError ?? "tipLoginError"), context);
+            showTipInfo(
+                (localizedStrings?.tipLoginError ?? "tipLoginError"), context);
           }
           if (mySysUser.initialPageId != null) {
             Navigator.pushReplacementNamed(context, '/home');
           } else {
-            showTipInfo((localizedStrings?.tipLoginError ?? "tipLoginError"), context);
+            showTipInfo(
+                (localizedStrings?.tipLoginError ?? "tipLoginError"), context);
           }
         });
       }
@@ -124,7 +127,9 @@ class LoginPageState extends State<LoginPage> with WindowLifecycleMixin {
 
     _eventbus3 = eventBus.on<EventServiceOff>().listen((event) {
       setState(() {
-        showServiceErrorDialog(context, (localizedStrings?.gTipServiceOff ?? "gTipServiceOff"),
+        showServiceErrorDialog(
+            context,
+            (localizedStrings?.gTipServiceOff ?? "gTipServiceOff"),
             (localizedStrings?.gTitleConfirm ?? "gTitleConfirm"));
       });
     });
@@ -193,14 +198,34 @@ class LoginPageState extends State<LoginPage> with WindowLifecycleMixin {
     double tHeight = MediaQuery.of(context).size.height;
     if (_checkingUsers) {
       return Scaffold(
-        backgroundColor: Colors.white,
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              CircularProgressIndicator(),
-            ],
-          ),
+        body: Stack(
+          children: [
+            Positioned.fill(
+              child: Image.asset(
+                backImgPath,
+                fit: BoxFit.cover,
+              ),
+            ),
+            Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(colorScheme.primary),
+                  ),
+                  SizedBox(height: 20),
+                  Text(
+                    localizedStrings?.tipLoadingData ?? "正在初始化数据...",
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: Colors.black87,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
       );
     }
@@ -404,7 +429,8 @@ class LoginPageState extends State<LoginPage> with WindowLifecycleMixin {
                                           },
                                         ),
                                         Text(
-                                          (localizedStrings?.tipLoginRemember ?? "tipLoginRemember"),
+                                          (localizedStrings?.tipLoginRemember ??
+                                              "tipLoginRemember"),
                                           style: textTheme.bodySmall!.apply(
                                             color: colorScheme.surface,
                                           ),
@@ -430,7 +456,8 @@ class LoginPageState extends State<LoginPage> with WindowLifecycleMixin {
                                     child: _isLoading
                                         ? const CircularProgressIndicator()
                                         : Text(
-                                            (localizedStrings?.btnLogin ?? "btnLogin"),
+                                            (localizedStrings?.btnLogin ??
+                                                "btnLogin"),
                                             style: textTheme.bodySmall!.apply(
                                               color: colorScheme.surface,
                                             ),

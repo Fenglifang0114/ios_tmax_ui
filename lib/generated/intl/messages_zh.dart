@@ -1163,6 +1163,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "tipFormulaDataError": MessageLookupByLibrary.simpleMessage("配方数据错误！"),
     "tipImporting": MessageLookupByLibrary.simpleMessage("检查完成，正在导入中..."),
     "tipJumpPage": MessageLookupByLibrary.simpleMessage("跳转"),
+    "tipLoadingData": MessageLookupByLibrary.simpleMessage("正在初始化数据..."),
     "tipLoginError": MessageLookupByLibrary.simpleMessage("用户名或密码错误"),
     "tipLoginPasswordEmpty": MessageLookupByLibrary.simpleMessage("请输入密码"),
     "tipLoginPasswordNotEmpty": MessageLookupByLibrary.simpleMessage("密码不能为空"),

@@ -3726,5 +3726,9 @@
   "btErrNoService": "Target service not found",
   "btErrNoReadChannel": "Data read channel not found",
   "btErrListenFail": "Failed to start listening",
-  "btErrException": "Connection exception"
+  "btErrException": "Connection exception",
+  "tipLoadingData": "Loading Data...",
+  "@tipLoadingData": {
+    "description": "Prompt for loading data"
+  }
 }

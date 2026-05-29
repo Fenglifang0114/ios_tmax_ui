@@ -1653,6 +1653,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Checking completed, importing...",
     ),
     "tipJumpPage": MessageLookupByLibrary.simpleMessage("Jump to"),
+    "tipLoadingData": MessageLookupByLibrary.simpleMessage("Loading Data..."),
     "tipLoginError": MessageLookupByLibrary.simpleMessage(
       "Username or password error",
     ),

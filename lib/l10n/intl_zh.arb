@@ -3726,5 +3726,9 @@
   "btErrNoService": "未找到目标服务",
   "btErrNoReadChannel": "未找到数据读取通道，连接无效",
   "btErrListenFail": "开启监听失败",
-  "btErrException": "连接异常"
+  "btErrException": "连接异常",
+  "tipLoadingData": "正在初始化数据...",
+  "@tipLoadingData": {
+    "description": "Prompt for loading data"
+  }
 }
