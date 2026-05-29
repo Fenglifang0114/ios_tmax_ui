@@ -30,13 +30,13 @@ Future<void> main() async {
   if (Platform.isAndroid) {
     // 增加启动后端的稳定性，先等待系统资源准备就绪
     Future.microtask(() async {
-      await Future.delayed(const Duration(seconds: 3));
+      await Future.delayed(const Duration(milliseconds: 100));
       const platform = MethodChannel('com.tmax.service/backend');
       try {
         final String result = await platform.invokeMethod('startBackend');
         debugPrint("Backend started: $result");
         // 后端启动后，额外等待几秒让端口监听就绪
-        await Future.delayed(const Duration(seconds: 3));
+        await Future.delayed(const Duration(milliseconds: 500));
         final WebSocketManager socketManager = WebSocketManager();
         if (!socketManager.isConnected) {
           socketManager.connect();
@@ -212,7 +212,7 @@ class MyApp extends StatelessWidget {
     final WebSocketManager socketManager = WebSocketManager();
     if (Platform.isAndroid) {
       // 这里的延迟可以作为二次检查，确保连接
-      Future.delayed(const Duration(seconds: 8), () {
+      Future.delayed(const Duration(seconds: 2), () {
         if (!socketManager.isConnected) socketManager.connect();
       });
     } else {
