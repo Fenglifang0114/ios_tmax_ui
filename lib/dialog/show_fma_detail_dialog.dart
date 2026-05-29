@@ -1,5 +1,7 @@
-﻿// 展示配方详情弹框组件
+// 展示配方详情弹框组件
 import 'package:flutter/material.dart';
+import 'package:t_max/widget/t_max_dialog.dart';
+
 import 'package:t_max/data/f_raw_name.dart';
 import 'package:t_max/data/formula_common.dart';
 import 'package:t_max/data/formula_from_db_data.dart';
@@ -80,7 +82,7 @@ class ShowFormulaDetailDialogState extends State<ShowFormulaDetailDialog> {
 
   @override
   Widget build(BuildContext ctx) {
-    return Dialog(
+    return TMaxDialog(
       backgroundColor: Colors.transparent,
       child: Container(
         width: 716,

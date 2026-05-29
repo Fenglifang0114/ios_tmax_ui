@@ -1,5 +1,7 @@
-﻿// 配方类别管理弹框
+// 配方类别管理弹框
 import 'package:flutter/material.dart';
+import 'package:t_max/widget/t_max_dialog.dart';
+
 import 'package:t_max/data/formula_common.dart';
 import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/data/language.dart';
@@ -115,7 +117,7 @@ class FmaTypeMgrDialogState extends State<FmaTypeMgrDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return Dialog(
+    return TMaxDialog(
       backgroundColor: Colors.transparent,
       child: Container(
         width: 610,
@@ -397,7 +399,7 @@ class AddFormulaTypeDialogState extends State<AddFormulaTypeDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return Dialog(
+    return TMaxDialog(
       backgroundColor: Colors.transparent,
       child: Container(
         width: 610,
@@ -585,7 +587,7 @@ class EditFormulaTypeDialogState extends State<EditFormulaTypeDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return Dialog(
+    return TMaxDialog(
       backgroundColor: Colors.transparent,
       child: Container(
         width: 610,

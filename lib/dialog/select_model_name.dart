@@ -1,4 +1,6 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
+import 'package:t_max/widget/t_max_dialog.dart';
+
 import 'package:flutter/services.dart';
 import 'package:t_max/data/custom_model_info.dart';
 import 'package:t_max/data/home_page_common_data.dart';
@@ -62,7 +64,7 @@ class ModelSelectionScreenState extends State<ModelSelectionScreen> {
   @override
   Widget build(BuildContext context) {
     _groupModels(); // 每次build时重新分组
-    return Dialog(
+    return TMaxDialog(
       backgroundColor: Colors.transparent,
       child: Container(
         width: 1002,

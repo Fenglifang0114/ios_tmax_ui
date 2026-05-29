@@ -1,7 +1,9 @@
-﻿//百分比模式时，需要添加的配方总重量
+//百分比模式时，需要添加的配方总重量
 
 // 定义新增配方重量弹框组件
 import 'package:flutter/material.dart';
+import 'package:t_max/widget/t_max_dialog.dart';
+
 import 'package:t_max/data/fma_rec_list_db_data.dart';
 import 'package:t_max/data/formula_common.dart';
 import 'package:t_max/data/g_data.dart';
@@ -92,7 +94,7 @@ class FmaServerSettingDialogState extends State<FmaServerSettingDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return Dialog(
+    return TMaxDialog(
       backgroundColor: Colors.transparent,
       child: Container(
         width: 610,

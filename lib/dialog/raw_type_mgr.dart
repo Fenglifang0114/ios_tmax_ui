@@ -1,5 +1,7 @@
-﻿//原料类别管理弹框
+//原料类别管理弹框
 import 'package:flutter/material.dart';
+import 'package:t_max/widget/t_max_dialog.dart';
+
 import 'package:t_max/data/formula_common.dart';
 import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/data/language.dart';
@@ -114,7 +116,7 @@ class RawTypeMgrDialogState extends State<RawTypeMgrDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return Dialog(
+    return TMaxDialog(
       backgroundColor: Colors.transparent,
       child: Container(
         width: 610,
@@ -399,7 +401,7 @@ class AddRawTypeDialogState extends State<AddRawTypeDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return Dialog(
+    return TMaxDialog(
       backgroundColor: Colors.transparent,
       child: Container(
         width: 610,
@@ -600,7 +602,7 @@ class EditRawTypeDialogState extends State<EditRawTypeDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return Dialog(
+    return TMaxDialog(
       backgroundColor: Colors.transparent,
       child: Container(
         width: 610,

@@ -1,4 +1,6 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
+import 'package:t_max/widget/t_max_dialog.dart';
+
 import 'package:flutter/services.dart';
 import 'package:t_max/data/g_data.dart';
 import 'package:t_max/data/language.dart';
@@ -569,7 +571,7 @@ class AddPluInfoDialogState extends State<AddPluInfoDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return Dialog(
+    return TMaxDialog(
       backgroundColor: Colors.transparent,
       child: Container(
           width: 810,

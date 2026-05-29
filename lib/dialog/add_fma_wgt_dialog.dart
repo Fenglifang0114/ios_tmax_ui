@@ -1,4 +1,4 @@
-﻿//百分比模式时，需要添加的配方总重量
+//百分比模式时，需要添加的配方总重量
 
 // 定义新增配方重量弹框组件
 import 'package:flutter/material.dart';
@@ -68,16 +68,26 @@ class AddFormulaWgtDialogState extends State<AddFormulaWgtDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return Dialog(
+    return Scaffold(
       backgroundColor: Colors.transparent,
-      child: Container(
-        width: 610,
-        height: 376,
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surface,
-          borderRadius: BorderRadius.circular(0),
-        ),
-        child: Column(
+      resizeToAvoidBottomInset: true,
+      body: SingleChildScrollView(
+        child: GestureDetector(
+          onTap: () => Navigator.pop(context),
+          child: Container(
+            color: Colors.transparent,
+            height: MediaQuery.of(context).size.height,
+            alignment: Alignment.center,
+            child: GestureDetector(
+              onTap: () {}, // 阻止点击弹框内部关闭
+              child: Container(
+                width: 610,
+                height: 376,
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.surface,
+                  borderRadius: BorderRadius.circular(0),
+                ),
+                child: Column(
           children: [
             // 头部
             ...dialogHeadStyle(
@@ -268,6 +278,10 @@ class AddFormulaWgtDialogState extends State<AddFormulaWgtDialog> {
               ),
             ),
           ],
+        ),
+      ),
+            ),
+          ),
         ),
       ),
     );

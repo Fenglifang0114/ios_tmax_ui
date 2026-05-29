@@ -1,4 +1,6 @@
-﻿import 'dart:convert';
+import 'dart:convert';
+import 'package:t_max/widget/t_max_dialog.dart';
+
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -97,7 +99,7 @@ class MyQrcodeDialogState extends State<MyQrcodeDialog> {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
-    return Dialog(
+    return TMaxDialog(
       backgroundColor: Colors.transparent,
       insetPadding: const EdgeInsets.all(40),
       child: Container(
@@ -673,7 +675,7 @@ class EditBarCodeDialogState extends State<EditBarCodeDialog> {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    return Dialog(
+    return TMaxDialog(
       backgroundColor: Colors.transparent,
       insetPadding: const EdgeInsets.all(40),
       child: Container(

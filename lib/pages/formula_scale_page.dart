@@ -1,4 +1,4 @@
-﻿import 'dart:async';
+import 'dart:async';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
@@ -681,8 +681,22 @@ class FormulationScalePageState extends State<FormulationScalePage>
                       showScaleList(),
                       SizedBox(width: 14),
                       Expanded(
-                        child: Column(
-                          children: [
+                        child: LayoutBuilder(
+                          builder: (context, constraints) {
+                            return SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: SingleChildScrollView(
+                                scrollDirection: Axis.vertical,
+                                child: ConstrainedBox(
+                                  constraints: BoxConstraints(
+                                    minWidth: 1000,
+                                    minHeight: 700,
+                                  ),
+                                  child: Container(
+                                    width: constraints.maxWidth > 1000 ? constraints.maxWidth : 1000,
+                                    height: constraints.maxHeight > 700 ? constraints.maxHeight : 700,
+                                    child: Column(
+                                      children: [
                             showTabBar(),
                             Divider(
                               color: colorScheme.outline,
@@ -802,9 +816,15 @@ class FormulationScalePageState extends State<FormulationScalePage>
                               height: 14,
                               color: colorScheme.surface,
                             ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
+                    ),
+                  );
+                },
+              ),
+            ),
                     ],
                   ),
                 )
@@ -2469,17 +2489,10 @@ class FormulationScalePageState extends State<FormulationScalePage>
   }
 
   void getRawTemplate() async {
-    final directory = Directory.current.path;
-    String? outputFile = (await FilePicker.platform.saveFile(
-      initialDirectory: directory,
-      type: FileType.custom,
-      dialogTitle: 'Output file:',
-      allowedExtensions: ["csv"],
-      fileName: 'Ingredient_template.csv',
-    ));
+    String? outputFile = await PublicFunctions.pickSaveFilePath('Ingredient_template.csv');
     if (outputFile == null) return;
 
-    if (!outputFile.contains(".csv")) {
+    if (!outputFile.toLowerCase().endsWith(".csv")) {
       outputFile = "$outputFile.csv";
     }
     String filePath = outputFile;
@@ -2493,17 +2506,10 @@ class FormulationScalePageState extends State<FormulationScalePage>
   }
 
   void getFmaTemplate() async {
-    final directory = Directory.current.path;
-    String? outputFile = (await FilePicker.platform.saveFile(
-      initialDirectory: directory,
-      type: FileType.custom,
-      dialogTitle: 'Output file:',
-      allowedExtensions: ["csv"],
-      fileName: 'Formula_template.csv',
-    ));
+    String? outputFile = await PublicFunctions.pickSaveFilePath('Formula_template.csv');
     if (outputFile == null) return;
 
-    if (!outputFile.contains(".csv")) {
+    if (!outputFile.toLowerCase().endsWith(".csv")) {
       outputFile = "$outputFile.csv";
     }
     String filePath = outputFile;
@@ -2709,17 +2715,10 @@ class FormulationScalePageState extends State<FormulationScalePage>
     }
     List<RawDataInfo> exportRawList = selRawList;
 
-    final directory = Directory.current.path;
-    String? outputFile = (await FilePicker.platform.saveFile(
-      initialDirectory: directory,
-      type: FileType.custom,
-      dialogTitle: 'Output file:',
-      allowedExtensions: ["csv"],
-      fileName: 'ingredient_list.csv',
-    ));
+    String? outputFile = await PublicFunctions.pickSaveFilePath('ingredient_list.csv');
     if (outputFile == null) return;
 
-    if (!outputFile.contains(".csv")) {
+    if (!outputFile.toLowerCase().endsWith(".csv")) {
       outputFile = "$outputFile.csv";
     }
     String filePath = outputFile;
@@ -2741,17 +2740,11 @@ class FormulationScalePageState extends State<FormulationScalePage>
       return;
     }
     List<FormulaInfoDb> exportFormulaList = selFormulas;
-    final directory = Directory.current.path;
-    String? outputFile = (await FilePicker.platform.saveFile(
-      initialDirectory: directory,
-      type: FileType.custom,
-      dialogTitle: 'Output file:',
-      allowedExtensions: ["csv"],
-      fileName: 'formula_list.csv',
-    ));
+    
+    String? outputFile = await PublicFunctions.pickSaveFilePath('formula_list.csv');
     if (outputFile == null) return;
 
-    if (!outputFile.contains(".csv")) {
+    if (!outputFile.toLowerCase().endsWith(".csv")) {
       outputFile = "$outputFile.csv";
     }
     String filePath = outputFile;

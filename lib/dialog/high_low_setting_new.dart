@@ -1,4 +1,6 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
+import 'package:t_max/widget/t_max_dialog.dart';
+
 import 'package:flutter/services.dart';
 import 'package:t_max/data/high_low_weight.dart';
 import 'package:t_max/dialog/custom_dialog_tip.dart';
@@ -241,7 +243,7 @@ class NewHighLowSettingDialogState extends State<NewHighLowSettingDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return Dialog(
+    return TMaxDialog(
       backgroundColor: Colors.transparent,
       child: Container(
         width: 610,

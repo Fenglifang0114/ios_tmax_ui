@@ -1,4 +1,6 @@
-﻿import 'dart:io';
+import 'dart:io';
+import 'package:t_max/widget/t_max_dialog.dart';
+
 import 'package:flutter/material.dart';
 import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/widget/common_widget.dart';
@@ -50,7 +52,7 @@ void showServiceErrorDialog(
     context: context,
     barrierDismissible: false, // 允许点击空白处关闭对话框
     builder: (BuildContext ctx) {
-      return Dialog(
+      return TMaxDialog(
         backgroundColor: Colors.transparent,
         child: Container(
           width: 400,

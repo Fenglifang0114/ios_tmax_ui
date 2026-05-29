@@ -1,4 +1,4 @@
-﻿//流速测试页面
+//流速测试页面
 import 'dart:async';
 import 'dart:io';
 import 'package:csv/csv.dart';
@@ -979,16 +979,36 @@ class FlowRatePageState extends State<FlowRatePage>
                       color: colorScheme.surfaceDim,
                     ),
                     Expanded(
-                      child: Column(
-                        children: [
-                          Expanded(flex: 10, child: _buildTopSection(context)),
-                          Container(
-                            height: 14,
-                            color: colorScheme.surfaceDim,
-                          ),
-                          _buildToggleSection(context),
-                          _buildChartOrTableSection(context)
-                        ],
+                      child: LayoutBuilder(
+                        builder: (context, constraints) {
+                          return SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: SingleChildScrollView(
+                              scrollDirection: Axis.vertical,
+                              child: ConstrainedBox(
+                                constraints: const BoxConstraints(
+                                  minWidth: 1000,
+                                  minHeight: 700,
+                                ),
+                                child: Container(
+                                  width: constraints.maxWidth > 1000 ? constraints.maxWidth : 1000,
+                                  height: constraints.maxHeight > 700 ? constraints.maxHeight : 700,
+                                  child: Column(
+                                    children: [
+                                      Expanded(flex: 10, child: _buildTopSection(context)),
+                                      Container(
+                                        height: 14,
+                                        color: colorScheme.surfaceDim,
+                                      ),
+                                      _buildToggleSection(context),
+                                      _buildChartOrTableSection(context)
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          );
+                        },
                       ),
                     ),
                   ],
@@ -1270,16 +1290,9 @@ class FlowRatePageState extends State<FlowRatePage>
           ),
         ),
         onPressed: () async {
-          final directory = Directory.current.path;
-          String? outputFile = await FilePicker.platform.saveFile(
-            initialDirectory: directory,
-            type: FileType.custom,
-            dialogTitle: 'Output file:',
-            allowedExtensions: ["csv"],
-            fileName: 'records.csv',
-          );
+          String? outputFile = await PublicFunctions.pickSaveFilePath('records.csv');
           if (outputFile != null) {
-            if (!outputFile.contains(".csv")) {
+            if (!outputFile.toLowerCase().endsWith(".csv")) {
               outputFile = "$outputFile.csv";
             }
             String filePath = outputFile;

@@ -18,8 +18,10 @@ class S {
   static S? _current;
 
   static S get current {
-    assert(_current != null,
-        'No instance of S was loaded. Try to initialize the S delegate before accessing S.current.');
+    assert(
+      _current != null,
+      'No instance of S was loaded. Try to initialize the S delegate before accessing S.current.',
+    );
     return _current!;
   }
 
@@ -41,8 +43,10 @@ class S {
 
   static S of(BuildContext context) {
     final instance = S.maybeOf(context);
-    assert(instance != null,
-        'No instance of S present in the widget tree. Did you add S.delegate in localizationsDelegates?');
+    assert(
+      instance != null,
+      'No instance of S present in the widget tree. Did you add S.delegate in localizationsDelegates?',
+    );
     return instance!;
   }
 
@@ -945,12 +949,7 @@ class S {
 
   /// `Date Format`
   String get date_format {
-    return Intl.message(
-      'Date Format',
-      name: 'date_format',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Date Format', name: 'date_format', desc: '', args: []);
   }
 
   /// `Date Separator`
@@ -965,32 +964,17 @@ class S {
 
   /// `Pretare:`
   String get pretare {
-    return Intl.message(
-      'Pretare:',
-      name: 'pretare',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Pretare:', name: 'pretare', desc: '', args: []);
   }
 
   /// `Edit`
   String get gBtnEdit {
-    return Intl.message(
-      'Edit',
-      name: 'gBtnEdit',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Edit', name: 'gBtnEdit', desc: '', args: []);
   }
 
   /// `Back`
   String get button_back {
-    return Intl.message(
-      'Back',
-      name: 'button_back',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Back', name: 'button_back', desc: '', args: []);
   }
 
   /// `Select Format`
@@ -1075,22 +1059,12 @@ class S {
 
   /// `OL mode`
   String get serial_page_ol {
-    return Intl.message(
-      'OL mode',
-      name: 'serial_page_ol',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('OL mode', name: 'serial_page_ol', desc: '', args: []);
   }
 
   /// `UL mode`
   String get serial_page_ul {
-    return Intl.message(
-      'UL mode',
-      name: 'serial_page_ul',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('UL mode', name: 'serial_page_ul', desc: '', args: []);
   }
 
   /// `Weight mode`
@@ -1405,12 +1379,7 @@ class S {
 
   /// `Server Ip:`
   String get server_ip {
-    return Intl.message(
-      'Server Ip:',
-      name: 'server_ip',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Server Ip:', name: 'server_ip', desc: '', args: []);
   }
 
   /// `Confirm to return to hompage?`
@@ -1495,12 +1464,7 @@ class S {
 
   /// `Free Text`
   String get p_text_title {
-    return Intl.message(
-      'Free Text',
-      name: 'p_text_title',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Free Text', name: 'p_text_title', desc: '', args: []);
   }
 
   /// `Dividing Line`
@@ -1525,112 +1489,57 @@ class S {
 
   /// `Text`
   String get p_text_var {
-    return Intl.message(
-      'Text',
-      name: 'p_text_var',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Text', name: 'p_text_var', desc: '', args: []);
   }
 
   /// `Line`
   String get p_div_line_var {
-    return Intl.message(
-      'Line',
-      name: 'p_div_line_var',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Line', name: 'p_div_line_var', desc: '', args: []);
   }
 
   /// `NO.`
   String get p_no_var {
-    return Intl.message(
-      'NO.',
-      name: 'p_no_var',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('NO.', name: 'p_no_var', desc: '', args: []);
   }
 
   /// `Header1`
   String get p_header1_var {
-    return Intl.message(
-      'Header1',
-      name: 'p_header1_var',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Header1', name: 'p_header1_var', desc: '', args: []);
   }
 
   /// `Header2`
   String get p_Header2_var {
-    return Intl.message(
-      'Header2',
-      name: 'p_Header2_var',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Header2', name: 'p_Header2_var', desc: '', args: []);
   }
 
   /// `Header3`
   String get p_header3_var {
-    return Intl.message(
-      'Header3',
-      name: 'p_header3_var',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Header3', name: 'p_header3_var', desc: '', args: []);
   }
 
   /// `Footer1`
   String get p_footer1_var {
-    return Intl.message(
-      'Footer1',
-      name: 'p_footer1_var',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Footer1', name: 'p_footer1_var', desc: '', args: []);
   }
 
   /// `Footer2`
   String get p_footer2_var {
-    return Intl.message(
-      'Footer2',
-      name: 'p_footer2_var',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Footer2', name: 'p_footer2_var', desc: '', args: []);
   }
 
   /// `Footer3`
   String get p_footer3_var {
-    return Intl.message(
-      'Footer3',
-      name: 'p_footer3_var',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Footer3', name: 'p_footer3_var', desc: '', args: []);
   }
 
   /// `PLU_ID`
   String get p_plu_id_var {
-    return Intl.message(
-      'PLU_ID',
-      name: 'p_plu_id_var',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('PLU_ID', name: 'p_plu_id_var', desc: '', args: []);
   }
 
   /// `PLU_Name`
   String get p_plu_name_var {
-    return Intl.message(
-      'PLU_Name',
-      name: 'p_plu_name_var',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('PLU_Name', name: 'p_plu_name_var', desc: '', args: []);
   }
 
   /// `Order Number`
@@ -1665,32 +1574,17 @@ class S {
 
   /// `PreTare`
   String get p_pre_tare_var {
-    return Intl.message(
-      'PreTare',
-      name: 'p_pre_tare_var',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('PreTare', name: 'p_pre_tare_var', desc: '', args: []);
   }
 
   /// `Unit`
   String get p_unit_var {
-    return Intl.message(
-      'Unit',
-      name: 'p_unit_var',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Unit', name: 'p_unit_var', desc: '', args: []);
   }
 
   /// `Date`
   String get p_date_var {
-    return Intl.message(
-      'Date',
-      name: 'p_date_var',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Date', name: 'p_date_var', desc: '', args: []);
   }
 
   /// `Tax Type1`
@@ -1815,22 +1709,12 @@ class S {
 
   /// `Subtotal`
   String get p_subtotal_var {
-    return Intl.message(
-      'Subtotal',
-      name: 'p_subtotal_var',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Subtotal', name: 'p_subtotal_var', desc: '', args: []);
   }
 
   /// `Currency`
   String get p_currency_var {
-    return Intl.message(
-      'Currency',
-      name: 'p_currency_var',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Currency', name: 'p_currency_var', desc: '', args: []);
   }
 
   /// `Copy Times`
@@ -1885,12 +1769,7 @@ class S {
 
   /// `PLU Tax`
   String get p_plu_tax_var {
-    return Intl.message(
-      'PLU Tax',
-      name: 'p_plu_tax_var',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('PLU Tax', name: 'p_plu_tax_var', desc: '', args: []);
   }
 
   /// `Total No Tax`
@@ -1915,22 +1794,12 @@ class S {
 
   /// `Tare`
   String get p_tare_var {
-    return Intl.message(
-      'Tare',
-      name: 'p_tare_var',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Tare', name: 'p_tare_var', desc: '', args: []);
   }
 
   /// `Time`
   String get p_time_var {
-    return Intl.message(
-      'Time',
-      name: 'p_time_var',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Time', name: 'p_time_var', desc: '', args: []);
   }
 
   /// `Change Amount`
@@ -1945,22 +1814,12 @@ class S {
 
   /// `Price`
   String get p_price_var {
-    return Intl.message(
-      'Price',
-      name: 'p_price_var',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Price', name: 'p_price_var', desc: '', args: []);
   }
 
   /// `Free text.`
   String get p_text_expl {
-    return Intl.message(
-      'Free text.',
-      name: 'p_text_expl',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Free text.', name: 'p_text_expl', desc: '', args: []);
   }
 
   /// `Loop divider line.`
@@ -2045,12 +1904,7 @@ class S {
 
   /// `PLU_ID.`
   String get p_plu_id_expl {
-    return Intl.message(
-      'PLU_ID.',
-      name: 'p_plu_id_expl',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('PLU_ID.', name: 'p_plu_id_expl', desc: '', args: []);
   }
 
   /// `PLU_Name.`
@@ -2115,12 +1969,7 @@ class S {
 
   /// `Date.`
   String get p_date_expl {
-    return Intl.message(
-      'Date.',
-      name: 'p_date_expl',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Date.', name: 'p_date_expl', desc: '', args: []);
   }
 
   /// `Tax Type 1.`
@@ -2345,22 +2194,12 @@ class S {
 
   /// `Tare value.`
   String get p_tare_expl {
-    return Intl.message(
-      'Tare value.',
-      name: 'p_tare_expl',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Tare value.', name: 'p_tare_expl', desc: '', args: []);
   }
 
   /// `Time.`
   String get p_time_expl {
-    return Intl.message(
-      'Time.',
-      name: 'p_time_expl',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Time.', name: 'p_time_expl', desc: '', args: []);
   }
 
   /// `Change Amount.`
@@ -2385,22 +2224,12 @@ class S {
 
   /// `Variable`
   String get l_var_title {
-    return Intl.message(
-      'Variable',
-      name: 'l_var_title',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Variable', name: 'l_var_title', desc: '', args: []);
   }
 
   /// `Free Text`
   String get l_text_title {
-    return Intl.message(
-      'Free Text',
-      name: 'l_text_title',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Free Text', name: 'l_text_title', desc: '', args: []);
   }
 
   /// `BarCode Variable`
@@ -2425,102 +2254,52 @@ class S {
 
   /// `Shape`
   String get l_shape_title {
-    return Intl.message(
-      'Shape',
-      name: 'l_shape_title',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Shape', name: 'l_shape_title', desc: '', args: []);
   }
 
   /// `Line`
   String get l_line_var {
-    return Intl.message(
-      'Line',
-      name: 'l_line_var',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Line', name: 'l_line_var', desc: '', args: []);
   }
 
   /// `Text`
   String get l_text_var {
-    return Intl.message(
-      'Text',
-      name: 'l_text_var',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Text', name: 'l_text_var', desc: '', args: []);
   }
 
   /// `BarCode`
   String get l_barcode_var {
-    return Intl.message(
-      'BarCode',
-      name: 'l_barcode_var',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('BarCode', name: 'l_barcode_var', desc: '', args: []);
   }
 
   /// `Qrcode`
   String get l_qrcode_var {
-    return Intl.message(
-      'Qrcode',
-      name: 'l_qrcode_var',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Qrcode', name: 'l_qrcode_var', desc: '', args: []);
   }
 
   /// `NO.`
   String get l_no_var {
-    return Intl.message(
-      'NO.',
-      name: 'l_no_var',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('NO.', name: 'l_no_var', desc: '', args: []);
   }
 
   /// `Gross`
   String get l_gross_var {
-    return Intl.message(
-      'Gross',
-      name: 'l_gross_var',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Gross', name: 'l_gross_var', desc: '', args: []);
   }
 
   /// `Tare`
   String get l_tare_var {
-    return Intl.message(
-      'Tare',
-      name: 'l_tare_var',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Tare', name: 'l_tare_var', desc: '', args: []);
   }
 
   /// `Net`
   String get l_net_var {
-    return Intl.message(
-      'Net',
-      name: 'l_net_var',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Net', name: 'l_net_var', desc: '', args: []);
   }
 
   /// `PCS`
   String get l_pcs_var {
-    return Intl.message(
-      'PCS',
-      name: 'l_pcs_var',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('PCS', name: 'l_pcs_var', desc: '', args: []);
   }
 
   /// `WeightUnit`
@@ -2535,42 +2314,22 @@ class S {
 
   /// `Date`
   String get l_date_var {
-    return Intl.message(
-      'Date',
-      name: 'l_date_var',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Date', name: 'l_date_var', desc: '', args: []);
   }
 
   /// `Time`
   String get l_time_var {
-    return Intl.message(
-      'Time',
-      name: 'l_time_var',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Time', name: 'l_time_var', desc: '', args: []);
   }
 
   /// `U.WGT`
   String get l_uwgt_var {
-    return Intl.message(
-      'U.WGT',
-      name: 'l_uwgt_var',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('U.WGT', name: 'l_uwgt_var', desc: '', args: []);
   }
 
   /// `U.WU`
   String get l_uwu_var {
-    return Intl.message(
-      'U.WU',
-      name: 'l_uwu_var',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('U.WU', name: 'l_uwu_var', desc: '', args: []);
   }
 
   /// `UnitWeight`
@@ -2585,12 +2344,7 @@ class S {
 
   /// `Percent`
   String get l_percent_var {
-    return Intl.message(
-      'Percent',
-      name: 'l_percent_var',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Percent', name: 'l_percent_var', desc: '', args: []);
   }
 
   /// `TotalWeight`
@@ -2625,92 +2379,47 @@ class S {
 
   /// `Line`
   String get l_line_expl {
-    return Intl.message(
-      'Line',
-      name: 'l_line_expl',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Line', name: 'l_line_expl', desc: '', args: []);
   }
 
   /// `Text`
   String get l_text_expl {
-    return Intl.message(
-      'Text',
-      name: 'l_text_expl',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Text', name: 'l_text_expl', desc: '', args: []);
   }
 
   /// `BarCode`
   String get l_barcode_expl {
-    return Intl.message(
-      'BarCode',
-      name: 'l_barcode_expl',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('BarCode', name: 'l_barcode_expl', desc: '', args: []);
   }
 
   /// `Qrcode`
   String get l_qrcode_expl {
-    return Intl.message(
-      'Qrcode',
-      name: 'l_qrcode_expl',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Qrcode', name: 'l_qrcode_expl', desc: '', args: []);
   }
 
   /// `NO.`
   String get l_no_expl {
-    return Intl.message(
-      'NO.',
-      name: 'l_no_expl',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('NO.', name: 'l_no_expl', desc: '', args: []);
   }
 
   /// `Gross`
   String get l_gross_expl {
-    return Intl.message(
-      'Gross',
-      name: 'l_gross_expl',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Gross', name: 'l_gross_expl', desc: '', args: []);
   }
 
   /// `Tare`
   String get l_tare_expl {
-    return Intl.message(
-      'Tare',
-      name: 'l_tare_expl',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Tare', name: 'l_tare_expl', desc: '', args: []);
   }
 
   /// `Net`
   String get l_net_expl {
-    return Intl.message(
-      'Net',
-      name: 'l_net_expl',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Net', name: 'l_net_expl', desc: '', args: []);
   }
 
   /// `PCS`
   String get l_pcs_expl {
-    return Intl.message(
-      'PCS',
-      name: 'l_pcs_expl',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('PCS', name: 'l_pcs_expl', desc: '', args: []);
   }
 
   /// `WeightUnit`
@@ -2725,22 +2434,12 @@ class S {
 
   /// `Date`
   String get l_date_expl {
-    return Intl.message(
-      'Date',
-      name: 'l_date_expl',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Date', name: 'l_date_expl', desc: '', args: []);
   }
 
   /// `Time`
   String get l_time_expl {
-    return Intl.message(
-      'Time',
-      name: 'l_time_expl',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Time', name: 'l_time_expl', desc: '', args: []);
   }
 
   /// `Universal weight`
@@ -2775,12 +2474,7 @@ class S {
 
   /// `Percent`
   String get l_percent_expl {
-    return Intl.message(
-      'Percent',
-      name: 'l_percent_expl',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Percent', name: 'l_percent_expl', desc: '', args: []);
   }
 
   /// `TotalWeight`
@@ -2845,12 +2539,7 @@ class S {
 
   /// `Import`
   String get gBtnImport {
-    return Intl.message(
-      'Import',
-      name: 'gBtnImport',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Import', name: 'gBtnImport', desc: '', args: []);
   }
 
   /// `Select Folder`
@@ -7309,12 +6998,7 @@ class S {
 
   /// `Role`
   String get userRole {
-    return Intl.message(
-      'Role',
-      name: 'userRole',
-      desc: 'Role',
-      args: [],
-    );
+    return Intl.message('Role', name: 'userRole', desc: 'Role', args: []);
   }
 
   /// `Phone number`
@@ -7329,12 +7013,7 @@ class S {
 
   /// `Email`
   String get userEmail {
-    return Intl.message(
-      'Email',
-      name: 'userEmail',
-      desc: 'Email',
-      args: [],
-    );
+    return Intl.message('Email', name: 'userEmail', desc: 'Email', args: []);
   }
 
   /// `Enabled`
@@ -7499,12 +7178,7 @@ class S {
 
   /// `Data`
   String get menuData {
-    return Intl.message(
-      'Data',
-      name: 'menuData',
-      desc: 'Menu data',
-      args: [],
-    );
+    return Intl.message('Data', name: 'menuData', desc: 'Menu data', args: []);
   }
 
   /// `Format`
@@ -7870,12 +7544,7 @@ class S {
 
   /// `row`
   String get tipRow {
-    return Intl.message(
-      'row',
-      name: 'tipRow',
-      desc: 'Row tip',
-      args: [],
-    );
+    return Intl.message('row', name: 'tipRow', desc: 'Row tip', args: []);
   }
 
   /// `Checking completed, importing...`
@@ -7990,12 +7659,7 @@ class S {
 
   /// `Module`
   String get module {
-    return Intl.message(
-      'Module',
-      name: 'module',
-      desc: 'Module',
-      args: [],
-    );
+    return Intl.message('Module', name: 'module', desc: 'Module', args: []);
   }
 
   /// `Function Module`
@@ -8090,32 +7754,17 @@ class S {
 
   /// `Delete`
   String get delete {
-    return Intl.message(
-      'Delete',
-      name: 'delete',
-      desc: 'Delete',
-      args: [],
-    );
+    return Intl.message('Delete', name: 'delete', desc: 'Delete', args: []);
   }
 
   /// `Success`
   String get success {
-    return Intl.message(
-      'Success',
-      name: 'success',
-      desc: 'Success',
-      args: [],
-    );
+    return Intl.message('Success', name: 'success', desc: 'Success', args: []);
   }
 
   /// `Failure`
   String get failure {
-    return Intl.message(
-      'Failure',
-      name: 'failure',
-      desc: 'Failure',
-      args: [],
-    );
+    return Intl.message('Failure', name: 'failure', desc: 'Failure', args: []);
   }
 
   /// `System Operation`
@@ -8130,22 +7779,12 @@ class S {
 
   /// `Login`
   String get login {
-    return Intl.message(
-      'Login',
-      name: 'login',
-      desc: 'Login',
-      args: [],
-    );
+    return Intl.message('Login', name: 'login', desc: 'Login', args: []);
   }
 
   /// `Logout`
   String get logout {
-    return Intl.message(
-      'Logout',
-      name: 'logout',
-      desc: 'Logout',
-      args: [],
-    );
+    return Intl.message('Logout', name: 'logout', desc: 'Logout', args: []);
   }
 
   /// `Log Details`
@@ -8160,12 +7799,7 @@ class S {
 
   /// `Search`
   String get search {
-    return Intl.message(
-      'Search',
-      name: 'search',
-      desc: 'Search',
-      args: [],
-    );
+    return Intl.message('Search', name: 'search', desc: 'Search', args: []);
   }
 
   /// `Selected`
@@ -8811,12 +8445,7 @@ class S {
 
   /// `Network`
   String get gNetwork {
-    return Intl.message(
-      'Network',
-      name: 'gNetwork',
-      desc: 'Network',
-      args: [],
-    );
+    return Intl.message('Network', name: 'gNetwork', desc: 'Network', args: []);
   }
 
   /// `IP address and port is already in use`
@@ -8881,12 +8510,7 @@ class S {
 
   /// `Print`
   String get gPrint {
-    return Intl.message(
-      'Print',
-      name: 'gPrint',
-      desc: 'Print',
-      args: [],
-    );
+    return Intl.message('Print', name: 'gPrint', desc: 'Print', args: []);
   }
 
   /// `Set Static IP`
@@ -9294,12 +8918,7 @@ class S {
 
   /// `I/O Port`
   String get ioPort {
-    return Intl.message(
-      'I/O Port',
-      name: 'ioPort',
-      desc: 'I/O Port',
-      args: [],
-    );
+    return Intl.message('I/O Port', name: 'ioPort', desc: 'I/O Port', args: []);
   }
 
   /// `Output Port`
@@ -9364,12 +8983,7 @@ class S {
 
   /// `Input`
   String get inputPort {
-    return Intl.message(
-      'Input',
-      name: 'inputPort',
-      desc: 'Input',
-      args: [],
-    );
+    return Intl.message('Input', name: 'inputPort', desc: 'Input', args: []);
   }
 
   /// `Please use UTF-8 encoding`
@@ -9378,6 +8992,76 @@ class S {
       'Please use UTF-8 encoding',
       name: 'gMsgUseUtf8',
       desc: 'Error message when CSV encoding is unrecognized',
+      args: [],
+    );
+  }
+
+  /// `Missing necessary permissions`
+  String get btErrNoPermission {
+    return Intl.message(
+      'Missing necessary permissions',
+      name: 'btErrNoPermission',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Bluetooth is not turned on`
+  String get btErrNotEnabled {
+    return Intl.message(
+      'Bluetooth is not turned on',
+      name: 'btErrNotEnabled',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Scan timeout, device not found`
+  String get btErrScanTimeout {
+    return Intl.message(
+      'Scan timeout, device not found',
+      name: 'btErrScanTimeout',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Target service not found`
+  String get btErrNoService {
+    return Intl.message(
+      'Target service not found',
+      name: 'btErrNoService',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Data read channel not found`
+  String get btErrNoReadChannel {
+    return Intl.message(
+      'Data read channel not found',
+      name: 'btErrNoReadChannel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Failed to start listening`
+  String get btErrListenFail {
+    return Intl.message(
+      'Failed to start listening',
+      name: 'btErrListenFail',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Connection exception`
+  String get btErrException {
+    return Intl.message(
+      'Connection exception',
+      name: 'btErrException',
+      desc: '',
       args: [],
     );
   }

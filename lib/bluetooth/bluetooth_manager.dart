@@ -8,6 +8,7 @@ import 'package:t_max/data/btinfodata.dart';
 import 'package:t_max/data/scalecmd_data.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:t_max/data/language.dart';
 import 'dart:convert';
 
 class BluetoothManager {
@@ -53,7 +54,22 @@ class BluetoothManager {
 
     void update(String msg) {
       debugPrint("BLE: $msg");
-      if (onStatusUpdate != null) onStatusUpdate(msg);
+      // if (onStatusUpdate != null) onStatusUpdate(msg);
+    }
+
+    void finalUpdate(bool success, {String? reason}) {
+      if (onStatusUpdate != null) {
+        if (success) {
+          onStatusUpdate(localizedStrings?.success ?? "Success");
+        } else {
+          String failStr = localizedStrings?.failure ?? "Failure";
+          if (reason != null && reason.isNotEmpty) {
+            onStatusUpdate("$failStr: $reason");
+          } else {
+            onStatusUpdate(failStr);
+          }
+        }
+      }
     }
 
     // 3. 极速重连优化：如果物理链路已通，直接发起握手测试
@@ -80,6 +96,7 @@ class BluetoothManager {
       
       update("连接已激活，型号查询已发出");
       isConnecting = false;
+      finalUpdate(true);
       return true; 
     }
 
@@ -91,6 +108,7 @@ class BluetoothManager {
       if (!await requestPermissions()) {
         update("错误: 缺少必要权限");
         isConnecting = false;
+        finalUpdate(false, reason: localizedStrings?.btErrNoPermission);
         return false;
       }
 
@@ -99,6 +117,7 @@ class BluetoothManager {
       if (await FlutterBluePlus.adapterState.first != BluetoothAdapterState.on) {
         update("错误: 蓝牙未开启");
         isConnecting = false;
+        finalUpdate(false, reason: localizedStrings?.btErrNotEnabled);
         return false;
       }
 
@@ -135,6 +154,7 @@ class BluetoothManager {
       } catch (e) {
         update("错误: 扫描超时，未找到设备");
         isConnecting = false;
+        finalUpdate(false, reason: localizedStrings?.btErrScanTimeout);
         return false;
       } finally {
         await FlutterBluePlus.stopScan();
@@ -181,6 +201,7 @@ class BluetoothManager {
       if (targetService == null) {
         update("错误: 未找到目标服务 $targetServiceUUID");
         isConnecting = false;
+        finalUpdate(false, reason: localizedStrings?.btErrNoService);
         return false;
       }
 
@@ -201,6 +222,7 @@ class BluetoothManager {
         update("错误: 未找到数据读取通道，连接无效");
         await _device!.disconnect();
         isConnecting = false;
+        finalUpdate(false, reason: localizedStrings?.btErrNoReadChannel);
         return false;
       }
 
@@ -230,6 +252,7 @@ class BluetoothManager {
         update("错误: 开启监听失败: $e");
         await _device!.disconnect();
         isConnecting = false;
+        finalUpdate(false, reason: localizedStrings?.btErrListenFail);
         return false;
       }
 
@@ -263,11 +286,13 @@ class BluetoothManager {
         }
       }
       
+      finalUpdate(true);
       return true;
     } catch (e) {
-      update("连接异常: $e");
-      isConnecting = false;
-      return false;
+        update("连接异常: $e");
+        isConnecting = false;
+        finalUpdate(false, reason: localizedStrings?.btErrException);
+        return false;
     }
   }
 

@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'package:t_max/widget/t_max_dialog.dart';
+
 
 import 'package:flutter/material.dart';
 import 'package:t_max/data/home_page_common_data.dart';
@@ -119,7 +121,7 @@ class ShowNormalTipDialogState extends State<ShowNormalTipDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return Dialog(
+    return TMaxDialog(
       backgroundColor: Colors.transparent,
       child: Container(
         width: 400,
@@ -244,7 +246,7 @@ class ShowDeleteTipDialogState extends State<ShowDeleteTipDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return Dialog(
+    return TMaxDialog(
       backgroundColor: Colors.transparent,
       child: Container(
         width: 400,
@@ -374,7 +376,7 @@ class ShowHignWgtTipDialogState extends State<ShowHignWgtTipDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return Dialog(
+    return TMaxDialog(
       backgroundColor: Colors.transparent,
       child: Container(
         width: 400,
@@ -502,7 +504,7 @@ class ShowLowWgtTipDialogState extends State<ShowLowWgtTipDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return Dialog(
+    return TMaxDialog(
       backgroundColor: Colors.transparent,
       child: Container(
         width: 400,
@@ -595,7 +597,7 @@ class ShowUnitTipDialogState extends State<ShowUnitTipDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return Dialog(
+    return TMaxDialog(
       backgroundColor: Colors.transparent,
       child: Container(
         width: 400,
@@ -795,7 +797,7 @@ class ShowCheckCodeDialogState extends State<ShowCheckCodeDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return Dialog(
+    return TMaxDialog(
       backgroundColor: Colors.transparent,
       child: Container(
         width: 600,

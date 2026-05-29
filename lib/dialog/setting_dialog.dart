@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'package:t_max/widget/t_max_dialog.dart';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -93,7 +95,7 @@ class ParameterSettingDialogState extends State<ParameterSettingDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return Dialog(
+    return TMaxDialog(
       backgroundColor: Colors.transparent,
       child: Container(
         width: 700,

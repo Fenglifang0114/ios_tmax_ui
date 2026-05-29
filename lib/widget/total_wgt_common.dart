@@ -241,35 +241,38 @@ class _WgtDataTableState extends State<WgtDataTable> {
                 ),
                 Padding(
                   padding: EdgeInsets.all(8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      IconButton(
-                        icon: Icon(Icons.first_page),
-                        onPressed: () => tableState.goToPage(1),
-                      ),
-                      IconButton(
-                        icon: Icon(Icons.chevron_left),
-                        onPressed: tableState.previousPage,
-                      ),
-                      Text(
-                        '${(localizedStrings?.tipPageSequnce ?? "Page:")} ${tableState.currentPage}   /  ${(tableState._totalCount / tableState._itemsPerPage).ceil()} ${localizedStrings?.tipPage ?? ""}  ',
-                      ),
-                      IconButton(
-                        icon: Icon(Icons.chevron_right),
-                        onPressed: tableState.nextPage,
-                      ),
-                      IconButton(
-                        icon: Icon(Icons.last_page),
-                        onPressed: () => tableState.goToPage(
-                          (tableState._totalCount / tableState._itemsPerPage)
-                              .ceil(),
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        IconButton(
+                          icon: Icon(Icons.first_page),
+                          onPressed: () => tableState.goToPage(1),
                         ),
-                      ),
-                      Text(
-                        '  ${(localizedStrings?.tipPageTotal ?? "Total:")} ${tableState._totalCount}  ',
-                      ),
-                    ],
+                        IconButton(
+                          icon: Icon(Icons.chevron_left),
+                          onPressed: tableState.previousPage,
+                        ),
+                        Text(
+                          '${(localizedStrings?.tipPageSequnce ?? "Page:")} ${tableState.currentPage}   /  ${(tableState._totalCount / tableState._itemsPerPage).ceil()} ${localizedStrings?.tipPage ?? ""}  ',
+                        ),
+                        IconButton(
+                          icon: Icon(Icons.chevron_right),
+                          onPressed: tableState.nextPage,
+                        ),
+                        IconButton(
+                          icon: Icon(Icons.last_page),
+                          onPressed: () => tableState.goToPage(
+                            (tableState._totalCount / tableState._itemsPerPage)
+                                .ceil(),
+                          ),
+                        ),
+                        Text(
+                          '  ${(localizedStrings?.tipPageTotal ?? "Total:")} ${tableState._totalCount}  ',
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ],

@@ -30,6 +30,7 @@ class WebSocketManager {
   StreamSubscription? _channelSubscription;
   bool _isConnected = false;
   bool _isConnecting = false;
+  bool _hasEverConnected = false;
   Timer? _reconnectTimer;
   Timer? _heartbeatTimer;
   int _reconnectAttempts = 0;
@@ -93,6 +94,7 @@ class WebSocketManager {
 
       _isConnected = true;
       _isConnecting = false;
+      _hasEverConnected = true;
       _reconnectAttempts = 0;
 
       _connectionController.add(ServiceState.connected);
@@ -108,8 +110,12 @@ class WebSocketManager {
       _isConnecting = false;
       _connectionController.add(ServiceState.disconnected);
 
-      _log('Triggering service off event due to connection failure.');
-      eventBus.fire(EventServiceOff(''));
+      if (_hasEverConnected) {
+        _log('Triggering service off event due to connection failure.');
+        eventBus.fire(EventServiceOff(''));
+      } else {
+        _log('Silent reconnect on initial startup failure.');
+      }
 
       _scheduleReconnect();
     }
@@ -197,8 +203,12 @@ class WebSocketManager {
 
   void _handleDisconnectEvent() {
     if (_isConnected || _isConnecting) {
-      _log('Triggering service off event from stream disconnect.');
-      eventBus.fire(EventServiceOff(''));
+      if (_hasEverConnected) {
+        _log('Triggering service off event from stream disconnect.');
+        eventBus.fire(EventServiceOff(''));
+      } else {
+        _log('Silent stream disconnect on initial startup.');
+      }
     }
     _isConnected = false;
     _isConnecting = false;

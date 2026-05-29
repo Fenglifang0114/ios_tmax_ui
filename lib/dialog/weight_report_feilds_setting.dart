@@ -1,4 +1,6 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
+import 'package:t_max/widget/t_max_dialog.dart';
+
 import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/widget/dialog_head_style.dart';
 import '../data/language.dart';
@@ -47,7 +49,7 @@ class ReportSettingDialogState extends State<ReportSettingDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return Dialog(
+    return TMaxDialog(
       backgroundColor: Colors.transparent,
       child: Container(
         width: 630,

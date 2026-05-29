@@ -2292,110 +2292,108 @@ class _PluEidtPageState extends State<PluEidtPage> {
           // 分页控件
           Container(
             padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-            // decoration: BoxDecoration(
-            //   border: Border(
-            //     top: BorderSide(color: const Color.fromARGB(255, 44, 9, 197)!),
-            //   ),
-            // ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // 页码导航
-                Row(
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.first_page),
-                      onPressed: currentPage > 1 ? () => _changePage(1) : null,
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.chevron_left),
-                      onPressed: currentPage > 1
-                          ? () => _changePage(currentPage - 1)
-                          : null,
-                    ),
-                    Text(
-                      (localizedStrings?.tipPageSequnce ?? "tipPageSequnce") +
-                          ' $currentPage / $totalPages ${(localizedStrings?.tipPage ?? "tipPage")}',
-                      style: getTitleTextStyle(),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.chevron_right),
-                      onPressed: currentPage < totalPages
-                          ? () => _changePage(currentPage + 1)
-                          : null,
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.last_page),
-                      onPressed: currentPage < totalPages
-                          ? () => _changePage(totalPages)
-                          : null,
-                    ),
-                    SizedBox(
-                      width: regularPadding,
-                    ),
-                    Text(
-                      (localizedStrings?.tipJumpPage ?? "tipJumpPage"),
-                      style: getTitleTextStyle(),
-                    ),
-                    SizedBox(
-                      width: regularPadding,
-                    ),
-                    SizedBox(
-                      width: 70,
-                      height: 38,
-                      child: TextField(
-                        controller: pageController,
-                        enabled: totalPages > 1,
-                        keyboardType: TextInputType.number,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly, // 只允许输入数字
-                        ],
-                        textAlign: TextAlign.center,
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(0.0))),
-                          hintText: '',
-                          hintStyle: TextStyle(
-                            color: Theme.of(context)
-                                .colorScheme
-                                .onSurface, // 设置提示文本颜色
-                          ),
-                        ),
-                        style: Theme.of(context).textTheme.bodySmall!.apply(
-                              color: Theme.of(context).colorScheme.onSurface,
-                            ),
-
-                        maxLines: 1,
-                        minLines: 1,
-                        expands: false,
-
-                        // 监听回车键
-                        onSubmitted: (value) {
-                          if (value.isEmpty) {
-                            return;
-                          }
-
-                          if (int.parse(value) > 0) {
-                            int page = int.tryParse(value) ?? 1;
-                            _changePage(page);
-                          }
-                        },
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // 页码导航
+                  Row(
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.first_page),
+                        onPressed: currentPage > 1 ? () => _changePage(1) : null,
                       ),
-                    ),
-                    SizedBox(
-                      width: regularPadding,
-                    ),
-                    Text(
-                      (localizedStrings?.tipPage ?? "tipPage"),
-                      style: getTitleTextStyle(),
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  width: largePadding,
-                ),
-              ],
+                      IconButton(
+                        icon: const Icon(Icons.chevron_left),
+                        onPressed: currentPage > 1
+                            ? () => _changePage(currentPage - 1)
+                            : null,
+                      ),
+                      Text(
+                        (localizedStrings?.tipPageSequnce ?? "tipPageSequnce") +
+                            ' $currentPage / $totalPages ${(localizedStrings?.tipPage ?? "tipPage")}',
+                        style: getTitleTextStyle(),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.chevron_right),
+                        onPressed: currentPage < totalPages
+                            ? () => _changePage(currentPage + 1)
+                            : null,
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.last_page),
+                        onPressed: currentPage < totalPages
+                            ? () => _changePage(totalPages)
+                            : null,
+                      ),
+                      SizedBox(
+                        width: regularPadding,
+                      ),
+                      Text(
+                        (localizedStrings?.tipJumpPage ?? "tipJumpPage"),
+                        style: getTitleTextStyle(),
+                      ),
+                      SizedBox(
+                        width: regularPadding,
+                      ),
+                      SizedBox(
+                        width: 70,
+                        height: 38,
+                        child: TextField(
+                          controller: pageController,
+                          enabled: totalPages > 1,
+                          keyboardType: TextInputType.number,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly, // 只允许输入数字
+                          ],
+                          textAlign: TextAlign.center,
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(0.0))),
+                            hintText: '',
+                            hintStyle: TextStyle(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onSurface, // 设置提示文本颜色
+                            ),
+                          ),
+                          style: Theme.of(context).textTheme.bodySmall!.apply(
+                                color: Theme.of(context).colorScheme.onSurface,
+                              ),
+  
+                          maxLines: 1,
+                          minLines: 1,
+                          expands: false,
+  
+                          // 监听回车键
+                          onSubmitted: (value) {
+                            if (value.isEmpty) {
+                              return;
+                            }
+  
+                            if (int.parse(value) > 0) {
+                              int page = int.tryParse(value) ?? 1;
+                              _changePage(page);
+                            }
+                          },
+                        ),
+                      ),
+                      SizedBox(
+                        width: regularPadding,
+                      ),
+                      Text(
+                        (localizedStrings?.tipPage ?? "tipPage"),
+                        style: getTitleTextStyle(),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    width: largePadding,
+                  ),
+                ],
+              ),
             ),
           ),
         ],

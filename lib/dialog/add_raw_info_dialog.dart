@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:t_max/data/formula_common.dart';
 import 'package:t_max/data/formula_scale_data.dart';
 import 'package:t_max/data/g_data.dart';
@@ -382,16 +382,26 @@ class AddRawDialogState extends State<AddRawDialog> {
       ),
     );
 
-    return Dialog(
+    return Scaffold(
       backgroundColor: Colors.transparent,
-      child: Container(
-        width: 610,
-        height: 665,
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surface,
-          borderRadius: BorderRadius.circular(0),
-        ),
-        child: Column(
+      resizeToAvoidBottomInset: true,
+      body: SingleChildScrollView(
+        child: GestureDetector(
+          onTap: () => Navigator.pop(context),
+          child: Container(
+            color: Colors.transparent,
+            height: MediaQuery.of(context).size.height,
+            alignment: Alignment.center,
+            child: GestureDetector(
+              onTap: () {}, // 阻止点击弹框内部关闭
+              child: Container(
+                width: 610,
+                height: 665,
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.surface,
+                  borderRadius: BorderRadius.circular(0),
+                ),
+                child: Column(
           children: [
             // 头部
             ...dialogHeadStyle(
@@ -789,6 +799,10 @@ class AddRawDialogState extends State<AddRawDialog> {
           ],
         ),
       ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
@@ -1169,16 +1183,26 @@ class EditRawDialogState extends State<EditRawDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return Dialog(
+    return Scaffold(
       backgroundColor: Colors.transparent,
-      child: Container(
-        width: 610,
-        height: 665,
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surface,
-          borderRadius: BorderRadius.circular(0),
-        ),
-        child: Column(
+      resizeToAvoidBottomInset: true,
+      body: SingleChildScrollView(
+        child: GestureDetector(
+          onTap: () => Navigator.pop(context),
+          child: Container(
+            color: Colors.transparent,
+            height: MediaQuery.of(context).size.height,
+            alignment: Alignment.center,
+            child: GestureDetector(
+              onTap: () {}, // 阻止点击弹框内部关闭
+              child: Container(
+                width: 610,
+                height: 665,
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.surface,
+                  borderRadius: BorderRadius.circular(0),
+                ),
+                child: Column(
           children: [
             // 头部
             ...dialogHeadStyle(context, (localizedStrings?.fEditMaterial ?? "fEditMaterial"), true),
@@ -1613,6 +1637,10 @@ class EditRawDialogState extends State<EditRawDialog> {
               ),
             ),
           ],
+        ),
+      ),
+            ),
+          ),
         ),
       ),
     );
