@@ -44,7 +44,9 @@ extension MultiScaleManagementListExt on MultiScaleManagementState {
             Expanded(
               child: getScaleType() == netScaleType
                   ? showNetworkScaleInfo()
-                  : showBluetoothScaleInfo(),
+                  : getScaleType() == comScaleType
+                      ? showComScaleInfo()
+                      : showBluetoothScaleInfo(),
             ),
           ],
         );
@@ -98,7 +100,9 @@ extension MultiScaleManagementListExt on MultiScaleManagementState {
                   ? SizedBox()
                   : getScaleType() == netScaleType
                       ? showNetworkScaleInfo() //网络秤
-                      : showBluetoothScaleInfo(), //蓝牙秤
+                      : getScaleType() == comScaleType
+                          ? showComScaleInfo() //串口秤
+                          : showBluetoothScaleInfo(), //蓝牙秤
             ],
           ),
         ),

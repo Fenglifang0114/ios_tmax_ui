@@ -1,4 +1,4 @@
-﻿//主界面公用的常量
+//主界面公用的常量
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';

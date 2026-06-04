@@ -47,6 +47,11 @@ extension MultiScaleManagementAddExt on MultiScaleManagementState {
   }
 
   Widget showAddComScaleInfo() {
+    if (Platform.isAndroid && !comLists.contains("USB")) {
+      comLists.add("USB");
+      usingComLists = List<String>.from(comLists);
+      if (comPortCtl.text.isEmpty) comPortCtl.text = "USB";
+    }
     return ListView(
       children: [
         SizedBox(
@@ -72,6 +77,9 @@ extension MultiScaleManagementAddExt on MultiScaleManagementState {
               },
               onTap: () {
                 PublicFunctions.getPortList();
+                if (Platform.isAndroid && !comLists.contains("USB")) {
+                  comLists.add("USB");
+                }
                 if (comLists.isEmpty && comPortCtl.text.isNotEmpty) {
                   comPortCtl.clear();
                 }

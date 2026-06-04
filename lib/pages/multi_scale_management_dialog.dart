@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/data/language.dart';
 import 'package:t_max/data/icons.dart';
@@ -131,6 +131,57 @@ class AddScaleDialogState extends State<AddScaleDialog> {
                           ),
                         ),
                       ),
+                        Expanded(
+                          child: MouseRegion(
+                            onEnter: (_) => setState(() => isComHovered = true),
+                            onExit: (_) => setState(() => isComHovered = false),
+                            child: InkWell(
+                              onTap: () {
+                                Navigator.pop(context, 'com');
+                              },
+                              child: Container(
+                                  height: 120,
+                                alignment: Alignment.center,
+                                color: isComHovered
+                                    ? Theme.of(context).colorScheme.primary
+                                    : Theme.of(context)
+                                        .colorScheme
+                                        .surfaceContainerLow,
+                                child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      getSvgIcon(
+                                          serialPortSvgIcon(),
+                                          btnHeight,
+                                          btnHeight,
+                                          isComHovered
+                                              ? Theme.of(context)
+                                                  .colorScheme
+                                                  .onPrimary
+                                              : Theme.of(context)
+                                                  .colorScheme
+                                                  .primary),
+                                      SizedBox(
+                                        height: regularPadding,
+                                      ),
+                                      Text(
+                                        (localizedStrings?.gSerialPort ?? "gSerialPort"),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyMedium!
+                                            .apply(
+                                                color: isComHovered
+                                                    ? Theme.of(context)
+                                                        .colorScheme
+                                                        .onPrimary
+                                                    : Theme.of(context)
+                                                        .colorScheme
+                                                        .primary),
+                                      )
+                                    ])),
+                          ),
+                        ),
+                        ),
                         SizedBox(
                           width: 40,
                         ),

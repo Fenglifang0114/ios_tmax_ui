@@ -18,6 +18,7 @@ import 'generated/l10n.dart';
 import 'widget/theme_color.dart';
 import 'package:win32/win32.dart';
 import 'package:flutter/services.dart';
+import 'package:t_max/usb_serial_manager.dart';
 
 const String serviceName = "TmaxService";
 const bool isServiceVersion = true; //是否是服务版本
@@ -30,6 +31,7 @@ Future<void> main() async {
   if (Platform.isAndroid) {
     // 增加启动后端的稳定性，先等待系统资源准备就绪
     Future.microtask(() async {
+      UsbSerialManager().init();
       await Future.delayed(const Duration(milliseconds: 100));
       const platform = MethodChannel('com.tmax.service/backend');
       try {

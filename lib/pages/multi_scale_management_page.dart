@@ -1,4 +1,5 @@
-﻿import 'dart:async';
+import 'dart:async';
+import 'dart:io';
 import 'dart:convert';
 import 'package:t_max/bluetooth/bluetooth_manager.dart';
 import 'package:flutter/material.dart';

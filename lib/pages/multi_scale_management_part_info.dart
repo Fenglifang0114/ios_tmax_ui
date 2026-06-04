@@ -168,6 +168,99 @@ extension MultiScaleManagementInfoExt on MultiScaleManagementState {
             })));
   }
 
+  Widget showComScaleInfo() {
+    return Expanded(
+        child: SizedBox(
+            width: double.infinity,
+            child: LayoutBuilder(
+                builder: (BuildContext context, BoxConstraints constraints) {
+              return ListView(
+                children: [
+                  const SizedBox(
+                    height: regularPadding,
+                  ),
+                  buildItemInfo(
+                      showItemNameWithStar(
+                          context, (localizedStrings?.gScaleName ?? "gScaleName"), false),
+                      showScaleNameInputBox(
+                          context,
+                          scaleNameCtl,
+                          '',
+                          IconButton(
+                            icon: Icon(Icons.edit_outlined), // 编辑按钮图标
+                            onPressed: () {
+                              setState(() {
+                                isRename = true;
+                              });
+                            },
+                          ), (value) {
+                        setState(() {});
+                      }, isRename),
+                      showItemNameWithStar(
+                          context, (localizedStrings?.gModelName ?? "gModelName"), false),
+                      showInputBox(context, scaleModelCtl, '', (value) {
+                        setState(() {});
+                      }, false)),
+                  const SizedBox(
+                    height: regularPadding,
+                  ),
+                  buildItemInfo(
+                      showItemNameWithStar(
+                          context, (localizedStrings?.gScaleSn ?? "gScaleSn"), false),
+                      showInputBox(context, snCtl, '', (value) {
+                        setState(() {});
+                      }, false),
+                      showItemNameWithStar(
+                          context, (localizedStrings?.gTipPort ?? "Port"), false),
+                      showInputBox(context, comPortCtl, '', (value) {
+                        setState(() {});
+                      }, false)),
+                  const SizedBox(
+                    height: regularPadding,
+                  ),
+                  Wrap(
+                    alignment: WrapAlignment.spaceEvenly,
+                    spacing: regularPadding,
+                    runSpacing: regularPadding,
+                    children: [
+                      Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                                width: inputWidth,
+                                child: showItemNameWithStar(context,
+                                    (localizedStrings?.gBaudRate ?? "Baud Rate"), false)),
+                            SizedBox(
+                                width: inputWidth,
+                                child:
+                                    showInputBox(context, baudRateCtl, '', (value) {
+                                  setState(() {});
+                                }, false))
+                          ]),
+                      Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                              width: inputWidth,
+                            ),
+                            SizedBox(
+                              width: inputWidth,
+                            )
+                          ])
+                    ],
+                  ),
+                  const SizedBox(
+                    height: regularPadding,
+                  ),
+                  const SizedBox(
+                    height: regularPadding,
+                  ),
+                  isRename ? showRenameConfirmBtn() : buttonRow(),
+                ],
+              );
+            })));
+  }
+
 
   Widget showRenameConfirmBtn() {
     return isRename
