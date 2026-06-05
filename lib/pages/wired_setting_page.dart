@@ -1,4 +1,4 @@
-﻿// wifi 璁剧疆鐣岄潰 鍙兘鐢ㄤ覆鍙ｈ缃?
+// wifi 璁剧疆鐣岄潰 鍙兘鐢ㄤ覆鍙ｈ缃?
 
 import 'dart:async';
 import 'dart:convert';
@@ -227,23 +227,22 @@ class WiredSettingPageState extends State<WiredSettingPage> {
         color: Theme.of(context).colorScheme.surface,
         child: Column(
           children: [
-            pageHeadInfo(context, width - headWidthPadding,
-                (localizedStrings?.menuWiredSetting ?? "menuWiredSetting"), '', () {
-              widget.onNavigate(widget.lastRouteName);
-            },
-                leading: isMobile
-                    ? Padding(
-                        padding: const EdgeInsets.only(left: regularPadding),
-                        child: Builder(
-                          builder: (context) => IconButton(
-                            icon: Icon(Icons.menu_open,
-                                color: Theme.of(context).colorScheme.primary,
-                                size: 28),
-                            onPressed: () => Scaffold.of(context).openDrawer(),
-                          ),
-                        ),
-                      )
-                    : null),
+            if (isMobile)
+              AppBar(
+                backgroundColor: Colors.transparent,
+                elevation: 0,
+                leading: Builder(builder: (context) {
+                  return IconButton(
+                    icon: Icon(Icons.menu_open,
+                        color: Theme.of(context).colorScheme.primary, size: 28),
+                    onPressed: () => Scaffold.of(context).openDrawer(),
+                  );
+                }),
+                title: Text(
+                  (localizedStrings?.menuWiredSetting ?? "menuWiredSetting"),
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+              ),
             Expanded(
               child: Row(
                 children: [

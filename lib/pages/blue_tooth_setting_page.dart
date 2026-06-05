@@ -1,4 +1,4 @@
-﻿//钃濈墮璁剧疆鐣岄潰   钃濈墮璁剧疆鍙兘閫氳繃涓插彛
+//钃濈墮璁剧疆鐣岄潰   钃濈墮璁剧疆鍙兘閫氳繃涓插彛
 
 import 'dart:async';
 import 'package:flutter/material.dart';
@@ -177,23 +177,22 @@ class BluetoothPageState extends State<BluetoothPage> {
         color: Theme.of(context).colorScheme.surface,
         child: Column(
           children: [
-            pageHeadInfo(context, width - headWidthPadding,
-                (localizedStrings?.menuBluetoothSetting ?? "menuBluetoothSetting"), '', () {
-              widget.onNavigate(widget.lastRouteName);
-            },
-                leading: isMobile
-                    ? Padding(
-                        padding: const EdgeInsets.only(left: regularPadding),
-                        child: Builder(builder: (context) {
-                          return IconButton(
-                            icon: Icon(Icons.menu_open,
-                                color: Theme.of(context).colorScheme.primary,
-                                size: 28),
-                            onPressed: () => Scaffold.of(context).openDrawer(),
-                          );
-                        }),
-                      )
-                    : null),
+            if (isMobile)
+              AppBar(
+                backgroundColor: Colors.transparent,
+                elevation: 0,
+                leading: Builder(builder: (context) {
+                  return IconButton(
+                    icon: Icon(Icons.menu_open,
+                        color: Theme.of(context).colorScheme.primary, size: 28),
+                    onPressed: () => Scaffold.of(context).openDrawer(),
+                  );
+                }),
+                title: Text(
+                  (localizedStrings?.menuBluetoothSetting ?? "menuBluetoothSetting"),
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+              ),
             Expanded(
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,

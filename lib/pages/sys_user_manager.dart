@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:t_max/data/g_data.dart';
 import 'package:t_max/data/home_page_common_data.dart';
@@ -245,17 +245,6 @@ class SysUserManagerPageState extends State<SysUserManagerPage>
       children: [
         SizedBox(
           width: largePadding,
-        ),
-        SizedBox(
-          child: IconButton(
-              onPressed: () {
-                widget.onNavigate(widget.lastRouteName);
-              },
-              icon: getSvgIcon(returnSvgIcon(), 28, 28,
-                  Theme.of(context).colorScheme.primary)),
-        ),
-        SizedBox(
-          width: regularPadding,
         ),
         SizedBox(
           width: maxWidth,

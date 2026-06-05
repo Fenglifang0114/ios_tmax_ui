@@ -1,4 +1,4 @@
-﻿import 'dart:async';
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -681,6 +681,7 @@ class CalibrationPageState extends State<CalibrationPage> {
                 (localizedStrings?.menuCalibration ?? "menuCalibration"), '', () {
               widget.onNavigate(widget.lastRouteName);
             },
+                showBackBtn: false,
                 leading: isMobile
                     ? Padding(
                         padding: const EdgeInsets.only(left: regularPadding),

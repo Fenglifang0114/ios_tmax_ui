@@ -163,9 +163,11 @@ extension MultiScaleManagementAddExt on MultiScaleManagementState {
                             }
                           }
                         }
-                        isAddScale = false;
-                        isRename = false;
-                        addScaleType = '';
+                        setState(() {
+                          isAddScale = false;
+                          isRename = false;
+                          addScaleType = '';
+                        });
 
                         addComScale();
                       }
@@ -298,11 +300,13 @@ extension MultiScaleManagementAddExt on MultiScaleManagementState {
                     (localizedStrings?.gBtnConfirm ?? "gBtnConfirm"),
                     selectBtInfo.mac != null
                         ? () {
-                            isAddScale = false;
-                            isRename = false;
-                            addScaleType = '';
-                            isBtSearching = false;
-                            isBtSearched = false;
+                            setState(() {
+                              isAddScale = false;
+                              isRename = false;
+                              addScaleType = '';
+                              isBtSearching = false;
+                              isBtSearched = false;
+                            });
                             addBtScale();
                           }
                         : null,
@@ -455,9 +459,11 @@ extension MultiScaleManagementAddExt on MultiScaleManagementState {
                 (localizedStrings?.gBtnConfirm ?? "gBtnConfirm"),
                 portCtl.text.isNotEmpty && _isValidIP
                     ? () {
-                        isAddScale = false;
-                        isRename = false;
-                        addScaleType = '';
+                        setState(() {
+                          isAddScale = false;
+                          isRename = false;
+                          addScaleType = '';
+                        });
 
                         addNetScale();
                       }

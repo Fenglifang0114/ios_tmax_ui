@@ -584,26 +584,22 @@ class WifiSettingPageState extends State<WifiSettingPage> {
         color: Theme.of(context).colorScheme.surface,
         child: Column(
           children: [
-            pageHeadInfo(
-                context,
-                width - headWidthPadding,
-                (localizedStrings?.menuWifiSetting ?? "menuWifiSetting"),
-                '', () {
-              widget.onNavigate(widget.lastRouteName);
-            },
-                leading: isMobile
-                    ? Padding(
-                        padding: const EdgeInsets.only(left: regularPadding),
-                        child: Builder(
-                          builder: (context) => IconButton(
-                            icon: Icon(Icons.menu_open,
-                                color: Theme.of(context).colorScheme.primary,
-                                size: 28),
-                            onPressed: () => Scaffold.of(context).openDrawer(),
-                          ),
-                        ),
-                      )
-                    : null),
+            if (isMobile)
+              AppBar(
+                backgroundColor: Colors.transparent,
+                elevation: 0,
+                leading: Builder(builder: (context) {
+                  return IconButton(
+                    icon: Icon(Icons.menu_open,
+                        color: Theme.of(context).colorScheme.primary, size: 28),
+                    onPressed: () => Scaffold.of(context).openDrawer(),
+                  );
+                }),
+                title: Text(
+                  (localizedStrings?.menuWifiSetting ?? "menuWifiSetting"),
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+              ),
             Expanded(
               child: Row(
                 children: [

@@ -337,7 +337,7 @@ Widget pageHeadDefScale(dynamic context, String pageTitle, String helpInfo) {
 
 Widget pageHeadInfo(dynamic context, double maxWidth, String pageTitle,
     String helpInfo, Function() onExit,
-    {bool showHelp = true, Widget? leading, Widget? trailing}) {
+    {bool showHelp = true, Widget? leading, Widget? trailing, bool showBackBtn = true}) {
   return Container(
       height: pageTopTitleHeight,
       color: Theme.of(context).colorScheme.surface,
@@ -346,7 +346,7 @@ Widget pageHeadInfo(dynamic context, double maxWidth, String pageTitle,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Expanded(child: subTitle(context, pageTitle, onExit, leading: leading)),
+              Expanded(child: subTitle(context, pageTitle, onExit, leading: leading, showBackBtn: showBackBtn)),
               Row(mainAxisAlignment: MainAxisAlignment.end, children: [
                 if (trailing != null) ...[
                   trailing,
@@ -370,24 +370,26 @@ Widget pageHeadInfo(dynamic context, double maxWidth, String pageTitle,
 }
 
 Widget subTitle(dynamic context, String pageTitle, Function() onExit,
-    {Widget? leading}) {
+    {Widget? leading, bool showBackBtn = true}) {
   return Row(
     children: [
       if (leading != null) leading,
-      SizedBox(
-        width: largePadding,
-      ),
-      SizedBox(
-        child: IconButton(
-            onPressed: () {
-              onExit();
-            },
-            icon: getSvgIcon(returnSvgIcon(), 28, 28,
-                Theme.of(context).colorScheme.primary)),
-      ),
-      SizedBox(
-        width: regularPadding,
-      ),
+      if (showBackBtn) ...[
+        SizedBox(
+          width: largePadding,
+        ),
+        SizedBox(
+          child: IconButton(
+              onPressed: () {
+                onExit();
+              },
+              icon: getSvgIcon(returnSvgIcon(), 28, 28,
+                  Theme.of(context).colorScheme.primary)),
+        ),
+        SizedBox(
+          width: regularPadding,
+        ),
+      ],
       Expanded(
         child: Text(
           pageTitle,

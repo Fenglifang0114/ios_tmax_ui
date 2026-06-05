@@ -1,4 +1,4 @@
-﻿//配置app
+//配置app
 
 import 'dart:io';
 
@@ -952,7 +952,9 @@ class _AppsSettingPageState extends State<AppsSettingPage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                subTitle(context, pageTitle),
+                subTitle(context, pageTitle, () {
+                  widget.onNavigate(widget.lastRouteName);
+                }),
                 Row(mainAxisAlignment: MainAxisAlignment.end, children: [
                   const SizedBox(
                     width: largePadding,
@@ -1004,20 +1006,17 @@ class _AppsSettingPageState extends State<AppsSettingPage> {
   Widget subTitle(
     dynamic context,
     String pageTitle,
+    Function() onExit,
   ) {
     return Row(
       children: [
         SizedBox(
-          width: smallPadding,
+          width: largePadding,
         ),
         SizedBox(
           child: IconButton(
               onPressed: () {
-                Future.delayed(Duration.zero, () {
-                  setState(() {
-                    widget.onNavigate(widget.lastRouteName);
-                  });
-                });
+                onExit();
               },
               icon: getSvgIcon(returnSvgIcon(), 28, 28,
                   Theme.of(context).colorScheme.primary)),

@@ -1,4 +1,4 @@
-﻿// 系统日志页面
+// 系统日志页面
 
 import 'package:flutter/material.dart';
 import 'package:t_max/data/g_data.dart';
@@ -107,24 +107,6 @@ class _SysLogPageState extends State<SysLogPage>
       children: [
         SizedBox(
           width: largePadding,
-        ),
-        SizedBox(
-          child: IconButton(
-              onPressed: () {
-                setState(() {
-                  isExit = true;
-                });
-                Future.delayed(Duration.zero, () {
-                  setState(() {
-                    widget.onNavigate(widget.lastRouteName);
-                  });
-                });
-              },
-              icon: getSvgIcon(returnSvgIcon(), 28, 28,
-                  Theme.of(context).colorScheme.primary)),
-        ),
-        SizedBox(
-          width: regularPadding,
         ),
         SizedBox(
           width: maxWidth,
