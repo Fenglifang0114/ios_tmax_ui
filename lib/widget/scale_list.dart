@@ -1202,6 +1202,7 @@ class _NewMutiScaleListWifiWidgetState
 
   @override
   Widget build(BuildContext context) {
+    scaleNetItems = myAllScalesList.where((s) => s.tMedia == 1 || s.tMedia == 2).toList();
     return Container(
       color: Theme.of(context).colorScheme.surface,
       width: widget.listWidth,
@@ -1214,12 +1215,11 @@ class _NewMutiScaleListWifiWidgetState
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 14),
                     child: ListView.separated(
-                      itemCount: myAllScalesList.where((s) => s.tMedia == 1).length,
+                      itemCount: scaleNetItems.length,
                       separatorBuilder: (context, index) =>
                           const SizedBox(height: smallPadding),
                       itemBuilder: (context, index) {
-                        final netScales = myAllScalesList.where((s) => s.tMedia == 1).toList();
-                        final scale = netScales[index];
+                        final scale = scaleNetItems[index];
 
                         bool isSelect =
                             (widget.selScaleList.contains(scale.scaleId));

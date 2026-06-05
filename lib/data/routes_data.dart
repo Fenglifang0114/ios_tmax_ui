@@ -441,9 +441,10 @@ List<RouteData> getAllAppsMenus() {
     ),
   ];
 
-  if (Platform.isAndroid || Platform.isIOS) {
-    appsMenus.removeWhere((menu) => menu.id == MenuId.retailReportPage);
-  }
+  // 允许所有平台显示零售报表
+  // if (Platform.isAndroid || Platform.isIOS) {
+  //   appsMenus.removeWhere((menu) => menu.id == MenuId.retailReportPage);
+  // }
 
   return appsMenus;
 }

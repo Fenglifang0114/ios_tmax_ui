@@ -207,12 +207,22 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
           if (myFactoryInfoFromScale.modelName != '') {
             setScaleStatus(myOnlineInfo.scaleId!, true);
             if (isTesting) {
-              showTipInfo((localizedStrings?.gTipConnected ?? "gTipConnected"), context);
+              int scaleType = getScaleType();
+              if (scaleType == 0) {
+                showTipInfo("${localizedStrings?.gSerialPort ?? 'Serial Port'} ${localizedStrings?.success ?? 'Success'}", context);
+              } else {
+                showTipInfo((localizedStrings?.gTipConnected ?? "gTipConnected"), context);
+              }
             }
           } else {
             setScaleStatus(myOnlineInfo.scaleId!, false);
             if (isTesting) {
-              showTipInfo((localizedStrings?.gTipConnectFail ?? "gTipConnectFail"), context);
+              int scaleType = getScaleType();
+              if (scaleType == 0) {
+                showTipInfo("${localizedStrings?.gSerialPort ?? 'Serial Port'} ${localizedStrings?.failure ?? 'Failure'}", context);
+              } else {
+                showTipInfo((localizedStrings?.gTipConnectFail ?? "gTipConnectFail"), context);
+              }
             }
           }
           if (isTesting) {

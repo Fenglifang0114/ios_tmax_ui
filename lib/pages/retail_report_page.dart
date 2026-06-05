@@ -1,8 +1,10 @@
-﻿import 'dart:async';
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -66,6 +68,7 @@ class RetailReportPageState extends State<RetailReportPage> {
 
   // 开始定时器
   void startTimer() {
+    if (Platform.isAndroid) return;
     if (_statusTimer == null || !_statusTimer!.isActive) {
       _statusTimer = Timer.periodic(const Duration(seconds: 5), (timer) {
         getServiceStatus();
@@ -88,6 +91,14 @@ class RetailReportPageState extends State<RetailReportPage> {
     // PublicFunctions.getDetailList();
     isRefresh = true;
     startTimer();
+    if (Platform.isAndroid) {
+      srvStatus = srvStarted;
+      srvStatusMsg = (localizedStrings?.gTipServiceStarted ?? "gTipServiceStarted");
+      if (isFirstLoad) {
+        isFirstLoad = false;
+        PublicFunctions.getDetailList();
+      }
+    }
     eventBus1 = eventBus.on<EventRespDetailInfo>().listen((event) {
       if (mounted) {
         isRefresh = true;
@@ -113,15 +124,23 @@ class RetailReportPageState extends State<RetailReportPage> {
     eventBus2 = eventBus.on<EventRevDetailTail>().listen((event) {
       if (mounted) {
         myRespDataFromScale = event.obj;
-        // if (myRespDataFromScale.msgBody.contains('ok')) {
-        //   PublicFunctions.getDetailList();
-        //   isRefresh = true;
-        // }
+        if (myRespDataFromScale.msgBody.contains('ok')) {
+          if (Platform.isAndroid) {
+            PublicFunctions.getDetailList();
+          } else {
+            PublicFunctions.getDetailListSrv1();
+          }
+          isRefresh = true;
+        }
       }
     });
     eventBus3 = eventBus.on<EventRespDetailAdd>().listen((event) {
       if (mounted) {
-        PublicFunctions.getNewDetailFormSrv1();
+        if (Platform.isAndroid) {
+          PublicFunctions.getDetailList();
+        } else {
+          PublicFunctions.getNewDetailFormSrv1();
+        }
         isRefresh = true;
       }
     });
@@ -177,7 +196,11 @@ class RetailReportPageState extends State<RetailReportPage> {
                   srvStatusMsg = (localizedStrings?.gTipServiceStarted ?? "gTipServiceStarted");
                   if (isFirstLoad) {
                     isFirstLoad = false;
-                    PublicFunctions.getDetailListSrv1();
+                    if (Platform.isAndroid) {
+                      PublicFunctions.getDetailList();
+                    } else {
+                      PublicFunctions.getDetailListSrv1();
+                    }
                   }
 
                   break;
@@ -206,6 +229,7 @@ class RetailReportPageState extends State<RetailReportPage> {
 
     eventBus6 = eventBus.on<EventRespNewDetailInfo>().listen((event) {
       if (mounted) {
+        if (Platform.isAndroid) return; // Android directly reads from DB, ignore raw event
         isRefresh = true;
         setState(() {
           try {
@@ -464,14 +488,18 @@ class RetailReportPageState extends State<RetailReportPage> {
       height: pageTopTitleHeight,
       child: Row(
         children: [
-          showInstallRow(),
+          if (!Platform.isAndroid) showInstallRow(),
           Spacer(),
           SizedBox(
             child: Row(
               children: [
                 showTextButton(context, 40, (localizedStrings?.rRefreshListBtn ?? "rRefreshListBtn"),
                     () {
-                  PublicFunctions.getDetailListSrv1();
+                  if (Platform.isAndroid) {
+                    PublicFunctions.getDetailList();
+                  } else {
+                    PublicFunctions.getDetailListSrv1();
+                  }
                 }, colorScheme.onPrimary, colorScheme.primary,
                     colorScheme.onPrimary),
                 SizedBox(
@@ -920,14 +948,40 @@ class RetailReportPageState extends State<RetailReportPage> {
 
     data.insert(0, header);
 
-    var directory = Directory.current.path;
-    String? outputFile = (await FilePicker.platform.saveFile(
-      initialDirectory: directory,
-      dialogTitle: 'Output file:',
-      type: FileType.custom,
-      allowedExtensions: ['csv'],
-      fileName: 'report.csv',
-    ));
+    String? outputFile;
+    
+    if (Platform.isAndroid) {
+      // 检查权限
+      if (await Permission.manageExternalStorage.isDenied) {
+        await Permission.manageExternalStorage.request();
+      }
+      if (await Permission.storage.isDenied) {
+        await Permission.storage.request();
+      }
+      // Android: Save directly to external storage (e.g., Downloads)
+      Directory? directory = await getExternalStorageDirectory();
+      if (directory != null) {
+        String timestamp = DateFormat('yyyyMMdd_HHmmss').format(DateTime.now());
+        outputFile = "${directory.path}/report_$timestamp.csv";
+      } else {
+        if (mounted && context.mounted) {
+          showErrorDialog(context, "Cannot access external storage directory.");
+        }
+        exportFlag = true;
+        return;
+      }
+    } else {
+      // Desktop: Use FilePicker
+      var directory = Directory.current.path;
+      outputFile = (await FilePicker.platform.saveFile(
+        initialDirectory: directory,
+        dialogTitle: 'Output file:',
+        type: FileType.custom,
+        allowedExtensions: ['csv'],
+        fileName: 'report.csv',
+      ));
+    }
+
     if (outputFile != null) {
       if (!outputFile.contains(".csv")) {
         outputFile = "$outputFile.csv";
