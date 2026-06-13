@@ -736,9 +736,12 @@ class SelectScalesPageNewState extends State<SelectScalesPageNew> {
                 Expanded(
                   child: SingleChildScrollView(
                     scrollDirection: Axis.vertical,
-                    child: myAllScalesList.isNotEmpty
-                        ? buildNetScaleInfo()
-                        : SizedBox(),
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: myAllScalesList.isNotEmpty
+                          ? buildNetScaleInfo()
+                          : SizedBox(),
+                    ),
                   ),
                 )
               ]),

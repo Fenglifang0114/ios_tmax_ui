@@ -3730,5 +3730,9 @@
   "tipLoadingData": "Loading Data...",
   "@tipLoadingData": {
     "description": "Prompt for loading data"
+  },
+  "menuFormulaExecution": "Formula Execution",
+  "@menuFormulaExecution": {
+    "description": "Menu item for formula execution"
   }
 }

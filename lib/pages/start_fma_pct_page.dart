@@ -1,4 +1,4 @@
-﻿import 'dart:async';
+import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:t_max/data/darf_fma_data_from_db.dart';
@@ -3374,12 +3374,12 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
 
         setAutoNext();
         if (checkCodeflag && selectedProcessWgt.no != 0) {
-          checkCodeOk == false;
+          checkCodeOk = false;
           showCheckCodeDialog();
         }
       } else {
         if (checkCodeflag && selectedProcessWgt.no != 0) {
-          checkCodeOk == false;
+          checkCodeOk = false;
           showCheckCodeDialog();
         }
       }

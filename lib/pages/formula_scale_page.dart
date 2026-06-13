@@ -1794,6 +1794,10 @@ class FormulationScalePageState extends State<FormulationScalePage>
     if (selectedFormula == null) {
       return;
     }
+    if (selectedFormula!.details == null || selectedFormula!.details!.isEmpty) {
+      showTipInfo((localizedStrings?.fFormulaDetailsEmpty ?? "该配方没有配方明细，无法开始称重"), context);
+      return;
+    }
     if (selectedFormula?.header?.isEncrypted == false) {
       //检查配方是重量模式还是百分比模式
       if (selectedFormula?.header?.formulaMode == "pct") {
@@ -1913,6 +1917,10 @@ class FormulationScalePageState extends State<FormulationScalePage>
   void startDarftWeighting() {
     //检查配方是保密的，还是公开的
     if (selectedDarfFma == null) {
+      return;
+    }
+    if (selectedDarfFma!.fmaInfo?.details == null || selectedDarfFma!.fmaInfo!.details!.isEmpty) {
+      showTipInfo((localizedStrings?.fFormulaDetailsEmpty ?? "该配方没有配方明细，无法开始称重"), context);
       return;
     }
     if (selectedDarfFma?.fmaInfo?.header?.isEncrypted == false) {

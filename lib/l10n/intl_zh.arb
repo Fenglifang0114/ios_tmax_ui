@@ -3730,5 +3730,9 @@
   "tipLoadingData": "正在初始化数据...",
   "@tipLoadingData": {
     "description": "Prompt for loading data"
+  },
+  "menuFormulaExecution": "配方执行",
+  "@menuFormulaExecution": {
+    "description": "Menu item for formula execution"
   }
 }

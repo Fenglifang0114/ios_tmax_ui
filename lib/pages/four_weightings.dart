@@ -1,4 +1,4 @@
-﻿import 'dart:async';
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -244,7 +244,7 @@ class FourWeightsPageState extends State<FourWeightsPage> {
           context,
           (localizedStrings?.menuWeighing ?? "menuWeighing"),
           scaleList,
-          '',
+          (localizedStrings?.gTipWeighingPageHelp ?? "gTipWeighingPageHelp"),
         ),
       ),
       body: Container(

@@ -273,7 +273,7 @@ class _DarftFmaTableState extends State<DarftFmaTable> {
               headerRowHeight: 48.0,
               frozenColumnsCount: 2,
               footerFrozenColumnsCount: 1,
-              columnWidthMode: ColumnWidthMode.fill,
+              columnWidthMode: ColumnWidthMode.none,
               gridLinesVisibility: GridLinesVisibility.horizontal,
               headerGridLinesVisibility: GridLinesVisibility.none,
               selectionMode: SelectionMode.none,

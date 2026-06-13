@@ -1,4 +1,4 @@
-import 'dart:convert';
+﻿import 'dart:convert';
 import 'package:t_max/widget/t_max_dialog.dart';
 
 import 'package:flutter/foundation.dart';
@@ -143,7 +143,7 @@ class ParameterSettingDialogState extends State<ParameterSettingDialog> {
                       Expanded(
                           flex: mySettingParam.scaleMode == 1
                               ? 3
-                              : 2, //检重秤hi low ok占宽度
+                              : 2, //检重秤hi low ok占宽�?
                           child: Column(
                             children: [
                               if (mySettingParam.scaleMode.toString() !=
@@ -253,10 +253,10 @@ class ParameterSettingDialogState extends State<ParameterSettingDialog> {
                                             MaxLengthEnforcement.enforced,
                                         maxLines: 1,
                                         inputFormatters: [
-                                          // 限制输入为数字
+                                          // 限制输入为数�?
                                           FilteringTextInputFormatter
                                               .digitsOnly,
-                                          // 自定义输入格式化器，限制输入 0 到 20 之间的整数
+                                          // 自定义输入格式化器，限制输入 0 �?20 之间的整�?
                                           TextInputFormatter.withFunction(
                                               (oldValue, newValue) {
                                             if (newValue.text.isEmpty) {
@@ -412,6 +412,7 @@ class ParameterSettingDialogState extends State<ParameterSettingDialog> {
             : '/';
     mySettingParam.stableTime = stableTime.text;
     mySettingParam.zeroRange = zeroRange.text;
+    mySettingParam.scaleMode = checkScaleMode;
     if (mySettingParam.scaleMode == 1) {
       mySettingParam.saveMode = _checkHiLow.toString();
     }
@@ -589,7 +590,7 @@ class ParamSettingDialogState extends State<ParamSettingDialog> {
   bool isSaveModeChecked = true;
   int _checkSaveMode = 1;
   int _checkDateMode = 1;
-  int _checkScaleMode = 1;
+  int checkScaleMode = 1;
   String dateSeparator = '-';
   int _checkDateSeparator = 1;
   int _checkHiLow = 1;
@@ -610,7 +611,7 @@ class ParamSettingDialogState extends State<ParamSettingDialog> {
             : (mySettingParam.dateSeparator == "/")
                 ? 3
                 : 1);
-    _checkScaleMode = mySettingParam.scaleMode;
+    checkScaleMode = mySettingParam.scaleMode;
     _checkDateMode = (mySettingParam.dateFormat.isEmpty)
         ? 1
         : int.parse(mySettingParam.dateFormat);
@@ -839,6 +840,7 @@ class ParamSettingDialogState extends State<ParamSettingDialog> {
             : '/';
     mySettingParam.stableTime = stableTime.text;
     mySettingParam.zeroRange = zeroRange.text;
+    mySettingParam.scaleMode = checkScaleMode;
     if (mySettingParam.scaleMode == 1) {
       mySettingParam.saveMode = _checkHiLow.toString();
     }
@@ -917,11 +919,11 @@ class ParamSettingDialogState extends State<ParamSettingDialog> {
   Radio scaleModeSingleRadio(int radioId) {
     return Radio(
         value: radioId,
-        groupValue: _checkScaleMode,
+        groupValue: checkScaleMode,
         onChanged: (value) {
           // debugPrint(value.toString());
           setState(() {
-            _checkScaleMode = radioId;
+            checkScaleMode = radioId;
           });
         });
   }
@@ -977,3 +979,4 @@ class ParamSettingDialogState extends State<ParamSettingDialog> {
     );
   }
 }
+

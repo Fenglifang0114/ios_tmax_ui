@@ -25,12 +25,12 @@ import '../data/selectedcontrol.dart';
 import '../data/writelog.dart';
 import '../eventbus/eventbus.dart';
 import '../functions/methods.dart';
-import '../widget/dropdown_copy.dart';
-import '../widget/page_head.dart';
-import '../widget/receipt_draggable_floating.dart';
-import '../widget/receipt_item.dart';
+import 'package:t_max/widget/dropdown_copy.dart';
+import 'package:t_max/widget/page_head.dart';
+import 'package:t_max/widget/receipt_draggable_floating.dart';
+import 'package:t_max/widget/receipt_item.dart';
 import 'package:path/path.dart' as p;
-import '../widget/receipt_line_painter.dart';
+import 'package:t_max/widget/receipt_line_painter.dart';
 
 const double receiptLineHeight = 3.9 * 8; //3.9mm *8 个点
 const String recieptMode = "P";
@@ -278,7 +278,7 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
           selectedQrcode = myReceiptItemData.qrcodeName;
           _selectFontsize = myReceiptItemData.fontSize.toString();
           selectedQr =
-              int.parse(myReceiptItemData.qrWidth.toString()).toString();
+              (int.tryParse(myReceiptItemData.qrWidth.toString()) ?? 3).toString();
           if (myReceiptItemData.alignment == 1) {
             _selectedAlignment = 'Left';
           } else if (myReceiptItemData.alignment == 2) {
@@ -407,14 +407,14 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
         _onSubmit(yPosvar.text, 3);
       }
     });
-    // _focusNodex2Pos.addListener(() {
-    //   if (!_focusNodex2Pos.hasFocus) {
-    //     _onSubmit(x2Posvar.text, 9);
-    //   }
-    // });
+    _focusNodex2Pos.addListener(() {
+      if (!_focusNodex2Pos.hasFocus) {
+        _onSubmit(x2Posvar.text, 17);
+      }
+    });
     _focusNodey2Pos.addListener(() {
       if (!_focusNodey2Pos.hasFocus) {
-        _onSubmit(y2Posvar.text, 10);
+        _onSubmit(y2Posvar.text, 11);
       }
     });
     _focusNodemaxLenth.addListener(() {
@@ -1583,17 +1583,23 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
       if (barcodedata.isNotEmpty) {
         barcodedata.write(',');
       }
-      if (con[i].type == 'TEXT') {
-        barcodedata.write('${con[i].type},${con[i].content}');
+      var type = con[i] is Map ? con[i]['type'] : con[i].type;
+      var content = con[i] is Map ? con[i]['content'] : con[i].content;
+      var alignment = con[i] is Map ? con[i]['alignment'] : con[i].alignment;
+      var defaultvalue = con[i] is Map ? con[i]['defaultvalue'] : con[i].defaultvalue;
+      var maxlength = con[i] is Map ? con[i]['maxlength'] : con[i].maxlength;
+
+      if (type == 'TEXT') {
+        barcodedata.write('$type,$content');
       } else {
-        if (con[i].alignment == 'Center') {
+        if (alignment == 'Center') {
           varalignment = 2;
         } else {
           varalignment = 3;
         }
 
         barcodedata.write(
-            'DATA,${con[i].type},${con[i].defaultvalue},$varalignment,${con[i].maxlength}');
+            'DATA,$type,$defaultvalue,$varalignment,$maxlength');
       }
     }
 
@@ -1610,18 +1616,24 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
       if (barcodedata.isNotEmpty) {
         barcodedata.write(','); // 在前一个项目之后附加逗号分隔符
       }
-      if (item['type'] == 'TEXT') {
-        barcodedata.write('TEXT,${item['content']}');
+      var type = item is Map ? item['type'] : item.type;
+      var content = item is Map ? item['content'] : item.content;
+      var alignment = item is Map ? item['alignment'] : item.alignment;
+      var defaultvalue = item is Map ? item['defaultvalue'] : item.defaultvalue;
+      var maxlength = item is Map ? item['maxlength'] : item.maxlength;
+
+      if (type == 'TEXT') {
+        barcodedata.write('TEXT,$content');
       } else {
         var varalignment = 1;
-        if (item['alignment'] == 'Center') {
+        if (alignment == 'Center') {
           varalignment = 2;
-        } else if (item['alignment'] == 'Right') {
+        } else if (alignment == 'Right') {
           // 统一将未命中的情况视为 'Left'
           varalignment = 3;
         }
         barcodedata.write(
-            'DATA,${item['type']},${item['defaultvalue']},$varalignment,${item['maxlength']}');
+            'DATA,$type,$defaultvalue,$varalignment,$maxlength');
       }
     }
 
@@ -1817,7 +1829,7 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
     } else if (indexTemp == 2) {
       //x坐标
       setState(() {
-        var ss = double.parse(s.toString());
+        var ss = double.tryParse(s.toString()) ?? 0.0;
         myReceiptItemData.xPos = ss.toInt();
 
         for (var i = 0; i < receiptItemList.length; i++) {
@@ -1831,7 +1843,7 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
     } else if (indexTemp == 3) {
       //y坐标
       setState(() {
-        var ss = double.parse(s.toString());
+        var ss = double.tryParse(s.toString()) ?? 0.0;
         myReceiptItemData.yPos = ss.toInt();
 
         for (var i = 0; i < receiptItemList.length; i++) {
@@ -1980,7 +1992,7 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
     } else if (indexTemp == 10) {
       //x2坐标
       setState(() {
-        var ss = double.parse(s.toString());
+        var ss = double.tryParse(s.toString()) ?? 0.0;
         myReceiptItemData.x2Pos = ss.toInt();
 
         for (var i = 0; i < receiptItemList.length; i++) {
@@ -1994,7 +2006,7 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
     } else if (indexTemp == 11) {
       //y2坐标
       setState(() {
-        var ss = double.parse(s.toString());
+        var ss = double.tryParse(s.toString()) ?? 0.0;
         myReceiptItemData.y2Pos = ss.toInt();
 
         for (var i = 0; i < receiptItemList.length; i++) {
@@ -2081,7 +2093,7 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
     } else if (indexTemp == 16) {
       //Font reverse
       setState(() {
-        myReceiptItemData.lineWidth = double.parse(s);
+        myReceiptItemData.lineWidth = double.tryParse(s) ?? 0.5;
         for (var i = 0; i < receiptItemList.length; i++) {
           if (receiptItemList[i].index == myReceiptItemData.tabOrder) {
             receiptItemList[i].lineWidth = myReceiptItemData.lineWidth;
@@ -2093,7 +2105,7 @@ class _ReceiptDesignPageState extends State<ReceiptDesignPage> {
     } else if (indexTemp == 17) {
       //Font reverse
       setState(() {
-        myReceiptItemData.x2Pos = int.parse(s);
+        myReceiptItemData.x2Pos = int.tryParse(s) ?? 0;
         for (var i = 0; i < receiptItemList.length; i++) {
           if (receiptItemList[i].index == myReceiptItemData.tabOrder) {
             receiptItemList[i].x2Pos = myReceiptItemData.x2Pos;

@@ -1,4 +1,4 @@
-﻿//暂存的配方走这条路
+//暂存的配方走这条路
 
 import 'dart:async';
 import 'dart:convert';
@@ -3425,12 +3425,12 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
 
         setAutoNext();
         if (checkCodeflag && selectedProcessWgt.no != 0) {
-          checkCodeOk == false;
+          checkCodeOk = false;
           showCheckCodeDialog();
         }
       } else {
         if (checkCodeflag && selectedProcessWgt.no != 0) {
-          checkCodeOk == false;
+          checkCodeOk = false;
           showCheckCodeDialog();
         }
       }

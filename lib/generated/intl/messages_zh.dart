@@ -815,6 +815,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "menuFlowRate": MessageLookupByLibrary.simpleMessage("流速"),
         "menuFormat": MessageLookupByLibrary.simpleMessage("格式"),
         "menuFormula": MessageLookupByLibrary.simpleMessage("配方"),
+        "menuFormulaExecution": MessageLookupByLibrary.simpleMessage("配方执行"),
         "menuIncrementWeighing": MessageLookupByLibrary.simpleMessage("加法秤"),
         "menuLabelDesign": MessageLookupByLibrary.simpleMessage("标签格式设计"),
         "menuLabelFormatDownload":

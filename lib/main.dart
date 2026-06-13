@@ -28,6 +28,28 @@ const bool isServiceVersion = true; //是否是服务版本
 /// 限制应用程序单例运行 (通过检测端口绑定) 并启动主界面的 Route 容器。
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  
+  FlutterError.onError = (FlutterErrorDetails details) {
+    FlutterError.presentError(details);
+    writelog("Flutter Error: ${details.exceptionAsString()}\nStacktrace: ${details.stack}");
+    debugPrint("Flutter Error: ${details.exceptionAsString()}");
+  };
+
+  ErrorWidget.builder = (FlutterErrorDetails details) {
+    return Material(
+      child: Container(
+        color: Colors.red,
+        padding: const EdgeInsets.all(20),
+        child: SingleChildScrollView(
+          child: Text(
+            details.exceptionAsString() + '\n' + (details.stack?.toString() ?? ''),
+            style: const TextStyle(color: Colors.white, fontSize: 14),
+          ),
+        ),
+      ),
+    );
+  };
+
   if (Platform.isAndroid) {
     // 增加启动后端的稳定性，先等待系统资源准备就绪
     Future.microtask(() async {

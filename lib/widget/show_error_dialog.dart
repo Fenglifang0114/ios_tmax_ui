@@ -26,10 +26,14 @@ void showErrorDialog(BuildContext context, String tipStr) {
                 Expanded(
                     child: Container(
                   padding: EdgeInsets.all(20),
-                  child: Text(tipStr,
-                      maxLines: 3,
-                      overflow: TextOverflow.ellipsis,
-                      style: Theme.of(ctx).textTheme.bodySmall),
+                  child: SingleChildScrollView(
+                    child: Text(
+                      tipStr,
+                      style: Theme.of(ctx).textTheme.bodySmall?.apply(
+                            color: Theme.of(context).colorScheme.error,
+                          ),
+                    ),
+                  ),
                 )),
 
                 // 底部

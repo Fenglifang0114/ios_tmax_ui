@@ -9461,6 +9461,16 @@ class S {
       args: [],
     );
   }
+
+  /// `Formula Execution`
+  String get menuFormulaExecution {
+    return Intl.message(
+      'Formula Execution',
+      name: 'menuFormulaExecution',
+      desc: 'Menu item for formula execution',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

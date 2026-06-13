@@ -409,7 +409,7 @@ class AddRawDialogState extends State<AddRawDialog> {
 
             // 中部
             Expanded(
-                child: Column(children: [
+                child: SingleChildScrollView(child: Column(children: [
               SizedBox(
                 // padding: const EdgeInsets.only(top: 16, left: 16, right: 16),
                 height: 90,
@@ -695,7 +695,7 @@ class AddRawDialogState extends State<AddRawDialog> {
                   ],
                 ),
               ),
-            ])),
+            ]))),
 
             // 底部
             Container(
@@ -1209,7 +1209,7 @@ class EditRawDialogState extends State<EditRawDialog> {
 
             // 中部
             Expanded(
-                child: Column(children: [
+                child: SingleChildScrollView(child: Column(children: [
               SizedBox(
                 // padding: const EdgeInsets.only(top: 16, left: 16, right: 16),
                 height: 90,
@@ -1536,7 +1536,7 @@ class EditRawDialogState extends State<EditRawDialog> {
                   ),
                 ]),
               ),
-            ])),
+            ]))),
 
             // 底部
             Container(

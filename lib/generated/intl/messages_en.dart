@@ -1024,6 +1024,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Liquid Filling Speed"),
         "menuFormat": MessageLookupByLibrary.simpleMessage("Format"),
         "menuFormula": MessageLookupByLibrary.simpleMessage("Formula"),
+        "menuFormulaExecution":
+            MessageLookupByLibrary.simpleMessage("Formula Execution"),
         "menuIncrementWeighing":
             MessageLookupByLibrary.simpleMessage("Increment Weighing"),
         "menuLabelDesign": MessageLookupByLibrary.simpleMessage("Label Design"),

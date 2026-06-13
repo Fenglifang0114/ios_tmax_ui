@@ -71,8 +71,8 @@ class RespSysMsgType {
   static const String respFlowRateList = 'resp_flow_rate_list';
   static const String respFlowRateAdd = 'resp_flow_rate_add';
   static const String respGetAllWgtRecList = 'resp_get_all_wgt_rec_list';
-  static const String respGetUiConfig = 'resp_get_ui_config';
-  static const String respUpdateUiConfig = 'resp_update_ui_config';
+  static const String respGetUiConfig = 'resp_get_ui_conf';
+  static const String respUpdateUiConfig = 'resp_update_ui_conf';
   static const String respDelWgtRec = 'resp_del_wgt_rec';
   static const String respAddWgtRec = 'resp_add_wgt_rec';
   static const String respExportAllRecs = 'resp_export_all_recs';

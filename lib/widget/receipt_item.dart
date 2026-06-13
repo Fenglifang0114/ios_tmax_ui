@@ -1,7 +1,7 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:t_max/data/receipt_item.dart';
-import '../../data/selectedcontrol.dart';
-import '../../eventbus/eventbus.dart';
+import '../data/selectedcontrol.dart';
+import '../eventbus/eventbus.dart';
 import 'line_painter.dart';
 import 'package:barcode_widget/barcode_widget.dart';
 import 'dart:math';
@@ -283,7 +283,7 @@ class ReceiptItemState extends State<ReceiptItem> {
         child: Container(
           decoration: _getBorderStyle(),
           width: widget.x2Pos + 0, // 宽度等于线条长度
-          height: widget.lineWidth + 1, // 高度等于线条宽度
+          height: widget.lineWidth < 24 ? 24 : widget.lineWidth + 1, // 高度增加以便容易选中
           child: CustomPaint(
             painter: LinePainter(
               startPoint: Offset(
@@ -392,3 +392,4 @@ class ReceiptItemState extends State<ReceiptItem> {
     );
   }
 }
+

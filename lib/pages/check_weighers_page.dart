@@ -445,7 +445,7 @@ class CheckWeighersPageState extends State<CheckWeighersPage> {
         child: Column(
           children: [
             pageHeadInfo(context, width - headWidthPadding,
-                localizedStrings?.menuCheckWeighing ?? "", '', () {
+                localizedStrings?.menuCheckWeighing ?? "", (localizedStrings?.gTipCheckWgtPageHelp ?? "gTipCheckWgtPageHelp"), () {
               widget.onNavigate(widget.lastRouteName);
             },
                 leading: isMobile
