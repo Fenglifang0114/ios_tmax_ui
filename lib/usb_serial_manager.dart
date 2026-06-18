@@ -65,12 +65,10 @@ class UsbSerialManager {
     for (var scale in myAllScalesList) {
       if (scale.mediaConfig is SerialMediaConfig) {
         final serialConfig = scale.mediaConfig as SerialMediaConfig;
-        // 优先使用指定为 USB 的配置
         if (serialConfig.devPath == "USB") {
           targetBaudRate = serialConfig.baudRate;
           break;
         } else {
-          // 如果没有标明 USB，暂且记录第一个串口的波特率作为 fallback
           if (targetBaudRate == 9600) {
             targetBaudRate = serialConfig.baudRate;
           }
@@ -83,6 +81,44 @@ class UsbSerialManager {
       debugPrint("USB Serial Manager detected new baud rate: $_baudRate");
       if (_isConnected) {
         disconnect().then((_) => connectToFirstAvailablePort());
+      }
+    }
+  }
+
+  Future<void> changeBaudRate(int baudRate) async {
+    if (_baudRate != baudRate) {
+      _baudRate = baudRate;
+      debugPrint("USB Serial Manager manually changed baud rate to: $_baudRate");
+      if (_isConnected) {
+        await disconnect();
+        await connectToFirstAvailablePort();
+      }
+    }
+  }
+
+  Future<void> restoreBaudRate() async {
+    // trigger a recalculation from the scale list to revert to the normal 115200 (or whatever is configured)
+    int targetBaudRate = 9600; 
+    for (var scale in myAllScalesList) {
+      if (scale.mediaConfig is SerialMediaConfig) {
+        final serialConfig = scale.mediaConfig as SerialMediaConfig;
+        if (serialConfig.devPath == "USB") {
+          targetBaudRate = serialConfig.baudRate;
+          break;
+        } else {
+          if (targetBaudRate == 9600) {
+            targetBaudRate = serialConfig.baudRate;
+          }
+        }
+      }
+    }
+
+    if (_baudRate != targetBaudRate) {
+      _baudRate = targetBaudRate;
+      debugPrint("USB Serial Manager restored baud rate to: $_baudRate");
+      if (_isConnected) {
+        await disconnect();
+        await connectToFirstAvailablePort();
       }
     }
   }

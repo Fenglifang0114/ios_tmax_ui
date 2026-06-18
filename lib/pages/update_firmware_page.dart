@@ -16,6 +16,7 @@ import '../data/language.dart';
 import '../eventbus/eventbus.dart';
 import '../functions/methods.dart';
 import '../widget/custom_button.dart';
+import '../usb_serial_manager.dart';
 
 class UpdateFirmwarePage extends StatefulWidget {
   const UpdateFirmwarePage({super.key});
@@ -554,11 +555,16 @@ class SelectScalesPageNewState extends State<SelectScalesPageNew> {
         setState(() {
           if (myRespDataFromScale.msgBody.contains('fail')) {
             scaleTimerMap[myRespDataFromScale.scaleId]?.cancel();
+            UsbSerialManager().restoreBaudRate();
           }
 
           if (!scaleResMap[myRespDataFromScale.scaleId]!.res.contains('ok')) {
             scaleResMap[myRespDataFromScale.scaleId]!.res =
                 myRespDataFromScale.msgBody;
+            if (myRespDataFromScale.msgBody.contains('ok') || 
+                myRespDataFromScale.msgBody.contains('OK')) {
+              UsbSerialManager().restoreBaudRate();
+            }
           }
 
           if (checkAllNotEmpty()) {
@@ -667,6 +673,7 @@ class SelectScalesPageNewState extends State<SelectScalesPageNew> {
         timer!.cancel();
       });
     }
+    UsbSerialManager().restoreBaudRate();
     super.dispose();
   }
 
@@ -1270,8 +1277,11 @@ class SelectScalesPageNewState extends State<SelectScalesPageNew> {
     }
   }
 
-  void useSerialPortUpdate(String force, int scaleId) {
-    PublicFunctions.sendFormatToScale("${widget.sendMsgStr} ,$force", scaleId);
+  void useSerialPortUpdate(String force, int scaleId) async {
+    // 强制先将USB波特率改为 57600
+    await UsbSerialManager().changeBaudRate(57600);
+
+    PublicFunctions.sendFormatToScale("${widget.sendMsgStr},$force", scaleId);
     setState(() {
       scaleResMap[scaleId]!.res = (localizedStrings?.gTipRebootForUpdate ?? "gTipRebootForUpdate");
       isDownloading = true;
