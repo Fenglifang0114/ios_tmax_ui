@@ -58,6 +58,7 @@ class MyHomePageState extends State<MyHomePage>
   dynamic _eventbus7;
   dynamic _eventbus8;
   dynamic _eventbus9;
+  dynamic _eventbus10;
   ScrollController scrollController = ScrollController();
   bool isHovering = false; // 鐢ㄤ簬鎺у埗榧犳爣鎮仠鐘舵€?
 
@@ -192,6 +193,12 @@ class MyHomePageState extends State<MyHomePage>
       });
     });
 
+    _eventbus10 = eventBus.on<EventUpdateNavMenu>().listen((event) {
+      if (mounted) {
+        setState(() {});
+      }
+    });
+
     // 鎵€鏈夊垵濮嬪寲瀹屾垚鍚庤缃粯璁ら〉闈?
   }
 
@@ -205,6 +212,7 @@ class MyHomePageState extends State<MyHomePage>
     _eventbus7.cancel();
     _eventbus8.cancel();
     _eventbus9.cancel();
+    _eventbus10.cancel();
 
     disposeWindowLifecycle();
 

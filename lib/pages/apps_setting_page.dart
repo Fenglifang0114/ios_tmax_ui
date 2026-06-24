@@ -741,6 +741,7 @@ class _AppsSettingPageState extends State<AppsSettingPage> {
     });
     writePageIdsToJson(
         selectedConfigPaidMenuIds, selectedAppsPaidMenuIds, '/setConfig');
+    eventBus.fire(EventUpdateNavMenu(''));
   }
 
   void removeSelectConfig(int id) {
@@ -749,6 +750,7 @@ class _AppsSettingPageState extends State<AppsSettingPage> {
     });
     writePageIdsToJson(
         selectedConfigPaidMenuIds, selectedAppsPaidMenuIds, '/setConfig');
+    eventBus.fire(EventUpdateNavMenu(''));
   }
 
   void addSelectApp(int id) {
@@ -757,6 +759,7 @@ class _AppsSettingPageState extends State<AppsSettingPage> {
     });
     writePageIdsToJson(
         selectedConfigPaidMenuIds, selectedAppsPaidMenuIds, '/setConfig');
+    eventBus.fire(EventUpdateNavMenu(''));
   }
 
   void removeSelectApp(int id) {
@@ -765,6 +768,7 @@ class _AppsSettingPageState extends State<AppsSettingPage> {
     });
     writePageIdsToJson(
         selectedConfigPaidMenuIds, selectedAppsPaidMenuIds, '/setConfig');
+    eventBus.fire(EventUpdateNavMenu(''));
   }
 
   // 显示激活弹框，在弹框内选择文件

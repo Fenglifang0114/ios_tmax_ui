@@ -1,4 +1,4 @@
-﻿import 'package:event_bus/event_bus.dart';
+import 'package:event_bus/event_bus.dart';
 
 /// 全局唯一的 [EventBus] 消息总线单例。
 /// 用于跨 Widget 和跨业务层之间的无状态异步消息传递。
@@ -1095,4 +1095,9 @@ class EventVirtualSerialWrite {
   final int scaleId;
   final String base64Data;
   EventVirtualSerialWrite(this.scaleId, this.base64Data);
+}
+
+class EventUpdateNavMenu {
+  dynamic obj;
+  EventUpdateNavMenu(this.obj);
 }

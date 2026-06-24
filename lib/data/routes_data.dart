@@ -220,7 +220,7 @@ List<RouteData> getCurrentConfigMenus() {
         selectedConfigPaidMenuIds.contains(menu.id) &&
         getUserPermission(menu.id)) {
       currentConfigMenus.add(menu);
-    } else if (myLicenseInfo.isValid &&
+    } else if (myTConLicInfo.isValid &&
         selectedConfigPaidMenuIds.contains(menu.id) &&
         getUserPermission(menu.id)) {
       currentConfigMenus.add(menu);
