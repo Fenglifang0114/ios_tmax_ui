@@ -63,6 +63,7 @@ class RetailReportPageState extends State<RetailReportPage> {
   String srvStatusMsg = "";
 
   Timer? _statusTimer;
+  Timer? _heartbeatTimer;
   List<int> mySelScaleIdList = [];
   bool isFirstLoad = true;
 
@@ -88,6 +89,7 @@ class RetailReportPageState extends State<RetailReportPage> {
     srvStatusMsg = (localizedStrings?.gTipWait ?? "gTipWait");
     PublicFunctions.getScaleSrvList(999999999);
     netScaleOpenBill();
+    startHeartbeatTimer();
     // PublicFunctions.getDetailList();
     isRefresh = true;
     startTimer();
@@ -104,7 +106,7 @@ class RetailReportPageState extends State<RetailReportPage> {
         isRefresh = true;
         setState(() {
           try {
-            String detailStr = myDetailRevPak.msgBody.toString();
+            String detailStr = event.obj;
             myDetailRevPak = RevPakInfo(msgBody: StringBuffer());
             final detailInfoRev = detailInfoRevFromJson(detailStr);
             transactions = detailInfoRev.map((detail) {
@@ -233,7 +235,7 @@ class RetailReportPageState extends State<RetailReportPage> {
         isRefresh = true;
         setState(() {
           try {
-            String detailStr = myDetailRevPak.msgBody.toString();
+            String detailStr = event.obj;
             myDetailRevPak = RevPakInfo(msgBody: StringBuffer());
             final detailInfoRev = detailInfoRevFromJson(detailStr);
             for (int i = 0; i < detailInfoRev.length; i++) {
@@ -275,12 +277,31 @@ class RetailReportPageState extends State<RetailReportPage> {
   void netScaleOpenBill() {
     if (myAllScalesList.isNotEmpty) {
       for (int i = 0; i < myAllScalesList.length; i++) {
-        //只管理wifi的秤
-        if (myAllScalesList[i].tMedia == 1) {
+        // WiFi and Bluetooth
+        if (myAllScalesList[i].tMedia == 1 || myAllScalesList[i].tMedia == 2) {
           PublicFunctions.openBillSend(myAllScalesList[i].scaleId);
         }
       }
     }
+  }
+
+  void startHeartbeatTimer() {
+    if (_heartbeatTimer == null || !_heartbeatTimer!.isActive) {
+      _heartbeatTimer = Timer.periodic(const Duration(seconds: 3), (timer) {
+        if (myAllScalesList.isNotEmpty) {
+          for (int i = 0; i < myAllScalesList.length; i++) {
+            if (myAllScalesList[i].tMedia == 1 || myAllScalesList[i].tMedia == 2) {
+              PublicFunctions.sendCalHeartBeat(myAllScalesList[i].scaleId);
+            }
+          }
+        }
+      });
+    }
+  }
+
+  void stopHeartbeatTimer() {
+    _heartbeatTimer?.cancel();
+    _heartbeatTimer = null;
   }
 
   void initScaleList() {
@@ -301,6 +322,7 @@ class RetailReportPageState extends State<RetailReportPage> {
     eventBus5.cancel();
     eventBus6.cancel();
     _statusTimer?.cancel();
+    stopHeartbeatTimer();
     _scrollController.dispose();
     _scrollController1.dispose();
     super.dispose();
@@ -958,15 +980,16 @@ class RetailReportPageState extends State<RetailReportPage> {
       if (await Permission.storage.isDenied) {
         await Permission.storage.request();
       }
-      // Android: Save directly to external storage (e.g., Downloads)
-      Directory? directory = await getExternalStorageDirectory();
-      if (directory != null) {
+      // Android: Prompt user to select directory
+      String? selectedDirectory = await FilePicker.platform.getDirectoryPath(
+        dialogTitle: 'Select Output Folder',
+      );
+
+      if (selectedDirectory != null) {
         String timestamp = DateFormat('yyyyMMdd_HHmmss').format(DateTime.now());
-        outputFile = "${directory.path}/report_$timestamp.csv";
+        outputFile = "$selectedDirectory/report_$timestamp.csv";
       } else {
-        if (mounted && context.mounted) {
-          showErrorDialog(context, "Cannot access external storage directory.");
-        }
+        // User canceled directory selection
         exportFlag = true;
         return;
       }

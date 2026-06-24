@@ -337,54 +337,12 @@ class RespSysMsgType {
 
   static void handleDetailList(dynamic jsonData) {
     var dataString = jsonData['MsgBody'];
-
-    try {
-      PakInfo pakInfo = pakInfoFromJson(dataString);
-      if (pakInfo.pagId == 1) {
-        myDetailPakList = [];
-      }
-      if (pakInfo.msgBody == "null") {
-        return;
-      }
-      myDetailPakList.add(pakInfo);
-      if (pakInfo.pakCount == myDetailPakList.length) {
-        //先把包排序
-        myDetailPakList.sort((a, b) => a.pagId.compareTo(b.pagId));
-        for (int i = 0; i < myDetailPakList.length; i++) {
-          myDetailRevPak.msgBody.write(myDetailPakList[i].msgBody);
-        }
-        eventBus.fire(EventRespDetailInfo(''));
-        myDetailPakList = [];
-      }
-    } catch (e) {
-      return;
-    }
+    eventBus.fire(EventRespDetailInfo(dataString));
   }
 
   static void handleNewDetail(dynamic jsonData) {
     var dataString = jsonData['MsgBody'];
-
-    try {
-      PakInfo pakInfo = pakInfoFromJson(dataString);
-      if (pakInfo.pagId == 1) {
-        myDetailPakList = [];
-      }
-      if (pakInfo.msgBody == "null") {
-        return;
-      }
-      myDetailPakList.add(pakInfo);
-      if (pakInfo.pakCount == myDetailPakList.length) {
-        //先把包排序
-        myDetailPakList.sort((a, b) => a.pagId.compareTo(b.pagId));
-        for (int i = 0; i < myDetailPakList.length; i++) {
-          myDetailRevPak.msgBody.write(myDetailPakList[i].msgBody);
-        }
-        eventBus.fire(EventRespNewDetailInfo(''));
-        myDetailPakList = [];
-      }
-    } catch (e) {
-      return;
-    }
+    eventBus.fire(EventRespNewDetailInfo(dataString));
   }
 
   static void handleDetailAdd(dynamic jsonData) {
