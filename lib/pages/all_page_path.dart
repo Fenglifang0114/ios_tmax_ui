@@ -1,4 +1,4 @@
-﻿//所有的页面路径
+//所有的页面路径
 
 export 'home_multi_scales_page.dart';
 export '../widget/defer_widget.dart';
@@ -14,3 +14,4 @@ export 'package:t_max/pages/retail_report_page.dart';
 export 'package:t_max/pages/take_in_page.dart';
 export 'package:t_max/pages/formula_scale_page.dart';
 export 'package:t_max/pages/flow_rate_page.dart';
+export 'package:t_max/pages/mobile_setting_page.dart';

@@ -56,9 +56,12 @@ class MyHomePageState extends State<MyHomePage>
   dynamic _eventbus5;
   dynamic _eventbus6;
   dynamic _eventbus7;
+  dynamic _eventbus7;
   dynamic _eventbus8;
   dynamic _eventbus9;
   dynamic _eventbus10;
+  bool _hideScaffoldElements = false;
+  int _currentTabIndex = 0;
   ScrollController scrollController = ScrollController();
   bool isHovering = false; // 鐢ㄤ簬鎺у埗榧犳爣鎮仠鐘舵€?
 
@@ -199,7 +202,23 @@ class MyHomePageState extends State<MyHomePage>
       }
     });
 
-    // 鎵€鏈夊垵濮嬪寲瀹屾垚鍚庤缃粯璁ら〉闈?
+    eventBus.on<EventUiCmd>().listen((event) {
+      if (mounted) {
+        if (event.cmd == 'hideScaffoldElements') {
+          setState(() {
+            _hideScaffoldElements = true;
+          });
+        } else if (event.cmd == 'showScaffoldElements') {
+          setState(() {
+            _hideScaffoldElements = false;
+          });
+        } else if (event.cmd == 'showAddDevice') {
+          // You can also handle 'showAddDevice' if needed elsewhere
+        }
+      }
+    });
+
+    // 所有初始化完成后设置默认页面鎵€鏈夊垵濮嬪寲瀹屾垚鍚庤缃粯璁ら〉闈?
   }
 
   @override
@@ -209,6 +228,7 @@ class MyHomePageState extends State<MyHomePage>
     _eventbus4.cancel();
     _eventbus5.cancel();
     _eventbus6.cancel();
+    _eventbus7.cancel();
     _eventbus7.cancel();
     _eventbus8.cancel();
     _eventbus9.cancel();
@@ -321,7 +341,7 @@ class MyHomePageState extends State<MyHomePage>
             ? Icons.expand_less
             : Icons.expand_more,
         color: Theme.of(context).colorScheme.onPrimary, // 璁剧疆鍥炬爣棰滆壊
-        size: 20, // 鍙€夛細璋冩暣鍥炬爣澶у皬
+        size: 20, // 鍙€夛細璋冩暣鍥炬爣澶у皬
       ),
       onExpansionChanged: (isExpanded) {
         setState(() {
@@ -392,39 +412,79 @@ class MyHomePageState extends State<MyHomePage>
       child: Scaffold(
       drawer: isMobile ? Drawer(
         child: Container(
-          color: colorScheme.primary,
+          color: Colors.white,
           child: Column(
             children: [
-              DrawerHeader(
-                decoration: BoxDecoration(color: colorScheme.primary),
+              Container(
+                height: 120,
+                color: Colors.white,
+                padding: const EdgeInsets.only(top: 40, left: 16),
+                alignment: Alignment.centerLeft,
                 child: Row(
                   children: [
                     Image.asset(logoIconPath, width: 40, height: 40),
                     const SizedBox(width: 12),
-                    Expanded(child: Text(myAppName.appName!, style: textTheme.headlineSmall!.copyWith(color: colorScheme.onPrimary))),
+                    Text(
+                      myAppName.appName!,
+                      style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black87),
+                    ),
                   ],
                 ),
               ),
-              Expanded(child: showNavigationBar()),
+              Expanded(
+                child: ListView(
+                  padding: EdgeInsets.zero,
+                  children: [
+                    _buildDrawerItem(Icons.tune, "Configuration", () {
+                      Navigator.pop(context);
+                      setState(() {
+                        _currentTabIndex = 0;
+                        _navigateContent('/multiScaleManagement');
+                      });
+                    }),
+                    _buildDrawerItem(Icons.apps, "Application", () {
+                      Navigator.pop(context);
+                      setState(() {
+                        _navigateContent('/setConfig');
+                      });
+                    }),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                      child: Divider(color: Color(0xFFEEEEEE), height: 1),
+                    ),
+                    _buildDrawerItem(Icons.people_outline, "User management", () {}),
+                    _buildDrawerItem(Icons.receipt_long, "Log Management", () {}),
+                    _buildDrawerItem(Icons.balance, "Function Center", () {
+                      Navigator.pop(context);
+                      setState(() {
+                        _navigateContent('/settingsFunction');
+                      });
+                    }),
+                    _buildDrawerItem(Icons.lock_outline, "Change password", () {}),
+                    _buildDrawerItem(Icons.language, "Set Language", () {
+                      Navigator.pop(context);
+                      showSetLanguageDialog();
+                    }),
+                    _buildDrawerItem(Icons.info_outline, "System Information", () {
+                      Navigator.pop(context);
+                      showDialog(
+                        context: context,
+                        barrierDismissible: false,
+                        builder: (context) {
+                          return const CompanyInfoDialog();
+                        },
+                      );
+                    }),
+                  ],
+                ),
+              ),
             ],
           ),
         ),
       ) : null,
-      appBar: PreferredSize(
+      appBar: (isMobile && _hideScaffoldElements) ? null : PreferredSize(
         preferredSize: Size.fromHeight(isMobile ? 56 : 40),
         child: isMobile ? AppBar(
-          backgroundColor: colorScheme.primary,
-          foregroundColor: colorScheme.onPrimary,
-          title: Row(
-            children: [
-              Image.asset(logoIconPath, width: 28, height: 28),
-              const SizedBox(width: 8),
-              Text(myAppName.appName!, style: textTheme.titleMedium!.copyWith(color: colorScheme.onPrimary, fontWeight: FontWeight.bold)),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Text(
-                  "- ${generateTitle(getPageId(_selectedNavRoute))}",
-                  style: textTheme.titleMedium!.copyWith(color: colorScheme.onPrimary),
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
@@ -505,8 +565,8 @@ class MyHomePageState extends State<MyHomePage>
                 // Content
                 Expanded(
                   child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: regularPadding),
-                    color: colorScheme.surfaceDim,
+                    padding: isMobile ? EdgeInsets.zero : EdgeInsets.symmetric(horizontal: regularPadding),
+                    color: isMobile ? Colors.white : colorScheme.surfaceDim,
                     child: Navigator(
                       key: contentNavigatorKey,
                       initialRoute: _selectedNavRoute,
@@ -525,7 +585,67 @@ class MyHomePageState extends State<MyHomePage>
           ),
         ],
       ),
+      bottomNavigationBar: isMobile && !_hideScaffoldElements ? BottomNavigationBar(
+        currentIndex: _currentTabIndex,
+        type: BottomNavigationBarType.fixed,
+        backgroundColor: Colors.white,
+        selectedItemColor: const Color(0xFF0D558E),
+        unselectedItemColor: Colors.grey,
+        selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+        unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.normal, fontSize: 12),
+        onTap: (index) {
+          setState(() {
+            _currentTabIndex = index;
+            // Map tabs to routes
+            switch (index) {
+              case 0:
+                _navigateContent('/multiScaleManagement');
+                break;
+              case 1:
+                _navigateContent('/mobileSetting'); // Navigate to the setting list
+                break;
+              case 2:
+                _navigateContent('/labelDesign'); // Example format route
+                break;
+              case 3:
+                _navigateContent('/basicDataCollection'); // Example data route
+                break;
+            }
+          });
+        },
+        items: [
+          BottomNavigationBarItem(
+            icon: Padding(padding: const EdgeInsets.only(bottom: 4), child: Icon(Icons.devices_other_outlined)),
+            activeIcon: Padding(padding: const EdgeInsets.only(bottom: 4), child: Icon(Icons.devices_other)),
+            label: "Connecting",
+          ),
+          BottomNavigationBarItem(
+            icon: Padding(padding: const EdgeInsets.only(bottom: 4), child: Icon(Icons.settings_outlined)),
+            activeIcon: Padding(padding: const EdgeInsets.only(bottom: 4), child: Icon(Icons.settings)),
+            label: localizedStrings?.gBtnSetting ?? "Setting",
+          ),
+          BottomNavigationBarItem(
+            icon: Padding(padding: const EdgeInsets.only(bottom: 4), child: Icon(Icons.description_outlined)),
+            activeIcon: Padding(padding: const EdgeInsets.only(bottom: 4), child: Icon(Icons.description)),
+            label: localizedStrings?.menuFormat ?? "Format",
+          ),
+          BottomNavigationBarItem(
+            icon: Padding(padding: const EdgeInsets.only(bottom: 4), child: Icon(Icons.dns_outlined)),
+            activeIcon: Padding(padding: const EdgeInsets.only(bottom: 4), child: Icon(Icons.dns)),
+            label: localizedStrings?.menuData ?? "Data",
+          ),
+        ],
+      ) : null,
     ));
+  }
+
+  Widget _buildDrawerItem(IconData icon, String title, VoidCallback onTap) {
+    return ListTile(
+      leading: Icon(icon, color: Colors.black87),
+      title: Text(title, style: const TextStyle(color: Colors.black87, fontSize: 16)),
+      onTap: onTap,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 24.0),
+    );
   }
 
   Widget showSysSetting(ColorScheme colorScheme, TextTheme textTheme) {

@@ -35,6 +35,7 @@ import 'package:t_max/pages/weighing.dart';
 import 'package:t_max/pages/weight_collection_page.dart';
 import 'package:t_max/pages/wifi_setting_page.dart';
 import 'package:t_max/pages/wired_setting_page.dart';
+import 'package:t_max/pages/mobile_setting_page.dart';
 
 class RouteData {
   RouteData({
@@ -500,6 +501,10 @@ Widget buildPageContent(dynamic Function(String) navigateContent,
   }
   if (pageName == '/settingsUser') {
     return SysUserManagerPage(
+        onNavigate: navigateContent, lastRouteName: lastRouteName);
+  }
+  if (pageName == '/mobileSetting') {
+    return MobileSettingPage(
         onNavigate: navigateContent, lastRouteName: lastRouteName);
   }
 
