@@ -6,6 +6,8 @@ import 'package:t_max/data/license_data.dart';
 import '../data/company_info.dart';
 import '../data/language.dart';
 import '../widget/version.dart';
+import 'package:t_max/functions/adaptive.dart';
+import 'package:t_max/functions/adaptive.dart';
 
 class CompanyInfoDialog extends StatefulWidget {
   const CompanyInfoDialog({super.key});
@@ -27,7 +29,7 @@ class CompanyInfoDialogState extends State<CompanyInfoDialog> {
     setAppInfo().then((value) => setState(() {}));
 
     isPass = myLicenseInfo.isValid;
-    //初始化
+    //鍒濆鍖?
   }
 
   @override
@@ -37,6 +39,54 @@ class CompanyInfoDialogState extends State<CompanyInfoDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final bool isMobile = Adaptive.isMobile(context);
+
+    if (isMobile) {
+      return Dialog(
+        insetPadding: EdgeInsets.zero,
+        child: Scaffold(
+          backgroundColor: Colors.grey[100],
+          appBar: AppBar(
+            backgroundColor: Colors.white,
+            foregroundColor: Colors.black87,
+            elevation: 0,
+            title: Text((localizedStrings?.gAppInformation ?? "System Information"), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+            centerTitle: true,
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back),
+              onPressed: () => Navigator.pop(context),
+            ),
+          ),
+          body: ListView(
+            padding: const EdgeInsets.all(16),
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(8)
+                ),
+                child: Column(
+                  children: [
+                    _buildMobileItem((localizedStrings?.appVersionTitle ?? "Version"), getVersion()),
+                    const Divider(height: 1, indent: 16),
+                    _buildMobileItem((localizedStrings?.appCompanyTitle ?? "Company"), myCompanyInfo.companyName!),
+                    const Divider(height: 1, indent: 16),
+                    _buildMobileItem((localizedStrings?.appTelTitle ?? "Tel"), myCompanyInfo.tel!),
+                    const Divider(height: 1, indent: 16),
+                    _buildMobileItem((localizedStrings?.appEmailTitle ?? "Email"), myCompanyInfo.email!),
+                    const Divider(height: 1, indent: 16),
+                    _buildMobileItem((localizedStrings?.appAddressTitle ?? "Address"), myCompanyInfo.address!),
+                    const Divider(height: 1, indent: 16),
+                    _buildMobileItem((localizedStrings?.appWebTitle ?? "Website"), myCompanyInfo.website!),
+                  ]
+                )
+              )
+            ]
+          )
+        )
+      );
+    }
+
     return TMaxDialog(
       backgroundColor: Colors.transparent,
       child: Container(
@@ -84,7 +134,7 @@ class CompanyInfoDialogState extends State<CompanyInfoDialog> {
                         Navigator.pop(context);
                       })
                 ])),
-            // 分割线
+            // 鍒嗗壊绾?
             Divider(
               height: 1,
               color: Theme.of(context).colorScheme.surfaceContainerLow,
@@ -164,4 +214,18 @@ class CompanyInfoDialogState extends State<CompanyInfoDialog> {
           ),
     ));
   }
+
+  Widget _buildMobileItem(String title, String value) {
+    return ListTile(
+      title: Text(title, style: TextStyle(color: Colors.grey[600], fontSize: 14)),
+      trailing: Container(
+        width: MediaQuery.of(context).size.width * 0.5,
+        alignment: Alignment.centerRight,
+        child: Text(value, style: const TextStyle(color: Colors.black87, fontSize: 16, fontWeight: FontWeight.w500), overflow: TextOverflow.ellipsis, maxLines: 2),
+      ),
+    );
+  }
 }
+
+
+

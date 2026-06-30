@@ -1,0 +1,2 @@
+D:/AndroidPhone/TMaxPcServiceUI/android/app/.cxx/Debug/6k4u6zw6/arm64-v8a/CMakeFiles/edit_cache.dir
+D:/AndroidPhone/TMaxPcServiceUI/android/app/.cxx/Debug/6k4u6zw6/arm64-v8a/CMakeFiles/rebuild_cache.dir

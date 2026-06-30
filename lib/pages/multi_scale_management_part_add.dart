@@ -4,6 +4,14 @@ part of 'multi_scale_management_page.dart';
 extension MultiScaleManagementAddExt on MultiScaleManagementState {
 //增加秤时显示
   Widget showAddScaleInfo(double maxWidth) {
+    if (Adaptive.isMobile(context)) {
+      return addScaleType == "com"
+          ? showAddComScaleInfo()
+          : addScaleType == "wifi"
+              ? showAddNetScaleInfo()
+              : showAddBtScaleInfo();
+    }
+
     return Column(children: [
       if (addScaleType == "bt")
         Row(
@@ -52,6 +60,10 @@ extension MultiScaleManagementAddExt on MultiScaleManagementState {
       usingComLists = List<String>.from(comLists);
       if (comPortCtl.text.isEmpty) comPortCtl.text = "USB";
     }
+    
+    if (Adaptive.isMobile(context)) {
+      return _buildMobileSerialAdd();
+    }
     return ListView(
       children: [
         SizedBox(
@@ -69,7 +81,7 @@ extension MultiScaleManagementAddExt on MultiScaleManagementState {
                   if (value != null && comLists.contains(value)) {
                     comPortCtl.text = value;
                   } else {
-                    // 若选择的值不在 comLists 中，清空输入框
+                    // 若选择的值不�?comLists 中，清空输入�?
                     comPortCtl.clear();
                   }
                   usingComLists = List<String>.from(comLists);
@@ -164,7 +176,7 @@ extension MultiScaleManagementAddExt on MultiScaleManagementState {
                           }
                         }
                         setState(() {
-                          isAddScale = false;
+                          isAddScale = false; eventBus.fire(EventUiCmd('showScaffoldElements'));
                           isRename = false;
                           addScaleType = '';
                         });
@@ -178,7 +190,7 @@ extension MultiScaleManagementAddExt on MultiScaleManagementState {
             const SizedBox(width: regularPadding),
             showTextButton(context, btnHeight, (localizedStrings?.gBtnCancel ?? "gBtnCancel"), () {
               setState(() {
-                isAddScale = false;
+                isAddScale = false; eventBus.fire(EventUiCmd('showScaffoldElements'));
                 isRename = false;
                 addScaleType = '';
                 selScaleId = -1;
@@ -196,7 +208,434 @@ extension MultiScaleManagementAddExt on MultiScaleManagementState {
     );
   }
 
+  void _showMobilePicker(String title, List<String> options, String currentValue, Function(String) onSelected) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              ),
+              Flexible(
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: options.length,
+                  itemBuilder: (context, index) {
+                    return ListTile(
+                      title: Text(
+                        options[index], 
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: options[index] == currentValue ? const Color(0xFF0D558E) : Colors.black87,
+                          fontWeight: options[index] == currentValue ? FontWeight.bold : FontWeight.normal,
+                        ),
+                      ),
+                      onTap: () {
+                        onSelected(options[index]);
+                        Navigator.pop(context);
+                      },
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildMobileListTile(String title, String value, VoidCallback onTap) {
+    return Column(
+      children: [
+        Container(
+          color: Colors.white,
+          child: ListTile(
+            title: Text(title, style: const TextStyle(color: Colors.black87, fontSize: 16)),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(value, style: const TextStyle(color: Colors.grey, fontSize: 16)),
+                const SizedBox(width: 8),
+                const Icon(Icons.chevron_right, color: Colors.grey),
+              ],
+            ),
+            onTap: onTap,
+          ),
+        ),
+        const Divider(height: 1, color: Color(0xFFEEEEEE), indent: 16),
+      ],
+    );
+  }
+
+  Widget _buildMobileSerialAdd() {
+    return Column(
+      children: [
+        // Fake App Bar
+        Container(
+          color: Colors.white,
+          padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+          child: SizedBox(
+            height: 56,
+            child: Row(
+            children: [
+              IconButton(
+                icon: const Icon(Icons.arrow_back, color: Colors.black),
+                onPressed: () {
+                  setState(() {
+                    isAddScale = false; eventBus.fire(EventUiCmd('showScaffoldElements'));
+                    addScaleType = '';
+                  });
+                },
+              ),
+              Expanded(
+                child: Center(
+                  child: Text(
+                    localizedStrings?.gSerialPort ?? "Serial port",
+                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
+                  ),
+                ),
+              ),
+              IconButton(
+                icon: const Icon(Icons.help_outline, color: Colors.black),
+                onPressed: () {},
+              ),
+            ],
+          ),
+          ),
+        ),
+        // List items
+        Expanded(
+          child: Container(
+            color: const Color(0xFFF5F5F5),
+            child: ListView(
+              children: [
+                _buildMobileListTile(
+                  localizedStrings?.gSerialPort ?? "Serial port",
+                  comPortCtl.text.isEmpty ? "Please select" : comPortCtl.text,
+                  () {
+                    PublicFunctions.getPortList();
+                    if (Platform.isAndroid && !comLists.contains("USB")) {
+                      comLists.add("USB");
+                    }
+                    _showMobilePicker(localizedStrings?.gSerialPort ?? "Serial port", comLists, comPortCtl.text, (val) {
+                      setState(() {
+                        comPortCtl.text = val;
+                      });
+                    });
+                  },
+                ),
+                _buildMobileListTile(
+                  localizedStrings?.gBaudRate ?? "Baud rate",
+                  baudRateCtl.text.isEmpty ? "115200" : baudRateCtl.text,
+                  () {
+                    _showMobilePicker(localizedStrings?.gBaudRate ?? "Baud rate", baudRateList, baudRateCtl.text, (val) {
+                      setState(() => baudRateCtl.text = val);
+                    });
+                  },
+                ),
+                _buildMobileListTile(
+                  localizedStrings?.gSerialParity ?? "Parity",
+                  protocolCtl.text.isEmpty ? "None" : protocolCtl.text,
+                  () {
+                    _showMobilePicker(localizedStrings?.gSerialParity ?? "Parity", checkBitsList, protocolCtl.text, (val) {
+                      setState(() => protocolCtl.text = val);
+                    });
+                  },
+                ),
+                _buildMobileListTile(
+                  localizedStrings?.gStopBits ?? "Stop bits",
+                  stopBitCtl.text.isEmpty ? "1" : stopBitCtl.text,
+                  () {
+                    _showMobilePicker(localizedStrings?.gStopBits ?? "Stop bits", stopBitsList, stopBitCtl.text, (val) {
+                      setState(() => stopBitCtl.text = val);
+                    });
+                  },
+                ),
+                _buildMobileListTile(
+                  localizedStrings?.gDataBits ?? "Data bits",
+                  dataBitCtl.text.isEmpty ? "8" : dataBitCtl.text,
+                  () {
+                    _showMobilePicker(localizedStrings?.gDataBits ?? "Data bits", dataBitsList, dataBitCtl.text, (val) {
+                      setState(() => dataBitCtl.text = val);
+                    });
+                  },
+                ),
+                // Common checkbox
+                Container(
+                  color: Colors.white,
+                  child: ListTile(
+                    title: Text(localizedStrings?.commonApp ?? "Common", style: const TextStyle(color: Colors.black87, fontSize: 16)),
+                    trailing: Switch(
+                      value: isDC500,
+                      activeColor: const Color(0xFF0D558E),
+                      onChanged: (val) => setState(() => isDC500 = val),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        // Bottom Confirm Button
+        Container(
+          color: Colors.white,
+          padding: const EdgeInsets.all(16.0),
+          child: SafeArea(
+            top: false,
+            child: SizedBox(
+              width: double.infinity,
+              height: 50,
+              child: ElevatedButton(
+                onPressed: comPortCtl.text.isNotEmpty ? () {
+                  // check if in use
+                  for (var scale in myAllScalesList) {
+                    if (scale.tMedia == comScaleType) {
+                      final serialConfig = scale.mediaConfig as SerialMediaConfig;
+                      if (serialConfig.devPath == comPortCtl.text) {
+                        showTipInfo((localizedStrings?.gTipPortInUsed ?? "gTipPortInUsed") + scale.scaleName, context);
+                        return;
+                      }
+                    }
+                  }
+                  setState(() {
+                    isAddScale = false; eventBus.fire(EventUiCmd('showScaffoldElements'));
+                    isRename = false;
+                    addScaleType = '';
+                  });
+                  addComScale();
+                } : null,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF0D558E),
+                  disabledBackgroundColor: Colors.grey[300],
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                  elevation: 0,
+                ),
+                child: Text(
+                  localizedStrings?.gBtnConfirm ?? "Confirm",
+                  style: const TextStyle(fontSize: 16, color: Colors.white),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildMobileBtAdd() {
+    return Column(
+      children: [
+        // Fake App Bar
+        Container(
+          color: Colors.white,
+          padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+          child: SizedBox(
+            height: 56,
+            child: Row(
+            children: [
+              IconButton(
+                icon: const Icon(Icons.arrow_back, color: Colors.black),
+                onPressed: () {
+                  setState(() {
+                    isAddScale = false; eventBus.fire(EventUiCmd('showScaffoldElements'));
+                    addScaleType = '';
+                    isBtSearching = false;
+                    isBtSearched = false;
+                  });
+                },
+              ),
+              Expanded(
+                child: Center(
+                  child: Text(
+                    localizedStrings?.bluetooth ?? "Bluetooth",
+                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
+                  ),
+                ),
+              ),
+              IconButton(
+                icon: const Icon(Icons.help_outline, color: Colors.black),
+                onPressed: () {},
+              ),
+              if (!isBtSearching)
+                IconButton(
+                  icon: const Icon(Icons.refresh, color: Colors.black),
+                  onPressed: () {
+                    PublicFunctions.getBtList();
+                    setState(() {
+                      btInfoList.clear();
+                      selectBtInfo = BtInfo();
+                      isBtSearching = true;
+                    });
+                  },
+                )
+              else
+                const SizedBox(width: 48), // Place holder to keep title centered
+            ],
+          ),
+          ),
+        ),
+        // Body
+        Expanded(
+          child: Container(
+            color: const Color(0xFFF5F5F5),
+            child: _buildMobileBtBody(),
+          ),
+        ),
+        // Bottom Confirm Button
+        if (isBtSearched)
+          Container(
+            color: Colors.white,
+            padding: const EdgeInsets.all(16.0),
+            child: SafeArea(
+              top: false,
+              child: SizedBox(
+                width: double.infinity,
+                height: 50,
+                child: ElevatedButton(
+                  onPressed: selectBtInfo.mac != null ? () {
+                    setState(() {
+                      isAddScale = false; eventBus.fire(EventUiCmd('showScaffoldElements'));
+                      isRename = false;
+                      addScaleType = '';
+                      isBtSearching = false;
+                      isBtSearched = false;
+                    });
+                    addBtScale();
+                  } : null,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF0D558E),
+                    disabledBackgroundColor: Colors.grey[300],
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                    elevation: 0,
+                  ),
+                  child: Text(
+                    localizedStrings?.gBtnConfirm ?? "Confirm",
+                    style: const TextStyle(fontSize: 16, color: Colors.white),
+                  ),
+                ),
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+
+  Widget _buildMobileBtBody() {
+    if (isBtSearching) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const CircularProgressIndicator(),
+            const SizedBox(height: 24),
+            Text(
+              localizedStrings?.gSearchingBtDevices ?? "Searching...",
+              style: const TextStyle(fontSize: 16, color: Color(0xFF0D558E)),
+            ),
+          ],
+        ),
+      );
+    } else if (isBtSearched) {
+      if (btInfoList.isEmpty) {
+        return Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.bluetooth_disabled, size: 64, color: Colors.grey[400]),
+              const SizedBox(height: 16),
+              Text(
+                localizedStrings?.noBluetoothDevicesFound ?? "No devices found",
+                style: const TextStyle(color: Colors.grey, fontSize: 16),
+              ),
+            ],
+          ),
+        );
+      }
+      return ListView.builder(
+        itemCount: btInfoList.length,
+        itemBuilder: (context, index) {
+          final device = btInfoList[index];
+          final isSelected = selectBtInfo.mac == device.mac;
+          return Column(
+            children: [
+              Container(
+                color: isSelected ? const Color(0xFF0D558E) : Colors.white,
+                child: ListTile(
+                  leading: Icon(Icons.scale, color: isSelected ? Colors.white : const Color(0xFF0D558E)),
+                  title: Text(
+                    device.name ?? "Unknown Device",
+                    style: TextStyle(color: isSelected ? Colors.white : Colors.black87, fontWeight: FontWeight.bold, fontSize: 14),
+                  ),
+                  subtitle: Text(
+                    "MAC: ${device.mac}",
+                    style: TextStyle(color: isSelected ? Colors.white70 : Colors.grey, fontSize: 12),
+                  ),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        "${device.rssi ?? -50}",
+                        style: TextStyle(color: isSelected ? Colors.white : Colors.grey, fontSize: 12),
+                      ),
+                      const SizedBox(width: 4),
+                      Icon(Icons.signal_cellular_alt, size: 20, color: isSelected ? Colors.white : const Color(0xFF0D558E)),
+                    ],
+                  ),
+                  onTap: () {
+                    setState(() {
+                      selectBtInfo = device;
+                    });
+                  },
+                ),
+              ),
+              if (!isSelected) const Divider(height: 1, color: Color(0xFFEEEEEE), indent: 16),
+            ],
+          );
+        },
+      );
+    } else {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset('assets/images/bt_tips.png', width: 200, height: 100, fit: BoxFit.scaleDown),
+            const SizedBox(height: 32),
+            SizedBox(
+              width: 200,
+              height: 44,
+              child: ElevatedButton(
+                onPressed: () {
+                  PublicFunctions.getBtList();
+                  setState(() {
+                    isBtSearching = true;
+                  });
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF0D558E),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                  elevation: 0,
+                ),
+                child: Text(
+                  localizedStrings?.startSearchBluetoothDevices ?? "Start Search",
+                  style: const TextStyle(fontSize: 16, color: Colors.white),
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+  }
+
   Widget showAddBtScaleInfo() {
+    if (Adaptive.isMobile(context)) {
+      return _buildMobileBtAdd();
+    }
     if (isBtSearching) {
       return ListView(
         padding: const EdgeInsets.symmetric(vertical: regularPadding),
@@ -301,7 +740,7 @@ extension MultiScaleManagementAddExt on MultiScaleManagementState {
                     selectBtInfo.mac != null
                         ? () {
                             setState(() {
-                              isAddScale = false;
+                              isAddScale = false; eventBus.fire(EventUiCmd('showScaffoldElements'));
                               isRename = false;
                               addScaleType = '';
                               isBtSearching = false;
@@ -316,7 +755,7 @@ extension MultiScaleManagementAddExt on MultiScaleManagementState {
                 showTextButton(context, btnHeight, (localizedStrings?.gBtnCancel ?? "gBtnCancel"),
                     () {
                   setState(() {
-                    isAddScale = false;
+                    isAddScale = false; eventBus.fire(EventUiCmd('showScaffoldElements'));
                     isRename = false;
                     addScaleType = '';
                     selScaleId = -1;
@@ -377,7 +816,7 @@ extension MultiScaleManagementAddExt on MultiScaleManagementState {
                 showTextButton(context, btnHeight, (localizedStrings?.gBtnCancel ?? "gBtnCancel"),
                     () {
                   setState(() {
-                    isAddScale = false;
+                    isAddScale = false; eventBus.fire(EventUiCmd('showScaffoldElements'));
                     isRename = false;
                     addScaleType = '';
                     selScaleId = -1;
@@ -395,7 +834,140 @@ extension MultiScaleManagementAddExt on MultiScaleManagementState {
     }
   }
 
+  Widget _buildMobileInputTile(String title, TextEditingController controller, String hint, TextInputType keyboardType) {
+    return Column(
+      children: [
+        Container(
+          color: Colors.white,
+          child: ListTile(
+            title: Row(
+              children: [
+                Text(title, style: const TextStyle(color: Colors.black87, fontSize: 16)),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: TextField(
+                    controller: controller,
+                    keyboardType: keyboardType,
+                    textAlign: TextAlign.right,
+                    decoration: InputDecoration(
+                      hintText: hint,
+                      hintStyle: const TextStyle(color: Colors.grey, fontSize: 16),
+                      border: InputBorder.none,
+                      isDense: true,
+                    ),
+                    style: const TextStyle(color: Colors.black87, fontSize: 16),
+                    onChanged: (val) {
+                      setState(() {});
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        const Divider(height: 1, color: Color(0xFFEEEEEE), indent: 16),
+      ],
+    );
+  }
+
+  Widget _buildMobileNetAdd() {
+    return Column(
+      children: [
+        // Fake App Bar
+        Container(
+          color: Colors.white,
+          padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+          child: SizedBox(
+            height: 56,
+            child: Row(
+            children: [
+              IconButton(
+                icon: const Icon(Icons.arrow_back, color: Colors.black),
+                onPressed: () {
+                  setState(() {
+                    isAddScale = false; eventBus.fire(EventUiCmd('showScaffoldElements'));
+                    addScaleType = '';
+                  });
+                },
+              ),
+              Expanded(
+                child: Center(
+                  child: Text(
+                    localizedStrings?.gNetwork ?? "Network",
+                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
+                  ),
+                ),
+              ),
+              IconButton(
+                icon: const Icon(Icons.help_outline, color: Colors.black),
+                onPressed: () {},
+              ),
+            ],
+          ),
+          ),
+        ),
+        // List items
+        Expanded(
+          child: Container(
+            color: const Color(0xFFF5F5F5),
+            child: ListView(
+              children: [
+                _buildMobileInputTile(
+                  localizedStrings?.gIpAddress ?? "IPv4",
+                  ipCtl,
+                  "", // removed localizedStrings?.gTipPleaseInput to prevent crash
+                  const TextInputType.numberWithOptions(decimal: true),
+                ),
+                _buildMobileInputTile(
+                  localizedStrings?.gTipPort ?? "Port",
+                  portCtl,
+                  "", // removed localizedStrings?.gTipPleaseInput to prevent crash
+                  TextInputType.number,
+                ),
+              ],
+            ),
+          ),
+        ),
+        // Bottom Confirm Button
+        Container(
+          color: Colors.white,
+          padding: const EdgeInsets.all(16.0),
+          child: SafeArea(
+            top: false,
+            child: SizedBox(
+              width: double.infinity,
+              height: 50,
+              child: ElevatedButton(
+                onPressed: portCtl.text.isNotEmpty && _isValidIP ? () {
+                  setState(() {
+                    isAddScale = false; eventBus.fire(EventUiCmd('showScaffoldElements'));
+                    isRename = false;
+                    addScaleType = '';
+                  });
+                  addNetScale();
+                } : null,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF0D558E),
+                  disabledBackgroundColor: Colors.grey[300],
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                  elevation: 0,
+                ),
+                child: Text(
+                  localizedStrings?.gBtnConfirm ?? "Confirm",
+                  style: const TextStyle(fontSize: 16, color: Colors.white),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget showAddNetScaleInfo() {
+    if (Adaptive.isMobile(context)) {
+      return _buildMobileNetAdd();
+    }
     return ListView(
       children: [
         SizedBox(
@@ -460,7 +1032,7 @@ extension MultiScaleManagementAddExt on MultiScaleManagementState {
                 portCtl.text.isNotEmpty && _isValidIP
                     ? () {
                         setState(() {
-                          isAddScale = false;
+                          isAddScale = false; eventBus.fire(EventUiCmd('showScaffoldElements'));
                           isRename = false;
                           addScaleType = '';
                         });
@@ -474,7 +1046,7 @@ extension MultiScaleManagementAddExt on MultiScaleManagementState {
             const SizedBox(width: regularPadding),
             showTextButton(context, btnHeight, (localizedStrings?.gBtnCancel ?? "gBtnCancel"), () {
               setState(() {
-                isAddScale = false;
+                isAddScale = false; eventBus.fire(EventUiCmd('showScaffoldElements'));
                 isRename = false;
                 addScaleType = '';
                 selScaleId = -1;
@@ -494,3 +1066,4 @@ extension MultiScaleManagementAddExt on MultiScaleManagementState {
   }
 
 }
+

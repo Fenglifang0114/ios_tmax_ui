@@ -172,88 +172,22 @@ class _ScaleItemWidgetState extends State<ScaleItemWidget> {
                 color: Theme.of(context).colorScheme.surface,
                 child: Row(
                   children: [
-                    // 状态图标区
-                    Container(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: isMobile ? 8.0 : largePadding),
-                        child: Center(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              _buildIconAndText(
-                                context,
-                                (localizedStrings?.iStable ?? "iStable"),
-                                (weightInfo?.isStable ?? false),
-                                1,
-                              ),
-                              SizedBox(width: isMobile ? 8 : 24),
-                              _buildIconAndText(
-                                context,
-                                (localizedStrings?.iTextNet ?? "iTextNet"),
-                                (weightInfo?.isNet ?? false),
-                                2,
-                              ),
-                              SizedBox(width: isMobile ? 8 : 24),
-                              _buildIconAndText(
-                                context,
-                                (localizedStrings?.iTextZero ?? "iTextZero"),
-                                (weightInfo?.isZero ?? false),
-                                3,
-                              ),
-                            ],
-                          ),
-                        )),
-                    // 重量数值区
+                    // 在移动端，重量在上面，状态图标在下面；在PC端，状态在左，重量在中。
                     Expanded(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Expanded(
-                              child: Container(
-                            alignment: Alignment.centerRight,
-                            child: FittedBox(
-                              fit: BoxFit.scaleDown,
-                              alignment: Alignment.centerRight,
-                              child: Text(weightInfo?.weightVal ?? '---------',
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  textAlign: TextAlign.right,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .headlineLarge
-                                      ?.copyWith(
-                                        fontSize: isMobile ? 32 : null,
-                                        color: isStart
-                                            ? Theme.of(context)
-                                                .colorScheme
-                                                .onTertiaryFixedVariant
-                                            : Theme.of(context)
-                                                .colorScheme
-                                                .error,
-                                      )),
+                      child: isMobile
+                          ? Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                _buildWeightDisplay(context, isMobile),
+                                _buildStatusIcons(context, isMobile),
+                              ],
+                            )
+                          : Row(
+                              children: [
+                                _buildStatusIcons(context, isMobile),
+                                Expanded(child: _buildWeightDisplay(context, isMobile)),
+                              ],
                             ),
-                          )),
-                          Container(
-                            width: isMobile ? 40 : 80,
-                            height: 80,
-                            alignment: Alignment.bottomLeft,
-                            child: FittedBox(
-                              fit: BoxFit.scaleDown,
-                              child: Text(weightInfo?.weightUnit ?? '----',
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyLarge
-                                      ?.apply(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onSurface,
-                                      )),
-                            ),
-                          )
-                        ],
-                      ),
                     ),
                     // 按钮操作区
                     Container(
@@ -272,9 +206,9 @@ class _ScaleItemWidgetState extends State<ScaleItemWidget> {
                                           widget.scaleId);
                                     }
                                   : null,
-                              Theme.of(context).colorScheme.onPrimary,
-                              Theme.of(context).colorScheme.primary,
-                              Theme.of(context).colorScheme.onPrimary),
+                              isMobile ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.onPrimary,
+                              isMobile ? Theme.of(context).colorScheme.surface : Theme.of(context).colorScheme.primary,
+                              isMobile ? Theme.of(context).colorScheme.outline : Theme.of(context).colorScheme.onPrimary),
                           showTextButton(
                               context,
                               isMobile ? 32 : 36,
@@ -285,9 +219,9 @@ class _ScaleItemWidgetState extends State<ScaleItemWidget> {
                                           widget.scaleId);
                                     }
                                   : null,
-                              Theme.of(context).colorScheme.onPrimary,
-                              Theme.of(context).colorScheme.primary,
-                              Theme.of(context).colorScheme.onPrimary),
+                              isMobile ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.onPrimary,
+                              isMobile ? Theme.of(context).colorScheme.surface : Theme.of(context).colorScheme.primary,
+                              isMobile ? Theme.of(context).colorScheme.outline : Theme.of(context).colorScheme.onPrimary),
                         ],
                       ),
                     ),
@@ -298,6 +232,94 @@ class _ScaleItemWidgetState extends State<ScaleItemWidget> {
             height: regularPadding,
             color: Colors.transparent,
           ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStatusIcons(BuildContext context, bool isMobile) {
+    return Container(
+        padding: EdgeInsets.symmetric(
+            horizontal: isMobile ? 8.0 : largePadding),
+        child: Center(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              _buildIconAndText(
+                context,
+                (localizedStrings?.iStable ?? "iStable"),
+                (weightInfo?.isStable ?? false),
+                1,
+              ),
+              SizedBox(width: isMobile ? 8 : 24),
+              _buildIconAndText(
+                context,
+                (localizedStrings?.iTextNet ?? "iTextNet"),
+                (weightInfo?.isNet ?? false),
+                2,
+              ),
+              SizedBox(width: isMobile ? 8 : 24),
+              _buildIconAndText(
+                context,
+                (localizedStrings?.iTextZero ?? "iTextZero"),
+                (weightInfo?.isZero ?? false),
+                3,
+              ),
+            ],
+          ),
+        ));
+  }
+
+  Widget _buildWeightDisplay(BuildContext context, bool isMobile) {
+    return Expanded(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          Expanded(
+              child: Container(
+            alignment: Alignment.centerRight,
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              alignment: Alignment.centerRight,
+              child: Text(weightInfo?.weightVal ?? '---------',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.right,
+                  style: Theme.of(context)
+                      .textTheme
+                      .headlineLarge
+                      ?.copyWith(
+                        fontSize: isMobile ? 48 : null,
+                        fontWeight: isMobile ? FontWeight.bold : null,
+                        color: isStart
+                            ? Theme.of(context)
+                                .colorScheme
+                                .onTertiaryFixedVariant
+                            : Theme.of(context)
+                                .colorScheme
+                                .error,
+                      )),
+            ),
+          )),
+          Container(
+            width: isMobile ? 40 : 80,
+            height: 80,
+            alignment: Alignment.bottomLeft,
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(weightInfo?.weightUnit ?? '----',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyLarge
+                      ?.apply(
+                        color: Theme.of(context)
+                            .colorScheme
+                            .onSurfaceVariant,
+                      )),
+            ),
+          )
         ],
       ),
     );

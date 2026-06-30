@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 
 class CustomElevatedButton extends StatelessWidget {
   final double btnWidth;
@@ -107,13 +107,15 @@ Widget getDialogTitle(
               const SizedBox(
                 width: 5,
               ),
-              SizedBox(
-                width: titleWidth,
-                child: Text(title,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                        fontSize: 18,
-                        color: Theme.of(context).colorScheme.primary)),
+              Flexible(
+                child: Container(
+                  constraints: BoxConstraints(maxWidth: titleWidth),
+                  child: Text(title,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                          fontSize: 18,
+                          color: Theme.of(context).colorScheme.primary)),
+                ),
               ),
             ],
           ),

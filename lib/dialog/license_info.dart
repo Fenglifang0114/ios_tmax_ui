@@ -1,4 +1,4 @@
-﻿import 'dart:io';
+import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -137,16 +137,16 @@ class LicenseInfoDialogState extends State<LicenseInfoDialog> {
     pidCtl.text = systemId + pId;
     return AlertDialog(
       title: getDialogTitle(
-          context, (localizedStrings?.gTitleLicense ?? "gTitleLicense"), Icons.key, 420),
+          context, (localizedStrings?.gTitleLicense ?? "gTitleLicense"), Icons.key, MediaQuery.of(context).size.width > 450 ? 420 : MediaQuery.of(context).size.width * 0.6),
       content: Container(
         height: 400,
-        width: 300,
+        width: double.maxFinite,
         decoration:
             BoxDecoration(color: Theme.of(context).colorScheme.surfaceTint),
         child: ListView(
           children: [
             SizedBox(
-              width: 300,
+              width: double.infinity,
               height: 40,
               child: TextField(
                 controller: pidCtl,
@@ -161,13 +161,9 @@ class LicenseInfoDialogState extends State<LicenseInfoDialog> {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(
-                  width: 18,
-                ),
                 (mySystemVersion != 1)
                     ? const SizedBox()
-                    : SizedBox(
-                        width: 200,
+                    : Expanded(
                         child: Text((localizedStrings?.gExpirationDate ?? "gExpirationDate"),
                             textAlign: TextAlign.left,
                             style: TextStyle(
@@ -177,10 +173,9 @@ class LicenseInfoDialogState extends State<LicenseInfoDialog> {
                       ),
                 (mySystemVersion != 1)
                     ? const SizedBox()
-                    : SizedBox(
-                        width: 200,
+                    : Expanded(
                         child: Text(myTConLicInfo.liceseDate,
-                            textAlign: TextAlign.center,
+                            textAlign: TextAlign.right,
                             style: TextStyle(
                               fontSize: 16,
                               color: Theme.of(context)
@@ -252,7 +247,7 @@ class LicenseInfoDialogState extends State<LicenseInfoDialog> {
               height: 10,
             ),
             SizedBox(
-              width: 400,
+              width: double.infinity,
               child: TextField(
                 readOnly: true,
                 controller: licCtl,
@@ -270,7 +265,7 @@ class LicenseInfoDialogState extends State<LicenseInfoDialog> {
               height: 20,
             ),
             SizedBox(
-              width: 200,
+              width: double.infinity,
               child: Text((localizedStrings?.gTipResult ?? "gTipResult"),
                   textAlign: TextAlign.center,
                   style: TextStyle(
@@ -279,7 +274,7 @@ class LicenseInfoDialogState extends State<LicenseInfoDialog> {
                   )),
             ),
             SizedBox(
-              width: 400,
+              width: double.infinity,
               child: TextField(
                 readOnly: true,
                 controller: resCtl,

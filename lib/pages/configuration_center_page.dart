@@ -1,4 +1,4 @@
-﻿//配置Config的页面 按年收费
+//配置Config的页面 按年收费
 
 import 'dart:io';
 import 'package:flutter/material.dart';
@@ -12,6 +12,7 @@ import 'package:t_max/dialog/license_info.dart';
 import 'package:t_max/eventbus/eventbus.dart';
 import 'package:t_max/functions/methods.dart';
 import 'package:t_max/widget/show_license_res.dart';
+import 'package:t_max/functions/adaptive.dart';
 
 class ConfigurationPage extends StatefulWidget {
   final Function(String) onNavigate;
@@ -216,9 +217,15 @@ class _ConfigurationPageState extends State<ConfigurationPage>
             // 点击卡片跳转页面
             formAppSetting = true;
             String route = "/settingsApp${tempMenu.routeName!}";
-            widget.onNavigate(route);
-
-            // goAppPage(tempMenu, context, widget.onNavigate);
+            if (Adaptive.isMobile(context)) {
+              Navigator.of(context, rootNavigator: true).push(
+                MaterialPageRoute(
+                  builder: (context) => buildPageContent(widget.onNavigate, route, widget.lastRouteName),
+                ),
+              );
+            } else {
+              widget.onNavigate(route);
+            }
           },
           child: AnimatedContainer(
               padding: EdgeInsets.all(20),
@@ -289,6 +296,97 @@ class _ConfigurationPageState extends State<ConfigurationPage>
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     allConfigMenus = getAllConfigMenus();
+    final bool isMobile = Adaptive.isMobile(context);
+
+    if (isMobile) {
+      return Scaffold(
+        backgroundColor: Colors.grey[100],
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          foregroundColor: Colors.black87,
+          elevation: 0,
+          leading: BackButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+          title: Text(
+            "Application", // Ideally localizedStrings?.menuApplication ?? "Application"
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          centerTitle: true,
+        ),
+        body: ListView(
+          padding: EdgeInsets.all(16),
+          children: allAppsMenus.where((menu) {
+            bool isAdded = selectedAppsPaidMenuIds.contains(menu.id);
+            bool isConfigCertified = getIsAppCertified(menu.id);
+            bool isFree = isFreeApp(menu.id);
+            bool isPermission = getUserPermission(menu.id);
+
+            return isAdded && isPermission && (isConfigCertified || isFree);
+          }).map((menu) {
+            return GestureDetector(
+              onTap: () {
+                formAppSetting = true;
+                String route = "/settingsApp${menu.routeName!}";
+                Navigator.of(context, rootNavigator: true).push(
+                  MaterialPageRoute(
+                    builder: (context) => buildPageContent(widget.onNavigate, menu.routeName, widget.lastRouteName),
+                  ),
+                );
+              },
+              child: Container(
+                margin: EdgeInsets.only(bottom: 12),
+                padding: EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Row(
+                  children: [
+                    getSvgIcon(
+                        menu.iconPath,
+                        32,
+                        32,
+                        colorScheme.primary),
+                    SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            menu.title,
+                            style: TextStyle(
+                              color: colorScheme.onSurface,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          SizedBox(height: 4),
+                          Text(
+                            menu.subtitle,
+                            style: TextStyle(
+                              color: colorScheme.onSurfaceVariant,
+                              fontSize: 14,
+                            ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }).toList(),
+        ),
+      );
+    }
 
     return Scaffold(
       body: Container(

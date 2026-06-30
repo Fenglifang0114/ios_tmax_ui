@@ -3,6 +3,7 @@ import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/data/language.dart';
 import 'package:t_max/data/routes_data.dart';
 import 'package:t_max/data/icons.dart';
+import 'package:t_max/functions/adaptive.dart';
 
 class MobileSettingPage extends StatefulWidget {
   final Function(String) onNavigate;
@@ -54,7 +55,15 @@ class _MobileSettingPageState extends State<MobileSettingPage> {
             child: GestureDetector(
               onTap: () {
                 if (menu.routeName != null) {
-                  widget.onNavigate(menu.routeName!);
+                  if (Adaptive.isMobile(context)) {
+                    Navigator.of(context, rootNavigator: true).push(
+                      MaterialPageRoute(
+                        builder: (context) => buildPageContent(widget.onNavigate, menu.routeName, widget.lastRouteName),
+                      ),
+                    );
+                  } else {
+                    widget.onNavigate(menu.routeName!);
+                  }
                 }
               },
               child: Container(

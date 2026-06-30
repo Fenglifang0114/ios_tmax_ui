@@ -13,9 +13,10 @@ import 'package:t_max/data/scalecmd_data.dart';
 import 'package:t_max/data/writelog.dart';
 import 'package:t_max/dialog/custom_dialog_tip.dart';
 import 'package:t_max/pages/btlist.dart';
-import 'package:t_max/pages/gif.dart';
 import 'package:t_max/widget/common_widget.dart';
 import 'package:t_max/widget/no_device_widget.dart';
+import 'package:t_max/widget/add_device_bottom_sheet.dart';
+import 'package:t_max/functions/adaptive.dart';
 import '../data/cominfoslist_data.dart';
 import '../data/device_data.dart';
 import '../data/downloadresponse.dart';
@@ -91,6 +92,7 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
   dynamic _eventbus9;
   dynamic _eventbus10;
   dynamic _eventbus11;
+  dynamic _eventbus12;
 
   Timer? checkIsOnlineTimer;
   List<String> comLists = [];
@@ -158,12 +160,16 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
           if (dataStr.isNotEmpty) {
             if (dataStr.contains('ok')) {
               selScaleId = -1;
-              showTipInfo((localizedStrings?.gTipDeleteOk ?? "gTipDeleteOk"), context);
+              showTipInfo(
+                  (localizedStrings?.gTipDeleteOk ?? "gTipDeleteOk"), context);
               PublicFunctions.getScaleList();
               return;
             }
             if (dataStr.contains('fail') && dataStr.contains('formula')) {
-              showTipInfo((localizedStrings?.fRawInUseDeleteErrorMsg ?? "fRawInUseDeleteErrorMsg"), context);
+              showTipInfo(
+                  (localizedStrings?.fRawInUseDeleteErrorMsg ??
+                      "fRawInUseDeleteErrorMsg"),
+                  context);
               return;
             }
 
@@ -177,6 +183,7 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
       if (mounted) {
         setState(() {
           isAddScale = false;
+          eventBus.fire(EventUiCmd('showScaffoldElements'));
           String dataStr = event.obj;
           if (dataStr.isNotEmpty) {
             if (dataStr.contains('scale list')) {
@@ -192,7 +199,8 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
               return;
             }
             dataStr.contains('ok')
-                ? showTipInfo((localizedStrings?.gTipGetIpOk ?? "gTipGetIpOk"), context)
+                ? showTipInfo(
+                    (localizedStrings?.gTipGetIpOk ?? "gTipGetIpOk"), context)
                 : showTipInfo(dataStr, context);
           }
         });
@@ -209,9 +217,13 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
             if (isTesting) {
               int scaleType = getScaleType();
               if (scaleType == 0) {
-                showTipInfo("${localizedStrings?.gSerialPort ?? 'Serial Port'} ${localizedStrings?.success ?? 'Success'}", context);
+                showTipInfo(
+                    "${localizedStrings?.gSerialPort ?? 'Serial Port'} ${localizedStrings?.success ?? 'Success'}",
+                    context);
               } else {
-                showTipInfo((localizedStrings?.gTipConnected ?? "gTipConnected"), context);
+                showTipInfo(
+                    (localizedStrings?.gTipConnected ?? "gTipConnected"),
+                    context);
               }
             }
           } else {
@@ -219,9 +231,13 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
             if (isTesting) {
               int scaleType = getScaleType();
               if (scaleType == 0) {
-                showTipInfo("${localizedStrings?.gSerialPort ?? 'Serial Port'} ${localizedStrings?.failure ?? 'Failure'}", context);
+                showTipInfo(
+                    "${localizedStrings?.gSerialPort ?? 'Serial Port'} ${localizedStrings?.failure ?? 'Failure'}",
+                    context);
               } else {
-                showTipInfo((localizedStrings?.gTipConnectFail ?? "gTipConnectFail"), context);
+                showTipInfo(
+                    (localizedStrings?.gTipConnectFail ?? "gTipConnectFail"),
+                    context);
               }
             }
           }
@@ -244,7 +260,10 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
 
           if (myComScaleInfo.isOnline) {
             myComScaleInfo.isOnline = false;
-            showTipInfo((localizedStrings?.gTipSerialPortDisconnected ?? "gTipSerialPortDisconnected"), context);
+            showTipInfo(
+                (localizedStrings?.gTipSerialPortDisconnected ??
+                    "gTipSerialPortDisconnected"),
+                context);
           }
           myComScaleInfo.isOnline = false;
           myComScaleSn.modelName = '';
@@ -317,14 +336,44 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
         OnlineInfo info = event.obj;
         if (info.scaleId == selScaleId) {
           setState(() {
-            if (info.factInfo?.modelName != null && info.factInfo!.modelName!.isNotEmpty) {
+            if (info.factInfo?.modelName != null &&
+                info.factInfo!.modelName!.isNotEmpty) {
               scaleModelCtl.text = info.factInfo!.modelName!;
             }
-            if (info.factInfo?.scaleSn != null && info.factInfo!.scaleSn!.isNotEmpty) {
+            if (info.factInfo?.scaleSn != null &&
+                info.factInfo!.scaleSn!.isNotEmpty) {
               snCtl.text = info.factInfo!.scaleSn!;
             }
           });
         }
+      }
+    });
+
+    _eventbus12 = eventBus.on<EventUiCmd>().listen((event) {
+      if (mounted && event.obj == 'showAddDevice') {
+        showModalBottomSheet(
+          context: context,
+          backgroundColor: Colors.transparent,
+          isScrollControlled: true,
+          builder: (context) {
+            return const AddDeviceBottomSheet();
+          },
+        ).then((value) {
+          if (value != null && value != "") {
+            setState(() {
+              addScaleType = value;
+              isAddScale = true;
+              eventBus.fire(EventUiCmd('hideScaffoldElements'));
+              selScaleId = -1;
+              isRename = false;
+              ipCtl.text = "";
+              snCtl.text = "";
+              portCtl.text = "";
+              macCtl.text = "";
+              btNameCtl.text = "";
+            });
+          }
+        });
       }
     });
   }
@@ -429,6 +478,7 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
     btNameCtl.dispose();
     _eventbus10?.cancel();
     _eventbus11?.cancel();
+    _eventbus12?.cancel();
     checkIsOnlineTimer?.cancel();
     super.dispose();
   }
@@ -509,7 +559,10 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
         final netConfig = scale.mediaConfig as NetworkMediaConfig;
         if (netConfig.ipAddress == ipCtl.text &&
             netConfig.port.toString() == portCtl.text) {
-          showTipInfo((localizedStrings?.ipAddressAndPortIsAlreadyInUse ?? "ipAddressAndPortIsAlreadyInUse"), context);
+          showTipInfo(
+              (localizedStrings?.ipAddressAndPortIsAlreadyInUse ??
+                  "ipAddressAndPortIsAlreadyInUse"),
+              context);
           return;
         }
       }
@@ -609,6 +662,8 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
   }
 
   void delScale() {
+    if (selScaleId == -1) return;
+
     Scale? delScaleInfo;
     for (var scale in myAllScalesList) {
       if (scale.scaleId == selScaleId) {
@@ -617,17 +672,19 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
       }
     }
 
-    if (delScaleInfo!.mediaConfig.type == btScaleType) {
+    if (delScaleInfo == null) return;
+
+    if (delScaleInfo.mediaConfig.type == btScaleType) {
       int scaleIdToDel = selScaleId; // 预先捕获 ID，防止延时期间 UI 状态改变
-      
+
       // 删除之前先关闭连续发送
       PublicFunctions.stopWeight(scaleIdToDel);
-      
+
       // 延迟一下确保关闭指令发出，然后再断开蓝牙连接并删除
       Future.delayed(const Duration(milliseconds: 500), () {
         // 显式断开蓝牙物理连接
         bluetoothManager.disconnect();
-        
+
         Future.delayed(const Duration(seconds: 2), () {
           DelScaleInfo delScale = DelScaleInfo();
           delScale.scaleId = scaleIdToDel;

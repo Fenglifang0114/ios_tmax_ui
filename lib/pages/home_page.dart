@@ -56,7 +56,6 @@ class MyHomePageState extends State<MyHomePage>
   dynamic _eventbus5;
   dynamic _eventbus6;
   dynamic _eventbus7;
-  dynamic _eventbus7;
   dynamic _eventbus8;
   dynamic _eventbus9;
   dynamic _eventbus10;
@@ -204,15 +203,15 @@ class MyHomePageState extends State<MyHomePage>
 
     eventBus.on<EventUiCmd>().listen((event) {
       if (mounted) {
-        if (event.cmd == 'hideScaffoldElements') {
+        if (event.obj == 'hideScaffoldElements') {
           setState(() {
             _hideScaffoldElements = true;
           });
-        } else if (event.cmd == 'showScaffoldElements') {
+        } else if (event.obj == 'showScaffoldElements') {
           setState(() {
             _hideScaffoldElements = false;
           });
-        } else if (event.cmd == 'showAddDevice') {
+        } else if (event.obj == 'showAddDevice') {
           // You can also handle 'showAddDevice' if needed elsewhere
         }
       }
@@ -444,9 +443,12 @@ class MyHomePageState extends State<MyHomePage>
                     }),
                     _buildDrawerItem(Icons.apps, "Application", () {
                       Navigator.pop(context);
-                      setState(() {
-                        _navigateContent('/setConfig');
-                      });
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => buildPageContent(_navigateContent, '/setConfig', null),
+                        ),
+                      );
                     }),
                     const Padding(
                       padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
@@ -456,9 +458,12 @@ class MyHomePageState extends State<MyHomePage>
                     _buildDrawerItem(Icons.receipt_long, "Log Management", () {}),
                     _buildDrawerItem(Icons.balance, "Function Center", () {
                       Navigator.pop(context);
-                      setState(() {
-                        _navigateContent('/settingsFunction');
-                      });
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => buildPageContent(_navigateContent, '/settingsFunction', null),
+                        ),
+                      );
                     }),
                     _buildDrawerItem(Icons.lock_outline, "Change password", () {}),
                     _buildDrawerItem(Icons.language, "Set Language", () {
@@ -485,13 +490,33 @@ class MyHomePageState extends State<MyHomePage>
       appBar: (isMobile && _hideScaffoldElements) ? null : PreferredSize(
         preferredSize: Size.fromHeight(isMobile ? 56 : 40),
         child: isMobile ? AppBar(
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            ],
+          backgroundColor: Colors.white,
+          foregroundColor: Colors.black87,
+          elevation: 0,
+          leading: Builder(
+            builder: (context) => IconButton(
+              icon: const Icon(Icons.grid_view_outlined, color: Colors.black87),
+              onPressed: () => Scaffold.of(context).openDrawer(),
+            ),
           ),
+          title: Text(
+            "Connecting",
+            style: Theme.of(context).textTheme.titleLarge!.copyWith(color: Colors.black87, fontWeight: FontWeight.bold, fontSize: 18),
+          ),
+          centerTitle: true,
           actions: [
-             _buildTopBarActions(colorScheme, textTheme),
+            IconButton(
+              icon: const Icon(Icons.help_outline, color: Colors.black87),
+              onPressed: () {},
+            ),
+            if (_selectedNavRoute == '/multiScaleManagement')
+              IconButton(
+                icon: const Icon(Icons.add_circle_outline, color: Colors.black87),
+                onPressed: () {
+                  eventBus.fire(EventUiCmd('showAddDevice'));
+                },
+              ),
+            const SizedBox(width: 8),
           ],
         ) : DraggableTitleBar(title: ''),
       ),

@@ -178,7 +178,7 @@ class WeightModePageState extends State<WeightModePage> {
                         padding: const EdgeInsets.only(left: regularPadding),
                         child: Builder(builder: (context) {
                           return IconButton(
-                            icon: Icon(Icons.menu_open,
+                            icon: Icon(Icons.scale_outlined,
                                 color: Theme.of(context).colorScheme.primary,
                                 size: 28),
                             onPressed: () => Scaffold.of(context).openDrawer(),

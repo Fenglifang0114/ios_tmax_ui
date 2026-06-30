@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/data/icons.dart';
 import 'package:t_max/data/language.dart';
@@ -16,6 +17,7 @@ import 'package:t_max/eventbus/eventbus.dart';
 import 'package:t_max/functions/methods.dart';
 import 'package:t_max/widget/dialog_head_style.dart';
 import 'package:t_max/widget/show_license_res.dart';
+import 'package:t_max/functions/adaptive.dart';
 
 class AppsSettingPage extends StatefulWidget {
   final Function(String) onNavigate;
@@ -114,6 +116,7 @@ class _AppsSettingPageState extends State<AppsSettingPage> {
 
   @override
   void dispose() {
+    eventBus.fire(EventUiCmd('showScaffoldElements'));
     eventbus1.cancel();
     eventbus2.cancel();
     activationFileCtl.dispose();
@@ -810,8 +813,7 @@ class _AppsSettingPageState extends State<AppsSettingPage> {
                             child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  SizedBox(
-                                    width: 400,
+                                  Expanded(
                                     child: showInputBox(
                                         activationFileCtl,
                                         localizedStrings
@@ -1071,6 +1073,11 @@ class _AppsSettingPageState extends State<AppsSettingPage> {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     allAppsMenus = getAllAppsMenus();
+    final bool isMobile = Adaptive.isMobile(context);
+
+    if (isMobile) {
+      return _buildMobileFunctionCenter(context, colorScheme);
+    }
 
     return Scaffold(
       body: Column(children: [
@@ -1087,6 +1094,233 @@ class _AppsSettingPageState extends State<AppsSettingPage> {
               ])),
         ),
       ]),
+    );
+  }
+
+  Widget _buildMobileFunctionCenter(BuildContext context, ColorScheme colorScheme) {
+    List<Widget> groups = [];
+
+    if (pressedConfig) {
+      // Configuration lists
+      final freeConfigMenus = allConfigMenus.where((menu) => freeConfigMenuIds.contains(menu.id)).toList();
+      final paidConfigMenus = allConfigMenus.where((menu) => paidConfigMenuIds.contains(menu.id)).toList();
+      groups.add(_buildMobileGroup((localizedStrings?.gTipFreeConfiguration ?? "Free Configuration"), freeConfigMenus, false, colorScheme));
+      groups.add(_buildMobileGroup((localizedStrings?.gTipAdvancedConfiguration ?? "Advanced Configuration"), paidConfigMenus, false, colorScheme));
+    } else {
+      // Application lists
+      final freeAppsMenus = allAppsMenus.where((menu) => freeAppMenuIds.contains(menu.id)).toList();
+      final retailAppsMenus = allAppsMenus.where((menu) => retailAppMenuIds.contains(menu.id)).toList();
+      final industrialAppsMenus = allAppsMenus.where((menu) => industrialAppMenuIds.contains(menu.id)).toList();
+      groups.add(_buildMobileGroup((localizedStrings?.gTipFreeApplications ?? "Free Applications"), freeAppsMenus, true, colorScheme));
+      groups.add(_buildMobileGroup((localizedStrings?.gTipRetailApplications ?? "Retail Applications"), retailAppsMenus, true, colorScheme));
+      groups.add(_buildMobileGroup((localizedStrings?.gTipIndustrialApplications ?? "Industrial Applications"), industrialAppsMenus, true, colorScheme));
+    }
+
+    return Scaffold(
+      backgroundColor: Colors.grey[100],
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black87,
+        elevation: 0,
+        leading: BackButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+        title: Text(
+          (localizedStrings?.gBtnConfigSetting ?? "Function Center"),
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+        ),
+        centerTitle: true,
+      ),
+      body: Column(
+        children: [
+          // Segmented Control
+          Container(
+            color: Colors.white,
+            padding: const EdgeInsets.symmetric(vertical: 12.0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: GestureDetector(
+                    onTap: () => setState(() => pressedConfig = true),
+                    child: Container(
+                      margin: const EdgeInsets.only(left: 16.0, right: 8.0),
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      decoration: BoxDecoration(
+                        color: pressedConfig ? colorScheme.primary : Colors.grey[200],
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      alignment: Alignment.center,
+                      child: Text(
+                        (localizedStrings?.menuConfiguration ?? "Configuration"),
+                        style: TextStyle(
+                          color: pressedConfig ? Colors.white : Colors.black87,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: GestureDetector(
+                    onTap: () => setState(() => pressedConfig = false),
+                    child: Container(
+                      margin: const EdgeInsets.only(left: 8.0, right: 16.0),
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      decoration: BoxDecoration(
+                        color: !pressedConfig ? colorScheme.primary : Colors.grey[200],
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      alignment: Alignment.center,
+                      child: Text(
+                        (localizedStrings?.gTitleAppConfig ?? "Application"),
+                        style: TextStyle(
+                          color: !pressedConfig ? Colors.white : Colors.black87,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          // Activation Block
+          Container(
+            color: Colors.white,
+            padding: const EdgeInsets.all(16.0),
+            margin: const EdgeInsets.only(top: 8.0),
+            child: Row(
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      (localizedStrings?.gSystemId ?? "System ID") + ":",
+                      style: TextStyle(color: Colors.grey[600], fontSize: 12),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      myLicenseInfo.pId,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        color: colorScheme.primary,
+                      ),
+                    ),
+                  ],
+                ),
+                const Spacer(),
+                ElevatedButton(
+                  onPressed: showActivateDialog,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: colorScheme.primary,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                  ),
+                  child: Text(localizedStrings?.gBtnActivate ?? "Activate"),
+                ),
+              ],
+            ),
+          ),
+          // Grouped Lists
+          Expanded(
+            child: ListView(
+              padding: EdgeInsets.zero,
+              children: groups,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMobileGroup(String title, List<RouteData> items, bool isApp, ColorScheme colorScheme) {
+    if (items.isEmpty) return const SizedBox.shrink();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 16.0, top: 16.0, bottom: 8.0),
+          child: Text(
+            title,
+            style: TextStyle(color: Colors.grey[600], fontSize: 14, fontWeight: FontWeight.bold),
+          ),
+        ),
+        Container(
+          color: Colors.white,
+          child: Column(
+            children: items.map((menu) {
+              bool isAdded = isApp ? getIsAddedApp(menu.id) : getIsAddedConfig(menu.id);
+              bool isCertified = isApp ? getIsAppCertified(menu.id) : myTConLicInfo.isValid;
+              bool isFree = isApp ? isFreeApp(menu.id) : isFreeConfig(menu.id);
+              bool isEnabled = isCertified || isFree;
+
+              return Column(
+                children: [
+                  ListTile(
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    leading: getSvgIcon(menu.iconPath, 28, 28, colorScheme.primary),
+                    title: Row(
+                      children: [
+                        Flexible(
+                          child: Text(
+                            menu.title,
+                            style: const TextStyle(fontSize: 16),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        if (isEnabled)
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: Colors.green.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: Text(
+                              localizedStrings?.gTipActivated ?? "Activated",
+                              style: const TextStyle(color: Colors.green, fontSize: 10),
+                            ),
+                          )
+                        else
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: Colors.red.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: Text(
+                              localizedStrings?.gTipUnactivated ?? "Unactivated",
+                              style: const TextStyle(color: Colors.red, fontSize: 10),
+                            ),
+                          ),
+                      ],
+                    ),
+                    trailing: Switch(
+                      value: isAdded,
+                      activeColor: colorScheme.primary,
+                      onChanged: !isEnabled ? null : (val) {
+                        if (isApp) {
+                          if (val) addSelectApp(menu.id);
+                          else removeSelectApp(menu.id);
+                        } else {
+                          if (val) addSelectConfig(menu.id);
+                          else removeSelectConfig(menu.id);
+                        }
+                      },
+                    ),
+                  ),
+                  if (menu != items.last)
+                    const Divider(height: 1, indent: 56), // match leading icon width + padding
+                ],
+              );
+            }).toList(),
+          ),
+        ),
+      ],
     );
   }
 

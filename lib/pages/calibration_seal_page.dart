@@ -18,6 +18,8 @@ import '../../eventbus/eventbus.dart';
 import '../../functions/methods.dart';
 import '../data/language.dart';
 import '../data/timer_manager.dart';
+import 'package:t_max/functions/adaptive.dart';
+import 'package:t_max/data/manager_scale_channel.dart';
 
 class CalibrationSealPage extends StatefulWidget {
   const CalibrationSealPage({super.key});
@@ -246,7 +248,13 @@ class CalibrationSealPageState extends State<CalibrationSealPage> {
       if (myAllScalesList.isEmpty) {
         showTipInfo((localizedStrings?.gTipNoDeviceAddFirst ?? "gTipNoDeviceAddFirst"), context);
       } else {
-        if (selScaleId == -1) {
+        if (Adaptive.isMobile(context)) {
+          setState(() {
+            selScaleId = myDefScaleInfo.defScaleId ?? myAllScalesList.first.scaleId;
+            enabledGetInfo = false;
+            PublicFunctions.getSealStatus(selScaleId);
+          });
+        } else if (selScaleId == -1) {
           showTipInfo((localizedStrings?.gTipSelectDeviceFirst ?? "gTipSelectDeviceFirst"), context);
         }
       }
@@ -269,6 +277,9 @@ class CalibrationSealPageState extends State<CalibrationSealPage> {
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
+    if (Adaptive.isMobile(context)) {
+      return mobileLayout(context, width);
+    }
     return Scaffold(
       body: firstLayout(context, width),
     );
@@ -799,6 +810,298 @@ class CalibrationSealPageState extends State<CalibrationSealPage> {
       selScaleId = scaleId;
       sealLogInfoList = [];
     });
+  }
+
+  Widget mobileLayout(BuildContext context, double width) {
+    return Scaffold(
+      backgroundColor: Colors.grey[100],
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black87,
+        elevation: 0,
+        leading: BackButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            getSvgIcon(sealManagmentSvgIcon(), 24, 24, Theme.of(context).colorScheme.primary),
+            const SizedBox(width: 8),
+            Text(
+              localizedStrings?.menuSealManagment ?? "Calibration Lock",
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
+        centerTitle: true,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.help_outline, color: Theme.of(context).colorScheme.primary),
+            onPressed: () {
+              // Help action
+            },
+          )
+        ],
+      ),
+      body: Column(
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Hardware Calibration Switch Card
+                  Container(
+                    margin: const EdgeInsets.only(bottom: 16),
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: Colors.blue.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: getSvgIcon(hardwareSealSvgIcon(), 28, 28, Colors.blue),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                localizedStrings?.hardwareSeal ?? "Hardware Calibration Switch",
+                                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                hardSealStatus == "true"
+                                    ? localizedStrings?.sealed ?? "Sealed"
+                                    : hardSealStatus == "false"
+                                        ? localizedStrings?.notSealed ?? "Not Sealed"
+                                        : localizedStrings?.toBeVerified ?? "To be verified",
+                                style: TextStyle(
+                                  color: hardSealStatus == "true"
+                                      ? Colors.red
+                                      : hardSealStatus == "false"
+                                          ? Colors.green
+                                          : Colors.blue,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  // Software Calibration Lock Card
+                  Container(
+                    margin: const EdgeInsets.only(bottom: 24),
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: Colors.green.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: getSvgIcon(softwareSealSvgIcon(), 28, 28, Colors.green),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                localizedStrings?.softwareSeal ?? "Software Calibration Lock",
+                                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                softSealStatus == "true"
+                                    ? localizedStrings?.softwareLocked ?? "Software Locked"
+                                    : softSealStatus == "false"
+                                        ? localizedStrings?.softwareUnlocked ?? "Software Unlocked"
+                                        : localizedStrings?.toBeVerified ?? "To be verified",
+                                style: TextStyle(
+                                  color: softSealStatus == "true"
+                                      ? Colors.red
+                                      : softSealStatus == "false"
+                                          ? Colors.green
+                                          : Colors.blue,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  // Operation Record
+                  Text(
+                    localizedStrings?.fTipOperation ?? "Operation Record",
+                    style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.grey),
+                  ),
+                  const SizedBox(height: 8),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: ListView.separated(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: sealLogInfoList.length,
+                      separatorBuilder: (context, index) => const Divider(height: 1, indent: 16, endIndent: 16),
+                      itemBuilder: (context, index) {
+                        final log = sealLogInfoList[index];
+                        final isSeal = log.operation == "seal";
+                        return ListTile(
+                          title: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  isSeal
+                                      ? localizedStrings?.fTipSeal ?? "Seal"
+                                      : localizedStrings?.fTipUnseal ?? "Unseal",
+                                  style: TextStyle(
+                                    color: isSeal ? Colors.red : Colors.green,
+                                    fontSize: 15,
+                                  ),
+                                ),
+                              ),
+                              Text(
+                                log.operator ?? "",
+                                style: const TextStyle(fontSize: 14, color: Colors.black87),
+                              ),
+                            ],
+                          ),
+                          subtitle: Text(
+                            '${log.operationTime!.year}/${log.operationTime!.month.toString().padLeft(2, '0')}/${log.operationTime!.day.toString().padLeft(2, '0')} ${log.operationTime!.hour.toString().padLeft(2, '0')}:${log.operationTime!.minute.toString().padLeft(2, '0')}',
+                            style: const TextStyle(fontSize: 12, color: Colors.grey),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          // Bottom Action Buttons
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 10,
+                  offset: const Offset(0, -5),
+                ),
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SizedBox(
+                  width: double.infinity,
+                  height: 48,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue[800],
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    ),
+                    onPressed: enabledGetInfo
+                        ? () {
+                            if (selScaleId == -1) {
+                              showTipInfo(localizedStrings?.gTipSelectDeviceFirst ?? "", context);
+                              return;
+                            }
+                            PublicFunctions.getSealStatus(selScaleId);
+                            setState(() {
+                              enabledGetInfo = false;
+                            });
+                          }
+                        : null,
+                    child: Text(localizedStrings?.checkSeal ?? "Check Seal", style: const TextStyle(fontSize: 16)),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                SizedBox(
+                  width: double.infinity,
+                  height: 48,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: softSealStatus == "false" && enabledGetInfo ? Colors.green : Colors.grey[300],
+                      foregroundColor: Colors.white,
+                      disabledBackgroundColor: Colors.grey[300],
+                      disabledForegroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    ),
+                    onPressed: softSealStatus == "false" && enabledGetInfo
+                        ? () {
+                            String sealCode = getSealCode();
+                            if (sealCode.isEmpty) return;
+                            PublicFunctions.softSeal(selScaleId, sealCode);
+                            setState(() {
+                              enabledGetInfo = false;
+                            });
+                          }
+                        : null,
+                    child: Text(localizedStrings?.applySoftwareSeal ?? "Enable Software Calibration Lock", style: const TextStyle(fontSize: 16)),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                SizedBox(
+                  width: double.infinity,
+                  height: 48,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: softSealStatus == "true" && enabledGetInfo ? Colors.green : Colors.grey[300],
+                      foregroundColor: Colors.white,
+                      disabledBackgroundColor: Colors.grey[300],
+                      disabledForegroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    ),
+                    onPressed: softSealStatus == "true" && enabledGetInfo
+                        ? () {
+                            String sealCode = getSealCode();
+                            if (sealCode.isEmpty) return;
+                            PublicFunctions.removeSoftSeal(selScaleId, sealCode);
+                            setState(() {
+                              enabledGetInfo = false;
+                            });
+                          }
+                        : null,
+                    child: Text(localizedStrings?.removeSoftwareSeal ?? "Disable Software Calibration Lock", style: const TextStyle(fontSize: 16)),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Color _getDeptColor(String dept) {

@@ -28,10 +28,11 @@ const bool isServiceVersion = true; //是否是服务版本
 /// 限制应用程序单例运行 (通过检测端口绑定) 并启动主界面的 Route 容器。
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   FlutterError.onError = (FlutterErrorDetails details) {
     FlutterError.presentError(details);
-    writelog("Flutter Error: ${details.exceptionAsString()}\nStacktrace: ${details.stack}");
+    writelog(
+        "Flutter Error: ${details.exceptionAsString()}\nStacktrace: ${details.stack}");
     debugPrint("Flutter Error: ${details.exceptionAsString()}");
   };
 
@@ -42,7 +43,9 @@ Future<void> main() async {
         padding: const EdgeInsets.all(20),
         child: SingleChildScrollView(
           child: Text(
-            details.exceptionAsString() + '\n' + (details.stack?.toString() ?? ''),
+            details.exceptionAsString() +
+                '\n' +
+                (details.stack?.toString() ?? ''),
             style: const TextStyle(color: Colors.white, fontSize: 14),
           ),
         ),
@@ -112,7 +115,7 @@ Future<void> main() async {
       exit(0);
     }
   }
-  
+
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String savedLanguage = prefs.getString('language') ?? 'en_US';
   String savedDarkMode = prefs.getString('darkMode') ?? 'false';

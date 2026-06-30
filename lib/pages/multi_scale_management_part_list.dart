@@ -13,15 +13,18 @@ extension MultiScaleManagementListExt on MultiScaleManagementState {
           children: [
             // 增加一个返回按钮
             Container(
-              height: 50,
               color: Theme.of(context).colorScheme.surface,
-              child: Row(
+              padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+              child: SizedBox(
+                height: 50,
+                child: Row(
                 children: [
                   IconButton(
                     icon: Icon(Icons.arrow_back),
                     onPressed: () {
                       setState(() {
                         selScaleId = -1;
+                        eventBus.fire(EventUiCmd('showScaffoldElements'));
                       });
                     },
                   ),
@@ -29,16 +32,20 @@ extension MultiScaleManagementListExt on MultiScaleManagementState {
                   Spacer(),
                   IconButton(
                     icon: Icon(Icons.delete_outline, color: Theme.of(context).colorScheme.error),
-                    onPressed: () {
-                      setState(() {
-                        isDel = true;
-                        delScale();
-                        selScaleId = -1; // 删除后返回列表
-                      });
-                    },
+                    onPressed: isDel
+                        ? null
+                        : () {
+                            setState(() {
+                              isDel = true;
+                              delScale();
+                              selScaleId = -1; // 删除后返回列表
+                              eventBus.fire(EventUiCmd('showScaffoldElements'));
+                            });
+                          },
                   ),
                   SizedBox(width: 8),
                 ],
+              ),
               ),
             ),
             Expanded(
@@ -52,18 +59,13 @@ extension MultiScaleManagementListExt on MultiScaleManagementState {
         );
       } else {
         // 列表页
-        return Column(
-          children: [
-            Expanded(
-              child: Column(
-                children: [
-                  SizedBox(height: regularPadding),
-                  showAddScaleBtn(),
-                  Expanded(child: showScaleList(maxWidth)),
-                ],
-              ),
-            ),
-          ],
+        return Container(
+          color: Colors.white, // White background as per reference image
+          child: Column(
+            children: [
+              Expanded(child: showScaleList(maxWidth)),
+            ],
+          ),
         );
       }
     }
@@ -251,6 +253,7 @@ extension MultiScaleManagementListExt on MultiScaleManagementState {
                       setState(() {
                         isRename = false;
                         selScaleId = scale.scaleId;
+                        eventBus.fire(EventUiCmd('hideScaffoldElements'));
                         scaleNameCtl.text = scale.scaleName;
                         scaleModelCtl.text = scale.scaleModel;
                         snCtl.text = scale.scaleSn;
@@ -282,11 +285,16 @@ extension MultiScaleManagementListExt on MultiScaleManagementState {
                     },
                     child: Container(
                       height: scaleItemHeight,
-                      color: !isSelect
-                          ? Theme.of(context).colorScheme.surfaceContainerLow
-                          : scale.isOnline
-                              ? Theme.of(context).colorScheme.primary
-                              : Theme.of(context).colorScheme.error,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        border: Border(
+                          bottom: BorderSide(
+                            color: Colors.grey.withOpacity(0.2),
+                            width: 1,
+                          ),
+                        ),
+                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
                       child: Row(
                         children: [
                           Container(
@@ -296,109 +304,68 @@ extension MultiScaleManagementListExt on MultiScaleManagementState {
                               child: Container(
                                   decoration: BoxDecoration(
                                     borderRadius:
-                                        BorderRadius.all(Radius.circular(4)),
-                                    color: !isSelect
-                                        ? Theme.of(context)
-                                            .colorScheme
-                                            .surfaceContainerLowest
-                                        : Theme.of(context)
-                                            .colorScheme
-                                            .surface
-                                            .withOpacity(0.1),
+                                        BorderRadius.all(Radius.circular(8)),
+                                    color: Color(0xFF0D558E), // Blue background from image
                                   ),
-                                  width: scaleInnerItemHeight,
-                                  height: scaleInnerItemHeight,
+                                  width: 48,
+                                  height: 48,
                                   child: scale.tMedia == 0
                                       ? Container(
                                           alignment: Alignment.center,
-                                          width: iconMenuSize,
-                                          height: iconMenuSize,
                                           child: getSvgIcon(
                                               serialPortSvgIcon(),
-                                              iconMenuSize,
-                                              iconMenuSize,
-                                              (!isSelect)
-                                                  ? Theme.of(context)
-                                                      .colorScheme
-                                                      .primary
-                                                  : Theme.of(context)
-                                                      .colorScheme
-                                                      .onPrimary))
+                                              24,
+                                              24,
+                                              Colors.white))
                                       : scale.tMedia == 1
                                           ? Container(
                                               alignment: Alignment.center,
-                                              width: iconMenuSize,
-                                              height: iconMenuSize,
                                               child: getSvgIcon(
                                                   networkSvgIcon(),
-                                                  iconMenuSize,
-                                                  iconMenuSize,
-                                                  (!isSelect)
-                                                      ? Theme.of(context)
-                                                          .colorScheme
-                                                          .primary
-                                                      : Theme.of(context)
-                                                          .colorScheme
-                                                          .onPrimary))
+                                                  24,
+                                                  24,
+                                                  Colors.white))
                                           : Container(
                                               alignment: Alignment.center,
-                                              width: iconMenuSize,
-                                              height: iconMenuSize,
                                               child: getSvgIcon(
                                                   btSvgIcon(),
-                                                  iconMenuSize,
-                                                  iconMenuSize,
-                                                  (!isSelect)
-                                                      ? Theme.of(context)
-                                                          .colorScheme
-                                                          .primary
-                                                      : Theme.of(context)
-                                                          .colorScheme
-                                                          .onPrimary)))),
+                                                  24,
+                                                  24,
+                                                  Colors.white)))),
+                          SizedBox(width: 16),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(
                                   scale.scaleName,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodySmall!
-                                      .apply(
-                                        color: !isSelect
-                                            ? Theme.of(context)
-                                                .colorScheme
-                                                .primary
-                                            : Theme.of(context)
-                                                .colorScheme
-                                                .onPrimary,
-                                      ),
+                                  style: TextStyle(
+                                    color: Colors.black87,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w500,
+                                  ),
                                   overflow: TextOverflow.ellipsis,
                                 ),
+                                SizedBox(height: 4),
                                 Text(
                                   scale.isOnline
-                                      ? (localizedStrings?.gTipOnline ?? "gTipOnline")
-                                      : (localizedStrings?.gTipOffline ?? "gTipOffline"),
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodySmall!
-                                      .apply(
-                                        color: isSelect
-                                            ? Theme.of(context)
-                                                .colorScheme
-                                                .onPrimary
-                                            : scale.isOnline
-                                                ? Theme.of(context)
-                                                    .colorScheme
-                                                    .onTertiaryFixedVariant
-                                                : Theme.of(context)
-                                                    .colorScheme
-                                                    .error,
-                                      ),
+                                      ? "online"
+                                      : "offline",
+                                  style: TextStyle(
+                                    color: scale.isOnline
+                                        ? Color(0xFF00B074) // Green
+                                        : Color(0xFFFF4B4B), // Red
+                                    fontSize: 14,
+                                  ),
                                 ),
                               ],
                             ),
+                          ),
+                          Icon(
+                            Icons.chevron_right,
+                            color: Colors.grey,
+                            size: 24,
                           ),
                         ],
                       ),
