@@ -168,24 +168,34 @@ class WeightModePageState extends State<WeightModePage> {
         color: Theme.of(context).colorScheme.surface,
         child: Column(
           children: [
-            pageHeadInfo(context, isMobile ? width : width - headWidthPadding,
-                localizedStrings?.menuWeighing ?? 'Weighing', '', () {
-              formAppSetting = false;
-              widget.onNavigate(widget.lastRouteName);
-            },
-                leading: isMobile
-                    ? Padding(
-                        padding: const EdgeInsets.only(left: regularPadding),
-                        child: Builder(builder: (context) {
-                          return IconButton(
-                            icon: Icon(Icons.scale_outlined,
-                                color: Theme.of(context).colorScheme.primary,
-                                size: 28),
-                            onPressed: () => Scaffold.of(context).openDrawer(),
-                          );
-                        }),
-                      )
-                    : null),
+            SafeArea(
+              bottom: false,
+              child: pageHeadInfo(
+                  context,
+                  isMobile ? width : width - headWidthPadding,
+                  localizedStrings?.menuWeighing ?? 'Weighing',
+                  localizedStrings?.gTipWeighingPageHelp ?? '', () {
+                formAppSetting = false;
+                if (isMobile) {
+                  Navigator.pop(context);
+                } else {
+                  widget.onNavigate(widget.lastRouteName);
+                }
+              },
+                  leading: isMobile
+                      ? Padding(
+                          padding: const EdgeInsets.only(left: regularPadding),
+                          child: Builder(builder: (context) {
+                            return IconButton(
+                              icon: Icon(Icons.scale_outlined,
+                                  color: Theme.of(context).colorScheme.primary,
+                                  size: 28),
+                              onPressed: () => Scaffold.of(context).openDrawer(),
+                            );
+                          }),
+                        )
+                      : null),
+            ),
             Container(
               height: regularPadding,
               color: Theme.of(context).colorScheme.surfaceDim,
