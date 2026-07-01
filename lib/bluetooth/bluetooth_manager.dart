@@ -16,10 +16,10 @@ class BluetoothManager {
   factory BluetoothManager() => _instance;
   BluetoothManager._internal();
 
-  // 参考 test_bt 的配置
-  static const String targetServiceUUID = "A002";
-  static const String charReadUUID = "C305";
-  static const String charWriteUUID = "C304";
+  // 支持两套蓝牙模块: A002(C305/C304) 和 FFE0(FFE4/FFE9)
+  static const List<String> targetServiceUUIDs = ["A002", "FFE0"];
+  static const List<String> charReadUUIDs = ["C305", "FFE4"];
+  static const List<String> charWriteUUIDs = ["C304", "FFE9"];
 
   BluetoothDevice? _device;
   BluetoothCharacteristic? _readChar;
@@ -192,14 +192,15 @@ class BluetoothManager {
       
       BluetoothService? targetService;
       for (var s in services) {
-        if (s.uuid.toString().toUpperCase().contains(targetServiceUUID)) {
+        String sUUID = s.uuid.toString().toUpperCase();
+        if (targetServiceUUIDs.any((uuid) => sUUID.contains(uuid))) {
           targetService = s;
           break;
         }
       }
 
       if (targetService == null) {
-        update("错误: 未找到目标服务 $targetServiceUUID");
+        update("错误: 未找到目标服务 ${targetServiceUUIDs.join(' 或 ')}");
         isConnecting = false;
         finalUpdate(false, reason: localizedStrings?.btErrNoService);
         return false;
@@ -211,9 +212,9 @@ class BluetoothManager {
       _writeChar = null;
       for (var c in targetService.characteristics) {
         String cUUID = c.uuid.toString().toUpperCase();
-        if (cUUID.contains(charReadUUID)) {
+        if (charReadUUIDs.any((uuid) => cUUID.contains(uuid))) {
           _readChar = c;
-        } else if (cUUID.contains(charWriteUUID)) {
+        } else if (charWriteUUIDs.any((uuid) => cUUID.contains(uuid))) {
           _writeChar = c;
         }
       }
