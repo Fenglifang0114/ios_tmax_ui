@@ -1043,6 +1043,7 @@ class _AppsSettingPageState extends State<AppsSettingPage> {
                         ? Theme.of(context).colorScheme.primary
                         : Theme.of(context).colorScheme.onSurface))),
 
+        /*
         SizedBox(
           height: 20,
           child: VerticalDivider(
@@ -1061,6 +1062,7 @@ class _AppsSettingPageState extends State<AppsSettingPage> {
                     color: !pressedConfig
                         ? Theme.of(context).colorScheme.primary
                         : Theme.of(context).colorScheme.onSurface))),
+        */
 
         SizedBox(
           width: regularPadding,
@@ -1102,8 +1104,8 @@ class _AppsSettingPageState extends State<AppsSettingPage> {
 
     if (pressedConfig) {
       // Configuration lists
-      final freeConfigMenus = allConfigMenus.where((menu) => freeConfigMenuIds.contains(menu.id)).toList();
-      final paidConfigMenus = allConfigMenus.where((menu) => paidConfigMenuIds.contains(menu.id)).toList();
+      final freeConfigMenus = allConfigMenus.where((menu) => freeConfigMenuIds.contains(menu.id) && menu.id == MenuId.sealManagmentPage).toList();
+      final paidConfigMenus = allConfigMenus.where((menu) => paidConfigMenuIds.contains(menu.id) && menu.id == MenuId.sealManagmentPage).toList();
       groups.add(_buildMobileGroup((localizedStrings?.gTipFreeConfiguration ?? "Free Configuration"), freeConfigMenus, false, colorScheme));
       groups.add(_buildMobileGroup((localizedStrings?.gTipAdvancedConfiguration ?? "Advanced Configuration"), paidConfigMenus, false, colorScheme));
     } else {
@@ -1135,7 +1137,8 @@ class _AppsSettingPageState extends State<AppsSettingPage> {
       ),
       body: Column(
         children: [
-          // Segmented Control
+          // Segmented Control (Hidden per user request)
+          /*
           Container(
             color: Colors.white,
             padding: const EdgeInsets.symmetric(vertical: 12.0),
@@ -1186,6 +1189,7 @@ class _AppsSettingPageState extends State<AppsSettingPage> {
               ],
             ),
           ),
+          */
           // Activation Block
           Container(
             color: Colors.white,
@@ -1369,7 +1373,7 @@ class _AppsSettingPageState extends State<AppsSettingPage> {
                         // 过滤出免费的应用
                         final freeConfigMenus = allConfigMenus
                             .where(
-                                (menu) => freeConfigMenuIds.contains(menu.id))
+                                (menu) => freeConfigMenuIds.contains(menu.id) && menu.id == MenuId.sealManagmentPage)
                             .toList();
                         return SingleChildScrollView(
                           child: Wrap(
@@ -1432,7 +1436,7 @@ class _AppsSettingPageState extends State<AppsSettingPage> {
                         // 过滤出免费的应用
                         final paidConfigMenus = allConfigMenus
                             .where(
-                                (menu) => paidConfigMenuIds.contains(menu.id))
+                                (menu) => paidConfigMenuIds.contains(menu.id) && menu.id == MenuId.sealManagmentPage)
                             .toList();
                         return SingleChildScrollView(
                           child: Wrap(

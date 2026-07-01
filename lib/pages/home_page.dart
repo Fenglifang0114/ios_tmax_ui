@@ -41,8 +41,7 @@ class MyHomePage extends StatefulWidget {
   MyHomePageState createState() => MyHomePageState();
 }
 
-class MyHomePageState extends State<MyHomePage>
-    with WindowLifecycleMixin {
+class MyHomePageState extends State<MyHomePage> with WindowLifecycleMixin {
   String _selectedNavRoute = '/';
   String lastRouteName = defualtSelectPage; //闄や簡璁剧疆澶栫殑鏈€鍚庝竴涓矾鐢?
 
@@ -86,8 +85,6 @@ class MyHomePageState extends State<MyHomePage>
       });
     }
   }
-
-
 
   @override
   void initState() {
@@ -190,7 +187,9 @@ class MyHomePageState extends State<MyHomePage>
 
     _eventbus9 = eventBus.on<EventServiceOff>().listen((event) {
       setState(() {
-        showServiceErrorDialog(context, (localizedStrings?.gTipServiceOff ?? "gTipServiceOff"),
+        showServiceErrorDialog(
+            context,
+            (localizedStrings?.gTipServiceOff ?? "gTipServiceOff"),
             (localizedStrings?.gTitleConfirm ?? "gTitleConfirm"));
       });
     });
@@ -292,7 +291,9 @@ class MyHomePageState extends State<MyHomePage>
     }
 
     // 鐗规畩澶勭悊"澶氬彴绉ょ鐞?缁?- 鐩存帴浣滀负鑿滃崟椤硅烦杞?
-    if (group.title == (localizedStrings?.menuMultiScaleManagement ?? "menuMultiScaleManagement")) {
+    if (group.title ==
+        (localizedStrings?.menuMultiScaleManagement ??
+            "menuMultiScaleManagement")) {
       // 鑾峰彇绗竴涓湁鏁堣矾鐢遍」
       final effectiveRoute = group.children.firstWhere(
         (item) => item is RouteData,
@@ -310,7 +311,8 @@ class MyHomePageState extends State<MyHomePage>
           : Container();
     }
 
-    if (group.title == (localizedStrings?.menuApplications ?? "menuApplications")) {
+    if (group.title ==
+        (localizedStrings?.menuApplications ?? "menuApplications")) {
       final effectiveRoute = group.children.firstWhere(
         (item) => item is RouteData,
         orElse: () => RouteData(
@@ -379,295 +381,383 @@ class MyHomePageState extends State<MyHomePage>
     ColorScheme colorScheme = Theme.of(context).colorScheme;
     TextTheme textTheme = Theme.of(context).textTheme;
     localizedStrings = S.of(context);
-    
+
     return PopScope(
-      canPop: false,
-      onPopInvokedWithResult: (didPop, result) async {
-        if (didPop) return;
-        if (mounted) {
-          showDialog(
-            context: context,
-            barrierDismissible: false,
-            builder: (context) {
-              return CustomAlertDialog(
-                titleText: (localizedStrings?.gTipExitApp ?? "gTipExitApp"),
-                onNoPressed: () {
-                  Navigator.of(context).pop();
-                },
-                onYesPressed: () async {
-                  Navigator.of(context).pop();
-                  dispose();
-                  if (!Platform.isAndroid) {
-                    await trayManager.destroy();
-                    await windowManager.destroy();
-                  }
-                  exit(0);
-                },
-              );
-            },
-          );
-        }
-      },
-      child: Scaffold(
-      drawer: isMobile ? Drawer(
-        child: Container(
-          color: Colors.white,
-          child: Column(
-            children: [
-              Container(
-                height: 120,
-                color: Colors.white,
-                padding: const EdgeInsets.only(top: 40, left: 16),
-                alignment: Alignment.centerLeft,
-                child: Row(
-                  children: [
-                    Image.asset(logoIconPath, width: 40, height: 40),
-                    const SizedBox(width: 12),
-                    Text(
-                      myAppName.appName!,
-                      style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black87),
+        canPop: false,
+        onPopInvokedWithResult: (didPop, result) async {
+          if (didPop) return;
+          if (mounted) {
+            showDialog(
+              context: context,
+              barrierDismissible: false,
+              builder: (context) {
+                return CustomAlertDialog(
+                  titleText: (localizedStrings?.gTipExitApp ?? "gTipExitApp"),
+                  onNoPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  onYesPressed: () async {
+                    Navigator.of(context).pop();
+                    dispose();
+                    if (!Platform.isAndroid) {
+                      await trayManager.destroy();
+                      await windowManager.destroy();
+                    }
+                    exit(0);
+                  },
+                );
+              },
+            );
+          }
+        },
+        child: Scaffold(
+          drawer: isMobile
+              ? Drawer(
+                  child: Container(
+                    color: Colors.white,
+                    child: Column(
+                      children: [
+                        Container(
+                          height: 120,
+                          color: Colors.white,
+                          padding: const EdgeInsets.only(top: 40, left: 16),
+                          alignment: Alignment.centerLeft,
+                          child: Row(
+                            children: [
+                              Image.asset(logoIconPath, width: 40, height: 40),
+                              const SizedBox(width: 12),
+                              Text(
+                                myAppName.appName!,
+                                style: const TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black87),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Expanded(
+                          child: ListView(
+                            padding: EdgeInsets.zero,
+                            children: [
+                              /*
+                              // 暂时屏蔽 Configuration
+                              _buildDrawerItem(Icons.tune, "Configuration", () {
+                                Navigator.pop(context);
+                                setState(() {
+                                  _currentTabIndex = 0;
+                                  _navigateContent('/multiScaleManagement');
+                                });
+                              }),
+                              */
+                              _buildDrawerItem(Icons.apps, "Application", () {
+                                Navigator.pop(context);
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => buildPageContent(
+                                        _navigateContent, '/setConfig', null),
+                                  ),
+                                );
+                              }),
+                              const Padding(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 16.0, vertical: 8.0),
+                                child: Divider(
+                                    color: Color(0xFFEEEEEE), height: 1),
+                              ),
+                              /*
+                              // 暂时屏蔽以下功能
+                              _buildDrawerItem(Icons.people_outline,
+                                  "User management", () {}),
+                              _buildDrawerItem(
+                                  Icons.receipt_long, "Log Management", () {}),
+                              */
+                              _buildDrawerItem(Icons.balance, "Function Center",
+                                  () {
+                                Navigator.pop(context);
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => buildPageContent(
+                                        _navigateContent,
+                                        '/settingsFunction',
+                                        null),
+                                  ),
+                                );
+                              }),
+                              /*
+                              _buildDrawerItem(
+                                  Icons.lock_outline, "Change password", () {}),
+                              */
+                              _buildDrawerItem(Icons.language, "Set Language",
+                                  () {
+                                Navigator.pop(context);
+                                showSetLanguageDialog();
+                              }),
+                              _buildDrawerItem(
+                                  Icons.info_outline, "System Information", () {
+                                Navigator.pop(context);
+                                showDialog(
+                                  context: context,
+                                  barrierDismissible: false,
+                                  builder: (context) {
+                                    return const CompanyInfoDialog();
+                                  },
+                                );
+                              }),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
+                )
+              : null,
+          appBar: (isMobile && _hideScaffoldElements)
+              ? null
+              : PreferredSize(
+                  preferredSize: Size.fromHeight(isMobile ? 56 : 40),
+                  child: isMobile
+                      ? AppBar(
+                          backgroundColor: Colors.white,
+                          foregroundColor: Colors.black87,
+                          elevation: 0,
+                          leading: Builder(
+                            builder: (context) => IconButton(
+                              icon: const Icon(Icons.grid_view_outlined,
+                                  color: Colors.black87),
+                              onPressed: () =>
+                                  Scaffold.of(context).openDrawer(),
+                            ),
+                          ),
+                          title: Text(
+                            _currentTabIndex == 0 ? "Connecting" : (localizedStrings?.gBtnSetting ?? "Setting"),
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleLarge!
+                                .copyWith(
+                                    color: Colors.black87,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 18),
+                          ),
+                          centerTitle: true,
+                          actions: [
+                            if (_currentTabIndex == 0)
+                              IconButton(
+                                icon: const Icon(Icons.help_outline,
+                                    color: Colors.black87),
+                                onPressed: () {},
+                              ),
+                            if (_selectedNavRoute == '/multiScaleManagement')
+                              IconButton(
+                                icon: const Icon(Icons.add_circle_outline,
+                                    color: Colors.black87),
+                                onPressed: () {
+                                  eventBus.fire(EventUiCmd('showAddDevice'));
+                                },
+                              ),
+                            const SizedBox(width: 8),
+                          ],
+                        )
+                      : DraggableTitleBar(title: ''),
                 ),
-              ),
-              Expanded(
-                child: ListView(
-                  padding: EdgeInsets.zero,
-                  children: [
-                    _buildDrawerItem(Icons.tune, "Configuration", () {
-                      Navigator.pop(context);
-                      setState(() {
-                        _currentTabIndex = 0;
-                        _navigateContent('/multiScaleManagement');
-                      });
-                    }),
-                    _buildDrawerItem(Icons.apps, "Application", () {
-                      Navigator.pop(context);
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => buildPageContent(_navigateContent, '/setConfig', null),
-                        ),
-                      );
-                    }),
-                    const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                      child: Divider(color: Color(0xFFEEEEEE), height: 1),
+          body: Row(
+            children: [
+              // Desktop Navigation Bar
+              if (!isMobile && showLeftNavigationBar)
+                Container(
+                  width: leftBarWidth,
+                  color: colorScheme.primary,
+                  child: Column(children: [
+                    SizedBox(
+                      height: leftBarIconHeight,
+                      width: leftBarWidth,
+                      child: Row(
+                        children: [
+                          IconButton(
+                            padding: EdgeInsets.only(left: largePadding),
+                            iconSize: iconAppSize,
+                            onPressed: () {},
+                            icon: Image.asset(logoIconPath,
+                                width: iconAppSize, height: iconAppSize),
+                          ),
+                          Expanded(
+                            child: Container(
+                              padding: EdgeInsets.only(left: regularPadding),
+                              child: Text(myAppName.appName!,
+                                  style: textTheme.headlineSmall!
+                                      .copyWith(color: colorScheme.onPrimary)),
+                            ),
+                          )
+                        ],
+                      ),
                     ),
-                    _buildDrawerItem(Icons.people_outline, "User management", () {}),
-                    _buildDrawerItem(Icons.receipt_long, "Log Management", () {}),
-                    _buildDrawerItem(Icons.balance, "Function Center", () {
-                      Navigator.pop(context);
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => buildPageContent(_navigateContent, '/settingsFunction', null),
+                    Expanded(child: showNavigationBar()),
+                    const SizedBox(height: 16),
+                    Image.asset(companyImage, width: 120, height: 40),
+                    const SizedBox(height: 16),
+                  ]),
+                ),
+
+              // Main Area
+              Expanded(
+                child: Column(
+                  children: [
+                    if (!isMobile) ...[
+                      Container(
+                          height: topLinePadding,
+                          color: colorScheme.surfaceDim),
+                      SizedBox(
+                        height: topBarHeight,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Container(
+                              padding: EdgeInsets.only(left: largePadding),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  if (!showLeftNavigationBar) ...[
+                                    Image.asset(logoIconPath,
+                                        width: 24, height: 24),
+                                    const SizedBox(width: 8),
+                                    Text(myAppName.appName!,
+                                        style: textTheme.titleMedium!.copyWith(
+                                            color: colorScheme.primary,
+                                            fontWeight: FontWeight.bold)),
+                                    const SizedBox(width: 16),
+                                  ],
+                                  Text(
+                                      generateTitle(
+                                          getPageId(_selectedNavRoute)),
+                                      style: textTheme.bodySmall!.copyWith(
+                                          color: colorScheme.onSurface)),
+                                ],
+                              ),
+                            ),
+                            _buildTopBarActions(colorScheme, textTheme),
+                          ],
                         ),
-                      );
-                    }),
-                    _buildDrawerItem(Icons.lock_outline, "Change password", () {}),
-                    _buildDrawerItem(Icons.language, "Set Language", () {
-                      Navigator.pop(context);
-                      showSetLanguageDialog();
-                    }),
-                    _buildDrawerItem(Icons.info_outline, "System Information", () {
-                      Navigator.pop(context);
-                      showDialog(
-                        context: context,
-                        barrierDismissible: false,
-                        builder: (context) {
-                          return const CompanyInfoDialog();
-                        },
-                      );
-                    }),
+                      ),
+                      Container(
+                          height: regularPadding,
+                          color: colorScheme.surfaceDim),
+                    ],
+                    // Content
+                    Expanded(
+                      child: Container(
+                        padding: isMobile
+                            ? EdgeInsets.zero
+                            : EdgeInsets.symmetric(horizontal: regularPadding),
+                        color: isMobile ? Colors.white : colorScheme.surfaceDim,
+                        child: Navigator(
+                          key: contentNavigatorKey,
+                          initialRoute: _selectedNavRoute,
+                          onGenerateRoute: (settings) {
+                            final pageContent = buildPageContent(
+                                _navigateContent, settings.name, lastRouteName);
+                            return MaterialPageRoute(
+                              builder: (context) => pageContent,
+                              settings: settings,
+                            );
+                          },
+                        ),
+                      ),
+                    )
                   ],
                 ),
               ),
             ],
           ),
-        ),
-      ) : null,
-      appBar: (isMobile && _hideScaffoldElements) ? null : PreferredSize(
-        preferredSize: Size.fromHeight(isMobile ? 56 : 40),
-        child: isMobile ? AppBar(
-          backgroundColor: Colors.white,
-          foregroundColor: Colors.black87,
-          elevation: 0,
-          leading: Builder(
-            builder: (context) => IconButton(
-              icon: const Icon(Icons.grid_view_outlined, color: Colors.black87),
-              onPressed: () => Scaffold.of(context).openDrawer(),
-            ),
-          ),
-          title: Text(
-            "Connecting",
-            style: Theme.of(context).textTheme.titleLarge!.copyWith(color: Colors.black87, fontWeight: FontWeight.bold, fontSize: 18),
-          ),
-          centerTitle: true,
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.help_outline, color: Colors.black87),
-              onPressed: () {},
-            ),
-            if (_selectedNavRoute == '/multiScaleManagement')
-              IconButton(
-                icon: const Icon(Icons.add_circle_outline, color: Colors.black87),
-                onPressed: () {
-                  eventBus.fire(EventUiCmd('showAddDevice'));
-                },
-              ),
-            const SizedBox(width: 8),
-          ],
-        ) : DraggableTitleBar(title: ''),
-      ),
-      body: Row(
-        children: [
-          // Desktop Navigation Bar
-          if (!isMobile && showLeftNavigationBar)
-            Container(
-              width: leftBarWidth,
-              color: colorScheme.primary,
-              child: Column(children: [
-                SizedBox(
-                  height: leftBarIconHeight,
-                  width: leftBarWidth,
-                  child: Row(
-                    children: [
-                      IconButton(
-                        padding: EdgeInsets.only(left: largePadding),
-                        iconSize: iconAppSize,
-                        onPressed: () {},
-                        icon: Image.asset(logoIconPath, width: iconAppSize, height: iconAppSize),
-                      ),
-                      Expanded(
-                        child: Container(
-                          padding: EdgeInsets.only(left: regularPadding),
-                          child: Text(myAppName.appName!, style: textTheme.headlineSmall!.copyWith(color: colorScheme.onPrimary)),
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-                Expanded(child: showNavigationBar()),
-                const SizedBox(height: 16),
-                Image.asset(companyImage, width: 120, height: 40),
-                const SizedBox(height: 16),
-              ]),
-            ),
-
-          // Main Area
-          Expanded(
-            child: Column(
-              children: [
-                if (!isMobile) ...[
-                  Container(height: topLinePadding, color: colorScheme.surfaceDim),
-                  SizedBox(
-                    height: topBarHeight,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Container(
-                          padding: EdgeInsets.only(left: largePadding),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              if (!showLeftNavigationBar) ...[
-                                Image.asset(logoIconPath, width: 24, height: 24),
-                                const SizedBox(width: 8),
-                                Text(myAppName.appName!, style: textTheme.titleMedium!.copyWith(color: colorScheme.primary, fontWeight: FontWeight.bold)),
-                                const SizedBox(width: 16),
-                              ],
-                              Text(generateTitle(getPageId(_selectedNavRoute)), style: textTheme.bodySmall!.copyWith(color: colorScheme.onSurface)),
-                            ],
-                          ),
-                        ),
-                        _buildTopBarActions(colorScheme, textTheme),
-                      ],
+          bottomNavigationBar: isMobile && !_hideScaffoldElements
+              ? BottomNavigationBar(
+                  currentIndex: _currentTabIndex,
+                  type: BottomNavigationBarType.fixed,
+                  backgroundColor: Colors.white,
+                  selectedItemColor: const Color(0xFF0D558E),
+                  unselectedItemColor: Colors.grey,
+                  selectedLabelStyle: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 12),
+                  unselectedLabelStyle: const TextStyle(
+                      fontWeight: FontWeight.normal, fontSize: 12),
+                  onTap: (index) {
+                    setState(() {
+                      _currentTabIndex = index;
+                      // Map tabs to routes
+                      switch (index) {
+                        case 0:
+                          _navigateContent('/multiScaleManagement');
+                          break;
+                        case 1:
+                          _navigateContent(
+                              '/mobileSetting'); // Navigate to the setting list
+                          break;
+                        /*
+                        // 暂时屏蔽 Format 和 Data
+                        case 2:
+                          _navigateContent(
+                              '/labelDesign'); // Example format route
+                          break;
+                        case 3:
+                          _navigateContent(
+                              '/basicDataCollection'); // Example data route
+                          break;
+                        */
+                      }
+                    });
+                  },
+                  items: [
+                    BottomNavigationBarItem(
+                      icon: Padding(
+                          padding: const EdgeInsets.only(bottom: 4),
+                          child: Icon(Icons.devices_other_outlined)),
+                      activeIcon: Padding(
+                          padding: const EdgeInsets.only(bottom: 4),
+                          child: Icon(Icons.devices_other)),
+                      label: "Connecting",
                     ),
-                  ),
-                  Container(height: regularPadding, color: colorScheme.surfaceDim),
-                ],
-                // Content
-                Expanded(
-                  child: Container(
-                    padding: isMobile ? EdgeInsets.zero : EdgeInsets.symmetric(horizontal: regularPadding),
-                    color: isMobile ? Colors.white : colorScheme.surfaceDim,
-                    child: Navigator(
-                      key: contentNavigatorKey,
-                      initialRoute: _selectedNavRoute,
-                      onGenerateRoute: (settings) {
-                        final pageContent = buildPageContent(_navigateContent, settings.name, lastRouteName);
-                        return MaterialPageRoute(
-                          builder: (context) => pageContent,
-                          settings: settings,
-                        );
-                      },
+                    BottomNavigationBarItem(
+                      icon: Padding(
+                          padding: const EdgeInsets.only(bottom: 4),
+                          child: Icon(Icons.settings_outlined)),
+                      activeIcon: Padding(
+                          padding: const EdgeInsets.only(bottom: 4),
+                          child: Icon(Icons.settings)),
+                      label: localizedStrings?.gBtnSetting ?? "Setting",
                     ),
-                  ),
+                    /*
+                    // 暂时屏蔽 Format 和 Data
+                    BottomNavigationBarItem(
+                      icon: Padding(
+                          padding: const EdgeInsets.only(bottom: 4),
+                          child: Icon(Icons.description_outlined)),
+                      activeIcon: Padding(
+                          padding: const EdgeInsets.only(bottom: 4),
+                          child: Icon(Icons.description)),
+                      label: localizedStrings?.menuFormat ?? "Format",
+                    ),
+                    BottomNavigationBarItem(
+                      icon: Padding(
+                          padding: const EdgeInsets.only(bottom: 4),
+                          child: Icon(Icons.dns_outlined)),
+                      activeIcon: Padding(
+                          padding: const EdgeInsets.only(bottom: 4),
+                          child: Icon(Icons.dns)),
+                      label: localizedStrings?.menuData ?? "Data",
+                    ),
+                    */
+                  ],
                 )
-              ],
-            ),
-          ),
-        ],
-      ),
-      bottomNavigationBar: isMobile && !_hideScaffoldElements ? BottomNavigationBar(
-        currentIndex: _currentTabIndex,
-        type: BottomNavigationBarType.fixed,
-        backgroundColor: Colors.white,
-        selectedItemColor: const Color(0xFF0D558E),
-        unselectedItemColor: Colors.grey,
-        selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
-        unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.normal, fontSize: 12),
-        onTap: (index) {
-          setState(() {
-            _currentTabIndex = index;
-            // Map tabs to routes
-            switch (index) {
-              case 0:
-                _navigateContent('/multiScaleManagement');
-                break;
-              case 1:
-                _navigateContent('/mobileSetting'); // Navigate to the setting list
-                break;
-              case 2:
-                _navigateContent('/labelDesign'); // Example format route
-                break;
-              case 3:
-                _navigateContent('/basicDataCollection'); // Example data route
-                break;
-            }
-          });
-        },
-        items: [
-          BottomNavigationBarItem(
-            icon: Padding(padding: const EdgeInsets.only(bottom: 4), child: Icon(Icons.devices_other_outlined)),
-            activeIcon: Padding(padding: const EdgeInsets.only(bottom: 4), child: Icon(Icons.devices_other)),
-            label: "Connecting",
-          ),
-          BottomNavigationBarItem(
-            icon: Padding(padding: const EdgeInsets.only(bottom: 4), child: Icon(Icons.settings_outlined)),
-            activeIcon: Padding(padding: const EdgeInsets.only(bottom: 4), child: Icon(Icons.settings)),
-            label: localizedStrings?.gBtnSetting ?? "Setting",
-          ),
-          BottomNavigationBarItem(
-            icon: Padding(padding: const EdgeInsets.only(bottom: 4), child: Icon(Icons.description_outlined)),
-            activeIcon: Padding(padding: const EdgeInsets.only(bottom: 4), child: Icon(Icons.description)),
-            label: localizedStrings?.menuFormat ?? "Format",
-          ),
-          BottomNavigationBarItem(
-            icon: Padding(padding: const EdgeInsets.only(bottom: 4), child: Icon(Icons.dns_outlined)),
-            activeIcon: Padding(padding: const EdgeInsets.only(bottom: 4), child: Icon(Icons.dns)),
-            label: localizedStrings?.menuData ?? "Data",
-          ),
-        ],
-      ) : null,
-    ));
+              : null,
+        ));
   }
 
   Widget _buildDrawerItem(IconData icon, String title, VoidCallback onTap) {
     return ListTile(
       leading: Icon(icon, color: Colors.black87),
-      title: Text(title, style: const TextStyle(color: Colors.black87, fontSize: 16)),
+      title: Text(title,
+          style: const TextStyle(color: Colors.black87, fontSize: 16)),
       onTap: onTap,
       contentPadding: const EdgeInsets.symmetric(horizontal: 24.0),
     );
@@ -842,7 +932,9 @@ class MyHomePageState extends State<MyHomePage>
           child: Text(
             mySysUser.nickName ?? '',
             style: textTheme.bodySmall!.apply(
-              color: Adaptive.isMobile(context) ? colorScheme.onPrimary : colorScheme.onSurface,
+              color: Adaptive.isMobile(context)
+                  ? colorScheme.onPrimary
+                  : colorScheme.onSurface,
             ),
             overflow: TextOverflow.ellipsis,
           ),
@@ -851,13 +943,16 @@ class MyHomePageState extends State<MyHomePage>
         showSysSetting(colorScheme, textTheme),
         SizedBox(width: regularPadding),
         Tooltip(
-          message: (localizedStrings?.menuSystemInformation ?? "menuSystemInformation"),
+          message: (localizedStrings?.menuSystemInformation ??
+              "menuSystemInformation"),
           child: IconButton(
             icon: getSvgIcon(
                 infoSvgIcon(),
                 topIconSize,
                 topIconSize,
-                Adaptive.isMobile(context) ? colorScheme.onPrimary : colorScheme.surfaceContainerHighest),
+                Adaptive.isMobile(context)
+                    ? colorScheme.onPrimary
+                    : colorScheme.surfaceContainerHighest),
             onPressed: () {
               showDialog(
                 context: context,
@@ -894,7 +989,8 @@ class MyHomePageState extends State<MyHomePage>
             break;
           case ServiceState.retrying:
             color = Colors.redAccent;
-            tooltip = "Service Lost. Retrying in ${WebSocketManager().nextRetrySeconds}s...";
+            tooltip =
+                "Service Lost. Retrying in ${WebSocketManager().nextRetrySeconds}s...";
             break;
           case ServiceState.disconnected:
           default:

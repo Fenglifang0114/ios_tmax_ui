@@ -17,7 +17,7 @@ class LanguageSettingPage extends StatefulWidget {
 
 class LanguageSettingPageState extends State<LanguageSettingPage> {
   List<String> languageList = [
-    '涓枃',
+    '中文',
     'English',
   ];
   dynamic localizedStrings;
@@ -32,8 +32,8 @@ class LanguageSettingPageState extends State<LanguageSettingPage> {
       languageCtl.text = 'English';
     } else if (((localizedStrings?.gLanguage ?? "gLanguage") == '袪褍褋褋泻懈泄')) {
       languageCtl.text = '袪褍褋褋泻懈泄';
-    } else if ((localizedStrings?.gLanguage ?? "gLanguage") == '涓枃') {
-      languageCtl.text = '涓枃';
+    } else if ((localizedStrings?.gLanguage ?? "gLanguage") == '中文') {
+      languageCtl.text = '中文';
     } else {
       languageCtl.text = 'English';
     }
@@ -208,7 +208,7 @@ class LanguageSettingPageState extends State<LanguageSettingPage> {
               String language = '';
 
               setState(() {
-                if (value == "涓枃") {
+                if (value == "中文") {
                   S.load(const Locale('zh', 'CN'));
                   language = 'zh_CN';
                   saveLanguageSetting(language);
@@ -258,7 +258,7 @@ class LanguageSettingPageState extends State<LanguageSettingPage> {
       languageCtl.text = value;
       // SpUtil.putString(SpConstant.LANGUAGE, value);
       // setState(() {
-      //   if (value == "涓枃") {
+      //   if (value == "中文") {
       //     S.load(const Locale('zh', 'CN'));
       //     saveLanguageSetting('zh_CN');
       //   } else if (value == "English") {

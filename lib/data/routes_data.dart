@@ -374,6 +374,8 @@ List<RouteData> getAllAppsMenus() {
       subtitle: (localizedStrings?.subTitleWeighing ?? "subTitleWeighing"),
       iconPath: weighingSvgIcon(),
     ),
+    /*
+    // 暂时屏蔽 Retail Report
     RouteData(
         id: MenuId.retailReportPage,
         title: (localizedStrings?.menuRetailReport ?? "menuRetailReport"),
@@ -381,6 +383,7 @@ List<RouteData> getAllAppsMenus() {
         subtitle:
             (localizedStrings?.subTitleRetailReport ?? "subTitleRetailReport"),
         iconPath: detailReportSvgIcon()),
+    */
     RouteData(
         id: MenuId.weightDataCollectionPage,
         title: (localizedStrings?.menuWeighingDataCollection ??

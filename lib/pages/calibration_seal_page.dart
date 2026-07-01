@@ -250,9 +250,7 @@ class CalibrationSealPageState extends State<CalibrationSealPage> {
       } else {
         if (Adaptive.isMobile(context)) {
           setState(() {
-            selScaleId = myDefScaleInfo.defScaleId ?? myAllScalesList.first.scaleId;
-            enabledGetInfo = false;
-            PublicFunctions.getSealStatus(selScaleId);
+            selScaleId = -1;
           });
         } else if (selScaleId == -1) {
           showTipInfo((localizedStrings?.gTipSelectDeviceFirst ?? "gTipSelectDeviceFirst"), context);
@@ -815,6 +813,48 @@ class CalibrationSealPageState extends State<CalibrationSealPage> {
   Widget mobileLayout(BuildContext context, double width) {
     return Scaffold(
       backgroundColor: Colors.grey[100],
+      drawer: Drawer(
+        width: 250,
+        child: SafeArea(
+          child: Container(
+            color: Theme.of(context).colorScheme.surface,
+            child: Column(
+              children: [
+                Container(
+                  height: 48,
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    (localizedStrings?.gTitleDeviceList ?? "Device List"),
+                    style: Theme.of(context).textTheme.labelLarge!.apply(
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                  ),
+                ),
+                const Divider(height: 1),
+                Expanded(
+                  child: NewAllScaleListWidget(
+                    listWidth: 250,
+                    selScaleId: selScaleId,
+                    clickScale: (scale) {
+                      if (!enabledGetInfo) {
+                        showTipInfo((localizedStrings?.gTipPerformingOperation ?? "Performing"), context);
+                        return;
+                      }
+                      setState(() {
+                        changeScale(scale.scaleId);
+                        enabledGetInfo = false;
+                      });
+                      PublicFunctions.getSealStatus(scale.scaleId);
+                      Navigator.pop(context); // 关闭抽屉
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
       appBar: AppBar(
         backgroundColor: Colors.white,
         foregroundColor: Colors.black87,
@@ -824,16 +864,23 @@ class CalibrationSealPageState extends State<CalibrationSealPage> {
             Navigator.pop(context);
           },
         ),
-        title: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            getSvgIcon(sealManagmentSvgIcon(), 24, 24, Theme.of(context).colorScheme.primary),
-            const SizedBox(width: 8),
-            Text(
-              localizedStrings?.menuSealManagment ?? "Calibration Lock",
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+        title: Builder(
+          builder: (context) => GestureDetector(
+            onTap: () {
+              Scaffold.of(context).openDrawer();
+            },
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.scale_outlined, color: Theme.of(context).colorScheme.primary, size: 24),
+                const SizedBox(width: 8),
+                Text(
+                  localizedStrings?.menuSealManagment ?? "Calibration Lock",
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
         centerTitle: true,
         actions: [
