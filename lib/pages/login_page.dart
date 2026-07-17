@@ -191,44 +191,189 @@ class LoginPageState extends State<LoginPage> with WindowLifecycleMixin {
     await prefs.setBool('isRemember', isSave);
   }
 
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildMobile(BuildContext context) {
+    return Scaffold(
+      resizeToAvoidBottomInset: false,
+      body: Stack(
+        children: [
+          // Background
+          Positioned.fill(
+            child: Image.asset(
+              'assets/images/mobileLogin.png',
+              fit: BoxFit.cover,
+            ),
+          ),
+          
+          SafeArea(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // Top "Log in" Title
+                Padding(
+                  padding: const EdgeInsets.only(top: 16.0, bottom: 40.0),
+                  child: Center(
+                    child: Text(
+                      localizedStrings?.btnLogin ?? "Log in",
+                      style: const TextStyle(
+                        fontSize: 18,
+                        color: Colors.black87,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ),
+                
+                // Content Padding
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 32.0),
+                  child: Form(
+                    key: _formKey,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        // T-Connect Title
+                        Text(
+                          myAppName.appName ?? "T-Connect",
+                          style: const TextStyle(
+                            fontSize: 36,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF0D558E), // dark blue
+                          ),
+                        ),
+                        const SizedBox(height: 40),
+                        
+                        // Username Field
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: TextFormField(
+                            controller: _usernameController,
+                            decoration: InputDecoration(
+                              hintText: localizedStrings?.tipLoginUsernameEmpty ?? "Account",
+                              prefixIcon: const Icon(Icons.person_outline, color: Color(0xFF0D558E)),
+                              border: InputBorder.none,
+                              contentPadding: const EdgeInsets.symmetric(vertical: 16),
+                            ),
+                            validator: (value) {
+                              if (firstTime) return null;
+                              if (value == null || value.isEmpty) {
+                                return localizedStrings?.tipLoginUsernameNotEmpty;
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        
+                        // Password Field
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: TextFormField(
+                            controller: _passwordController,
+                            obscureText: !_showPassword,
+                            obscuringCharacter: '*',
+                            decoration: InputDecoration(
+                              hintText: localizedStrings?.tipLoginPasswordEmpty ?? "Password",
+                              prefixIcon: const Icon(Icons.lock_outline, color: Color(0xFF0D558E)),
+                              suffixIcon: IconButton(
+                                icon: Icon(
+                                  _showPassword ? Icons.visibility_outlined : Icons.visibility_off_outlined,
+                                  color: Colors.black54,
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    _showPassword = !_showPassword;
+                                  });
+                                },
+                              ),
+                              border: InputBorder.none,
+                              contentPadding: const EdgeInsets.symmetric(vertical: 16),
+                            ),
+                            validator: (value) {
+                              if (firstTime) return null;
+                              if (value == null || value.isEmpty) {
+                                return localizedStrings?.tipLoginPasswordNotEmpty;
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        
+                        // Remember Password
+                        Row(
+                          children: [
+                            SizedBox(
+                              height: 24,
+                              width: 24,
+                              child: Checkbox(
+                                activeColor: const Color(0xFF0D558E),
+                                value: _rememberController.text == "true",
+                                side: const BorderSide(width: 1.5, color: Colors.black54),
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                                onChanged: (value) {
+                                  setState(() {
+                                    if (value == null) return;
+                                    _rememberController.text = value ? "true" : "false";
+                                  });
+                                },
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              localizedStrings?.tipLoginRemember ?? "Remember password",
+                              style: const TextStyle(color: Colors.black87, fontSize: 14),
+                            ),
+                          ],
+                        ),
+                        
+                        const SizedBox(height: 24),
+                        
+                        // Login Button
+                        SizedBox(
+                          height: 50,
+                          child: ElevatedButton(
+                            onPressed: _isLoading ? null : _submitLogin,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFF0D558E),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            ),
+                            child: _isLoading
+                                ? const SizedBox(
+                                    height: 24,
+                                    width: 24,
+                                    child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                                  )
+                                : Text(
+                                    localizedStrings?.btnLogin ?? "Log in",
+                                    style: const TextStyle(color: Colors.white, fontSize: 16),
+                                  ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDesktop(BuildContext context) {
     ColorScheme colorScheme = Theme.of(context).colorScheme;
     TextTheme textTheme = Theme.of(context).textTheme;
     double tHeight = MediaQuery.of(context).size.height;
-    if (_checkingUsers) {
-      return Scaffold(
-        body: Stack(
-          children: [
-            Positioned.fill(
-              child: Image.asset(
-                backImgPath,
-                fit: BoxFit.cover,
-              ),
-            ),
-            Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation<Color>(colorScheme.primary),
-                  ),
-                  SizedBox(height: 20),
-                  Text(
-                    localizedStrings?.tipLoadingData ?? "正在初始化数据...",
-                    style: TextStyle(
-                      fontSize: 18,
-                      color: Colors.black87,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      );
-    }
     return Scaffold(
       appBar: Platform.isAndroid
           ? null
@@ -252,19 +397,6 @@ class LoginPageState extends State<LoginPage> with WindowLifecycleMixin {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
-                  // SizedBox(
-                  //   height: 50,
-                  //   child: Row(
-                  //     mainAxisAlignment: MainAxisAlignment.start,
-                  //     children: [
-                  //       Image.asset(
-                  //         'assets/images/company.png',
-                  //         width: 138,
-                  //         height: 50,
-                  //       ),
-                  //     ],
-                  //   ),
-                  // ),
                   SizedBox(
                     height: tHeight - 130,
                     child: Row(
@@ -478,6 +610,50 @@ class LoginPageState extends State<LoginPage> with WindowLifecycleMixin {
         ],
       ),
     );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_checkingUsers) {
+      ColorScheme colorScheme = Theme.of(context).colorScheme;
+      return Scaffold(
+        body: Stack(
+          children: [
+            Positioned.fill(
+              child: Image.asset(
+                backImgPath,
+                fit: BoxFit.cover,
+              ),
+            ),
+            Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(colorScheme.primary),
+                  ),
+                  SizedBox(height: 20),
+                  Text(
+                    localizedStrings?.tipLoadingData ?? "正在初始化数据...",
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: Colors.black87,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+    
+    if (Platform.isAndroid || Platform.isIOS) {
+      return _buildMobile(context);
+    } else {
+      return _buildDesktop(context);
+    }
   }
 }
 

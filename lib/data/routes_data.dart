@@ -36,6 +36,10 @@ import 'package:t_max/pages/weight_collection_page.dart';
 import 'package:t_max/pages/wifi_setting_page.dart';
 import 'package:t_max/pages/wired_setting_page.dart';
 import 'package:t_max/pages/mobile_setting_page.dart';
+import 'package:t_max/pages/mobile_data_page.dart';
+import 'package:t_max/pages/mobile_format_page.dart';
+import 'package:t_max/pages/mobile_sys_log_page.dart';
+import 'package:t_max/pages/mobile_sys_user_manager.dart';
 
 class RouteData {
   RouteData({
@@ -503,6 +507,10 @@ Widget buildPageContent(dynamic Function(String) navigateContent,
         onNavigate: navigateContent, lastRouteName: lastRouteName);
   }
   if (pageName == '/settingsUser') {
+    if (Platform.isAndroid || Platform.isIOS) {
+      return MobileSysUserManagerPage(
+          onNavigate: navigateContent, lastRouteName: lastRouteName);
+    }
     return SysUserManagerPage(
         onNavigate: navigateContent, lastRouteName: lastRouteName);
   }
@@ -510,8 +518,19 @@ Widget buildPageContent(dynamic Function(String) navigateContent,
     return MobileSettingPage(
         onNavigate: navigateContent, lastRouteName: lastRouteName);
   }
-
+  if (pageName == '/mobileData') {
+    return MobileDataPage(
+        onNavigate: navigateContent, lastRouteName: lastRouteName);
+  }
+  if (pageName == '/mobileFormat') {
+    return MobileFormatPage(
+        onNavigate: navigateContent, lastRouteName: lastRouteName);
+  }
   if (pageName == '/settingsLog') {
+    if (Platform.isAndroid || Platform.isIOS) {
+      return MobileSysLogPage(
+          onNavigate: navigateContent, lastRouteName: lastRouteName);
+    }
     return SysLogPage(
         onNavigate: navigateContent, lastRouteName: lastRouteName);
   }

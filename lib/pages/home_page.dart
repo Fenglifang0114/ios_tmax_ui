@@ -4,6 +4,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:t_max/data/sys_user_from_db.dart';
 import 'dart:io';
 import 'package:tray_manager/tray_manager.dart';
 import 'package:window_manager/window_manager.dart';
@@ -34,6 +35,8 @@ import 'package:t_max/common/window_lifecycle_mixin.dart';
 import 'package:t_max/functions/adaptive.dart';
 import 'package:t_max/common/web_socket_channel.dart';
 
+import 'package:t_max/pages/mobile_change_password_page.dart';
+
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
 
@@ -61,6 +64,12 @@ class MyHomePageState extends State<MyHomePage> with WindowLifecycleMixin {
   bool _hideScaffoldElements = false;
   int _currentTabIndex = 0;
   ScrollController scrollController = ScrollController();
+
+  bool get _shouldHideScaffoldElements =>
+      _hideScaffoldElements ||
+      _selectedNavRoute == '/settingsUser' ||
+      _selectedNavRoute == '/settingsLog' ||
+      _selectedNavRoute == '/formulaMgr';
   bool isHovering = false; // 鐢ㄤ簬鎺у埗榧犳爣鎮仠鐘舵€?
 
   bool _isInitialized = false;
@@ -71,10 +80,15 @@ class MyHomePageState extends State<MyHomePage> with WindowLifecycleMixin {
     localizedStrings = S.of(context);
     if (!_isInitialized) {
       _isInitialized = true;
+      if (Platform.isAndroid || Platform.isIOS) {
+        lastRouteName = '/multiScaleManagement';
+      }
       Future.delayed(const Duration(milliseconds: 10), () {
         if (mounted) {
           setState(() {
-            if (mySysUser.roleId == superAdminRoleId ||
+            if (Platform.isAndroid || Platform.isIOS) {
+              _navigateContent('/multiScaleManagement');
+            } else if (mySysUser.roleId == superAdminRoleId ||
                 mySysUser.roleId == adminRoleId) {
               _navigateContent('/multiScaleManagement');
             } else {
@@ -241,7 +255,19 @@ class MyHomePageState extends State<MyHomePage> with WindowLifecycleMixin {
   void _navigateContent(String routeName) {
     setState(() {
       _selectedNavRoute = routeName;
-      showLeftNavigationBar = !routeName.startsWith('/settings'); // 鎺у埗瀵艰埅鏍忔樉绀?
+      showLeftNavigationBar = !routeName.startsWith('/settings'); // 控制导航栏显示
+
+      if (Platform.isAndroid || Platform.isIOS) {
+        if (routeName == '/multiScaleManagement') {
+          _currentTabIndex = 0;
+        } else if (routeName == '/mobileSetting') {
+          _currentTabIndex = 1;
+        } else if (routeName == '/mobileFormat') {
+          _currentTabIndex = 2;
+        } else if (routeName == '/mobileData') {
+          _currentTabIndex = 3;
+        }
+      }
     });
 
     if (routeName.contains('/settings')) {
@@ -418,20 +444,34 @@ class MyHomePageState extends State<MyHomePage> with WindowLifecycleMixin {
                     child: Column(
                       children: [
                         Container(
-                          height: 120,
+                          height: 180,
                           color: Colors.white,
-                          padding: const EdgeInsets.only(top: 40, left: 16),
-                          alignment: Alignment.centerLeft,
-                          child: Row(
+                          padding: const EdgeInsets.only(top: 40),
+                          alignment: Alignment.center,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Image.asset(logoIconPath, width: 40, height: 40),
-                              const SizedBox(width: 12),
+                              CircleAvatar(
+                                radius: 36,
+                                backgroundColor: Colors.blue[50],
+                                child: Text(
+                                  mySysUser.userName != null &&
+                                          mySysUser.userName!.isNotEmpty
+                                      ? mySysUser.userName![0].toUpperCase()
+                                      : 'U',
+                                  style: const TextStyle(
+                                      fontSize: 32,
+                                      color: Colors.blue,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              const SizedBox(height: 12),
                               Text(
-                                myAppName.appName!,
+                                mySysUser.userName ?? '',
                                 style: const TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black87),
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w500,
+                                    color: Color(0xFF005A9E)),
                               ),
                             ],
                           ),
@@ -440,8 +480,6 @@ class MyHomePageState extends State<MyHomePage> with WindowLifecycleMixin {
                           child: ListView(
                             padding: EdgeInsets.zero,
                             children: [
-                              /*
-                              // 暂时屏蔽 Configuration
                               _buildDrawerItem(Icons.tune, "Configuration", () {
                                 Navigator.pop(context);
                                 setState(() {
@@ -449,7 +487,6 @@ class MyHomePageState extends State<MyHomePage> with WindowLifecycleMixin {
                                   _navigateContent('/multiScaleManagement');
                                 });
                               }),
-                              */
                               _buildDrawerItem(Icons.apps, "Application", () {
                                 Navigator.pop(context);
                                 Navigator.push(
@@ -466,35 +503,57 @@ class MyHomePageState extends State<MyHomePage> with WindowLifecycleMixin {
                                 child: Divider(
                                     color: Color(0xFFEEEEEE), height: 1),
                               ),
-                              /*
-                              // 暂时屏蔽以下功能
-                              _buildDrawerItem(Icons.people_outline,
-                                  "User management", () {}),
-                              _buildDrawerItem(
-                                  Icons.receipt_long, "Log Management", () {}),
-                              */
-                              _buildDrawerItem(Icons.balance, "Function Center",
-                                  () {
-                                Navigator.pop(context);
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => buildPageContent(
-                                        _navigateContent,
-                                        '/settingsFunction',
-                                        null),
-                                  ),
-                                );
-                              }),
-                              /*
-                              _buildDrawerItem(
-                                  Icons.lock_outline, "Change password", () {}),
-                              */
+                              if (mySysUser.roleId == 1 || mySysUser.roleId == 2)
+                                _buildDrawerItem(
+                                    Icons.people_outline,
+                                    localizedStrings?.userManagement ??
+                                        "User management", () {
+                                  Navigator.pop(context);
+                                  _navigateContent('/settingsUser');
+                                }),
+                              if (mySysUser.roleId == 1 || mySysUser.roleId == 2)
+                                _buildDrawerItem(
+                                    Icons.receipt_long,
+                                    localizedStrings?.logManagement ??
+                                        "Log Management", () {
+                                  Navigator.pop(context);
+                                  _navigateContent('/settingsLog');
+                                }),
+                              if (mySysUser.roleId == 1 || mySysUser.roleId == 2)
+                                _buildDrawerItem(Icons.balance, "Function Center",
+                                    () {
+                                  Navigator.pop(context);
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => buildPageContent(
+                                          _navigateContent,
+                                          '/settingsFunction',
+                                          null),
+                                    ),
+                                  );
+                                }),
                               _buildDrawerItem(Icons.language, "Set Language",
                                   () {
                                 Navigator.pop(context);
                                 showSetLanguageDialog();
                               }),
+                              if ((mySysUser.roleId == superAdminRoleId &&
+                                      mySysUser.isChanged!) ||
+                                  (mySysUser.roleId != superAdminRoleId))
+                                _buildDrawerItem(
+                                    Icons.lock_outline,
+                                    localizedStrings?.titleChangePassword ??
+                                        "Change password", () {
+                                  Navigator.pop(context);
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          const MobileChangePasswordPage(),
+                                    ),
+                                  );
+                                }),
                               _buildDrawerItem(
                                   Icons.info_outline, "System Information", () {
                                 Navigator.pop(context);
@@ -509,12 +568,44 @@ class MyHomePageState extends State<MyHomePage> with WindowLifecycleMixin {
                             ],
                           ),
                         ),
+                        if ((mySysUser.roleId == superAdminRoleId && mySysUser.isChanged!) ||
+                            (mySysUser.roleId != superAdminRoleId))
+                          Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: SizedBox(
+                              width: double.infinity,
+                              height: 48,
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor:
+                                      const Color(0xFF005A9E), // dark blueish
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                ),
+                                onPressed: () {
+                                  Navigator.pop(context); // close drawer
+                                  firstLogin = true;
+                                  PublicFunctions.logout();
+                                  Navigator.of(context).pushNamedAndRemoveUntil(
+                                    '/login',
+                                    (Route<dynamic> route) => false,
+                                  );
+                                },
+                                child: Text(
+                                  localizedStrings?.logout ?? "logout",
+                                  style: const TextStyle(
+                                      color: Colors.white, fontSize: 16),
+                                ),
+                              ),
+                            ),
+                          ),
                       ],
                     ),
                   ),
                 )
               : null,
-          appBar: (isMobile && _hideScaffoldElements)
+          appBar: (isMobile && _shouldHideScaffoldElements)
               ? null
               : PreferredSize(
                   preferredSize: Size.fromHeight(isMobile ? 56 : 40),
@@ -532,7 +623,9 @@ class MyHomePageState extends State<MyHomePage> with WindowLifecycleMixin {
                             ),
                           ),
                           title: Text(
-                            _currentTabIndex == 0 ? "Connecting" : (localizedStrings?.gBtnSetting ?? "Setting"),
+                            _currentTabIndex == 0
+                                ? "Connecting"
+                                : (localizedStrings?.gBtnSetting ?? "Setting"),
                             style: Theme.of(context)
                                 .textTheme
                                 .titleLarge!
@@ -670,7 +763,7 @@ class MyHomePageState extends State<MyHomePage> with WindowLifecycleMixin {
               ),
             ],
           ),
-          bottomNavigationBar: isMobile && !_hideScaffoldElements
+          bottomNavigationBar: isMobile && !_shouldHideScaffoldElements
               ? BottomNavigationBar(
                   currentIndex: _currentTabIndex,
                   type: BottomNavigationBarType.fixed,
@@ -693,17 +786,12 @@ class MyHomePageState extends State<MyHomePage> with WindowLifecycleMixin {
                           _navigateContent(
                               '/mobileSetting'); // Navigate to the setting list
                           break;
-                        /*
-                        // 暂时屏蔽 Format 和 Data
                         case 2:
-                          _navigateContent(
-                              '/labelDesign'); // Example format route
+                          _navigateContent('/mobileFormat');
                           break;
                         case 3:
-                          _navigateContent(
-                              '/basicDataCollection'); // Example data route
+                          _navigateContent('/mobileData');
                           break;
-                        */
                       }
                     });
                   },
@@ -726,8 +814,6 @@ class MyHomePageState extends State<MyHomePage> with WindowLifecycleMixin {
                           child: Icon(Icons.settings)),
                       label: localizedStrings?.gBtnSetting ?? "Setting",
                     ),
-                    /*
-                    // 暂时屏蔽 Format 和 Data
                     BottomNavigationBarItem(
                       icon: Padding(
                           padding: const EdgeInsets.only(bottom: 4),
@@ -746,7 +832,6 @@ class MyHomePageState extends State<MyHomePage> with WindowLifecycleMixin {
                           child: Icon(Icons.dns)),
                       label: localizedStrings?.menuData ?? "Data",
                     ),
-                    */
                   ],
                 )
               : null,
