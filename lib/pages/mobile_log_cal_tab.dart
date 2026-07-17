@@ -1,13 +1,17 @@
+import 'dart:convert';
+import 'dart:io';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:t_max/data/g_data.dart';
-import 'package:t_max/data/home_page_common_data.dart';
+import 'package:path/path.dart' as p;
+import 'package:permission_handler/permission_handler.dart';
 import 'package:t_max/data/language.dart';
 import 'package:t_max/data/log_data.dart';
 import 'package:t_max/eventbus/eventbus.dart';
 import 'package:t_max/functions/methods.dart';
 import 'package:t_max/pages/mobile_log_detail_page.dart';
 import 'package:t_max/widget/mobile_log_filter_header.dart';
+import 'package:t_max/dialog/custom_dialog_tip.dart';
 
 class MobileLogCalTab extends StatefulWidget {
   final String contentType;
@@ -39,6 +43,7 @@ class _MobileLogCalTabState extends State<MobileLogCalTab> {
   List<CalLog> _allCalLogs = [];
 
   dynamic _eventbus1;
+  dynamic _eventbus3;
 
   DateTime? startDate;
   DateTime? endDate;
@@ -48,6 +53,7 @@ class _MobileLogCalTabState extends State<MobileLogCalTab> {
     operatorCtl.dispose();
     roleIdCtl.dispose();
     _eventbus1?.cancel();
+    _eventbus3?.cancel();
     super.dispose();
   }
 
@@ -81,12 +87,34 @@ class _MobileLogCalTabState extends State<MobileLogCalTab> {
         }
       }
     });
+
+    _eventbus3 = eventBus.on<EventRespExportCalLog>().listen((event) {
+      if (mounted) {
+        String josnData = event.obj;
+        try {
+          if (josnData.isEmpty) {
+            showTipInfo(
+                (localizedStrings?.gTipExportFail ?? "Export failed"), context);
+            return;
+          }
+          if (josnData.contains('ok')) {
+            showTipInfo(
+                (localizedStrings?.gTipExportSuccess ?? "Export succeeded"),
+                context);
+          }
+        } catch (e) {
+          return;
+        }
+      }
+    });
   }
 
   void getCurrentPageLogs() {
     int? roleId = int.tryParse(roleIdCtl.text);
-    String dateStart = startDate != null ? DateFormat('yyyy-MM-dd').format(startDate!) : "";
-    String dateEnd = endDate != null ? DateFormat('yyyy-MM-dd').format(endDate!) : "";
+    String dateStart =
+        startDate != null ? DateFormat('yyyy-MM-dd').format(startDate!) : "";
+    String dateEnd =
+        endDate != null ? DateFormat('yyyy-MM-dd').format(endDate!) : "";
 
     ReqGetLog reqGetLog = ReqGetLog(
       page: _currentPage,
@@ -116,8 +144,52 @@ class _MobileLogCalTabState extends State<MobileLogCalTab> {
     });
   }
 
-  void _export() {
-    // Mobile export logic
+  void _export() async {
+    if (Platform.isAndroid) {
+      await Permission.storage.request();
+    }
+
+    String? selectedDirectory = await FilePicker.platform.getDirectoryPath(
+      dialogTitle: 'Select Output Folder',
+    );
+
+    if (selectedDirectory == null) {
+      return;
+    }
+
+    String timestamp = DateFormat('yyyyMMdd_HHmmss').format(DateTime.now());
+    String outputFile = p.join(selectedDirectory, 'cal_log_$timestamp.csv');
+
+    int? roleId = int.tryParse(roleIdCtl.text);
+    String dateStart =
+        startDate != null ? DateFormat('yyyy-MM-dd').format(startDate!) : "";
+    String dateEnd =
+        endDate != null ? DateFormat('yyyy-MM-dd').format(endDate!) : "";
+
+    ReqExportLog exportLog = ReqExportLog(
+      filePath: outputFile,
+      fieldName: 'rec_id',
+      direction: "desc",
+      search: Search(
+        searchOperator: operatorCtl.text.isNotEmpty ? operatorCtl.text : null,
+        module: null,
+        roleId: roleId,
+        startTime: dateStart.isNotEmpty ? dateStart : null,
+        endTime: dateEnd.isNotEmpty ? dateEnd : null,
+      ),
+      translation: CalLogTranslator.getLanguageMap(),
+      headers: [
+        'ID',
+        (localizedStrings?.operator ?? "operator"),
+        (localizedStrings?.userRole ?? "userRole"),
+        (localizedStrings?.calibrationType ?? "calibrationType"),
+        (localizedStrings?.operationResult ?? "operationResult"),
+        (localizedStrings?.fCreatedAtCol ?? "fCreatedAtCol"),
+      ],
+    );
+
+    String jsonStr = jsonEncode(exportLog.toJson());
+    PublicFunctions.exportCalLog(jsonStr);
   }
 
   @override
@@ -165,16 +237,22 @@ class _MobileLogCalTabState extends State<MobileLogCalTab> {
         Expanded(
           child: ListView.separated(
             itemCount: _allCalLogs.length,
-            separatorBuilder: (_, __) => const Divider(height: 1, color: Color(0xFFEEEEEE)),
+            separatorBuilder: (_, __) =>
+                const Divider(height: 1, color: Color(0xFFEEEEEE)),
             itemBuilder: (context, index) {
               final log = _allCalLogs[index];
               return InkWell(
                 onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (_) => MobileLogDetailPage(log: log, logType: 'cal')));
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (_) =>
+                              MobileLogDetailPage(log: log, logType: 'cal')));
                 },
                 child: Container(
                   color: Colors.white,
-                  padding: const EdgeInsets.only(left: 4, right: 16, top: 12, bottom: 12),
+                  padding: const EdgeInsets.only(
+                      left: 4, right: 16, top: 12, bottom: 12),
                   child: Column(
                     children: [
                       Row(
@@ -191,11 +269,19 @@ class _MobileLogCalTabState extends State<MobileLogCalTab> {
                               });
                             },
                           ),
-                          Text(log.recId?.toString() ?? "", style: const TextStyle(color: Colors.blue)),
+                          Text(log.recId?.toString() ?? "",
+                              style: const TextStyle(color: Colors.blue)),
                           const Spacer(),
-                          Text(log.createTime != null ? DateFormat('yyyy-MM-dd HH:mm:ss').format(log.createTime!) : "", style: const TextStyle(color: Colors.black54, fontSize: 13)),
+                          Text(
+                              log.createTime != null
+                                  ? DateFormat('yyyy-MM-dd HH:mm:ss')
+                                      .format(log.createTime!)
+                                  : "",
+                              style: const TextStyle(
+                                  color: Colors.black54, fontSize: 13)),
                           const SizedBox(width: 8),
-                          const Icon(Icons.chevron_right, color: Colors.black26),
+                          const Icon(Icons.chevron_right,
+                              color: Colors.black26),
                         ],
                       ),
                       Padding(
@@ -206,25 +292,38 @@ class _MobileLogCalTabState extends State<MobileLogCalTab> {
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(localizedStrings?.operator ?? "Operator", style: const TextStyle(color: Colors.black45, fontSize: 12)),
+                                Text(localizedStrings?.operator ?? "Operator",
+                                    style: const TextStyle(
+                                        color: Colors.black45, fontSize: 12)),
                                 const SizedBox(height: 4),
-                                Text(log.operator ?? "", style: const TextStyle(color: Colors.black87)),
+                                Text(log.operator ?? "",
+                                    style:
+                                        const TextStyle(color: Colors.black87)),
                               ],
                             ),
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(localizedStrings?.calibrationType ?? "Calibration Type", style: const TextStyle(color: Colors.black45, fontSize: 12)),
+                                Text(
+                                    localizedStrings?.calibrationType ??
+                                        "Calibration Type",
+                                    style: const TextStyle(
+                                        color: Colors.black45, fontSize: 12)),
                                 const SizedBox(height: 4),
-                                Text(getCalLogTrans(log.type ?? ""), style: const TextStyle(color: Colors.black87)),
+                                Text(getCalLogTrans(log.type ?? ""),
+                                    style:
+                                        const TextStyle(color: Colors.black87)),
                               ],
                             ),
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(localizedStrings?.gTipResult ?? "Result", style: const TextStyle(color: Colors.black45, fontSize: 12)),
+                                Text(localizedStrings?.gTipResult ?? "Result",
+                                    style: const TextStyle(
+                                        color: Colors.black45, fontSize: 12)),
                                 const SizedBox(height: 4),
-                                Text(getCalLogTrans(log.calResult ?? ""), style: const TextStyle(color: Colors.blue)),
+                                Text(getCalLogTrans(log.calResult ?? ""),
+                                    style: const TextStyle(color: Colors.blue)),
                               ],
                             ),
                           ],
@@ -248,9 +347,11 @@ class _MobileLogCalTabState extends State<MobileLogCalTab> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF26A69A), // Teal color
                 padding: const EdgeInsets.symmetric(vertical: 14),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(4)),
               ),
-              child: const Text("Export", style: TextStyle(color: Colors.white, fontSize: 16)),
+              child: const Text("Export",
+                  style: TextStyle(color: Colors.white, fontSize: 16)),
             ),
           ),
         ),

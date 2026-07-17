@@ -2,9 +2,10 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:fast_gbk/fast_gbk.dart';
 import 'dart:io';
-import 'package:excel/excel.dart';
+import 'package:excel/excel.dart' hide Border;
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'mobile_report_setting_page.dart';
 import 'package:flutter/services.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
@@ -12,6 +13,8 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import 'package:t_max/data/download_prt_fmt.dart';
 import 'package:t_max/data/g_data.dart';
+import 'package:t_max/functions/adaptive.dart';
+import 'package:t_max/pages/mobile_plu_detail_page.dart';
 import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/data/icons.dart';
 import 'package:t_max/data/language.dart';
@@ -57,6 +60,10 @@ class _PluEidtPageState extends State<PluEidtPage> {
   bool isImporting = false;
 
   String _downloadType = "1";
+
+  bool isFetchingMobileData = false;
+  final ScrollController _mobileScrollController = ScrollController();
+  Map<int, bool> _expandedPlu = {};
 
   bool shouldToggleAll = false; // 是否全选
   String _sortField = ''; // 当前排序列名
@@ -325,6 +332,18 @@ class _PluEidtPageState extends State<PluEidtPage> {
   void initState() {
     super.initState();
 
+    _mobileScrollController.addListener(() {
+      if (_mobileScrollController.position.pixels >= _mobileScrollController.position.maxScrollExtent - 50) {
+        if (currentPage < totalPages && !isFetchingMobileData) {
+          setState(() {
+            isFetchingMobileData = true;
+            currentPage++;
+          });
+          getCurrentPageDataFormDb();
+        }
+      }
+    });
+
     _eventbus1 = eventBus.on<EventPLuDataSavedOK>().listen((event) {
       if (mounted) {
         setState(() {
@@ -368,7 +387,11 @@ class _PluEidtPageState extends State<PluEidtPage> {
 
     _eventbus5 = eventBus.on<EventPLuList>().listen((event) {
       if (mounted) {
-        dataModels.clear();
+        isFetchingMobileData = false;
+        bool isMobile = Adaptive.isMobile(context);
+        if (!isMobile || currentPage <= 1) {
+          dataModels.clear();
+        }
         String jsonData = event.obj;
         if (jsonData.isEmpty) {
           setPluToList([]);
@@ -448,6 +471,7 @@ class _PluEidtPageState extends State<PluEidtPage> {
     _eventbus6.cancel();
     _eventbus7.cancel();
     _eventbus8.cancel();
+    _mobileScrollController.dispose();
     allSelectedNotifier.dispose();
     gettingDataTimer?.cancel();
     dataModels.clear();
@@ -2161,6 +2185,9 @@ class _PluEidtPageState extends State<PluEidtPage> {
 
   @override
   Widget build(BuildContext context) {
+    if (Adaptive.isMobile(context)) {
+      return _buildMobileLayout(context, MediaQuery.of(context).size.width);
+    }
     return Scaffold(
       body: Column(
         children: [
@@ -2395,6 +2422,650 @@ class _PluEidtPageState extends State<PluEidtPage> {
                 ],
               ),
             ),
+          ),
+        ],
+      ),
+    );
+  }
+  Widget _buildMobileLayout(BuildContext context, double width) {
+    bool hasSelection = dataModels.any((m) => m.isSelected);
+    return Scaffold(
+      backgroundColor: const Color(0xFFF5F5F5),
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        centerTitle: true,
+        leading: const BackButton(color: Colors.black87),
+        title: Text(
+          localizedStrings?.menuPluManagement ?? "PLU Management",
+          style: const TextStyle(color: Colors.black87, fontSize: 18, fontWeight: FontWeight.bold),
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.help_outline, color: Colors.black87),
+            onPressed: () {},
+          ),
+          IconButton(
+            icon: const Icon(Icons.add_circle_outline, color: Colors.black87),
+            onPressed: () {
+               Navigator.push(
+                 context,
+                 MaterialPageRoute(
+                   builder: (context) => MobilePluDetailPage(
+                     type: 0,
+                     selField: fieldOrder,
+                     pluList: getPluList(),
+                     pluInfo: PluData(0, 0, 0, 0, '', '', 0, 0, 0, 0, 0, 0, 0, '', false, '', 0, 0, '', ''),
+                     onSave: (updatedPlu) {
+                       String jsonData = jsonEncode(PluDataFromDb(
+                         recId: 0,
+                         plu: updatedPlu.plu.toString(),
+                         productCode: updatedPlu.productCode.toString(),
+                         itemCode: updatedPlu.itemCode.toString(),
+                         category: updatedPlu.category,
+                         productName: updatedPlu.productName,
+                         generalUnit: updatedPlu.generalUnit.toString(),
+                         taxType: updatedPlu.taxType.toString(),
+                         price: updatedPlu.price.toString(),
+                         unitWeight: updatedPlu.unitWeight.toString(),
+                         pretare: updatedPlu.pretare.toString(),
+                         limitHigh: updatedPlu.limitHigh.toString(),
+                         limitLow: updatedPlu.limitLow.toString(),
+                         createdAt: DateTime.now(),
+                         updatedAt: DateTime.now(),
+                         createBy: updatedPlu.createBy,
+                         updateBy: updatedPlu.updateBy,
+                         enabled: updatedPlu.enabled,
+                         createUser: updatedPlu.createUser,
+                         updateUser: updatedPlu.updateUser,
+                       ));
+                       PublicFunctions.addOneProduct(jsonData);
+                     },
+                   ),
+                 ),
+               );
+            },
+          ),
+        ],
+      ),
+      body: Column(
+        children: [
+          Container(
+            color: Colors.white,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Container(
+              height: 40,
+              decoration: BoxDecoration(
+                color: const Color(0xFFF5F5F5),
+                borderRadius: BorderRadius.circular(4),
+              ),
+              child: TextField(
+                controller: pluNameCtl,
+                onChanged: (val) {
+                  pluCtl.text = val; 
+                },
+                decoration: InputDecoration(
+                  hintText: localizedStrings?.fSearchHint ?? "Search",
+                  hintStyle: const TextStyle(color: Colors.black38, fontSize: 14),
+                  prefixIcon: const Icon(Icons.search, color: Colors.black38, size: 20),
+                  border: InputBorder.none,
+                  contentPadding: const EdgeInsets.symmetric(vertical: 10),
+                  suffixIcon: IconButton(
+                    icon: const Icon(Icons.clear, size: 18, color: Colors.black38),
+                    onPressed: () {
+                      pluNameCtl.clear();
+                      pluCtl.clear();
+                      setState(() { currentPage = 1; getCurrentPageDataFormDb(); });
+                    },
+                  ),
+                ),
+                onSubmitted: (val) {
+                  setState(() { currentPage = 1; getCurrentPageDataFormDb(); });
+                },
+              ),
+            ),
+          ),
+          _buildMobileActionRow(hasSelection),
+          Expanded(
+            child: ListView.builder(
+              controller: _mobileScrollController,
+              itemCount: dataModels.length,
+              itemBuilder: (context, index) {
+                return _buildMobilePluCard(dataModels[index], index);
+              },
+            ),
+          ),
+          _buildMobileBottomButtons(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMobileActionRow(bool hasSelection) {
+    return Container(
+      color: Colors.white,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      child: Row(
+        children: [
+          if (hasSelection) ...[
+            Row(
+              children: [
+                SizedBox(
+                  width: 24,
+                  height: 24,
+                  child: Checkbox(
+                    value: allSelectedNotifier.value,
+                    onChanged: (val) {
+                      shouldToggleAll = true;
+                      allSelectedNotifier.value = val ?? false;
+                    },
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Text(localizedStrings?.gSelectAll ?? "select all", style: const TextStyle(fontSize: 14, color: Colors.black87)),
+              ],
+            ),
+            const Spacer(),
+            InkWell(
+              onTap: () {
+                 showTipInfo("Download feature for scale", context);
+              },
+              child: Row(
+                children: [
+                  Icon(Icons.download, color: colorScheme.primary, size: 20),
+                  const SizedBox(width: 4),
+                  Text(localizedStrings?.gBtnDownload ?? "Download", style: const TextStyle(color: Colors.black87, fontSize: 14)),
+                ],
+              ),
+            ),
+            const SizedBox(width: 16),
+            InkWell(
+              onTap: () {
+                 _deleteSelectedItems();
+              },
+              child: Row(
+                children: [
+                  const Icon(Icons.delete_outline, color: Colors.red, size: 20),
+                  const SizedBox(width: 4),
+                  Text(localizedStrings?.gBtnDelete ?? "Delete", style: const TextStyle(color: Colors.black87, fontSize: 14)),
+                ],
+              ),
+            ),
+            const SizedBox(width: 16),
+            Switch(
+              value: dataModels.where((m) => m.isSelected).every((m) => m.pluData.enabled == true),
+              onChanged: (val) {
+                _updateEnabledItems(val);
+              },
+              activeColor: const Color(0xFF26A69A),
+            ),
+          ] else ...[
+            Expanded(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  InkWell(
+                    onTap: () {}, 
+                    child: Row(
+                      children: [
+                        Icon(Icons.download, color: colorScheme.primary, size: 20),
+                        const SizedBox(width: 4),
+                        Text(localizedStrings?.gBtnDownload ?? "Download", style: const TextStyle(color: Colors.black87, fontSize: 14)),
+                      ],
+                    ),
+                  ),
+                  InkWell(
+                    onTap: () {
+                      Map<String, String> colNamesMap = {};
+                      for (var item in _columnVisibility.entries) {
+                        colNamesMap[item.key] = getColumnName(item.key);
+                      }
+                      
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => MobileReportSettingPage(
+                            options: colNamesMap,
+                            initialSelectedOptions: fieldOrder,
+                          ),
+                        ),
+                      ).then((value) {
+                        if (value != null) {
+                          List<String> selectedOptions = value;
+                          fieldOrder = selectedOptions;
+
+                          SetPluFields setInfo = SetPluFields(selPlu: fieldOrder);
+                          String jsonStr = setPluFieldsToJson(setInfo);
+                          PublicFunctions.setPluFields(jsonStr);
+
+                          for (var item in _columnVisibility.entries) {
+                            if (selectedOptions.contains(item.key)) {
+                              _columnVisibility[item.key] = true;
+                            } else {
+                              _columnVisibility[item.key] = false;
+                            }
+                          }
+
+                          setState(() {});
+                        }
+                      });
+                    },
+                    child: Row(
+                      children: [
+                        Icon(Icons.article_outlined, color: colorScheme.primary, size: 20),
+                        const SizedBox(width: 4),
+                        Text(localizedStrings?.gBtnReportSetting ?? "Report Setting", style: const TextStyle(color: Colors.black87, fontSize: 14)),
+                      ],
+                    ),
+                  ),
+                  InkWell(
+                    onTap: () {
+                       _showClearAllDialog();
+                    },
+                    child: Row(
+                      children: [
+                        const Icon(Icons.cleaning_services_outlined, color: Colors.red, size: 20),
+                        const SizedBox(width: 4),
+                        Text(localizedStrings?.fClearBtn ?? "Clear", style: const TextStyle(color: Colors.black87, fontSize: 14)),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  void _showClearAllDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          child: Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text("Prompt", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                    IconButton(
+                      icon: const Icon(Icons.close),
+                      onPressed: () => Navigator.pop(context),
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 24),
+                const Icon(Icons.cleaning_services, size: 64, color: Colors.redAccent),
+                const SizedBox(height: 16),
+                const Text(
+                  "All PLU will be erased and reloaded. Continue?",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 16),
+                ),
+                const SizedBox(height: 32),
+                SizedBox(
+                  width: double.infinity,
+                  height: 44,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      PublicFunctions.clearAllProduct();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFFF03A47),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                    ),
+                    child: const Text("Confirm", style: TextStyle(color: Colors.white, fontSize: 16)),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      }
+    );
+  }
+
+  Widget _buildMobilePluCard(PluDataModel model, int index) {
+    int key = model.pluData.plu ?? index;
+    bool isExpanded = _expandedPlu[key] ?? false;
+    bool canExpand = fieldOrder.any((f) => f != 'plu' && f != 'productName' && f != 'enabled');
+    
+    return Container(
+      margin: const EdgeInsets.only(bottom: 1),
+      color: Colors.white,
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            child: Row(
+              children: [
+                SizedBox(
+                  width: 24,
+                  height: 24,
+                  child: Checkbox(
+                    value: model.isSelected,
+                    onChanged: (val) {
+                      setState(() {
+                        model.isSelected = val ?? false;
+                        _updateAllSelectedStatus();
+                      });
+                    },
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: colorScheme.primary,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                  child: Text(
+                    model.pluData.plu.toString().padLeft(2, '0'),
+                    style: const TextStyle(color: Colors.white, fontSize: 12),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    model.pluData.productName ?? "",
+                    style: TextStyle(color: colorScheme.primary, fontSize: 16),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                Switch(
+                  value: model.pluData.enabled ?? true,
+                  onChanged: (val) {
+                    _handleEnabled(model);
+                  },
+                  activeColor: const Color(0xFF26A69A),
+                ),
+                const SizedBox(width: 4),
+                InkWell(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => MobilePluDetailPage(
+                          type: 1,
+                          selField: fieldOrder,
+                          pluList: getPluList(),
+                          pluInfo: model.pluData,
+                          onSave: (updatedPlu) {
+                            performModifyPlu(PluDataModel(pluData: updatedPlu));
+                          },
+                        ),
+                      ),
+                    );
+                  },
+                  child: const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 4.0),
+                    child: Icon(Icons.edit_note, color: Colors.black54, size: 28),
+                  ),
+                ),
+                if (canExpand) ...[
+                  const SizedBox(width: 4),
+                  InkWell(
+                    onTap: () {
+                      setState(() {
+                        _expandedPlu[key] = !isExpanded;
+                      });
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey.shade300),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      padding: const EdgeInsets.all(2),
+                      child: Icon(
+                        isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
+                        color: Colors.black54,
+                        size: 20,
+                      ),
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+          if (isExpanded)
+            Container(
+              color: const Color(0xFFFAFAFA),
+              padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 16),
+              child: Column(
+                children: _buildDynamicExpandedFields(model),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  List<Widget> _buildDynamicExpandedFields(PluDataModel model) {
+    List<Widget> items = [];
+    final Map<int, String> pluWgtUnit = {
+      0: 'kg',
+      1: 'g',
+      2: 'lb',
+      3: 'oz',
+      4: 'pcs',
+    };
+    final Map<int, String> pluTax = {
+      0: 'tax1',
+      1: 'tax2',
+      2: 'tax3',
+      3: 'tax4',
+      4: 'tax5',
+      5: 'tax6',
+    };
+
+    for (String field in fieldOrder) {
+      if (field == 'plu' || field == 'productName' || field == 'enabled') continue;
+
+      String title = '';
+      String value = '';
+
+      switch (field) {
+        case 'price':
+          title = localizedStrings?.gPluPrice ?? "Price";
+          value = model.pluData.price.toString();
+          break;
+        case 'generalUnit':
+          title = localizedStrings?.gPluWgtUnit ?? "Unit";
+          value = pluWgtUnit[model.pluData.generalUnit] ?? model.pluData.generalUnit.toString();
+          break;
+        case 'taxType':
+          title = localizedStrings?.gPluTaxType ?? "Tax Type";
+          value = pluTax[model.pluData.taxType] ?? model.pluData.taxType.toString();
+          break;
+        case 'unitWeight':
+          title = localizedStrings?.gPluUnitWgt ?? "Unit Weight(g)";
+          value = model.pluData.unitWeight.toString();
+          break;
+        case 'pretare':
+          title = localizedStrings?.gPluPretare ?? "Pretare(kg)";
+          value = model.pluData.pretare.toString();
+          break;
+        case 'limitHigh':
+          title = localizedStrings?.gPluLimitHigh ?? "Limit High";
+          value = model.pluData.limitHigh.toString();
+          break;
+        case 'limitLow':
+          title = localizedStrings?.gPluLimitLow ?? "Limit Low";
+          value = model.pluData.limitLow.toString();
+          break;
+        case 'category':
+          title = localizedStrings?.gPluCategory ?? "Category";
+          value = model.pluData.category ?? "-";
+          break;
+        case 'productCode':
+          title = localizedStrings?.gPluPluCode ?? "Product Code";
+          value = model.pluData.productCode.toString();
+          break;
+        case 'itemCode':
+          title = localizedStrings?.gPluItemCode ?? "Item Code";
+          value = model.pluData.itemCode.toString();
+          break;
+      }
+
+      if (title.isNotEmpty) {
+        items.add(_buildDetailItem(title, value));
+      }
+    }
+
+    List<Widget> rows = [];
+    for (int i = 0; i < items.length; i += 3) {
+      rows.add(
+        Row(
+          children: [
+            items[i],
+            if (i + 1 < items.length) items[i + 1] else const Expanded(child: SizedBox()),
+            if (i + 2 < items.length) items[i + 2] else const Expanded(child: SizedBox()),
+          ],
+        ),
+      );
+      if (i + 3 < items.length) {
+        rows.add(const SizedBox(height: 12));
+      }
+    }
+
+    return rows;
+  }
+
+  Widget _buildDetailItem(String title, String value) {
+    return Expanded(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(title, style: const TextStyle(color: Colors.black45, fontSize: 12)),
+          const SizedBox(height: 4),
+          Text(value, style: const TextStyle(color: Colors.black87, fontSize: 14)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMobileBottomButtons() {
+    return Container(
+      color: Colors.white,
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        children: [
+          SizedBox(
+            width: double.infinity,
+            height: 44,
+            child: ElevatedButton(
+              onPressed: () async {
+                  String? selectedDirectory;
+                  if (Platform.isAndroid) {
+                    if (await Permission.manageExternalStorage.isGranted == false) {
+                      await Permission.manageExternalStorage.request();
+                    }
+                    if (await Permission.storage.isGranted == false) {
+                      await Permission.storage.request();
+                    }
+                    final Directory dir = Directory('/storage/emulated/0/Download');
+                    if (!await dir.exists()) {
+                      await dir.create(recursive: true);
+                    }
+                    selectedDirectory = dir.path;
+                  } else {
+                    selectedDirectory = await FilePicker.platform.getDirectoryPath(dialogTitle: 'Select Output Folder');
+                  }
+                  if (selectedDirectory != null) {
+                    final String filePath = path.join(selectedDirectory, 'ProductTemplate.csv');
+                    ExportResult msg = await exportRawTemplate(filePath);
+                    if (!mounted) return;
+                    if (msg.isSuccess) {
+                      showTipInfo('Template saved to ' + filePath, context);
+                    } else {
+                      showTipInfo(msg.errorMessage ?? "Error", context);
+                    }
+                  }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF004B87),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+              ),
+              child: const Text("Get PLU Template", style: TextStyle(color: Colors.white, fontSize: 16)),
+            ),
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Expanded(
+                child: SizedBox(
+                  height: 44,
+                  child: ElevatedButton(
+                    onPressed: () async {
+                        String? selectedDirectory;
+                        if (Platform.isAndroid) {
+                          if (await Permission.manageExternalStorage.isGranted == false) {
+                            await Permission.manageExternalStorage.request();
+                          }
+                          if (await Permission.storage.isGranted == false) {
+                            await Permission.storage.request();
+                          }
+                          final Directory dir = Directory('/storage/emulated/0/Download');
+                          if (!await dir.exists()) {
+                            await dir.create(recursive: true);
+                          }
+                          selectedDirectory = dir.path;
+                        } else {
+                          selectedDirectory = await FilePicker.platform.getDirectoryPath(dialogTitle: 'Select Output Folder');
+                        }
+                        if (selectedDirectory != null) {
+                          String outputFile = path.join(selectedDirectory, 'export_product_${DateTime.now().millisecondsSinceEpoch}.csv');
+                          SearchPlu searchPluInfo = SearchPlu(
+                            category: categoryCtl.text.isNotEmpty ? categoryCtl.text : null,
+                            plu: pluCtl.text.isNotEmpty ? pluCtl.text : null,
+                            pluName: pluNameCtl.text.isNotEmpty ? pluNameCtl.text : null,
+                          );
+                          ExportPlu exportPluInfo = ExportPlu(
+                            translation: getTranslationMap(),
+                            searchPlu: searchPluInfo,
+                            path: outputFile,
+                          );
+                          String jsonStr = jsonEncode(exportPluInfo);
+                          PublicFunctions.exportProduct(jsonStr);
+                        }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF004B87),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                    ),
+                    child: const Text("Export", style: TextStyle(color: Colors.white, fontSize: 16)),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: SizedBox(
+                  height: 44,
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      if (isImporting) return;
+                      setState(() => isImporting = true);
+                      await performImport();
+                      setState(() => isImporting = false);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF004B87),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                    ),
+                    child: const Text("Import", style: TextStyle(color: Colors.white, fontSize: 16)),
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
       ),

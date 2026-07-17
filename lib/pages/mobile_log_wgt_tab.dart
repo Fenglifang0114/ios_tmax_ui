@@ -1,5 +1,10 @@
+import 'dart:convert';
+import 'dart:io';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:path/path.dart' as p;
+import 'package:permission_handler/permission_handler.dart';
 import 'package:t_max/data/g_data.dart';
 import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/data/language.dart';
@@ -8,6 +13,7 @@ import 'package:t_max/eventbus/eventbus.dart';
 import 'package:t_max/functions/methods.dart';
 import 'package:t_max/pages/mobile_log_detail_page.dart';
 import 'package:t_max/widget/mobile_log_filter_header.dart';
+import 'package:t_max/dialog/custom_dialog_tip.dart';
 
 class MobileLogWgtTab extends StatefulWidget {
   final String contentType;
@@ -39,6 +45,7 @@ class _MobileLogWgtTabState extends State<MobileLogWgtTab> {
   List<ScaleWgtInfo> _allWgtLogs = [];
 
   dynamic _eventbus1;
+  dynamic _eventbus3;
 
   DateTime? startDate;
   DateTime? endDate;
@@ -48,6 +55,7 @@ class _MobileLogWgtTabState extends State<MobileLogWgtTab> {
     operatorCtl.dispose();
     roleIdCtl.dispose();
     _eventbus1?.cancel();
+    _eventbus3?.cancel();
     super.dispose();
   }
 
@@ -78,6 +86,23 @@ class _MobileLogWgtTabState extends State<MobileLogWgtTab> {
           }
         } catch (e) {
           // ignore
+        }
+      }
+    });
+
+    _eventbus3 = eventBus.on<EventRespExportWgtLog>().listen((event) {
+      if (mounted) {
+        String josnData = event.obj;
+        try {
+          if (josnData.isEmpty) {
+            showTipInfo((localizedStrings?.gTipExportFail ?? "Export failed"), context);
+            return;
+          }
+          if (josnData.contains('ok')) {
+            showTipInfo((localizedStrings?.gTipExportSuccess ?? "Export succeeded"), context);
+          }
+        } catch (e) {
+          return;
         }
       }
     });
@@ -116,8 +141,48 @@ class _MobileLogWgtTabState extends State<MobileLogWgtTab> {
     });
   }
 
-  void _export() {
-    // Mobile export logic
+  void _export() async {
+    if (Platform.isAndroid) {
+      await Permission.storage.request();
+    }
+    
+    String? selectedDirectory = await FilePicker.platform.getDirectoryPath(
+      dialogTitle: 'Select Output Folder',
+    );
+    
+    if (selectedDirectory == null) {
+      return;
+    }
+    
+    String timestamp = DateFormat('yyyyMMdd_HHmmss').format(DateTime.now());
+    String outputFile = p.join(selectedDirectory, 'wgt_log_$timestamp.csv');
+    
+    int? roleId = int.tryParse(roleIdCtl.text);
+    String dateStart = startDate != null ? DateFormat('yyyy-MM-dd').format(startDate!) : "";
+    String dateEnd = endDate != null ? DateFormat('yyyy-MM-dd').format(endDate!) : "";
+    
+    ReqExportLog exportLog = ReqExportLog(
+      filePath: outputFile,
+      fieldName: 'rec_id',
+      direction: "desc",
+      search: Search(
+        searchOperator: operatorCtl.text.isNotEmpty ? operatorCtl.text : null,
+        module: null,
+        roleId: roleId,
+        startTime: dateStart.isNotEmpty ? dateStart : null,
+        endTime: dateEnd.isNotEmpty ? dateEnd : null,
+      ),
+      translation: WgtLogTranslator.getLanguageMap(),
+      headers: [
+        'ID',
+        (localizedStrings?.operator ?? "operator"),
+        (localizedStrings?.module ?? "module"),
+        (localizedStrings?.fCreatedAtCol ?? "fCreatedAtCol"),
+      ],
+    );
+    
+    String jsonStr = jsonEncode(exportLog.toJson());
+    PublicFunctions.exportWgtLog(jsonStr);
   }
 
   void _clearLogs() {

@@ -1,4 +1,4 @@
-﻿import 'dart:convert';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/data/olul_err_data.dart';
@@ -11,6 +11,7 @@ import '../../functions/methods.dart';
 import '../data/manager_scale_channel.dart';
 import '../data/language.dart';
 import '../data/timer_manager.dart';
+import 'package:t_max/functions/adaptive.dart';
 
 class BasicDataPage extends StatefulWidget {
   const BasicDataPage({super.key});
@@ -95,6 +96,9 @@ class BasicDataPageState extends State<BasicDataPage> {
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
+    if (Adaptive.isMobile(context)) {
+      return mobileLayout(context, width);
+    }
     return Scaffold(
       body: firstLayout(context, width),
     );
@@ -284,5 +288,202 @@ class BasicDataPageState extends State<BasicDataPage> {
     });
 
     // PublicFunctions.getWeight(scaleId);
+  }
+
+  Widget mobileLayout(BuildContext context, double width) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      drawer: Drawer(
+        width: 250,
+        child: SafeArea(
+          child: Container(
+            color: Theme.of(context).colorScheme.surface,
+            child: Column(
+              children: [
+                Container(
+                  height: 48,
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    (localizedStrings?.gTitleDeviceList ?? "Device List"),
+                    style: Theme.of(context).textTheme.labelLarge!.apply(
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                  ),
+                ),
+                const Divider(height: 1),
+                Expanded(
+                  child: NewAllScaleListWidget(
+                    listWidth: 250,
+                    selScaleId: selScaleId,
+                    clickScale: (scale) {
+                      if (!enabledGetDataBtn) {
+                        showTipInfo((localizedStrings?.gTipPerformingOperation ?? "Performing"), context);
+                        return;
+                      }
+                      setState(() {
+                        changeScale(scale.scaleId);
+                      });
+                      Navigator.pop(context); // close drawer
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black87,
+        elevation: 0,
+        leading: BackButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+        title: Text(
+          localizedStrings?.menuBasicDataCollection ?? "Basic Data Collection",
+          style: const TextStyle(
+            color: Colors.black87,
+            fontSize: 18,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        centerTitle: true,
+        actions: [
+          Builder(
+            builder: (context) => IconButton(
+              icon: const Icon(Icons.scale_outlined, color: Colors.black87, size: 24),
+              onPressed: () {
+                Scaffold.of(context).openDrawer();
+              },
+            ),
+          ),
+          IconButton(
+            icon: const Icon(Icons.help_outline, color: Colors.black87, size: 24),
+            onPressed: () {},
+          ),
+          const SizedBox(width: 8),
+        ],
+      ),
+      body: Column(
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(16.0),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(4),
+                  border: Border.all(color: Colors.grey.withAlpha(51)),
+                ),
+                child: Column(
+                  children: [
+                    _buildMobileHeaderRow(),
+                    _buildMobileDataRow((localizedStrings?.cTipPowerOnCnt ?? "Power-On Count"), myBasicErrInfo.powerOnCnt.toString(), true),
+                    _buildMobileDataRow((localizedStrings?.cTipPowerOffCnt ?? "Abnormal Power-Off Count"), myBasicErrInfo.forcedShutdownCnt.toString(), false),
+                    _buildMobileDataRow((localizedStrings?.cTipOlTime ?? "OL Time(mins)"), myBasicErrInfo.olTime.toString(), true),
+                    _buildMobileDataRow((localizedStrings?.cTipErr4Cnt ?? "Err4 Count"), myBasicErrInfo.err4Cnt.toString(), false),
+                    _buildMobileDataRow((localizedStrings?.cTipCalswitchCnt ?? "Calibration Switch Count"), myBasicErrInfo.calSwitchCnt.toString(), true),
+                    _buildMobileDataRow((localizedStrings?.cTipRunningTime ?? "Running Time(mins)"), myBasicErrInfo.runningTime.toString(), false),
+                    _buildMobileDataRow((localizedStrings?.cTipWeighingCount ?? "Weighing Count"), myBasicErrInfo.wgtCnt.toString(), true),
+                    _buildMobileDataRow((localizedStrings?.cTipUlTime ?? "UL Time(mins)"), myBasicErrInfo.ulTime.toString(), false),
+                    _buildMobileDataRow((localizedStrings?.cTipErr19Cnt ?? "Err19 Count"), myBasicErrInfo.err19Cnt.toString(), true),
+                    _buildMobileDataRow((localizedStrings?.cTipCalCnt ?? "Calibration Count"), myBasicErrInfo.caliCnt.toString(), false),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.all(16),
+            child: SizedBox(
+              width: double.infinity,
+              height: 48,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF005A9E),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                ),
+                onPressed: enabledGetDataBtn
+                    ? () {
+                        if (selScaleId == -1) {
+                          showTipInfo(localizedStrings?.gTipSelectDeviceFirst ?? "Select Device", context);
+                          return;
+                        }
+                        PublicFunctions.getBasicData(selScaleId);
+                        setState(() {
+                          enabledGetDataBtn = false;
+                        });
+                      }
+                    : null,
+                child: Text(
+                  localizedStrings?.gBtnGetBasicData ?? "Get Basic Data",
+                  style: const TextStyle(color: Colors.white, fontSize: 16),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMobileHeaderRow() {
+    return Container(
+      color: const Color(0xFFF5F5F5),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      child: Row(
+        children: [
+          Expanded(
+            flex: 2,
+            child: Text(
+              localizedStrings?.gTipInformation ?? "Information",
+              style: const TextStyle(fontSize: 14, color: Colors.black54),
+            ),
+          ),
+          Expanded(
+            flex: 1,
+            child: Text(
+              localizedStrings?.gTipValue ?? "Parameter List",
+              style: const TextStyle(fontSize: 14, color: Colors.black54),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMobileDataRow(String title, String value, bool isEven) {
+    return Container(
+      color: isEven ? Colors.white : const Color(0xFFFAFAFA),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      decoration: BoxDecoration(
+        border: Border(
+          top: BorderSide(color: Colors.grey.withAlpha(25)),
+        ),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            flex: 2,
+            child: Text(
+              title,
+              style: const TextStyle(fontSize: 14, color: Colors.black87),
+            ),
+          ),
+          Expanded(
+            flex: 1,
+            child: Text(
+              value,
+              style: const TextStyle(fontSize: 14, color: Colors.black87),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
