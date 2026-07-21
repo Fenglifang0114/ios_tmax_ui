@@ -17,6 +17,8 @@ import '../eventbus/eventbus.dart';
 import '../functions/methods.dart';
 import '../widget/custom_button.dart';
 import '../usb_serial_manager.dart';
+import 'package:t_max/functions/adaptive.dart';
+import 'package:t_max/pages/mobile_sel_scales_page.dart';
 
 class UpdateFirmwarePage extends StatefulWidget {
   const UpdateFirmwarePage({super.key});
@@ -54,6 +56,9 @@ class _UpdateFirmwarePageState extends State<UpdateFirmwarePage> {
 
   @override
   Widget build(BuildContext context) {
+    if (Adaptive.isMobile(context)) {
+      return _buildMobileContent(context);
+    }
     double width = MediaQuery.of(context).size.width;
     return Scaffold(
       body: Container(
@@ -156,9 +161,123 @@ class _UpdateFirmwarePageState extends State<UpdateFirmwarePage> {
                   ),
                 ),
                 const SizedBox(
-                  height: 50,
                 ),
               ])),
+    );
+  }
+
+  Widget _buildMobileContent(BuildContext context) {
+    bool hasData = zipFileCtl.text.isNotEmpty;
+
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        centerTitle: true,
+        leading: BackButton(
+          color: Colors.black87,
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: Text(
+          localizedStrings?.menuFirmwareUpdate ?? "Firmware Update",
+          style: const TextStyle(color: Colors.black87, fontSize: 18, fontWeight: FontWeight.bold),
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.help_outline, color: Colors.black87),
+            onPressed: () {},
+          )
+        ],
+      ),
+      body: Column(
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    localizedStrings?.gTipFirmwareZipFile ?? "Firmware Zip",
+                    style: const TextStyle(fontSize: 14, color: Colors.black87),
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Container(
+                          height: 48,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            border: Border.all(color: Colors.grey[300]!),
+                          ),
+                          child: TextField(
+                            controller: zipFileCtl,
+                            readOnly: true,
+                            enabled: false,
+                            decoration: const InputDecoration(
+                              border: InputBorder.none,
+                              contentPadding: EdgeInsets.symmetric(horizontal: 12),
+                            ),
+                          ),
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          zipFileCtl.text = '';
+                          pickFiles(zipFileCtl);
+                        },
+                        child: Container(
+                          width: 48,
+                          height: 48,
+                          color: const Color(0xFF0D558E),
+                          child: const Icon(Icons.add, color: Colors.white),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            color: Colors.white,
+            child: SafeArea(
+              child: SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: (!isSetting && hasData) ? () {
+                    setState(() {
+                      _progress = 0.0;
+                      _errMsgSerial = "";
+                    });
+                    useNetworkUpdate();
+                  } : null,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.grey[300],
+                    disabledBackgroundColor: Colors.grey[300],
+                    shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                  ).copyWith(
+                    backgroundColor: WidgetStateProperty.resolveWith<Color>(
+                      (Set<WidgetState> states) {
+                        if (states.contains(WidgetState.disabled)) return Colors.grey[300]!;
+                        return Colors.grey[300]!; 
+                      },
+                    ),
+                  ),
+                  child: Text(
+                    localizedStrings?.gBtnDownload ?? "Download",
+                    style: TextStyle(color: hasData ? Colors.black87 : Colors.white, fontSize: 16),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -303,16 +422,20 @@ class _UpdateFirmwarePageState extends State<UpdateFirmwarePage> {
   }
 
   void showSelScaleDialog(int funcNo, String msg) {
-    showDialog(
-      context: context,
-      barrierDismissible: false, // 允许点击空白处关闭对话框
-      builder: (context) {
-        return SelectScalesPageNew(
-          funcNo: funcNo,
-          sendMsgStr: msg,
-        );
-      },
-    );
+    if (Adaptive.isMobile(context)) {
+      Navigator.push(context, MaterialPageRoute(builder: (context) => MobileSelectScalesPage(funcNo: funcNo, sendMsgStr: msg)));
+    } else {
+      showDialog(
+        context: context,
+        barrierDismissible: false, // 允许点击空白处关闭对话框
+        builder: (context) {
+          return SelectScalesPageNew(
+            funcNo: funcNo,
+            sendMsgStr: msg,
+          );
+        },
+      );
+    }
   }
 
   Widget _buildBtnDownload() {
@@ -348,8 +471,8 @@ class _UpdateFirmwarePageState extends State<UpdateFirmwarePage> {
       }
       FilePickerResult? result = await FilePicker.platform.pickFiles(
         allowMultiple: false,
-        type: FileType.custom,
-        allowedExtensions: ['zip'],
+        type: Platform.isAndroid ? FileType.any : FileType.custom,
+        allowedExtensions: Platform.isAndroid ? null : ['zip'],
       );
       if (result != null) {
         setState(() {

@@ -28,6 +28,7 @@ import 'package:t_max/dialog/show_options_dialog.dart';
 import 'package:t_max/eventbus/eventbus.dart';
 import 'package:t_max/functions/methods.dart';
 import 'package:t_max/pages/update_firmware_page.dart';
+import 'package:t_max/pages/mobile_sel_scales_page.dart';
 
 import 'package:t_max/widget/dialog_head_style.dart';
 import 'package:t_max/widget/f_open_file.dart';
@@ -2567,8 +2568,45 @@ class _PluEidtPageState extends State<PluEidtPage> {
             ),
             const Spacer(),
             InkWell(
-              onTap: () {
-                 showTipInfo("Download feature for scale", context);
+              onTap: () async {
+                  List<PluDataModel> selectedPluInfos = [];
+                  bool selectRow = false;
+                  for (var dessert in dataModels) {
+                    if (dessert.isSelected) {
+                      selectedPluInfos.add(dessert);
+                      selectRow = true;
+                    }
+                  }
+                  if (!selectRow) {
+                    showTipInfo(localizedStrings?.gTipNoDataSelected ?? "No Data Selected", context);
+                    return;
+                  }
+                  for (var dessert in selectedPluInfos) {
+                    if (dessert.pluData.enabled == false) {
+                      showTipInfo(localizedStrings?.gTipDownPluDisabled ?? "Disabled PLU", context);
+                      return;
+                    }
+                  }
+
+                  String msg = checkImportData(selectedPluInfos);
+                  if (msg != "") {
+                    showTipInfo(msg, context);
+                    return;
+                  }
+
+                  String msgStr = await downloadFormExcel(selectedPluInfos);
+                  if (!msgStr.contains("OK") && mounted) {
+                    showTipInfo(msgStr, context);
+                    return;
+                  }
+                  List<String> splitted = msgStr.split(',');
+                  if (splitted.length != 2) {
+                    return;
+                  }
+                  if (mounted) {
+                    String sendJson = getSendMsg(1, splitted[1]);
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => MobileSelectScalesPage(funcNo: 1, sendMsgStr: sendJson)));
+                  }
               },
               child: Row(
                 children: [
@@ -2605,7 +2643,9 @@ class _PluEidtPageState extends State<PluEidtPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   InkWell(
-                    onTap: () {}, 
+                    onTap: () {
+                      showTipInfo(localizedStrings?.gTipNoDataSelected ?? "No Data Selected", context);
+                    }, 
                     child: Row(
                       children: [
                         Icon(Icons.download, color: colorScheme.primary, size: 20),

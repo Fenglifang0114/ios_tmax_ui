@@ -12,6 +12,9 @@ import '../data/scalecmd_data.dart';
 import '../data/timer_manager.dart';
 import '../data/writelog.dart';
 import '../widget/page_head.dart';
+import 'package:t_max/functions/adaptive.dart';
+import 'package:t_max/pages/mobile_sel_scales_page.dart';
+import 'package:t_max/pages/update_firmware_page.dart';
 
 const int maxDefFmtLen = 21000;
 
@@ -71,6 +74,9 @@ class _DefaultPrnFmtPageState extends State<DefaultPrnFmtPage> {
 
   @override
   Widget build(BuildContext context) {
+    if (Adaptive.isMobile(context)) {
+      return _buildMobileContent(context);
+    }
     final width = MediaQuery.of(context).size.width;
     // final _height = MediaQuery.of(context).size.height;
 
@@ -101,6 +107,228 @@ class _DefaultPrnFmtPageState extends State<DefaultPrnFmtPage> {
                   ),
                 )),
               ])),
+    );
+  }
+
+  Widget _buildMobileContent(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFFFAFAFA),
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        centerTitle: true,
+        leading: BackButton(
+          color: Colors.black87,
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: Text(
+          localizedStrings?.menuLabelFormatDownload ?? "Label Format Download",
+          style: const TextStyle(color: Colors.black87, fontSize: 18, fontWeight: FontWeight.bold),
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.help_outline, color: Colors.black87),
+            onPressed: () {},
+          )
+        ],
+      ),
+      body: Column(
+        children: [
+          Container(
+            color: Colors.white,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  localizedStrings?.gPrinter ?? "Printer Protocol",
+                  style: const TextStyle(fontSize: 14, color: Colors.black87),
+                ),
+                const SizedBox(height: 8),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[100],
+                  ),
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton<String>(
+                      isExpanded: true,
+                      value: _selectedValue,
+                      items: _options.map((String option) {
+                        return DropdownMenuItem<String>(
+                          value: option,
+                          child: Text(option),
+                        );
+                      }).toList(),
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          _selectedValue = newValue;
+                        });
+                      },
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 8),
+          Expanded(
+            child: Container(
+              color: Colors.white,
+              width: double.infinity,
+              child: dataRows.isEmpty
+                  ? Center(
+                      child: Text(
+                        localizedStrings?.def_fmt_no_file_tip ?? "No data yet",
+                        style: const TextStyle(color: Colors.black54, fontSize: 14),
+                      ),
+                    )
+                  : ListView.separated(
+                      itemCount: paths.length,
+                      separatorBuilder: (context, index) => const Divider(height: 1, color: Colors.black12),
+                      itemBuilder: (context, index) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                          child: Column(
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    localizedStrings?.def_fmt_no_title ?? "Default Number",
+                                    style: const TextStyle(color: Colors.black54, fontSize: 14),
+                                  ),
+                                  Text(
+                                    "Default ${index + 1}",
+                                    style: const TextStyle(color: Colors.black87, fontSize: 14),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 12),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    localizedStrings?.def_fmt_file_title ?? "File Path",
+                                    style: const TextStyle(color: Colors.black54, fontSize: 14),
+                                  ),
+                                  Expanded(
+                                    child: Text(
+                                      paths[index],
+                                      textAlign: TextAlign.right,
+                                      style: const TextStyle(color: Colors.black87, fontSize: 14),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            color: Colors.white,
+            child: SafeArea(
+              child: Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        result = await FilePicker.platform.pickFiles(
+                          allowMultiple: true,
+                          type: Platform.isAndroid ? FileType.any : FileType.custom,
+                          allowedExtensions: Platform.isAndroid ? null : ['fmt'],
+                        );
+
+                        if (result != null) {
+                          paths = result!.files.map((e) => e.path!).toList();
+                          setState(() {
+                            dataRows = [];
+                            for (var i = 0; i < paths.length; i++) {
+                              dataRows.add(DataRow(cells: [])); // dummy, we use paths in mobile
+                            }
+                          });
+                          if (result!.count > 10) {
+                            if (mounted && context.mounted) {
+                              _showErrorDialog(context, (localizedStrings?.def_fmt_sel_tip ?? "def_fmt_sel_tip"));
+                            }
+                          }
+                          int totalLen = 0;
+                          for (int i = 0; i < result!.count; i++) {
+                            totalLen += result!.files[i].size;
+                          }
+                          if (totalLen > maxDefFmtLen) {
+                            if (mounted && context.mounted) {
+                              _showErrorDialog(
+                                  context, (localizedStrings?.def_fmt_out_range_tip ?? "def_fmt_out_range_tip"));
+                            }
+                            setState(() {
+                              dataRows.clear();
+                              paths.clear();
+                            });
+                          }
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF0D558E),
+                        foregroundColor: Colors.white,
+                        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                      ),
+                      child: Text(
+                        localizedStrings?.button_select_format ?? "Select Format",
+                        style: const TextStyle(fontSize: 16),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: (!isDownloadClicked) && (dataRows.isNotEmpty)
+                          ? () {
+                              if (dataRows.length > 10) {
+                                _showErrorDialog(
+                                    context, (localizedStrings?.def_fmt_sel_tip ?? "def_fmt_sel_tip"));
+                              } else {
+                                _showConfirmationDialog(context);
+                              }
+                            }
+                          : null,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.grey[300],
+                        disabledBackgroundColor: Colors.grey[300],
+                        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                      ).copyWith(
+                        backgroundColor: WidgetStateProperty.resolveWith<Color>(
+                          (Set<WidgetState> states) {
+                            if (states.contains(WidgetState.disabled)) return Colors.grey[300]!;
+                            return const Color(0xFF0D558E);
+                          },
+                        ),
+                        foregroundColor: WidgetStateProperty.resolveWith<Color>(
+                          (Set<WidgetState> states) {
+                            if (states.contains(WidgetState.disabled)) return Colors.white;
+                            return Colors.white;
+                          },
+                        ),
+                      ),
+                      child: Text(
+                        localizedStrings?.gBtnDownload ?? "Download",
+                        style: const TextStyle(fontSize: 16),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -242,8 +470,8 @@ class _DefaultPrnFmtPageState extends State<DefaultPrnFmtPage> {
           onPressed: () async {
             result = await FilePicker.platform.pickFiles(
               allowMultiple: true,
-              type: FileType.custom,
-              allowedExtensions: ['fmt'],
+              type: Platform.isAndroid ? FileType.any : FileType.custom,
+              allowedExtensions: Platform.isAndroid ? null : ['fmt'],
             );
 
             if (result != null) {
@@ -426,16 +654,20 @@ class _DefaultPrnFmtPageState extends State<DefaultPrnFmtPage> {
   }
 
   void showSelScaleDialog(int funcNo, String msg) {
-    showDialog(
-      context: context,
-      barrierDismissible: false, // 允许点击空白处关闭对话框
-      builder: (context) {
-        return SelectScalesPageNew(
-          funcNo: funcNo,
-          sendMsgStr: msg,
-        );
-      },
-    );
+    if (Adaptive.isMobile(context)) {
+      Navigator.push(context, MaterialPageRoute(builder: (context) => MobileSelectScalesPage(funcNo: funcNo, sendMsgStr: msg)));
+    } else {
+      showDialog(
+        context: context,
+        barrierDismissible: false, // 允许点击空白处关闭对话框
+        builder: (context) {
+          return SelectScalesPageNew(
+            funcNo: funcNo,
+            sendMsgStr: msg,
+          );
+        },
+      );
+    }
   }
 
   String getSendFormatToScaleMsg(List<String> fmtSequence) {
@@ -456,8 +688,8 @@ class _DefaultPrnFmtPageState extends State<DefaultPrnFmtPage> {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       // initialDirectory: directory,
       allowMultiple: false,
-      type: FileType.custom,
-      allowedExtensions: ['zip'],
+      type: Platform.isAndroid ? FileType.any : FileType.custom,
+      allowedExtensions: Platform.isAndroid ? null : ['zip'],
     );
     if (result != null) {
       setState(() {

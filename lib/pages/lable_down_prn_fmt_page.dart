@@ -13,6 +13,8 @@ import '../data/scalecmd_data.dart';
 import '../data/writelog.dart';
 import '../widget/custom_button.dart';
 import 'default_prn_fmt_page.dart';
+import 'package:t_max/functions/adaptive.dart';
+import 'package:t_max/pages/mobile_sel_scales_page.dart';
 
 class DownloadLabelPage extends StatefulWidget {
   const DownloadLabelPage({super.key});
@@ -73,6 +75,9 @@ class _DownloadPageState extends State<DownloadLabelPage> {
 
   @override
   Widget build(BuildContext context) {
+    if (Adaptive.isMobile(context)) {
+      return _buildMobileContent(context);
+    }
     final width = MediaQuery.of(context).size.width;
     // final _height = MediaQuery.of(context).size.height;
 
@@ -101,6 +106,155 @@ class _DownloadPageState extends State<DownloadLabelPage> {
                   ),
                 )),
               ])),
+    );
+  }
+
+  Widget _buildMobileContent(BuildContext context) {
+    bool hasData = weightModeController.text.isNotEmpty ||
+        accModeController.text.isNotEmpty ||
+        pcsModeController.text.isNotEmpty ||
+        pctModeController.text.isNotEmpty;
+
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        centerTitle: true,
+        leading: BackButton(
+          color: Colors.black87,
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: Text(
+          localizedStrings?.menuLabelFormatDownload ?? "Label Format Download",
+          style: const TextStyle(color: Colors.black87, fontSize: 18, fontWeight: FontWeight.bold),
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.help_outline, color: Colors.black87),
+            onPressed: () {},
+          )
+        ],
+      ),
+      body: Column(
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildMobileFormatField((localizedStrings?.gTipFreeFormat ?? "Free format") + " 1", weightModeController),
+                  const SizedBox(height: 16),
+                  _buildMobileFormatField((localizedStrings?.gTipFreeFormat ?? "Free format") + " 2", accModeController),
+                  const SizedBox(height: 16),
+                  _buildMobileFormatField((localizedStrings?.gTipFreeFormat ?? "Free format") + " 3", pcsModeController),
+                  const SizedBox(height: 16),
+                  _buildMobileFormatField((localizedStrings?.gTipFreeFormat ?? "Free format") + " 4", pctModeController),
+                ],
+              ),
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            color: Colors.white,
+            child: SafeArea(
+              child: Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: (!isDownloadClicked && hasData) ? () {
+                         _showConfirmationDialog(context);
+                      } : null,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.grey[300],
+                        disabledBackgroundColor: Colors.grey[300],
+                        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                      ).copyWith(
+                        backgroundColor: WidgetStateProperty.resolveWith<Color>(
+                          (Set<WidgetState> states) {
+                            if (states.contains(WidgetState.disabled)) return Colors.grey[300]!;
+                            return Colors.grey[300]!;
+                          },
+                        ),
+                      ),
+                      child: Text(
+                        localizedStrings?.gBtnDownload ?? "Download",
+                        style: TextStyle(color: hasData ? Colors.black87 : Colors.white, fontSize: 16),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: (!isDownloadClicked) ? () {
+                        _jumpCfmDialog(context);
+                      } : null,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF0D558E),
+                        foregroundColor: Colors.white,
+                        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                      ),
+                      child: Text(
+                        localizedStrings?.gBtnDownloadDefaultFormat ?? "Default Format",
+                        style: const TextStyle(fontSize: 16),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMobileFormatField(String label, TextEditingController controller) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(fontSize: 14, color: Colors.black87),
+        ),
+        const SizedBox(height: 8),
+        Row(
+          children: [
+            Expanded(
+              child: Container(
+                height: 48,
+                decoration: BoxDecoration(
+                  color: Colors.grey[100],
+                ),
+                child: TextField(
+                  controller: controller,
+                  readOnly: true,
+                  enabled: false,
+                  decoration: const InputDecoration(
+                    border: InputBorder.none,
+                    contentPadding: EdgeInsets.symmetric(horizontal: 12),
+                  ),
+                ),
+              ),
+            ),
+            GestureDetector(
+              onTap: () {
+                controller.text = '';
+                pickFiles(controller);
+              },
+              child: Container(
+                width: 48,
+                height: 48,
+                color: const Color(0xFF0D558E),
+                child: const Icon(Icons.add, color: Colors.white),
+              ),
+            ),
+          ],
+        ),
+      ],
     );
   }
 
@@ -330,16 +484,20 @@ class _DownloadPageState extends State<DownloadLabelPage> {
   }
 
   void showSelScaleDialog(int funcNo, String msg) {
-    showDialog(
-      context: context,
-      barrierDismissible: false, // 允许点击空白处关闭对话框
-      builder: (context) {
-        return SelectScalesPageNew(
-          funcNo: funcNo,
-          sendMsgStr: msg,
-        );
-      },
-    );
+    if (Adaptive.isMobile(context)) {
+      Navigator.push(context, MaterialPageRoute(builder: (context) => MobileSelectScalesPage(funcNo: funcNo, sendMsgStr: msg)));
+    } else {
+      showDialog(
+        context: context,
+        barrierDismissible: false, // 允许点击空白处关闭对话框
+        builder: (context) {
+          return SelectScalesPageNew(
+            funcNo: funcNo,
+            sendMsgStr: msg,
+          );
+        },
+      );
+    }
   }
 
   Widget _buildDownloading() {

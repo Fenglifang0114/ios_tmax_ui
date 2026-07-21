@@ -19,6 +19,7 @@ import '../data/timer_manager.dart';
 import '../data/wifi_pwd_info.dart';
 import '../eventbus/eventbus.dart';
 import '../functions/methods.dart';
+import 'package:t_max/data/icons.dart';
 
 class WiredSettingPage extends StatefulWidget {
   final Function(String) onNavigate;
@@ -202,77 +203,44 @@ class WiredSettingPageState extends State<WiredSettingPage> {
     final width = MediaQuery.of(context).size.width;
     final bool isMobile = Adaptive.isMobile(context);
 
-    return Scaffold(
+    if (isMobile) {
+      return _buildMobileContent(context, width);
+    }
 
-      drawer: isMobile
-          ? Drawer(
-              width: 220,
-              child: NewComScaleListWidget(
-                listWidth: 220,
-                selScaleId: selScaleId,
-                clickScale: (scale) {
-                  if (isSetting) {
-                    showTipInfo(
-                        (localizedStrings?.gTipPerformingOperation ?? "gTipPerformingOperation"), context);
-                    return;
-                  }
-                  setState(() {
-                    changeScale(scale.scaleId);
-                  });
-                },
-              ),
-            )
-          : null,
+    return Scaffold(
+      drawer: null, // PC layout doesn't use standard drawer, it's a persistent left panel
       body: Container(
         color: Theme.of(context).colorScheme.surface,
         child: Column(
           children: [
-            if (isMobile)
-              AppBar(
-                backgroundColor: Colors.transparent,
-                elevation: 0,
-                leading: Builder(builder: (context) {
-                  return IconButton(
-                    icon: Icon(Icons.menu_open,
-                        color: Theme.of(context).colorScheme.primary, size: 28),
-                    onPressed: () => Scaffold.of(context).openDrawer(),
-                  );
-                }),
-                title: Text(
-                  (localizedStrings?.menuWiredSetting ?? "menuWiredSetting"),
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-              ),
             Expanded(
               child: Row(
                 children: [
                   Expanded(
                     child: Row(
                       children: [
-                        if (!isMobile)
-                          Container(
-                            width: 220,
-                            color: Theme.of(context).colorScheme.surfaceTint,
-                            child: NewComScaleListWidget(
-                              listWidth: 220,
-                              selScaleId: selScaleId,
-                              clickScale: (scale) {
-                                if (isSetting) {
-                                  showTipInfo((localizedStrings?.gTipPerformingOperation ?? "gTipPerformingOperation"), context);
-                                  return;
-                                }
-                                setState(() {
-                                  changeScale(scale.scaleId);
-                                });
-                              },
-                            ),
+                        Container(
+                          width: 220,
+                          color: Theme.of(context).colorScheme.surfaceTint,
+                          child: NewComScaleListWidget(
+                            listWidth: 220,
+                            selScaleId: selScaleId,
+                            clickScale: (scale) {
+                              if (isSetting) {
+                                showTipInfo((localizedStrings?.gTipPerformingOperation ?? "gTipPerformingOperation"), context);
+                                return;
+                              }
+                              setState(() {
+                                changeScale(scale.scaleId);
+                              });
+                            },
                           ),
-                        if (!isMobile)
-                          VerticalDivider(
-                            width: 1,
-                            thickness: 1,
-                            color: Theme.of(context).colorScheme.outlineVariant,
-                          ),
+                        ),
+                        VerticalDivider(
+                          width: 1,
+                          thickness: 1,
+                          color: Theme.of(context).colorScheme.outlineVariant,
+                        ),
                         Expanded(
                           child: SingleChildScrollView(
                             child: comScalesList.isEmpty ? const SizedBox() : showRightWigdet(),
@@ -583,6 +551,232 @@ class WiredSettingPageState extends State<WiredSettingPage> {
     }
 
     return isValid;
+  }
+
+  Widget _buildMobileContent(BuildContext context, double width) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      drawer: Drawer(
+        width: 220,
+        child: Container(
+          color: Theme.of(context).colorScheme.surfaceTint,
+          child: Column(
+            children: [
+              SizedBox(height: MediaQuery.of(context).padding.top),
+              Expanded(
+                child: NewComScaleListWidget(
+                  listWidth: 220,
+                  selScaleId: selScaleId,
+                  clickScale: (scale) {
+                    if (isSetting) {
+                      showTipInfo(
+                          (localizedStrings?.gTipPerformingOperation ?? "gTipPerformingOperation"), context);
+                      return;
+                    }
+                    Navigator.pop(context); // Close drawer
+                    setState(() {
+                      changeScale(scale.scaleId);
+                    });
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        centerTitle: true,
+        leadingWidth: 100,
+        leading: Builder(
+          builder: (BuildContext ctx) {
+            return Row(
+              children: [
+                BackButton(
+                  color: Colors.black87,
+                  onPressed: () => Navigator.pop(context),
+                ),
+                GestureDetector(
+                  onTap: () => Scaffold.of(ctx).openDrawer(),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                    child: getSvgIcon(wiredSettingSvgIcon(), 24, 24, Colors.black87),
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
+        title: Text(
+          localizedStrings?.menuWiredSetting ?? "Ethernet Setting",
+          style: const TextStyle(color: Colors.black87, fontSize: 18, fontWeight: FontWeight.bold),
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.help_outline, color: Colors.black87),
+            onPressed: () {},
+          ),
+        ],
+      ),
+      body: Column(
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  _buildMobileField(localizedStrings?.gIpAddress ?? "IPv4", ipController),
+                  const Divider(height: 1, color: Color(0xFFEEEEEE)),
+                  _buildMobileField(localizedStrings?.gNetmask ?? "Netmask", netMaskController),
+                  const Divider(height: 1, color: Color(0xFFEEEEEE)),
+                  _buildMobileField(localizedStrings?.gGateway ?? "Gateway", gateWayController),
+                  const Divider(height: 1, color: Color(0xFFEEEEEE)),
+                  _buildMobileDhcpToggle(),
+                ],
+              ),
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.all(16),
+            color: Colors.white,
+            child: SafeArea(
+              child: Column(
+                children: [
+                  if (_isStatic) ...[
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: (_isStatic && isValidData()) ? () {
+                          if (isBusy) {
+                            return showTipInfo(localizedStrings?.pleaseWait ?? "Please wait", context);
+                          }
+                          isBusy = true;
+                          PublicFunctions.setWiredDhcp(selScaleId, 'false');
+                          isSetting = true;
+                        } : null,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF0D558E),
+                          foregroundColor: Colors.white,
+                          disabledBackgroundColor: Colors.grey[300],
+                          shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                        ),
+                        child: Text(
+                          localizedStrings?.setStaticIP ?? "Set Static IP",
+                          style: const TextStyle(fontSize: 16),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                  ],
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        if (selScaleId == -1) {
+                          showTipInfo(localizedStrings?.gTipSelectDeviceFirst ?? "Select Device First", context);
+                          return;
+                        }
+                        showTipInfo(localizedStrings?.gTipGetIP ?? "Getting IP", context);
+                        PublicFunctions.getWiredDhcp(selScaleId);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF1CB079),
+                        foregroundColor: Colors.white,
+                        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                      ),
+                      child: Text(
+                        localizedStrings?.gBtnGetIp ?? "Get Ip",
+                        style: const TextStyle(fontSize: 16),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMobileField(String label, TextEditingController controller) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      color: Colors.white,
+      child: Row(
+        children: [
+          Text(label, style: const TextStyle(fontSize: 16, color: Colors.black87)),
+          const SizedBox(width: 16),
+          Expanded(
+            child: TextField(
+              readOnly: !_isStatic,
+              controller: controller,
+              keyboardType: TextInputType.number,
+              textAlign: TextAlign.right,
+              decoration: const InputDecoration(
+                border: InputBorder.none,
+                isDense: true,
+                contentPadding: EdgeInsets.zero,
+              ),
+              style: TextStyle(
+                fontSize: 16,
+                color: !validateIpFlag(controller.text)
+                    ? Colors.red
+                    : (!_isStatic ? Colors.black54 : Colors.black87),
+              ),
+              onChanged: (value) => setState(() {}),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMobileDhcpToggle() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      color: Colors.white,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          const Text("DHCP", style: TextStyle(fontSize: 16, color: Colors.black87)),
+          Switch(
+            value: !_isStatic,
+            activeColor: const Color(0xFF1CB079),
+            onChanged: (value) async {
+              if (selScaleId == -1) {
+                showTipInfo(localizedStrings?.gTipSelectDeviceFirst ?? "Select Device First", context);
+                return;
+              }
+              if (isBusy) {
+                return showTipInfo(localizedStrings?.pleaseWait ?? "Please wait", context);
+              }
+              if (_isPressing) {
+                showTipInfo(localizedStrings?.pleaseWait ?? "Please wait", context);
+                return;
+              }
+
+              setState(() {
+                _isStatic = !value;
+              });
+              if (!_isStatic) {
+                isBusy = true;
+                PublicFunctions.setWiredDhcp(selScaleId, 'true');
+              }
+              _isPressing = true;
+              await Future.delayed(const Duration(seconds: 2));
+              if (mounted) {
+                setState(() {
+                  _isPressing = false;
+                });
+              }
+            },
+          ),
+        ],
+      ),
+    );
   }
 }
 
