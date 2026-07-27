@@ -1,8 +1,6 @@
 //重量收集页面 20250522
 
 import 'dart:async';
-import 'dart:io';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:t_max/data/g_data.dart';
@@ -49,7 +47,8 @@ class TakeOutPageState extends State<TakeOutPage> {
   final Map<int, GlobalKey> _scaleWidgetKeys = {};
   ReqWeightCountine tempWeight = ReqWeightCountine();
   final Map<int, Widget> _scaleWidgetCache = {};
-  Map<int, WeightInfo> scaleWgtMapDetail = {}; //存储每台秤的详细数据，组成total weight 的明细数�?
+  Map<int, WeightInfo> scaleWgtMapDetail =
+      {}; //存储每台秤的详细数据，组成total weight 的明细数�?
   List<int> mySelScaleIdList = [];
   List<ScaleRecInfo> allWgtRecList = [];
 
@@ -105,21 +104,23 @@ class TakeOutPageState extends State<TakeOutPage> {
     });
     eventBus1 = eventBus.on<EventUpdateSettingParam>().listen((event) {
       if (mounted) {
-        if (mounted) setState(() {
-          PublicFunctions.getUIConfNormal(wgtTakeOutMode);
-        });
+        if (mounted)
+          setState(() {
+            PublicFunctions.getUIConfNormal(wgtTakeOutMode);
+          });
       }
     });
 
     eventBus2 = eventBus.on<EventSettingParam>().listen((event) {
       if (mounted) {
-        if (mounted) setState(() {
-          mySettingParam = event.obj;
-          if (firstGetSelScale) {
-            firstGetSelScale = false;
-            getSelScaleInApp();
-          }
-        });
+        if (mounted)
+          setState(() {
+            mySettingParam = event.obj;
+            if (firstGetSelScale) {
+              firstGetSelScale = false;
+              getSelScaleInApp();
+            }
+          });
       }
     });
 
@@ -169,10 +170,11 @@ class TakeOutPageState extends State<TakeOutPage> {
 
     eventBus7 = eventBus.on<EventDelAllWgtRecs>().listen((event) {
       if (mounted) {
-        if (mounted) setState(() {
-          _tableState.allData.clear();
-          _tableState.loadPage(1);
-        });
+        if (mounted)
+          setState(() {
+            _tableState.allData.clear();
+            _tableState.loadPage(1);
+          });
       }
     });
 
@@ -194,47 +196,50 @@ class TakeOutPageState extends State<TakeOutPage> {
 
     eventBus9 = eventBus.on<EventProductRecList>().listen((event) {
       if (mounted) {
-        if (mounted) setState(() {
-          List<PluDataFromDb> pluInfoList = event.obj;
-          for (int i = 0; i < pluInfoList.length; i++) {
-            PluData newPlu = PluData(0, 0, 0, 0, '', '', 0, 0, 0, 0, 0, 0, 0,
-                '', false, '', 0, 0, '', '');
-            newPlu.enabled = pluInfoList[i].enabled ?? true;
-            if (!pluInfoList[i].enabled!) {
-              continue;
+        if (mounted)
+          setState(() {
+            List<PluDataFromDb> pluInfoList = event.obj;
+            for (int i = 0; i < pluInfoList.length; i++) {
+              PluData newPlu = PluData(0, 0, 0, 0, '', '', 0, 0, 0, 0, 0, 0, 0,
+                  '', false, '', 0, 0, '', '');
+              newPlu.enabled = pluInfoList[i].enabled ?? true;
+              if (!pluInfoList[i].enabled!) {
+                continue;
+              }
+              newPlu.recId = pluInfoList[i].recId;
+              newPlu.plu = int.tryParse(pluInfoList[i].plu ?? '0') ?? 0;
+              newPlu.productCode =
+                  int.tryParse(pluInfoList[i].productCode ?? '0') ?? 0;
+              newPlu.itemCode =
+                  int.tryParse(pluInfoList[i].itemCode ?? '0') ?? 0;
+              newPlu.category = pluInfoList[i].category;
+              newPlu.productName = pluInfoList[i].productName;
+              newPlu.price = double.tryParse(pluInfoList[i].price ?? '0') ?? 0;
+              newPlu.taxType = int.tryParse(pluInfoList[i].taxType ?? '0') ?? 0;
+              newPlu.generalUnit =
+                  int.tryParse(pluInfoList[i].generalUnit ?? '0') ?? 0;
+              newPlu.unitWeight =
+                  double.tryParse(pluInfoList[i].unitWeight ?? '0') ?? 0;
+              newPlu.pretare =
+                  double.tryParse(pluInfoList[i].pretare ?? '0') ?? 0;
+              newPlu.limitHigh =
+                  double.tryParse(pluInfoList[i].limitHigh ?? '0') ?? 0;
+              newPlu.limitLow =
+                  double.tryParse(pluInfoList[i].limitLow ?? '0') ?? 0;
+              newPlu.creatAt =
+                  pluInfoList[i].createdAt?.toIso8601String() ?? " ";
+              newPlu.updateAt =
+                  pluInfoList[i].updatedAt?.toIso8601String() ?? " ";
+              newPlu.createBy = pluInfoList[i].createBy;
+              newPlu.updateBy = pluInfoList[i].updateBy;
+
+              myPluInfoList.add(newPlu);
             }
-            newPlu.recId = pluInfoList[i].recId;
-            newPlu.plu = int.tryParse(pluInfoList[i].plu ?? '0') ?? 0;
-            newPlu.productCode =
-                int.tryParse(pluInfoList[i].productCode ?? '0') ?? 0;
-            newPlu.itemCode = int.tryParse(pluInfoList[i].itemCode ?? '0') ?? 0;
-            newPlu.category = pluInfoList[i].category;
-            newPlu.productName = pluInfoList[i].productName;
-            newPlu.price = double.tryParse(pluInfoList[i].price ?? '0') ?? 0;
-            newPlu.taxType = int.tryParse(pluInfoList[i].taxType ?? '0') ?? 0;
-            newPlu.generalUnit =
-                int.tryParse(pluInfoList[i].generalUnit ?? '0') ?? 0;
-            newPlu.unitWeight =
-                double.tryParse(pluInfoList[i].unitWeight ?? '0') ?? 0;
-            newPlu.pretare =
-                double.tryParse(pluInfoList[i].pretare ?? '0') ?? 0;
-            newPlu.limitHigh =
-                double.tryParse(pluInfoList[i].limitHigh ?? '0') ?? 0;
-            newPlu.limitLow =
-                double.tryParse(pluInfoList[i].limitLow ?? '0') ?? 0;
-            newPlu.creatAt = pluInfoList[i].createdAt?.toIso8601String() ?? " ";
-            newPlu.updateAt =
-                pluInfoList[i].updatedAt?.toIso8601String() ?? " ";
-            newPlu.createBy = pluInfoList[i].createBy;
-            newPlu.updateBy = pluInfoList[i].updateBy;
 
-            myPluInfoList.add(newPlu);
-          }
-
-          // getProductNameList();
-          // getWeight();
-          // getRecords();
-        });
+            // getProductNameList();
+            // getWeight();
+            // getRecords();
+          });
       }
     });
     eventBus10 = eventBus.on<EventAddWgtRec>().listen((event) {
@@ -265,11 +270,12 @@ class TakeOutPageState extends State<TakeOutPage> {
 
   @override
   void didChangeDependencies() {
-    if (mounted) setState(() {
-      for (var item in myReportFeildsMap.keys) {
-        _tableState.visibleColumns[item]!.isSelect = myReportFeildsMap[item]!;
-      }
-    });
+    if (mounted)
+      setState(() {
+        for (var item in myReportFeildsMap.keys) {
+          _tableState.visibleColumns[item]!.isSelect = myReportFeildsMap[item]!;
+        }
+      });
     super.didChangeDependencies();
   }
 
@@ -484,9 +490,10 @@ class TakeOutPageState extends State<TakeOutPage> {
                                   listWidth: appScaleListWidth, // 列表宽度
                                   selScaleList: mySelScaleIdList,
                                   clickScale: (scale) {
-                                    if (mounted) setState(() {
-                                      addOrRemoveSelScale(scale.scaleId);
-                                    });
+                                    if (mounted)
+                                      setState(() {
+                                        addOrRemoveSelScale(scale.scaleId);
+                                      });
                                   },
                                 ),
                               ),
@@ -567,7 +574,6 @@ class TakeOutPageState extends State<TakeOutPage> {
     }
   }
 
-
   void addOrRemoveSelScale(int scaleId) {
     if (mySelScaleIdList.contains(scaleId)) {
       mySelScaleIdList.remove(scaleId);
@@ -600,9 +606,10 @@ class TakeOutPageState extends State<TakeOutPage> {
                 children: [
                   showSelPluWidget(width - 2 * regularPadding, 40,
                       (PluData pluData) {
-                    if (mounted) setState(() {
-                      selectedPluData = pluData;
-                    });
+                    if (mounted)
+                      setState(() {
+                        selectedPluData = pluData;
+                      });
                   })
                 ],
               ),
@@ -724,9 +731,10 @@ class TakeOutPageState extends State<TakeOutPage> {
                             }).toList(),
                             onChanged: (newValue) {
                               if (newValue != null) {
-                                if (mounted) setState(() {
-                                  totalWgtUnitCtl.text = newValue;
-                                });
+                                if (mounted)
+                                  setState(() {
+                                    totalWgtUnitCtl.text = newValue;
+                                  });
 
                                 // 更新总重量和稳定状�?
                                 updateTotalWeightAndStable();
@@ -828,7 +836,9 @@ class TakeOutPageState extends State<TakeOutPage> {
                             fixedSize: const Size(28, 28), // 设置固定大小
                           ),
                           onPressed: () async {
-                            String? outputFile = await PublicFunctions.pickSaveFilePath('report.csv');
+                            String? outputFile =
+                                await PublicFunctions.pickSaveFilePath(
+                                    'report.csv');
 
                             if (outputFile != null) {
                               PublicFunctions.exportAllRecords(
@@ -886,7 +896,8 @@ class TakeOutPageState extends State<TakeOutPage> {
                         width: regularPadding,
                       ),
                       Tooltip(
-                        message: localizedStrings?.gParameterSettingsTitle ?? "",
+                        message:
+                            localizedStrings?.gParameterSettingsTitle ?? "",
                         child: IconButton(
                           iconSize: 28,
                           color: Theme.of(context).colorScheme.onPrimary,
@@ -960,15 +971,18 @@ class TakeOutPageState extends State<TakeOutPage> {
                                 builder: (BuildContext context) {
                                   return ShowDeleteTipDialog(
                                     title: localizedStrings?.fTipTitle ?? "",
-                                    msg: localizedStrings?.gTipConfirmDeleteAll ?? "",
+                                    msg: localizedStrings
+                                            ?.gTipConfirmDeleteAll ??
+                                        "",
                                   );
                                 },
                               ).then((value) {
                                 if (value) {
-                                  if (mounted) setState(() {
-                                    PublicFunctions.newDeleteAllRecords(
-                                        mySettingParam.scaleMode);
-                                  });
+                                  if (mounted)
+                                    setState(() {
+                                      PublicFunctions.newDeleteAllRecords(
+                                          mySettingParam.scaleMode);
+                                    });
                                 }
                               });
                             },
@@ -1007,12 +1021,13 @@ class TakeOutPageState extends State<TakeOutPage> {
       },
     ).then((value) {
       if (value) {
-        if (mounted) setState(() {
-          for (var item in myReportFeildsMap.keys) {
-            _tableState.visibleColumns[item]!.isSelect =
-                myReportFeildsMap[item]!;
-          }
-        });
+        if (mounted)
+          setState(() {
+            for (var item in myReportFeildsMap.keys) {
+              _tableState.visibleColumns[item]!.isSelect =
+                  myReportFeildsMap[item]!;
+            }
+          });
       }
     });
   }

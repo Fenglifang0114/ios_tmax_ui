@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:t_max/data/icons.dart';
-import 'package:t_max/data/language.dart';
 
 class AddDeviceBottomSheet extends StatefulWidget {
   const AddDeviceBottomSheet({super.key});
@@ -54,7 +52,8 @@ class _AddDeviceBottomSheetState extends State<AddDeviceBottomSheet> {
           _buildOptionBtn(
             context,
             "Serial port",
-            Icons.cable, // Using a generic icon if specific svg isn't easily available, or I can use the existing SVG
+            Icons
+                .cable, // Using a generic icon if specific svg isn't easily available, or I can use the existing SVG
             'com',
           ),
           const SizedBox(height: 16),
@@ -76,7 +75,8 @@ class _AddDeviceBottomSheetState extends State<AddDeviceBottomSheet> {
     );
   }
 
-  Widget _buildOptionBtn(BuildContext context, String title, IconData icon, String type) {
+  Widget _buildOptionBtn(
+      BuildContext context, String title, IconData icon, String type) {
     return ElevatedButton(
       onPressed: () {
         Navigator.pop(context, type);

@@ -1,8 +1,6 @@
 //重量收集页面 20250522
 
 import 'dart:async';
-import 'dart:io';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:t_max/data/g_data.dart';
@@ -41,7 +39,6 @@ class CheckWeighersPage extends StatefulWidget {
 }
 
 class CheckWeighersPageState extends State<CheckWeighersPage> {
-
   TextEditingController totalWgtUnitCtl = TextEditingController(text: 'kg');
 // 使用 ValueNotifier 来存储总重量和稳定状�?
   final ValueNotifier<double> totalWeightNotifier = ValueNotifier<double>(0);
@@ -51,7 +48,8 @@ class CheckWeighersPageState extends State<CheckWeighersPage> {
   ReqWeightCountine tempWeight = ReqWeightCountine();
   final Map<int, Widget> _scaleWidgetCache = {};
   Map<int, WeightInfo> scaleWeightMap = {}; // 存储每台秤的最新称重数据，键为秤的 ID，值为包含重量和单位的对象
-  Map<int, WeightInfo> scaleWgtMapDetail = {}; //存储每台秤的详细数据，组成total weight 的明细数�?
+  Map<int, WeightInfo> scaleWgtMapDetail =
+      {}; //存储每台秤的详细数据，组成total weight 的明细数�?
   List<int> mySelScaleIdList = [];
   List<ScaleRecInfo> allWgtRecList = [];
 
@@ -99,21 +97,23 @@ class CheckWeighersPageState extends State<CheckWeighersPage> {
     });
     eventBus1 = eventBus.on<EventUpdateSettingParam>().listen((event) {
       if (mounted) {
-        if (mounted) setState(() {
-          PublicFunctions.getUIConfNormal(wgtCheckMode);
-        });
+        if (mounted)
+          setState(() {
+            PublicFunctions.getUIConfNormal(wgtCheckMode);
+          });
       }
     });
 
     eventBus2 = eventBus.on<EventSettingParam>().listen((event) {
       if (mounted) {
-        if (mounted) setState(() {
-          mySettingParam = event.obj;
-          if (firstGetSelScale) {
-            firstGetSelScale = false;
-            getSelScaleInApp();
-          }
-        });
+        if (mounted)
+          setState(() {
+            mySettingParam = event.obj;
+            if (firstGetSelScale) {
+              firstGetSelScale = false;
+              getSelScaleInApp();
+            }
+          });
       }
     });
 
@@ -163,55 +163,59 @@ class CheckWeighersPageState extends State<CheckWeighersPage> {
 
     eventBus7 = eventBus.on<EventDelAllWgtRecs>().listen((event) {
       if (mounted) {
-        if (mounted) setState(() {
-          _tableState.allData.clear();
-          _tableState.loadPage(1);
-        });
+        if (mounted)
+          setState(() {
+            _tableState.allData.clear();
+            _tableState.loadPage(1);
+          });
       }
     });
 
     eventBus9 = eventBus.on<EventProductRecList>().listen((event) {
       if (mounted) {
-        if (mounted) setState(() {
-          List<PluDataFromDb> pluInfoList = event.obj;
-          for (int i = 0; i < pluInfoList.length; i++) {
-            PluData newPlu = PluData(0, 0, 0, 0, '', '', 0, 0, 0, 0, 0, 0, 0,
-                '', true, '', 0, 0, '', '');
+        if (mounted)
+          setState(() {
+            List<PluDataFromDb> pluInfoList = event.obj;
+            for (int i = 0; i < pluInfoList.length; i++) {
+              PluData newPlu = PluData(0, 0, 0, 0, '', '', 0, 0, 0, 0, 0, 0, 0,
+                  '', true, '', 0, 0, '', '');
 
-            newPlu.enabled = pluInfoList[i].enabled ?? true;
-            if (!pluInfoList[i].enabled!) {
-              continue;
+              newPlu.enabled = pluInfoList[i].enabled ?? true;
+              if (!pluInfoList[i].enabled!) {
+                continue;
+              }
+              newPlu.recId = pluInfoList[i].recId;
+              newPlu.plu = int.tryParse(pluInfoList[i].plu ?? '0') ?? 0;
+              newPlu.productCode =
+                  int.tryParse(pluInfoList[i].productCode ?? '0') ?? 0;
+              newPlu.itemCode =
+                  int.tryParse(pluInfoList[i].itemCode ?? '0') ?? 0;
+              newPlu.category = pluInfoList[i].category;
+              newPlu.productName = pluInfoList[i].productName;
+              newPlu.price = double.tryParse(pluInfoList[i].price ?? '0') ?? 0;
+              newPlu.taxType = int.tryParse(pluInfoList[i].taxType ?? '0') ?? 0;
+              newPlu.generalUnit =
+                  int.tryParse(pluInfoList[i].generalUnit ?? '0') ?? 0;
+              newPlu.unitWeight =
+                  double.tryParse(pluInfoList[i].unitWeight ?? '0') ?? 0;
+              newPlu.pretare =
+                  double.tryParse(pluInfoList[i].pretare ?? '0') ?? 0;
+              newPlu.limitHigh =
+                  double.tryParse(pluInfoList[i].limitHigh ?? '0') ?? 0;
+              newPlu.limitLow =
+                  double.tryParse(pluInfoList[i].limitLow ?? '0') ?? 0;
+              newPlu.creatAt =
+                  pluInfoList[i].createdAt?.toIso8601String() ?? " ";
+              newPlu.updateAt =
+                  pluInfoList[i].updatedAt?.toIso8601String() ?? " ";
+              newPlu.createBy = pluInfoList[i].createBy;
+              newPlu.updateBy = pluInfoList[i].updateBy;
+              newPlu.createUser = pluInfoList[i].createUser;
+              newPlu.updateUser = pluInfoList[i].updateUser;
+
+              myPluInfoList.add(newPlu);
             }
-            newPlu.recId = pluInfoList[i].recId;
-            newPlu.plu = int.tryParse(pluInfoList[i].plu ?? '0') ?? 0;
-            newPlu.productCode =
-                int.tryParse(pluInfoList[i].productCode ?? '0') ?? 0;
-            newPlu.itemCode = int.tryParse(pluInfoList[i].itemCode ?? '0') ?? 0;
-            newPlu.category = pluInfoList[i].category;
-            newPlu.productName = pluInfoList[i].productName;
-            newPlu.price = double.tryParse(pluInfoList[i].price ?? '0') ?? 0;
-            newPlu.taxType = int.tryParse(pluInfoList[i].taxType ?? '0') ?? 0;
-            newPlu.generalUnit =
-                int.tryParse(pluInfoList[i].generalUnit ?? '0') ?? 0;
-            newPlu.unitWeight =
-                double.tryParse(pluInfoList[i].unitWeight ?? '0') ?? 0;
-            newPlu.pretare =
-                double.tryParse(pluInfoList[i].pretare ?? '0') ?? 0;
-            newPlu.limitHigh =
-                double.tryParse(pluInfoList[i].limitHigh ?? '0') ?? 0;
-            newPlu.limitLow =
-                double.tryParse(pluInfoList[i].limitLow ?? '0') ?? 0;
-            newPlu.creatAt = pluInfoList[i].createdAt?.toIso8601String() ?? " ";
-            newPlu.updateAt =
-                pluInfoList[i].updatedAt?.toIso8601String() ?? " ";
-            newPlu.createBy = pluInfoList[i].createBy;
-            newPlu.updateBy = pluInfoList[i].updateBy;
-            newPlu.createUser = pluInfoList[i].createUser;
-            newPlu.updateUser = pluInfoList[i].updateUser;
-
-            myPluInfoList.add(newPlu);
-          }
-        });
+          });
       }
     });
     eventBus10 = eventBus.on<EventAddWgtRec>().listen((event) {
@@ -242,11 +246,12 @@ class CheckWeighersPageState extends State<CheckWeighersPage> {
 
   @override
   void didChangeDependencies() {
-    if (mounted) setState(() {
-      for (var item in myReportFeildsMap.keys) {
-        _tableState.visibleColumns[item]!.isSelect = myReportFeildsMap[item]!;
-      }
-    });
+    if (mounted)
+      setState(() {
+        for (var item in myReportFeildsMap.keys) {
+          _tableState.visibleColumns[item]!.isSelect = myReportFeildsMap[item]!;
+        }
+      });
     super.didChangeDependencies();
   }
 
@@ -390,6 +395,7 @@ class CheckWeighersPageState extends State<CheckWeighersPage> {
 
     return totalWeight;
   }
+
   @override
   Widget build(BuildContext context) {
     if (myAllScalesList.isEmpty) {
@@ -403,7 +409,6 @@ class CheckWeighersPageState extends State<CheckWeighersPage> {
     final bool isMobile = Adaptive.isMobile(context);
 
     return Scaffold(
-
       drawer: isMobile
           ? Drawer(
               width: appScaleListWidth + 20,
@@ -429,9 +434,10 @@ class CheckWeighersPageState extends State<CheckWeighersPage> {
                         listWidth: appScaleListWidth,
                         selScaleList: mySelScaleIdList,
                         clickScale: (scale) {
-                          if (mounted) setState(() {
-                            addOrRemoveSelScale(scale.scaleId);
-                          });
+                          if (mounted)
+                            setState(() {
+                              addOrRemoveSelScale(scale.scaleId);
+                            });
                         },
                       ),
                     ),
@@ -441,11 +447,14 @@ class CheckWeighersPageState extends State<CheckWeighersPage> {
             )
           : null,
       body: Container(
-        color: Theme.of(context).colorScheme.surface,
-        child: Column(
-          children: [
-            pageHeadInfo(context, width - headWidthPadding,
-                localizedStrings?.menuCheckWeighing ?? "", (localizedStrings?.gTipCheckWgtPageHelp ?? "gTipCheckWgtPageHelp"), () {
+          color: Theme.of(context).colorScheme.surface,
+          child: Column(children: [
+            pageHeadInfo(
+                context,
+                width - headWidthPadding,
+                localizedStrings?.menuCheckWeighing ?? "",
+                (localizedStrings?.gTipCheckWgtPageHelp ??
+                    "gTipCheckWgtPageHelp"), () {
               widget.onNavigate(widget.lastRouteName);
             },
                 leading: isMobile
@@ -466,47 +475,46 @@ class CheckWeighersPageState extends State<CheckWeighersPage> {
               color: Theme.of(context).colorScheme.surfaceContainerLow,
             ),
             Expanded(
-              child: Container(
-                color: Theme.of(context).colorScheme.surfaceTint,
-                child: Row(
-                  children: [
-                    if (!isMobile)
-                      Container(
-                        width: appScaleListWidth,
-                        color: Theme.of(context).colorScheme.surfaceTint,
-                        child: NewMutiScaleListWidget(
-                          listWidth: appScaleListWidth,
-                          selScaleList: mySelScaleIdList,
-                          clickScale: (scale) {
-                            if (mounted) setState(() {
+                child: Container(
+              color: Theme.of(context).colorScheme.surfaceTint,
+              child: Row(
+                children: [
+                  if (!isMobile)
+                    Container(
+                      width: appScaleListWidth,
+                      color: Theme.of(context).colorScheme.surfaceTint,
+                      child: NewMutiScaleListWidget(
+                        listWidth: appScaleListWidth,
+                        selScaleList: mySelScaleIdList,
+                        clickScale: (scale) {
+                          if (mounted)
+                            setState(() {
                               addOrRemoveSelScale(scale.scaleId);
                             });
-                          },
-                        ),
+                        },
                       ),
-                    if (!isMobile)
-                      Container(
-                        width: regularPadding,
-                        color: Theme.of(context).colorScheme.surfaceContainerLow,
-                      ),
-                      Container(
-                        width: regularPadding,
-                        color:
-                            Theme.of(context).colorScheme.surfaceContainerLow,
-                      ),
-                      if (mySelScaleIdList.isNotEmpty)
-                        showScaleWgt(context, scaleWgtWidth),
-                      if (mySelScaleIdList.isNotEmpty)
-                        Container(
-                          width: regularPadding,
-                          color:
-                              Theme.of(context).colorScheme.surfaceContainerLow,
-                        ),
-                      showWgtTable(context) // width - 591 - 36)
-                    ],
+                    ),
+                  if (!isMobile)
+                    Container(
+                      width: regularPadding,
+                      color: Theme.of(context).colorScheme.surfaceContainerLow,
+                    ),
+                  Container(
+                    width: regularPadding,
+                    color: Theme.of(context).colorScheme.surfaceContainerLow,
                   ),
-                )),
-              ])),
+                  if (mySelScaleIdList.isNotEmpty)
+                    showScaleWgt(context, scaleWgtWidth),
+                  if (mySelScaleIdList.isNotEmpty)
+                    Container(
+                      width: regularPadding,
+                      color: Theme.of(context).colorScheme.surfaceContainerLow,
+                    ),
+                  showWgtTable(context) // width - 591 - 36)
+                ],
+              ),
+            )),
+          ])),
     );
   }
 
@@ -590,8 +598,7 @@ class CheckWeighersPageState extends State<CheckWeighersPage> {
                 final scaleId = mySelScaleIdList[index];
                 // 如果key不存在，创建新的GlobalKey
                 if (!_scaleWidgetKeys.containsKey(scaleId)) {
-                  _scaleWidgetKeys[scaleId] =
-                      GlobalKey();
+                  _scaleWidgetKeys[scaleId] = GlobalKey();
                 }
                 // 如果缓存不存在，使用稳定的GlobalKey创建新Widget
                 if (!_scaleWidgetCache.containsKey(scaleId)) {
@@ -649,7 +656,9 @@ class CheckWeighersPageState extends State<CheckWeighersPage> {
                             fixedSize: const Size(28, 28), // 设置固定大小
                           ),
                           onPressed: () async {
-                            String? outputFile = await PublicFunctions.pickSaveFilePath('report.csv');
+                            String? outputFile =
+                                await PublicFunctions.pickSaveFilePath(
+                                    'report.csv');
 
                             if (outputFile != null) {
                               PublicFunctions.exportAllRecords(
@@ -707,7 +716,8 @@ class CheckWeighersPageState extends State<CheckWeighersPage> {
                         width: regularPadding,
                       ),
                       Tooltip(
-                        message: localizedStrings?.gParameterSettingsTitle ?? "",
+                        message:
+                            localizedStrings?.gParameterSettingsTitle ?? "",
                         child: IconButton(
                           iconSize: 28,
                           color: Theme.of(context).colorScheme.onPrimary,
@@ -781,15 +791,18 @@ class CheckWeighersPageState extends State<CheckWeighersPage> {
                                 builder: (BuildContext context) {
                                   return ShowDeleteTipDialog(
                                     title: localizedStrings?.fTipTitle ?? "",
-                                    msg: localizedStrings?.gTipConfirmDeleteAll ?? "",
+                                    msg: localizedStrings
+                                            ?.gTipConfirmDeleteAll ??
+                                        "",
                                   );
                                 },
                               ).then((value) {
                                 if (value) {
-                                  if (mounted) setState(() {
-                                    PublicFunctions.newDeleteAllRecords(
-                                        mySettingParam.scaleMode);
-                                  });
+                                  if (mounted)
+                                    setState(() {
+                                      PublicFunctions.newDeleteAllRecords(
+                                          mySettingParam.scaleMode);
+                                    });
                                 }
                               });
                             },
@@ -828,12 +841,13 @@ class CheckWeighersPageState extends State<CheckWeighersPage> {
       },
     ).then((value) {
       if (value) {
-        if (mounted) setState(() {
-          for (var item in myReportFeildsMap.keys) {
-            _tableState.visibleColumns[item]!.isSelect =
-                myReportFeildsMap[item]!;
-          }
-        });
+        if (mounted)
+          setState(() {
+            for (var item in myReportFeildsMap.keys) {
+              _tableState.visibleColumns[item]!.isSelect =
+                  myReportFeildsMap[item]!;
+            }
+          });
       }
     });
   }

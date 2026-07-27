@@ -5,6 +5,7 @@ import 'package:t_max/data/scale_info_from_db.dart';
 import 'package:t_max/dialog/custom_dialog_tip.dart';
 import 'package:t_max/widget/common_widget.dart';
 import 'package:t_max/widget/scale_list.dart';
+import 'package:t_max/widget/no_device_widget.dart';
 import '../data/downloadresponse.dart';
 import '../../eventbus/eventbus.dart';
 import '../../functions/methods.dart';
@@ -178,35 +179,7 @@ class SetSystemTimePageState extends State<SetSystemTimePage> {
     
     return Scaffold(
       key: _scaffoldKey,
-      drawer: isMobile
-          ? Drawer(
-              width: scaleListWidth,
-              child: Container(
-                color: Theme.of(context).colorScheme.surfaceTint,
-                child: Column(
-                  children: [
-                    SizedBox(height: MediaQuery.of(context).padding.top),
-                    Expanded(
-                      child: NewAllScaleListWidget(
-                        listWidth: scaleListWidth,
-                        selScaleId: selScaleId,
-                        clickScale: (scale) {
-                          if (isGettingTime || isSettingTime) {
-                            showTipInfo(
-                                (localizedStrings?.gTipPerformingOperation ?? "gTipPerformingOperation"),
-                                context);
-                            return;
-                          }
-                          Navigator.pop(context); // 关闭抽屉
-                          changeScale(scale.scaleId);
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            )
-          : null,
+      drawer: isMobile ? _buildMobileDrawer(context) : null,
       body: firstLayout(context, width, isMobile),
     );
   }
@@ -490,158 +463,318 @@ class SetSystemTimePageState extends State<SetSystemTimePage> {
   }
 
   Widget _buildMobileContent(BuildContext context, double width) {
-    return Column(
-      children: [
-        AppBar(
-          backgroundColor: Colors.white,
-          elevation: 0,
-          centerTitle: true,
-          leadingWidth: 100,
-          leading: Row(
-            children: [
-              BackButton(
-                color: Colors.black87,
-                onPressed: () => Navigator.pop(context),
-              ),
-              GestureDetector(
-                onTap: () => _scaffoldKey.currentState?.openDrawer(),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                  child: getSvgIcon(weighingSvgIcon(), 24, 24, Colors.black87),
-                ),
-              ),
-            ],
-          ),
-          title: Text(
-            localizedStrings?.menuDeviceTime ?? "Device Time",
-            style: const TextStyle(color: Colors.black87, fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.help_outline, color: Colors.black87),
-              onPressed: () {},
-            ),
-          ],
-        ),
-        Container(
-          width: width,
-          color: Colors.white,
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "Device",
-                style: const TextStyle(color: Colors.black87, fontSize: 14),
-              ),
-            ],
-          ),
-        ),
-        Container(
-          height: 1,
-          color: Colors.grey[200],
-        ),
-        Container(
-          width: width,
-          color: Colors.white,
-          padding: const EdgeInsets.symmetric(vertical: 40),
-          child: Column(
-            children: [
-              Text(
-                "${pad0(deviceTime.hour)}:${pad0(deviceTime.minute)}:${pad0(deviceTime.second)}",
-                style: const TextStyle(
-                  color: Color(0xFF0D558E),
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 16),
-              Text(
-                "${deviceTime.year}-${pad0(deviceTime.month)}-${pad0(deviceTime.day)}",
-                style: const TextStyle(
-                  color: Color(0xFF0D558E),
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-        ),
-        Expanded(
-          child: Container(
-            color: const Color(0xFFFAFAFA),
-          ),
-        ),
-        Container(
-          padding: const EdgeInsets.all(16),
-          color: const Color(0xFFFAFAFA),
-          child: SafeArea(
-            child: Row(
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        centerTitle: true,
+        leadingWidth: 100,
+        leading: Builder(
+          builder: (BuildContext ctx) {
+            return Row(
               children: [
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: selScaleId == -1 ? null : () {
-                      var timestamp = (DateTime.now().toUtc().millisecondsSinceEpoch / 1000).truncate();
-                      PublicFunctions.setScaleTime(timestamp.toString(), selScaleId);
-                      setState(() {
-                        isSettingTime = true;
-                      });
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF0D558E),
-                      foregroundColor: Colors.white,
-                      disabledBackgroundColor: Colors.grey[300],
-                      disabledForegroundColor: Colors.white,
-                      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                    ),
-                    child: Text(
-                      localizedStrings?.gBtnSyncTime ?? "Sync Time",
-                      style: const TextStyle(fontSize: 16),
-                    ),
+                BackButton(
+                  color: Colors.black87,
+                  onPressed: () => Navigator.pop(context),
+                ),
+                GestureDetector(
+                  onTap: () => _scaffoldKey.currentState?.openDrawer(),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                    child: getSvgIcon(
+                        weighingSvgIcon(), 24, 24, Colors.black87),
                   ),
                 ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: selScaleId == -1 ? null : () async {
-                      DateTime? pickedDate = await showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AdoptiveCalendar(
-                            initialDate: DateTime.now(),
-                            selectedColor: Theme.of(context).colorScheme.primary,
-                            action: true,
-                          );
-                        },
-                      );
-                      if (pickedDate != null) {
-                        var timestamp = (pickedDate.toUtc().millisecondsSinceEpoch / 1000).truncate();
-                        PublicFunctions.setScaleTime(timestamp.toString(), selScaleId);
-                        setState(() {
-                          isSettingTime = true;
-                        });
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF0D558E),
-                      foregroundColor: Colors.white,
-                      disabledBackgroundColor: Colors.grey[300],
-                      disabledForegroundColor: Colors.white,
-                      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                    ),
-                    child: Text(
-                      localizedStrings?.gBtnSetTime ?? "Set Date/Time",
-                      style: const TextStyle(fontSize: 16),
-                    ),
+              ],
+            );
+          },
+        ),
+        title: Text(
+          localizedStrings?.menuDeviceTime ?? "Device Time",
+          style: const TextStyle(
+              color: Colors.black87, fontSize: 18, fontWeight: FontWeight.bold),
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.help_outline, color: Colors.black87),
+            onPressed: () {},
+          ),
+        ],
+      ),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: width,
+            color: Colors.white,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            child: const Text(
+              "Device",
+              style: TextStyle(color: Colors.black87, fontSize: 14),
+            ),
+          ),
+          Container(
+            height: 1,
+            color: const Color(0xFFEEEEEE),
+          ),
+          Container(
+            margin: const EdgeInsets.all(16),
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(vertical: 32),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              border: Border.all(color: const Color(0xFFD0D0D0)),
+              borderRadius: BorderRadius.circular(4),
+            ),
+            child: Column(
+              children: [
+                Text(
+                  "${pad0(deviceTime.hour)}:${pad0(deviceTime.minute)}:${pad0(deviceTime.second)}",
+                  style: const TextStyle(
+                    color: Color(0xFF005696),
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  "${deviceTime.year}-${pad0(deviceTime.month)}-${pad0(deviceTime.day)}",
+                  style: const TextStyle(
+                    color: Color(0xFF005696),
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ],
             ),
           ),
+          Expanded(child: Container()),
+          Container(
+            padding: const EdgeInsets.all(16),
+            color: Colors.white,
+            child: SafeArea(
+              child: Row(
+                children: [
+                  Expanded(
+                    child: SizedBox(
+                      height: 48,
+                      child: ElevatedButton(
+                        onPressed: selScaleId == -1
+                            ? null
+                            : () {
+                                var timestamp = (DateTime.now()
+                                            .toUtc()
+                                            .millisecondsSinceEpoch /
+                                        1000)
+                                    .truncate();
+                                PublicFunctions.setScaleTime(
+                                    timestamp.toString(), selScaleId);
+                                setState(() {
+                                  isSettingTime = true;
+                                });
+                              },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF005696),
+                          foregroundColor: Colors.white,
+                          disabledBackgroundColor: Colors.grey[300],
+                          disabledForegroundColor: Colors.white,
+                          elevation: 0,
+                          shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.zero),
+                        ),
+                        child: Text(
+                          localizedStrings?.gBtnSyncTime ?? "Sync Time",
+                          style: const TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: SizedBox(
+                      height: 48,
+                      child: ElevatedButton(
+                        onPressed: selScaleId == -1
+                            ? null
+                            : () async {
+                                DateTime? pickedDate = await showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AdoptiveCalendar(
+                                      initialDate: DateTime.now(),
+                                      selectedColor:
+                                          Theme.of(context).colorScheme.primary,
+                                      action: true,
+                                    );
+                                  },
+                                );
+                                if (pickedDate != null) {
+                                  var timestamp = (pickedDate
+                                              .toUtc()
+                                              .millisecondsSinceEpoch /
+                                          1000)
+                                      .truncate();
+                                  PublicFunctions.setScaleTime(
+                                      timestamp.toString(), selScaleId);
+                                  setState(() {
+                                    isSettingTime = true;
+                                  });
+                                }
+                              },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF005696),
+                          foregroundColor: Colors.white,
+                          disabledBackgroundColor: Colors.grey[300],
+                          disabledForegroundColor: Colors.white,
+                          elevation: 0,
+                          shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.zero),
+                        ),
+                        child: Text(
+                          localizedStrings?.gBtnSetTime ?? "Set Date/Time",
+                          style: const TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMobileDrawer(BuildContext context) {
+    return Drawer(
+      width: 280,
+      backgroundColor: Colors.white,
+      child: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(left: 20, top: 20, bottom: 16, right: 16),
+              child: Text(
+                localizedStrings?.gTitleDeviceList ?? "Device List",
+                style: const TextStyle(
+                  color: Color(0xFF005696),
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            Expanded(
+              child: myAllScalesList.isEmpty
+                  ? showNoDeviceWidget(context)
+                  : ListView.separated(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      itemCount: myAllScalesList.length,
+                      separatorBuilder: (context, index) =>
+                          const SizedBox(height: 12),
+                      itemBuilder: (context, index) {
+                        final scale = myAllScalesList[index];
+                        final bool isSelect = (selScaleId == scale.scaleId);
+                        final bool isOnline = scale.isOnline;
+
+                        String iconPath = serialPortSvgIcon();
+                        if (scale.tMedia == netScaleType) {
+                          iconPath = networkSvgIcon();
+                        } else if (scale.tMedia == btScaleType) {
+                          iconPath = btSvgIcon();
+                        }
+
+                        return GestureDetector(
+                          onTap: () {
+                            if (isGettingTime || isSettingTime) {
+                              showTipInfo(
+                                localizedStrings?.gTipPerformingOperation ??
+                                    "Performing operation",
+                                context,
+                              );
+                              return;
+                            }
+                            Navigator.pop(context);
+                            changeScale(scale.scaleId);
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 12),
+                            decoration: BoxDecoration(
+                              color: isSelect
+                                  ? const Color(0xFF005696)
+                                  : const Color(0xFFF7F8FA),
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: Row(
+                              children: [
+                                Container(
+                                  width: 44,
+                                  height: 44,
+                                  decoration: BoxDecoration(
+                                    color: isSelect
+                                        ? Colors.white.withOpacity(0.2)
+                                        : const Color(0xFFE8EEF4),
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                  alignment: Alignment.center,
+                                  child: getSvgIcon(
+                                    iconPath,
+                                    24,
+                                    24,
+                                    isSelect ? Colors.white : const Color(0xFF005696),
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        scale.scaleName,
+                                        style: TextStyle(
+                                          color:
+                                              isSelect ? Colors.white : Colors.black87,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        isOnline
+                                            ? (localizedStrings?.gTipOnline ?? "Online")
+                                            : (localizedStrings?.gTipOffline ??
+                                                "Offline"),
+                                        style: TextStyle(
+                                          color: isSelect
+                                              ? Colors.white.withOpacity(0.9)
+                                              : (isOnline
+                                                  ? const Color(0xFF005696)
+                                                  : const Color(0xFFFF4D4F)),
+                                          fontSize: 14,
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 

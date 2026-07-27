@@ -174,6 +174,7 @@ class _UpdateFirmwarePageState extends State<UpdateFirmwarePage> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
+        scrolledUnderElevation: 0,
         centerTitle: true,
         leading: BackButton(
           color: Colors.black87,
@@ -181,7 +182,8 @@ class _UpdateFirmwarePageState extends State<UpdateFirmwarePage> {
         ),
         title: Text(
           localizedStrings?.menuFirmwareUpdate ?? "Firmware Update",
-          style: const TextStyle(color: Colors.black87, fontSize: 18, fontWeight: FontWeight.bold),
+          style: const TextStyle(
+              color: Colors.black87, fontSize: 18, fontWeight: FontWeight.bold),
         ),
         actions: [
           IconButton(
@@ -216,6 +218,7 @@ class _UpdateFirmwarePageState extends State<UpdateFirmwarePage> {
                             controller: zipFileCtl,
                             readOnly: true,
                             enabled: false,
+                            style: const TextStyle(fontSize: 14, color: Colors.black87),
                             decoration: const InputDecoration(
                               border: InputBorder.none,
                               contentPadding: EdgeInsets.symmetric(horizontal: 12),
@@ -231,7 +234,7 @@ class _UpdateFirmwarePageState extends State<UpdateFirmwarePage> {
                         child: Container(
                           width: 48,
                           height: 48,
-                          color: const Color(0xFF0D558E),
+                          color: const Color(0xFF005696),
                           child: const Icon(Icons.add, color: Colors.white),
                         ),
                       ),
@@ -242,35 +245,36 @@ class _UpdateFirmwarePageState extends State<UpdateFirmwarePage> {
             ),
           ),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            padding: const EdgeInsets.all(16),
             color: Colors.white,
             child: SafeArea(
               child: SizedBox(
                 width: double.infinity,
+                height: 48,
                 child: ElevatedButton(
-                  onPressed: (!isSetting && hasData) ? () {
-                    setState(() {
-                      _progress = 0.0;
-                      _errMsgSerial = "";
-                    });
-                    useNetworkUpdate();
-                  } : null,
+                  onPressed: (!isSetting && hasData)
+                      ? () {
+                          setState(() {
+                            _progress = 0.0;
+                            _errMsgSerial = "";
+                          });
+                          useNetworkUpdate();
+                        }
+                      : null,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.grey[300],
+                    backgroundColor:
+                        hasData ? const Color(0xFF005696) : Colors.grey[300],
+                    foregroundColor: Colors.white,
                     disabledBackgroundColor: Colors.grey[300],
-                    shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                  ).copyWith(
-                    backgroundColor: WidgetStateProperty.resolveWith<Color>(
-                      (Set<WidgetState> states) {
-                        if (states.contains(WidgetState.disabled)) return Colors.grey[300]!;
-                        return Colors.grey[300]!; 
-                      },
-                    ),
+                    disabledForegroundColor: Colors.white,
+                    elevation: 0,
+                    shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.zero),
                   ),
                   child: Text(
                     localizedStrings?.gBtnDownload ?? "Download",
-                    style: TextStyle(color: hasData ? Colors.black87 : Colors.white, fontSize: 16),
+                    style: const TextStyle(
+                        fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                 ),
               ),

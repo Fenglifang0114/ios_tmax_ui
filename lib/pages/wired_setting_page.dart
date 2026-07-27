@@ -8,13 +8,13 @@ import 'package:t_max/data/scale_info_from_db.dart';
 import 'package:t_max/dialog/custom_dialog_tip.dart';
 import 'package:t_max/widget/common_widget.dart';
 import 'package:t_max/widget/scale_list.dart';
+import 'package:t_max/widget/no_device_widget.dart';
 import 'package:t_max/data/scalecmd_data.dart';
 import 'package:t_max/data/wifi_list_info.dart';
 import 'package:t_max/data/writelog.dart';
 import '../data/ipinfodata.dart';
 import '../data/language.dart';
 import '../functions/adaptive.dart';
-import '../widget/page_head.dart';
 import '../data/timer_manager.dart';
 import '../data/wifi_pwd_info.dart';
 import '../eventbus/eventbus.dart';
@@ -32,7 +32,6 @@ class WiredSettingPage extends StatefulWidget {
 }
 
 class WiredSettingPageState extends State<WiredSettingPage> {
-
   TextEditingController netMaskController = TextEditingController();
   TextEditingController ipController = TextEditingController();
   TextEditingController gateWayController = TextEditingController();
@@ -90,7 +89,8 @@ class WiredSettingPageState extends State<WiredSettingPage> {
       if (mounted) {
         String dataStr = event.obj;
         if (dataStr.isEmpty || dataStr.contains("fail")) {
-          showTipInfo((localizedStrings?.gTipGetIpFail ?? "gTipGetIpFail"), context);
+          showTipInfo(
+              (localizedStrings?.gTipGetIpFail ?? "gTipGetIpFail"), context);
         }
 
         try {
@@ -101,9 +101,11 @@ class WiredSettingPageState extends State<WiredSettingPage> {
             netMaskController.text = ipInfoData.netmask ?? '';
             gateWayController.text = ipInfoData.gateway ?? '';
           });
-          showTipInfo((localizedStrings?.gTipGetIpOk ?? "gTipGetIpOk"), context);
+          showTipInfo(
+              (localizedStrings?.gTipGetIpOk ?? "gTipGetIpOk"), context);
         } catch (e) {
-          showTipInfo((localizedStrings?.gTipGetIpFail ?? "gTipGetIpFail"), context);
+          showTipInfo(
+              (localizedStrings?.gTipGetIpFail ?? "gTipGetIpFail"), context);
         }
       }
     });
@@ -115,9 +117,11 @@ class WiredSettingPageState extends State<WiredSettingPage> {
           isSetting = false;
         }
         if (dataStr.contains('ok')) {
-          showTipInfo((localizedStrings?.setIPSuccess ?? "setIPSuccess"), context);
+          showTipInfo(
+              (localizedStrings?.setIPSuccess ?? "setIPSuccess"), context);
         } else if (dataStr.contains('fail')) {
-          showTipInfo((localizedStrings?.setIPFailed ?? "setIPFailed"), context);
+          showTipInfo(
+              (localizedStrings?.setIPFailed ?? "setIPFailed"), context);
         }
       }
     });
@@ -129,7 +133,8 @@ class WiredSettingPageState extends State<WiredSettingPage> {
           isBusy = false;
         }
         if (dataStr.contains('ok')) {
-          showTipInfo((localizedStrings?.setDHCPSuccess ?? "setDHCPSuccess"), context);
+          showTipInfo(
+              (localizedStrings?.setDHCPSuccess ?? "setDHCPSuccess"), context);
           if (_isStatic && isSetting) {
             IpInfo ipInfo = IpInfo(
               ipController.text,
@@ -139,7 +144,8 @@ class WiredSettingPageState extends State<WiredSettingPage> {
             PublicFunctions.setWiredIp(selScaleId, jsonEncode(ipInfo));
           }
         } else if (dataStr.contains('fail')) {
-          showTipInfo((localizedStrings?.setDHCPFailed ?? "setDHCPFailed"), context);
+          showTipInfo(
+              (localizedStrings?.setDHCPFailed ?? "setDHCPFailed"), context);
         }
       }
     });
@@ -151,7 +157,8 @@ class WiredSettingPageState extends State<WiredSettingPage> {
           isBusy = false;
         }
         if (dataStr.isEmpty || dataStr.contains("fail")) {
-          showTipInfo((localizedStrings?.gTipGetIpFail ?? "gTipGetIpFail"), context);
+          showTipInfo(
+              (localizedStrings?.gTipGetIpFail ?? "gTipGetIpFail"), context);
           return;
         }
 
@@ -172,10 +179,15 @@ class WiredSettingPageState extends State<WiredSettingPage> {
     // 鍦ㄩ〉闈㈡瀯寤哄畬鎴愬悗鏄剧ず鎻愮ず
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (comScalesList.isEmpty) {
-        showTipInfo((localizedStrings?.gTipNoDeviceAddFirst ?? "gTipNoDeviceAddFirst"), context);
+        showTipInfo(
+            (localizedStrings?.gTipNoDeviceAddFirst ?? "gTipNoDeviceAddFirst"),
+            context);
       } else {
         if (selScaleId == -1) {
-          showTipInfo((localizedStrings?.gTipSelectDeviceFirst ?? "gTipSelectDeviceFirst"), context);
+          showTipInfo(
+              (localizedStrings?.gTipSelectDeviceFirst ??
+                  "gTipSelectDeviceFirst"),
+              context);
         }
       }
     });
@@ -208,7 +220,8 @@ class WiredSettingPageState extends State<WiredSettingPage> {
     }
 
     return Scaffold(
-      drawer: null, // PC layout doesn't use standard drawer, it's a persistent left panel
+      drawer:
+          null, // PC layout doesn't use standard drawer, it's a persistent left panel
       body: Container(
         color: Theme.of(context).colorScheme.surface,
         child: Column(
@@ -227,7 +240,11 @@ class WiredSettingPageState extends State<WiredSettingPage> {
                             selScaleId: selScaleId,
                             clickScale: (scale) {
                               if (isSetting) {
-                                showTipInfo((localizedStrings?.gTipPerformingOperation ?? "gTipPerformingOperation"), context);
+                                showTipInfo(
+                                    (localizedStrings
+                                            ?.gTipPerformingOperation ??
+                                        "gTipPerformingOperation"),
+                                    context);
                                 return;
                               }
                               setState(() {
@@ -243,7 +260,9 @@ class WiredSettingPageState extends State<WiredSettingPage> {
                         ),
                         Expanded(
                           child: SingleChildScrollView(
-                            child: comScalesList.isEmpty ? const SizedBox() : showRightWigdet(),
+                            child: comScalesList.isEmpty
+                                ? const SizedBox()
+                                : showRightWigdet(),
                           ),
                         ),
                       ],
@@ -261,7 +280,8 @@ class WiredSettingPageState extends State<WiredSettingPage> {
   void changeScale(int scaleId) {
     setState(() {
       if (isBusy) {
-        return showTipInfo((localizedStrings?.gTipGetIP ?? "gTipGetIP"), context);
+        return showTipInfo(
+            (localizedStrings?.gTipGetIP ?? "gTipGetIP"), context);
       }
       netMaskController.clear();
       ipController.clear();
@@ -278,8 +298,9 @@ class WiredSettingPageState extends State<WiredSettingPage> {
     return LayoutBuilder(
       builder: (context, constraints) {
         final isNarrow = constraints.maxWidth < 670;
-        final itemWidth = isNarrow ? constraints.maxWidth.clamp(0.0, 350.0) : 300.0;
-        
+        final itemWidth =
+            isNarrow ? constraints.maxWidth.clamp(0.0, 350.0) : 300.0;
+
         return Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -287,11 +308,18 @@ class WiredSettingPageState extends State<WiredSettingPage> {
             if (isNarrow)
               Column(
                 children: [
-                  _buildWiredField((localizedStrings?.gIpAddress ?? "gIpAddress"), ipController, width: itemWidth),
+                  _buildWiredField(
+                      (localizedStrings?.gIpAddress ?? "gIpAddress"),
+                      ipController,
+                      width: itemWidth),
                   const SizedBox(height: 20),
-                  _buildWiredField((localizedStrings?.gNetmask ?? "gNetmask"), netMaskController, width: itemWidth),
+                  _buildWiredField((localizedStrings?.gNetmask ?? "gNetmask"),
+                      netMaskController,
+                      width: itemWidth),
                   const SizedBox(height: 20),
-                  _buildWiredField((localizedStrings?.gGateway ?? "gGateway"), gateWayController, width: itemWidth),
+                  _buildWiredField((localizedStrings?.gGateway ?? "gGateway"),
+                      gateWayController,
+                      width: itemWidth),
                   const SizedBox(height: 20),
                   _buildDhcpToggle(width: itemWidth),
                 ],
@@ -302,16 +330,25 @@ class WiredSettingPageState extends State<WiredSettingPage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      _buildWiredField((localizedStrings?.gIpAddress ?? "gIpAddress"), ipController, width: itemWidth),
+                      _buildWiredField(
+                          (localizedStrings?.gIpAddress ?? "gIpAddress"),
+                          ipController,
+                          width: itemWidth),
                       const SizedBox(width: 70),
-                      _buildWiredField((localizedStrings?.gNetmask ?? "gNetmask"), netMaskController, width: itemWidth),
+                      _buildWiredField(
+                          (localizedStrings?.gNetmask ?? "gNetmask"),
+                          netMaskController,
+                          width: itemWidth),
                     ],
                   ),
                   const SizedBox(height: 20),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      _buildWiredField((localizedStrings?.gGateway ?? "gGateway"), gateWayController, width: itemWidth),
+                      _buildWiredField(
+                          (localizedStrings?.gGateway ?? "gGateway"),
+                          gateWayController,
+                          width: itemWidth),
                       const SizedBox(width: 70),
                       _buildDhcpToggle(width: itemWidth),
                     ],
@@ -334,10 +371,14 @@ class WiredSettingPageState extends State<WiredSettingPage> {
                         (_isStatic && isValidData())
                             ? () {
                                 if (isBusy) {
-                                  return showTipInfo((localizedStrings?.pleaseWait ?? "pleaseWait"), context);
+                                  return showTipInfo(
+                                      (localizedStrings?.pleaseWait ??
+                                          "pleaseWait"),
+                                      context);
                                 }
                                 isBusy = true;
-                                PublicFunctions.setWiredDhcp(selScaleId, 'false');
+                                PublicFunctions.setWiredDhcp(
+                                    selScaleId, 'false');
                                 isSetting = true;
                               }
                             : null,
@@ -355,10 +396,15 @@ class WiredSettingPageState extends State<WiredSettingPage> {
                       (localizedStrings?.gBtnGetIp ?? "gBtnGetIp"),
                       () {
                         if (selScaleId == -1) {
-                          showTipInfo((localizedStrings?.gTipSelectDeviceFirst ?? "gTipSelectDeviceFirst"), context);
+                          showTipInfo(
+                              (localizedStrings?.gTipSelectDeviceFirst ??
+                                  "gTipSelectDeviceFirst"),
+                              context);
                           return;
                         }
-                        showTipInfo((localizedStrings?.gTipGetIP ?? "gTipGetIP"), context);
+                        showTipInfo(
+                            (localizedStrings?.gTipGetIP ?? "gTipGetIP"),
+                            context);
                         PublicFunctions.getWiredDhcp(selScaleId);
                       },
                       Theme.of(context).colorScheme.onPrimary,
@@ -376,7 +422,8 @@ class WiredSettingPageState extends State<WiredSettingPage> {
     );
   }
 
-  Widget _buildWiredField(String label, TextEditingController controller, {double width = 300.0}) {
+  Widget _buildWiredField(String label, TextEditingController controller,
+      {double width = 300.0}) {
     return Center(
       child: Container(
         width: width,
@@ -404,11 +451,16 @@ class WiredSettingPageState extends State<WiredSettingPage> {
                     ),
                   ),
                   border: const OutlineInputBorder(),
-                  errorText: validateIpFlag(controller.text) ? null : (localizedStrings?.gTipErrorIp ?? "gTipErrorIp"),
+                  errorText: validateIpFlag(controller.text)
+                      ? null
+                      : (localizedStrings?.gTipErrorIp ?? "gTipErrorIp"),
                 ),
                 style: Theme.of(context).textTheme.bodySmall!.apply(
                       color: !_isStatic
-                          ? Theme.of(context).colorScheme.onSurfaceVariant.withOpacity(0.5)
+                          ? Theme.of(context)
+                              .colorScheme
+                              .onSurfaceVariant
+                              .withOpacity(0.5)
                           : Theme.of(context).colorScheme.onSurface,
                     ),
                 onChanged: (value) {
@@ -442,21 +494,28 @@ class WiredSettingPageState extends State<WiredSettingPage> {
               padding: EdgeInsets.zero,
               visualDensity: VisualDensity.compact,
               icon: Icon(
-                !_isStatic ? Icons.toggle_on_outlined : Icons.toggle_off_outlined,
+                !_isStatic
+                    ? Icons.toggle_on_outlined
+                    : Icons.toggle_off_outlined,
               ),
               color: !_isStatic
                   ? Theme.of(context).colorScheme.onTertiaryFixedVariant
                   : Theme.of(context).colorScheme.onSurfaceVariant,
               onPressed: () async {
                 if (selScaleId == -1) {
-                  showTipInfo((localizedStrings?.gTipSelectDeviceFirst ?? "gTipSelectDeviceFirst"), context);
+                  showTipInfo(
+                      (localizedStrings?.gTipSelectDeviceFirst ??
+                          "gTipSelectDeviceFirst"),
+                      context);
                   return;
                 }
                 if (isBusy) {
-                  return showTipInfo((localizedStrings?.pleaseWait ?? "pleaseWait"), context);
+                  return showTipInfo(
+                      (localizedStrings?.pleaseWait ?? "pleaseWait"), context);
                 }
                 if (_isPressing) {
-                  showTipInfo((localizedStrings?.pleaseWait ?? "pleaseWait"), context);
+                  showTipInfo(
+                      (localizedStrings?.pleaseWait ?? "pleaseWait"), context);
                   return;
                 }
 
@@ -556,37 +615,11 @@ class WiredSettingPageState extends State<WiredSettingPage> {
   Widget _buildMobileContent(BuildContext context, double width) {
     return Scaffold(
       backgroundColor: Colors.white,
-      drawer: Drawer(
-        width: 220,
-        child: Container(
-          color: Theme.of(context).colorScheme.surfaceTint,
-          child: Column(
-            children: [
-              SizedBox(height: MediaQuery.of(context).padding.top),
-              Expanded(
-                child: NewComScaleListWidget(
-                  listWidth: 220,
-                  selScaleId: selScaleId,
-                  clickScale: (scale) {
-                    if (isSetting) {
-                      showTipInfo(
-                          (localizedStrings?.gTipPerformingOperation ?? "gTipPerformingOperation"), context);
-                      return;
-                    }
-                    Navigator.pop(context); // Close drawer
-                    setState(() {
-                      changeScale(scale.scaleId);
-                    });
-                  },
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
+      drawer: _buildMobileDrawer(context),
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
+        scrolledUnderElevation: 0,
         centerTitle: true,
         leadingWidth: 100,
         leading: Builder(
@@ -601,7 +634,8 @@ class WiredSettingPageState extends State<WiredSettingPage> {
                   onTap: () => Scaffold.of(ctx).openDrawer(),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                    child: getSvgIcon(wiredSettingSvgIcon(), 24, 24, Colors.black87),
+                    child: getSvgIcon(
+                        weighingSvgIcon(), 24, 24, Colors.black87),
                   ),
                 ),
               ],
@@ -610,7 +644,8 @@ class WiredSettingPageState extends State<WiredSettingPage> {
         ),
         title: Text(
           localizedStrings?.menuWiredSetting ?? "Ethernet Setting",
-          style: const TextStyle(color: Colors.black87, fontSize: 18, fontWeight: FontWeight.bold),
+          style: const TextStyle(
+              color: Colors.black87, fontSize: 18, fontWeight: FontWeight.bold),
         ),
         actions: [
           IconButton(
@@ -625,89 +660,162 @@ class WiredSettingPageState extends State<WiredSettingPage> {
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  _buildMobileField(localizedStrings?.gIpAddress ?? "IPv4", ipController),
+                  _buildMobileField(
+                      localizedStrings?.gIpAddress ?? "IPv4", ipController),
                   const Divider(height: 1, color: Color(0xFFEEEEEE)),
-                  _buildMobileField(localizedStrings?.gNetmask ?? "Netmask", netMaskController),
+                  _buildMobileField(localizedStrings?.gNetmask ?? "Netmask",
+                      netMaskController),
                   const Divider(height: 1, color: Color(0xFFEEEEEE)),
-                  _buildMobileField(localizedStrings?.gGateway ?? "Gateway", gateWayController),
+                  _buildMobileField(localizedStrings?.gGateway ?? "Gateway",
+                      gateWayController),
                   const Divider(height: 1, color: Color(0xFFEEEEEE)),
                   _buildMobileDhcpToggle(),
                 ],
               ),
             ),
           ),
-          Container(
-            padding: const EdgeInsets.all(16),
-            color: Colors.white,
-            child: SafeArea(
-              child: Column(
-                children: [
-                  if (_isStatic) ...[
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: (_isStatic && isValidData()) ? () {
-                          if (isBusy) {
-                            return showTipInfo(localizedStrings?.pleaseWait ?? "Please wait", context);
-                          }
-                          isBusy = true;
-                          PublicFunctions.setWiredDhcp(selScaleId, 'false');
-                          isSetting = true;
-                        } : null,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF0D558E),
-                          foregroundColor: Colors.white,
-                          disabledBackgroundColor: Colors.grey[300],
-                          shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                        ),
-                        child: Text(
-                          localizedStrings?.setStaticIP ?? "Set Static IP",
-                          style: const TextStyle(fontSize: 16),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                  ],
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        if (selScaleId == -1) {
-                          showTipInfo(localizedStrings?.gTipSelectDeviceFirst ?? "Select Device First", context);
-                          return;
-                        }
-                        showTipInfo(localizedStrings?.gTipGetIP ?? "Getting IP", context);
-                        PublicFunctions.getWiredDhcp(selScaleId);
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF1CB079),
-                        foregroundColor: Colors.white,
-                        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                      ),
-                      child: Text(
-                        localizedStrings?.gBtnGetIp ?? "Get Ip",
-                        style: const TextStyle(fontSize: 16),
-                      ),
-                    ),
-                  ),
-                ],
+          _buildMobileBottomButtons(context),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMobileDrawer(BuildContext context) {
+    List<Scale> comScales =
+        myAllScalesList.where((scale) => scale.tMedia == comScaleType).toList();
+
+    return Drawer(
+      width: 280,
+      backgroundColor: Colors.white,
+      child: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(left: 20, top: 20, bottom: 16, right: 16),
+              child: Text(
+                localizedStrings?.gTitleDeviceList ?? "Device List",
+                style: const TextStyle(
+                  color: Color(0xFF005696),
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
-          ),
-        ],
+            Expanded(
+              child: comScales.isEmpty
+                  ? showNoDeviceWidget(context)
+                  : ListView.separated(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      itemCount: comScales.length,
+                      separatorBuilder: (context, index) =>
+                          const SizedBox(height: 12),
+                      itemBuilder: (context, index) {
+                        final scale = comScales[index];
+                        final bool isSelect = (selScaleId == scale.scaleId);
+                        final bool isOnline = scale.isOnline;
+
+                        return GestureDetector(
+                          onTap: () {
+                            if (isSetting) {
+                              showTipInfo(
+                                localizedStrings?.gTipPerformingOperation ??
+                                    "Performing operation",
+                                context,
+                              );
+                              return;
+                            }
+                            Navigator.pop(context);
+                            setState(() {
+                              changeScale(scale.scaleId);
+                            });
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 12),
+                            decoration: BoxDecoration(
+                              color: isSelect
+                                  ? const Color(0xFF005696)
+                                  : const Color(0xFFF7F8FA),
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: Row(
+                              children: [
+                                Container(
+                                  width: 44,
+                                  height: 44,
+                                  decoration: BoxDecoration(
+                                    color: isSelect
+                                        ? Colors.white.withOpacity(0.2)
+                                        : const Color(0xFFE8EEF4),
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                  alignment: Alignment.center,
+                                  child: getSvgIcon(
+                                    serialPortSvgIcon(),
+                                    24,
+                                    24,
+                                    isSelect ? Colors.white : const Color(0xFF005696),
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        scale.scaleName,
+                                        style: TextStyle(
+                                          color:
+                                              isSelect ? Colors.white : Colors.black87,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        isOnline
+                                            ? (localizedStrings?.gTipOnline ?? "Online")
+                                            : (localizedStrings?.gTipOffline ??
+                                                "Offline"),
+                                        style: TextStyle(
+                                          color: isSelect
+                                              ? Colors.white.withOpacity(0.9)
+                                              : (isOnline
+                                                  ? const Color(0xFF005696)
+                                                  : const Color(0xFFFF4D4F)),
+                                          fontSize: 14,
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildMobileField(String label, TextEditingController controller) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       color: Colors.white,
       child: Row(
         children: [
-          Text(label, style: const TextStyle(fontSize: 16, color: Colors.black87)),
+          Text(
+            label,
+            style: const TextStyle(fontSize: 16, color: Colors.black87),
+          ),
           const SizedBox(width: 16),
           Expanded(
             child: TextField(
@@ -716,6 +824,8 @@ class WiredSettingPageState extends State<WiredSettingPage> {
               keyboardType: TextInputType.number,
               textAlign: TextAlign.right,
               decoration: const InputDecoration(
+                hintText: "0.0.0.0",
+                hintStyle: TextStyle(fontSize: 16, color: Colors.black54),
                 border: InputBorder.none,
                 isDense: true,
                 contentPadding: EdgeInsets.zero,
@@ -736,25 +846,34 @@ class WiredSettingPageState extends State<WiredSettingPage> {
 
   Widget _buildMobileDhcpToggle() {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       color: Colors.white,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          const Text("DHCP", style: TextStyle(fontSize: 16, color: Colors.black87)),
+          const Text(
+            "DHCP",
+            style: TextStyle(fontSize: 16, color: Colors.black87),
+          ),
           Switch(
             value: !_isStatic,
             activeColor: const Color(0xFF1CB079),
+            activeTrackColor: const Color(0xFF1CB079).withOpacity(0.4),
             onChanged: (value) async {
               if (selScaleId == -1) {
-                showTipInfo(localizedStrings?.gTipSelectDeviceFirst ?? "Select Device First", context);
+                showTipInfo(
+                    localizedStrings?.gTipSelectDeviceFirst ??
+                        "Select Device First",
+                    context);
                 return;
               }
               if (isBusy) {
-                return showTipInfo(localizedStrings?.pleaseWait ?? "Please wait", context);
+                return showTipInfo(
+                    localizedStrings?.pleaseWait ?? "Please wait", context);
               }
               if (_isPressing) {
-                showTipInfo(localizedStrings?.pleaseWait ?? "Please wait", context);
+                showTipInfo(
+                    localizedStrings?.pleaseWait ?? "Please wait", context);
                 return;
               }
 
@@ -775,6 +894,118 @@ class WiredSettingPageState extends State<WiredSettingPage> {
             },
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildMobileBottomButtons(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      color: Colors.white,
+      child: SafeArea(
+        child: _isStatic
+            ? Row(
+                children: [
+                  Expanded(
+                    child: SizedBox(
+                      height: 48,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          if (selScaleId == -1) {
+                            showTipInfo(
+                                localizedStrings?.gTipSelectDeviceFirst ??
+                                    "Select Device First",
+                                context);
+                            return;
+                          }
+                          showTipInfo(
+                              localizedStrings?.gTipGetIP ?? "Getting IP",
+                              context);
+                          PublicFunctions.getWiredDhcp(selScaleId);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF1CB079),
+                          foregroundColor: Colors.white,
+                          elevation: 0,
+                          shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.zero),
+                        ),
+                        child: Text(
+                          localizedStrings?.gBtnGetIp ?? "Get Ip",
+                          style: const TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: SizedBox(
+                      height: 48,
+                      child: ElevatedButton(
+                        onPressed: (_isStatic && isValidData())
+                            ? () {
+                                if (isBusy) {
+                                  return showTipInfo(
+                                      localizedStrings?.pleaseWait ??
+                                          "Please wait",
+                                      context);
+                                }
+                                isBusy = true;
+                                PublicFunctions.setWiredDhcp(
+                                    selScaleId, 'false');
+                                isSetting = true;
+                              }
+                            : null,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF005696),
+                          foregroundColor: Colors.white,
+                          disabledBackgroundColor: Colors.grey[300],
+                          elevation: 0,
+                          shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.zero),
+                        ),
+                        child: Text(
+                          localizedStrings?.setStaticIP ?? "Set Static IP",
+                          style: const TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              )
+            : SizedBox(
+                width: double.infinity,
+                height: 48,
+                child: ElevatedButton(
+                  onPressed: () {
+                    if (selScaleId == -1) {
+                      showTipInfo(
+                          localizedStrings?.gTipSelectDeviceFirst ??
+                              "Select Device First",
+                          context);
+                      return;
+                    }
+                    showTipInfo(
+                        localizedStrings?.gTipGetIP ?? "Getting IP",
+                        context);
+                    PublicFunctions.getWiredDhcp(selScaleId);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF1CB079),
+                    foregroundColor: Colors.white,
+                    elevation: 0,
+                    shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.zero),
+                  ),
+                  child: Text(
+                    localizedStrings?.gBtnGetIp ?? "Get Ip",
+                    style: const TextStyle(
+                        fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
       ),
     );
   }

@@ -339,9 +339,9 @@ class _MobileSelectScalesPageState extends State<MobileSelectScalesPage> {
               itemCount: myAllScalesList.length,
               itemBuilder: (context, index) {
                 var scale = myAllScalesList[index];
-                int id = scale.scaleId!;
+                int id = scale.scaleId;
                 bool isSelected = checkboxStatesMap[id] ?? false;
-                bool isOnline = scale.isOnline ?? false;
+                bool isOnline = scale.isOnline;
                 ScaleDownRes? resInfo = scaleResMap[id];
                 double progress = resInfo?.process ?? 0.0;
                 String resStr = resInfo?.res ?? "";
@@ -385,7 +385,7 @@ class _MobileSelectScalesPageState extends State<MobileSelectScalesPage> {
                         ],
                       ),
                       const SizedBox(height: 12),
-                      _buildInfoRow(localizedStrings?.gScaleName ?? "Scale Name", scale.scaleName ?? ""),
+                      _buildInfoRow(localizedStrings?.gScaleName ?? "Scale Name", scale.scaleName),
                       const SizedBox(height: 8),
                       _buildInfoRow((localizedStrings?.gModelName ?? "Model Name") + "/Sn", "${scale.scaleModel == 'TMax' ? '' : scale.scaleModel}/${scale.scaleSn}"),
                       const SizedBox(height: 8),
@@ -449,7 +449,9 @@ class _MobileSelectScalesPageState extends State<MobileSelectScalesPage> {
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
-                                      localizedStrings?.fTipTitle ?? "Tip",
+                                      widget.funcNo == sendOnline
+                                          ? "Baud rate"
+                                          : (localizedStrings?.fTipTitle ?? "Tip"),
                                       style: const TextStyle(
                                         fontSize: 18,
                                         fontWeight: FontWeight.bold,
@@ -523,21 +525,16 @@ class _MobileSelectScalesPageState extends State<MobileSelectScalesPage> {
                     });
                   } : null,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.grey[300],
+                    backgroundColor: checkSelect() ? const Color(0xFF005696) : Colors.grey[300],
                     foregroundColor: Colors.white,
                     disabledBackgroundColor: Colors.grey[300],
+                    disabledForegroundColor: Colors.white,
+                    elevation: 0,
                     shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
-                  ).copyWith(
-                    backgroundColor: WidgetStateProperty.resolveWith<Color>(
-                      (Set<WidgetState> states) {
-                        if (states.contains(WidgetState.disabled)) return Colors.grey[400]!;
-                        return const Color(0xFF0D558E); 
-                      },
-                    ),
                   ),
                   child: Text(
                     localizedStrings?.gBtnStart ?? "Start",
-                    style: const TextStyle(fontSize: 16),
+                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                 ),
               ),

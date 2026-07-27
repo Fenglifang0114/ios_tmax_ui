@@ -199,10 +199,10 @@ class _ScaleItemWidgetState extends State<ScaleItemWidget> {
                           showTextButton(
                               context,
                               isMobile ? 32 : 36,
-                              (localizedStrings?.gBtnTare ?? "gBtnTare"),
+                              (localizedStrings?.iBtnZero ?? "iBtnZero"),
                               isStart
                                   ? () {
-                                      PublicFunctions.performTareWithScaleId(
+                                      PublicFunctions.performZeroWithScaleId(
                                           widget.scaleId);
                                     }
                                   : null,
@@ -212,10 +212,10 @@ class _ScaleItemWidgetState extends State<ScaleItemWidget> {
                           showTextButton(
                               context,
                               isMobile ? 32 : 36,
-                              (localizedStrings?.iBtnZero ?? "iBtnZero"),
+                              (localizedStrings?.gBtnTare ?? "gBtnTare"),
                               isStart
                                   ? () {
-                                      PublicFunctions.performZeroWithScaleId(
+                                      PublicFunctions.performTareWithScaleId(
                                           widget.scaleId);
                                     }
                                   : null,
@@ -241,29 +241,32 @@ class _ScaleItemWidgetState extends State<ScaleItemWidget> {
     return Container(
         padding: EdgeInsets.symmetric(
             horizontal: isMobile ? 8.0 : largePadding),
-        child: Center(
+        child: Align(
+          alignment: isMobile ? Alignment.centerLeft : Alignment.center,
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            mainAxisAlignment: isMobile
+                ? MainAxisAlignment.start
+                : MainAxisAlignment.spaceAround,
             children: [
               _buildIconAndText(
                 context,
-                (localizedStrings?.iStable ?? "iStable"),
-                (weightInfo?.isStable ?? false),
-                1,
+                (localizedStrings?.iTextZero ?? "iTextZero"),
+                (weightInfo?.isZero ?? false),
+                3,
               ),
-              SizedBox(width: isMobile ? 8 : 24),
+              SizedBox(width: isMobile ? 4 : 24),
               _buildIconAndText(
                 context,
                 (localizedStrings?.iTextNet ?? "iTextNet"),
                 (weightInfo?.isNet ?? false),
                 2,
               ),
-              SizedBox(width: isMobile ? 8 : 24),
+              SizedBox(width: isMobile ? 4 : 24),
               _buildIconAndText(
                 context,
-                (localizedStrings?.iTextZero ?? "iTextZero"),
-                (weightInfo?.isZero ?? false),
-                3,
+                (localizedStrings?.iStable ?? "iStable"),
+                (weightInfo?.isStable ?? false),
+                1,
               ),
             ],
           ),

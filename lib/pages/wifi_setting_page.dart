@@ -10,6 +10,7 @@ import 'package:t_max/data/scale_info_from_db.dart';
 import 'package:t_max/dialog/custom_dialog_tip.dart';
 import 'package:t_max/widget/common_widget.dart';
 import 'package:t_max/widget/scale_list.dart';
+import 'package:t_max/widget/no_device_widget.dart';
 import '../data/const_var_data.dart';
 import '../data/downloadresponse.dart';
 import 'package:t_max/data/respdata_data.dart';
@@ -21,7 +22,6 @@ import 'package:t_max/data/writelog.dart';
 import '../data/ipinfodata.dart';
 import '../data/language.dart';
 import '../functions/adaptive.dart';
-import '../widget/page_head.dart';
 import '../data/timer_manager.dart';
 import '../data/wifi_pwd_info.dart';
 import '../eventbus/eventbus.dart';
@@ -38,6 +38,7 @@ class WifiSettingPage extends StatefulWidget {
 }
 
 class WifiSettingPageState extends State<WifiSettingPage> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   List<String> wifiItems = [];
   List<String> displayedItems = [];
   List<int> wifiRssiList = [];
@@ -529,57 +530,20 @@ class WifiSettingPageState extends State<WifiSettingPage> {
   }
 
   @override
-  @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
     final bool isMobile = Adaptive.isMobile(context);
 
+    if (isMobile) {
+      return Scaffold(
+        key: _scaffoldKey,
+        drawer: _buildMobileDrawer(context),
+        body: _buildMobileContent(context, width),
+      );
+    }
+
     return Scaffold(
-      drawer: isMobile
-          ? Drawer(
-              width: 220 + 20,
-              child: Container(
-                color: Theme.of(context).colorScheme.surface,
-                child: Column(
-                  children: [
-                    Container(
-                      height: btnHeight + 40,
-                      padding:
-                          const EdgeInsets.only(left: regularPadding, top: 40),
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        (localizedStrings?.gTitleDeviceList ??
-                            "gTitleDeviceList"),
-                        style: Theme.of(context).textTheme.labelLarge!.apply(
-                              color: Theme.of(context).colorScheme.primary,
-                            ),
-                      ),
-                    ),
-                    const Divider(),
-                    Expanded(
-                      child: NewComScaleListWidget(
-                        listWidth: 220,
-                        selScaleId: selScaleId,
-                        clickScale: (scale) {
-                          if (isSetting) {
-                            showTipInfo(
-                                (localizedStrings?.gTipPerformingOperation ??
-                                    "gTipPerformingOperation"),
-                                context);
-                            return;
-                          }
-                          setState(() {
-                            changeScale(scale.scaleId);
-                          });
-                          Navigator.pop(context); // Close drawer
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            )
-          : null,
+      drawer: null,
       body: Container(
         color: Theme.of(context).colorScheme.surface,
         child: Column(
@@ -1439,5 +1403,775 @@ class WifiSettingPageState extends State<WifiSettingPage> {
     }
 
     return isValid;
+  }
+
+  Widget _buildMobileContent(BuildContext context, double width) {
+    bool canGetIp = (selScaleId != -1 && !isConnecting && !isSetting);
+    bool canToggleStatic =
+        (selScaleId != -1 && !_isStatic && !isConnecting && !isSetting);
+    bool canToggleDynamic =
+        (selScaleId != -1 && _isStatic && !isConnecting && !isSetting);
+    bool canConnect =
+        (selScaleId != -1 && isValidData() && !isConnecting && !isSetting);
+
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        centerTitle: true,
+        leadingWidth: 100,
+        leading: Builder(
+          builder: (BuildContext ctx) {
+            return Row(
+              children: [
+                BackButton(
+                  color: Colors.black87,
+                  onPressed: () => Navigator.pop(context),
+                ),
+                GestureDetector(
+                  onTap: () => _scaffoldKey.currentState?.openDrawer(),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                    child: getSvgIcon(
+                        weighingSvgIcon(), 24, 24, Colors.black87),
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
+        title: Text(
+          localizedStrings?.menuWifiSetting ?? "Wi-Fi Setting",
+          style: const TextStyle(
+              color: Colors.black87, fontSize: 18, fontWeight: FontWeight.bold),
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.help_outline, color: Colors.black87),
+            onPressed: () {},
+          ),
+        ],
+      ),
+      body: Column(
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    localizedStrings?.gTipConnectedInfo ?? "Connected AP Info",
+                    style: const TextStyle(
+                        color: Color(0xFF005696),
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        connectedSsid.isEmpty ? "-" : connectedSsid,
+                        style: const TextStyle(
+                            fontSize: 14, color: Colors.black87),
+                      ),
+                      Text(
+                        connectedMac.isEmpty ? "-" : connectedMac,
+                        style: const TextStyle(
+                            fontSize: 14, color: Colors.black54),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  const Divider(height: 1, color: Color(0xFFEEEEEE)),
+                  const SizedBox(height: 16),
+                  // Select Wi-Fi Tile
+                  GestureDetector(
+                    onTap: selScaleId == -1
+                        ? null
+                        : () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => MobileSelectWifiPage(
+                                  wifiItems: wifiItems,
+                                  bssidList: bssidList,
+                                  wifiRssiList: wifiRssiList,
+                                  currentSelectedSsid: ssidController.text,
+                                  onRefresh: () {
+                                    showTipInfo(
+                                        localizedStrings?.gTipGetAPList ??
+                                            "Getting AP List",
+                                        context);
+                                    PublicFunctions.getWifiList(selScaleId);
+                                    setState(() {
+                                      isSetting = true;
+                                    });
+                                  },
+                                  onConfirm: (ssid, bssid) {
+                                    setState(() {
+                                      ssidController.text = ssid;
+                                      passwordController.text =
+                                          getWifiPwd(ssid);
+                                      bssId = bssid;
+                                    });
+                                  },
+                                ),
+                              ),
+                            );
+                          },
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            "Select Wi-Fi",
+                            style: TextStyle(
+                                fontSize: 14, color: Colors.black87),
+                          ),
+                          Row(
+                            children: [
+                              Text(
+                                ssidController.text.isEmpty
+                                    ? ""
+                                    : ssidController.text,
+                                style: const TextStyle(
+                                    fontSize: 14, color: Colors.black87),
+                              ),
+                              const SizedBox(width: 4),
+                              const Icon(Icons.chevron_right,
+                                  color: Colors.black54),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const Divider(height: 1, color: Color(0xFFEEEEEE)),
+                  const SizedBox(height: 12),
+                  // SSID Field
+                  const Text(
+                    "SSID",
+                    style: TextStyle(fontSize: 14, color: Colors.black87),
+                  ),
+                  const SizedBox(height: 4),
+                  TextField(
+                    controller: ssidController,
+                    onChanged: (val) => setState(() {}),
+                    decoration: const InputDecoration(
+                      isDense: true,
+                      border: UnderlineInputBorder(),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  // Password Field
+                  const Text(
+                    "Password",
+                    style: TextStyle(fontSize: 14, color: Colors.black87),
+                  ),
+                  const SizedBox(height: 4),
+                  TextField(
+                    controller: passwordController,
+                    obscureText: passwordLock,
+                    onChanged: (val) => setState(() {}),
+                    decoration: InputDecoration(
+                      isDense: true,
+                      border: const UnderlineInputBorder(),
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          passwordLock
+                              ? Icons.visibility_off
+                              : Icons.visibility,
+                          color: Colors.black54,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            passwordLock = !passwordLock;
+                          });
+                        },
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  // IPv4 Field
+                  const Text(
+                    "IPv4",
+                    style: TextStyle(fontSize: 14, color: Colors.black87),
+                  ),
+                  const SizedBox(height: 4),
+                  TextField(
+                    controller: ipController,
+                    readOnly: !_isStatic,
+                    onChanged: (val) => setState(() {}),
+                    decoration: const InputDecoration(
+                      isDense: true,
+                      border: UnderlineInputBorder(),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  // Netmask Field
+                  const Text(
+                    "Netmask",
+                    style: TextStyle(fontSize: 14, color: Colors.black87),
+                  ),
+                  const SizedBox(height: 4),
+                  TextField(
+                    controller: netMaskController,
+                    readOnly: !_isStatic,
+                    onChanged: (val) => setState(() {}),
+                    decoration: const InputDecoration(
+                      isDense: true,
+                      border: UnderlineInputBorder(),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  // Gateway Field
+                  const Text(
+                    "Gateway",
+                    style: TextStyle(fontSize: 14, color: Colors.black87),
+                  ),
+                  const SizedBox(height: 4),
+                  TextField(
+                    controller: gateWayController,
+                    readOnly: !_isStatic,
+                    onChanged: (val) => setState(() {}),
+                    decoration: const InputDecoration(
+                      isDense: true,
+                      border: UnderlineInputBorder(),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          // Bottom Buttons
+          Container(
+            padding: const EdgeInsets.all(16),
+            color: Colors.white,
+            child: SafeArea(
+              child: Column(
+                children: [
+                  // Get Ip
+                  SizedBox(
+                    width: double.infinity,
+                    height: 44,
+                    child: ElevatedButton(
+                      onPressed: canGetIp
+                          ? () {
+                              PublicFunctions.getIpInfo(selScaleId);
+                              setState(() {
+                                isSetting = true;
+                              });
+                            }
+                          : null,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: canGetIp
+                            ? const Color(0xFF005696)
+                            : Colors.grey[300],
+                        foregroundColor: Colors.white,
+                        disabledBackgroundColor: Colors.grey[300],
+                        disabledForegroundColor: Colors.white,
+                        elevation: 0,
+                        shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.zero),
+                      ),
+                      child: Text(
+                        localizedStrings?.gBtnGetIp ?? "Get Ip",
+                        style: const TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  // Static
+                  SizedBox(
+                    width: double.infinity,
+                    height: 44,
+                    child: ElevatedButton(
+                      onPressed: canToggleStatic
+                          ? () {
+                              setState(() {
+                                _isStatic = true;
+                                showTipInfo(
+                                    localizedStrings?.gTipConnectStaticIp ??
+                                        "Connect Static IP",
+                                    context);
+                              });
+                            }
+                          : null,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: (selScaleId != -1 && _isStatic)
+                            ? const Color(0xFF005696)
+                            : (canToggleStatic
+                                ? const Color(0xFF005696)
+                                : Colors.grey[300]),
+                        foregroundColor: Colors.white,
+                        disabledBackgroundColor: (selScaleId != -1 && _isStatic)
+                            ? const Color(0xFF005696)
+                            : Colors.grey[300],
+                        disabledForegroundColor: Colors.white,
+                        elevation: 0,
+                        shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.zero),
+                      ),
+                      child: Text(
+                        localizedStrings?.gBtnStatic ?? "Static",
+                        style: const TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  // Dynamic
+                  SizedBox(
+                    width: double.infinity,
+                    height: 44,
+                    child: ElevatedButton(
+                      onPressed: canToggleDynamic
+                          ? () {
+                              setState(() {
+                                _isStatic = false;
+                              });
+                              PublicFunctions.setWifiDynamicMode(selScaleId);
+                              setState(() {
+                                isSetting = true;
+                              });
+                            }
+                          : null,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: (selScaleId != -1 && !_isStatic)
+                            ? const Color(0xFF005696)
+                            : (canToggleDynamic
+                                ? const Color(0xFF005696)
+                                : Colors.grey[300]),
+                        foregroundColor: Colors.white,
+                        disabledBackgroundColor: (selScaleId != -1 && !_isStatic)
+                            ? const Color(0xFF005696)
+                            : Colors.grey[300],
+                        disabledForegroundColor: Colors.white,
+                        elevation: 0,
+                        shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.zero),
+                      ),
+                      child: Text(
+                        localizedStrings?.gBtnDynamic ?? "Dynamic",
+                        style: const TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  // Connect
+                  SizedBox(
+                    width: double.infinity,
+                    height: 44,
+                    child: ElevatedButton(
+                      onPressed: canConnect
+                          ? () {
+                              showTipInfo(
+                                  localizedStrings?.gTipConnecting ??
+                                      "Connecting",
+                                  context);
+                              setState(() {
+                                isConnecting = true;
+                              });
+                              cntScaleTimerMgr.stopCntScaleTimer();
+                              if (_isStatic) {
+                                connectStaticIp();
+                              } else {
+                                connectDynamicIp();
+                              }
+                            }
+                          : null,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: canConnect
+                            ? const Color(0xFF1CB079)
+                            : Colors.grey[300],
+                        foregroundColor: Colors.white,
+                        disabledBackgroundColor: Colors.grey[300],
+                        disabledForegroundColor: Colors.white,
+                        elevation: 0,
+                        shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.zero),
+                      ),
+                      child: Text(
+                        localizedStrings?.gBtnConnect ?? "Connect",
+                        style: const TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMobileDrawer(BuildContext context) {
+    return Drawer(
+      width: 280,
+      backgroundColor: Colors.white,
+      child: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(
+                  left: 20, top: 20, bottom: 16, right: 16),
+              child: Text(
+                localizedStrings?.gTitleDeviceList ?? "Device List",
+                style: const TextStyle(
+                  color: Color(0xFF005696),
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            Expanded(
+              child: comScalesList.isEmpty
+                  ? showNoDeviceWidget(context)
+                  : ListView.separated(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      itemCount: comScalesList.length,
+                      separatorBuilder: (context, index) =>
+                          const SizedBox(height: 12),
+                      itemBuilder: (context, index) {
+                        final scale = comScalesList[index];
+                        final bool isSelect = (selScaleId == scale.scaleId);
+                        final bool isOnline = scale.isOnline;
+
+                        return GestureDetector(
+                          onTap: () {
+                            if (isSetting) {
+                              showTipInfo(
+                                localizedStrings?.gTipPerformingOperation ??
+                                    "Performing operation",
+                                context,
+                              );
+                              return;
+                            }
+                            Navigator.pop(context);
+                            changeScale(scale.scaleId);
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 12),
+                            decoration: BoxDecoration(
+                              color: isSelect
+                                  ? const Color(0xFF005696)
+                                  : const Color(0xFFF7F8FA),
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: Row(
+                              children: [
+                                Container(
+                                  width: 44,
+                                  height: 44,
+                                  decoration: BoxDecoration(
+                                    color: isSelect
+                                        ? Colors.white.withOpacity(0.2)
+                                        : const Color(0xFFE8EEF4),
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                  alignment: Alignment.center,
+                                  child: getSvgIcon(
+                                    serialPortSvgIcon(),
+                                    24,
+                                    24,
+                                    isSelect
+                                        ? Colors.white
+                                        : const Color(0xFF005696),
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        scale.scaleName,
+                                        style: TextStyle(
+                                          color: isSelect
+                                              ? Colors.white
+                                              : Colors.black87,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        isOnline
+                                            ? (localizedStrings?.gTipOnline ??
+                                                "Online")
+                                            : (localizedStrings?.gTipOffline ??
+                                                "Offline"),
+                                        style: TextStyle(
+                                          color: isSelect
+                                              ? Colors.white.withOpacity(0.9)
+                                              : (isOnline
+                                                  ? const Color(0xFF005696)
+                                                  : const Color(0xFFFF4D4F)),
+                                          fontSize: 14,
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class MobileSelectWifiPage extends StatefulWidget {
+  final List<String> wifiItems;
+  final List<String> bssidList;
+  final List<int> wifiRssiList;
+  final String currentSelectedSsid;
+  final VoidCallback onRefresh;
+  final Function(String ssid, String bssid) onConfirm;
+
+  const MobileSelectWifiPage({
+    super.key,
+    required this.wifiItems,
+    required this.bssidList,
+    required this.wifiRssiList,
+    required this.currentSelectedSsid,
+    required this.onRefresh,
+    required this.onConfirm,
+  });
+
+  @override
+  State<MobileSelectWifiPage> createState() => _MobileSelectWifiPageState();
+}
+
+class _MobileSelectWifiPageState extends State<MobileSelectWifiPage> {
+  TextEditingController searchController = TextEditingController();
+  List<String> filteredItems = [];
+  int selectedIndex = -1;
+
+  @override
+  void initState() {
+    super.initState();
+    filteredItems = List.from(widget.wifiItems);
+    if (widget.currentSelectedSsid.isNotEmpty) {
+      selectedIndex = widget.wifiItems.indexOf(widget.currentSelectedSsid);
+    }
+  }
+
+  @override
+  void dispose() {
+    searchController.dispose();
+    super.dispose();
+  }
+
+  void _filterWifi(String query) {
+    setState(() {
+      if (query.isEmpty) {
+        filteredItems = List.from(widget.wifiItems);
+      } else {
+        filteredItems = widget.wifiItems
+            .where((item) => item.toLowerCase().contains(query.toLowerCase()))
+            .toList();
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        centerTitle: true,
+        leading: BackButton(
+          color: Colors.black87,
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: const Text(
+          "Select Wi-Fi",
+          style: TextStyle(
+              color: Colors.black87, fontSize: 18, fontWeight: FontWeight.bold),
+        ),
+      ),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Container(
+                    height: 44,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF5F5F5),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: TextField(
+                      controller: searchController,
+                      onChanged: _filterWifi,
+                      decoration: const InputDecoration(
+                        hintText: "Search Name",
+                        hintStyle: TextStyle(color: Colors.grey, fontSize: 14),
+                        border: InputBorder.none,
+                        contentPadding:
+                            EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                GestureDetector(
+                  onTap: () {
+                    widget.onRefresh();
+                  },
+                  child: Container(
+                    width: 44,
+                    height: 44,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFE8EEF4),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    alignment: Alignment.center,
+                    child: const Icon(Icons.refresh, color: Color(0xFF005696)),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 8),
+          Expanded(
+            child: filteredItems.isEmpty
+                ? Center(
+                    child: Text(
+                      localizedStrings?.gTipNoData ?? "No Data",
+                      style: const TextStyle(color: Colors.grey),
+                    ),
+                  )
+                : ListView.separated(
+                    itemCount: filteredItems.length,
+                    separatorBuilder: (context, index) =>
+                        const Divider(height: 1, color: Color(0xFFEEEEEE)),
+                    itemBuilder: (context, index) {
+                      final ssid = filteredItems[index];
+                      final origIndex = widget.wifiItems.indexOf(ssid);
+                      final bssid =
+                          (origIndex >= 0 && origIndex < widget.bssidList.length)
+                              ? widget.bssidList[origIndex]
+                              : "";
+
+                      final bool isSelected = (selectedIndex == origIndex);
+
+                      return GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            selectedIndex = origIndex;
+                          });
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 12),
+                          color:
+                              isSelected ? const Color(0xFF005696) : Colors.white,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    ssid,
+                                    style: TextStyle(
+                                      color:
+                                          isSelected ? Colors.white : Colors.black87,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    bssid,
+                                    style: TextStyle(
+                                      color: isSelected
+                                          ? Colors.white70
+                                          : Colors.black54,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Icon(
+                                Icons.wifi,
+                                color:
+                                    isSelected ? Colors.white : const Color(0xFF005696),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+          ),
+          Container(
+            padding: const EdgeInsets.all(16),
+            color: Colors.white,
+            child: SafeArea(
+              child: SizedBox(
+                width: double.infinity,
+                height: 48,
+                child: ElevatedButton(
+                  onPressed: selectedIndex != -1
+                      ? () {
+                          final selectedSsid = widget.wifiItems[selectedIndex];
+                          final selectedBssid =
+                              widget.bssidList[selectedIndex];
+                          widget.onConfirm(selectedSsid, selectedBssid);
+                          Navigator.pop(context);
+                        }
+                      : null,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: selectedIndex != -1
+                        ? const Color(0xFF1CB079)
+                        : Colors.grey[300],
+                    foregroundColor: Colors.white,
+                    disabledBackgroundColor: Colors.grey[300],
+                    disabledForegroundColor: Colors.white,
+                    elevation: 0,
+                    shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.zero),
+                  ),
+                  child: Text(
+                    localizedStrings?.gBtnConfirm ?? "Confirm",
+                    style: const TextStyle(
+                        fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

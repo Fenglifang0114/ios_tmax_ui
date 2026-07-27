@@ -11,6 +11,7 @@ import 'package:t_max/widget/wgt_value_widget.dart';
 import 'package:t_max/eventbus/eventbus.dart';
 import 'package:t_max/functions/methods.dart';
 import '../data/downloadresponse.dart';
+import '../data/icons.dart';
 import '../data/language.dart';
 import '../functions/adaptive.dart';
 import '../widget/page_head.dart';
@@ -125,7 +126,51 @@ class WeightModePageState extends State<WeightModePage> {
     final bool isMobile = Adaptive.isMobile(context);
 
     return Scaffold(
-      // key: _scaffoldKey, // 移除全局键以避免布局切换时的断言错误
+      appBar: isMobile
+          ? AppBar(
+              backgroundColor: Colors.white,
+              elevation: 0,
+              scrolledUnderElevation: 0,
+              centerTitle: true,
+              leadingWidth: 100,
+              leading: Builder(
+                builder: (BuildContext ctx) {
+                  return Row(
+                    children: [
+                      BackButton(
+                        color: Colors.black87,
+                        onPressed: () {
+                          formAppSetting = false;
+                          Navigator.pop(context);
+                        },
+                      ),
+                      GestureDetector(
+                        onTap: () => Scaffold.of(ctx).openDrawer(),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                          child: getSvgIcon(
+                              weighingSvgIcon(), 24, 24, Colors.black87),
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              ),
+              title: Text(
+                localizedStrings?.menuWeighing ?? "Weighing",
+                style: const TextStyle(
+                    color: Colors.black87,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold),
+              ),
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.help_outline, color: Colors.black87),
+                  onPressed: () {},
+                ),
+              ],
+            )
+          : null,
       drawer: isMobile
           ? Drawer(
               width: scaleListWidth + 20,
@@ -168,38 +213,23 @@ class WeightModePageState extends State<WeightModePage> {
         color: Theme.of(context).colorScheme.surface,
         child: Column(
           children: [
-            SafeArea(
-              bottom: false,
-              child: pageHeadInfo(
-                  context,
-                  isMobile ? width : width - headWidthPadding,
-                  localizedStrings?.menuWeighing ?? 'Weighing',
-                  localizedStrings?.gTipWeighingPageHelp ?? '', () {
-                formAppSetting = false;
-                if (isMobile) {
-                  Navigator.pop(context);
-                } else {
+            if (!isMobile)
+              SafeArea(
+                bottom: false,
+                child: pageHeadInfo(
+                    context,
+                    width - headWidthPadding,
+                    localizedStrings?.menuWeighing ?? 'Weighing',
+                    localizedStrings?.gTipWeighingPageHelp ?? '', () {
+                  formAppSetting = false;
                   widget.onNavigate(widget.lastRouteName);
-                }
-              },
-                  leading: isMobile
-                      ? Padding(
-                          padding: const EdgeInsets.only(left: regularPadding),
-                          child: Builder(builder: (context) {
-                            return IconButton(
-                              icon: Icon(Icons.scale_outlined,
-                                  color: Theme.of(context).colorScheme.primary,
-                                  size: 28),
-                              onPressed: () => Scaffold.of(context).openDrawer(),
-                            );
-                          }),
-                        )
-                      : null),
-            ),
-            Container(
-              height: regularPadding,
-              color: Theme.of(context).colorScheme.surfaceDim,
-            ),
+                }),
+              ),
+            if (!isMobile)
+              Container(
+                height: regularPadding,
+                color: Theme.of(context).colorScheme.surfaceDim,
+              ),
             Expanded(
               child: Container(
                 color: Theme.of(context).colorScheme.surfaceTint,

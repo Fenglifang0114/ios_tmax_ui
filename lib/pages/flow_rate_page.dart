@@ -2,7 +2,6 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:csv/csv.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:t_max/data/comscaleinfo_data.dart';
 import 'package:t_max/data/flow_data_from_db.dart';
@@ -199,7 +198,8 @@ class FlowRatePageState extends State<FlowRatePage>
     eventbus1 = eventBus.on<EventRespFlowRateAdd>().listen((event) {
       if (mounted) {
         PublicFunctions.getFlowRateData();
-        showTipInfo((localizedStrings?.fSaveSuccess ?? "fSaveSuccess"), context);
+        showTipInfo(
+            (localizedStrings?.fSaveSuccess ?? "fSaveSuccess"), context);
       }
     });
 
@@ -253,7 +253,8 @@ class FlowRatePageState extends State<FlowRatePage>
                   myReqWeightCountine.msgBody!.weightVal;
 
               double newWgt =
-                  (double.tryParse(myReqWeightCountine.msgBody!.weightVal) ?? 0.0);
+                  (double.tryParse(myReqWeightCountine.msgBody!.weightVal) ??
+                      0.0);
               newWgt = (double.tryParse(newWgt.toStringAsFixed(3)) ?? 0.0);
               // 添加日志，查看每次接收到的重量数据
               // 调用保存函数
@@ -905,7 +906,8 @@ class FlowRatePageState extends State<FlowRatePage>
       //数据太少就返回
       if (rateDataList.length < 3) {
         rateDataList.clear();
-        showTipInfo((localizedStrings?.fDataTooLittle ?? "fDataTooLittle"), context);
+        showTipInfo(
+            (localizedStrings?.fDataTooLittle ?? "fDataTooLittle"), context);
         return;
       }
 
@@ -991,11 +993,17 @@ class FlowRatePageState extends State<FlowRatePage>
                                   minHeight: 700,
                                 ),
                                 child: Container(
-                                  width: constraints.maxWidth > 1000 ? constraints.maxWidth : 1000,
-                                  height: constraints.maxHeight > 700 ? constraints.maxHeight : 700,
+                                  width: constraints.maxWidth > 1000
+                                      ? constraints.maxWidth
+                                      : 1000,
+                                  height: constraints.maxHeight > 700
+                                      ? constraints.maxHeight
+                                      : 700,
                                   child: Column(
                                     children: [
-                                      Expanded(flex: 10, child: _buildTopSection(context)),
+                                      Expanded(
+                                          flex: 10,
+                                          child: _buildTopSection(context)),
                                       Container(
                                         height: 14,
                                         color: colorScheme.surfaceDim,
@@ -1022,8 +1030,11 @@ class FlowRatePageState extends State<FlowRatePage>
   }
 
   Widget _buildPageHeadInfo(BuildContext context, double width) {
-    return pageHeadInfo(context, width - headWidthPadding,
-        (localizedStrings?.fFlowRate ?? "fFlowRate"), (localizedStrings?.gTipFlowRatePageHelp ?? "gTipFlowRatePageHelp"), () {
+    return pageHeadInfo(
+        context,
+        width - headWidthPadding,
+        (localizedStrings?.fFlowRate ?? "fFlowRate"),
+        (localizedStrings?.gTipFlowRatePageHelp ?? "gTipFlowRatePageHelp"), () {
       formAppSetting = false;
       Future.delayed(Duration.zero, () {
         widget.onNavigate(widget.lastRouteName);
@@ -1190,7 +1201,9 @@ class FlowRatePageState extends State<FlowRatePage>
           });
         },
         child: showNormalText(
-          isStart ? (localizedStrings?.gBtnEnd ?? "gBtnEnd") : (localizedStrings?.gBtnStart ?? "gBtnStart"),
+          isStart
+              ? (localizedStrings?.gBtnEnd ?? "gBtnEnd")
+              : (localizedStrings?.gBtnStart ?? "gBtnStart"),
           colorScheme.onPrimary,
         ),
       ),
@@ -1261,7 +1274,8 @@ class FlowRatePageState extends State<FlowRatePage>
         children: [
           const SizedBox(width: 10),
           Expanded(
-            child: Text(localizedStrings?.fHistoricalWeighingRecordsBtn ?? "fHistoricalWeighingRecordsBtn"),
+            child: Text(localizedStrings?.fHistoricalWeighingRecordsBtn ??
+                "fHistoricalWeighingRecordsBtn"),
           ),
           Expanded(
             flex: 1,
@@ -1290,7 +1304,8 @@ class FlowRatePageState extends State<FlowRatePage>
           ),
         ),
         onPressed: () async {
-          String? outputFile = await PublicFunctions.pickSaveFilePath('records.csv');
+          String? outputFile =
+              await PublicFunctions.pickSaveFilePath('records.csv');
           if (outputFile != null) {
             if (!outputFile.toLowerCase().endsWith(".csv")) {
               outputFile = "$outputFile.csv";
@@ -1332,7 +1347,8 @@ class FlowRatePageState extends State<FlowRatePage>
                 return;
               }
 
-              showTipInfo((localizedStrings?.fSaveSuccess ?? "fSaveSuccess"), context);
+              showTipInfo(
+                  (localizedStrings?.fSaveSuccess ?? "fSaveSuccess"), context);
             } catch (e) {
               if (!context.mounted) {
                 return;

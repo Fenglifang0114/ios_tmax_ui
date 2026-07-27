@@ -7,12 +7,13 @@ import 'package:t_max/data/scale_info_from_db.dart';
 import 'package:t_max/dialog/custom_dialog_tip.dart';
 import 'package:t_max/widget/common_widget.dart';
 import 'package:t_max/widget/scale_list.dart';
+import 'package:t_max/widget/no_device_widget.dart';
+import 'package:t_max/data/icons.dart';
 import '../data/downloadresponse.dart';
 import 'package:t_max/functions/methods.dart';
 import '../../eventbus/eventbus.dart';
 import '../data/language.dart';
 import '../functions/adaptive.dart';
-import '../widget/page_head.dart';
 
 class BluetoothPage extends StatefulWidget {
   final Function(String) onNavigate;
@@ -63,7 +64,8 @@ class BluetoothPageState extends State<BluetoothPage> {
           isSetting = false;
           if (myRespDataFromScale.msgBody.isNotEmpty) {
             if (myRespDataFromScale.msgBody.contains('time out')) {
-              showTipInfo((localizedStrings?.gTipTimeOut ?? "gTipTimeOut"), context);
+              showTipInfo(
+                  (localizedStrings?.gTipTimeOut ?? "gTipTimeOut"), context);
             } else {
               showTipInfo(myRespDataFromScale.msgBody, context);
             }
@@ -83,9 +85,11 @@ class BluetoothPageState extends State<BluetoothPage> {
               _deviceNameController.text =
                   getBtName(myRespDataFromScale.msgBody);
             } else if (myRespDataFromScale.msgBody.contains("OK")) {
-              showTipInfo((localizedStrings?.fSuccessMsg ?? "fSuccessMsg"), context);
+              showTipInfo(
+                  (localizedStrings?.fSuccessMsg ?? "fSuccessMsg"), context);
             } else if (myRespDataFromScale.msgBody.contains('time out')) {
-              showTipInfo((localizedStrings?.gTipTimeOut ?? "gTipTimeOut"), context);
+              showTipInfo(
+                  (localizedStrings?.gTipTimeOut ?? "gTipTimeOut"), context);
             } else {
               showTipInfo(myRespDataFromScale.msgBody, context);
             }
@@ -97,10 +101,15 @@ class BluetoothPageState extends State<BluetoothPage> {
     // 鍦ㄩ〉闈㈡瀯寤哄畬鎴愬悗鏄剧ず鎻愮ず
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (comScalesList.isEmpty) {
-        showTipInfo((localizedStrings?.gTipNoDeviceAddFirst ?? "gTipNoDeviceAddFirst"), context);
+        showTipInfo(
+            (localizedStrings?.gTipNoDeviceAddFirst ?? "gTipNoDeviceAddFirst"),
+            context);
       } else {
         if (selScaleId == -1) {
-          showTipInfo((localizedStrings?.gTipSelectDeviceFirst ?? "gTipSelectDeviceFirst"), context);
+          showTipInfo(
+              (localizedStrings?.gTipSelectDeviceFirst ??
+                  "gTipSelectDeviceFirst"),
+              context);
         }
       }
     });
@@ -127,72 +136,58 @@ class BluetoothPageState extends State<BluetoothPage> {
     super.dispose();
   }
 
-
-
-
   @override
   Widget build(BuildContext context) {
-    final width = MediaQuery.of(context).size.width;
     final bool isMobile = Adaptive.isMobile(context);
 
     return Scaffold(
-
-      drawer: isMobile
-          ? Drawer(
-              width: scaleListWidth + 20,
-              child: Container(
-                color: Theme.of(context).colorScheme.surface,
-                child: Column(
-                  children: [
-                    Container(
-                      height: btnHeight + 40,
-                      padding:
-                          const EdgeInsets.only(left: regularPadding, top: 40),
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        (localizedStrings?.gTitleDeviceList ?? "gTitleDeviceList"),
-                        style: Theme.of(context).textTheme.labelLarge!.apply(
-                              color: Theme.of(context).colorScheme.primary,
-                            ),
+      drawer: isMobile ? _buildMobileDrawer(context) : null,
+      appBar: isMobile
+          ? AppBar(
+              backgroundColor: Colors.white,
+              elevation: 0,
+              scrolledUnderElevation: 0,
+              centerTitle: true,
+              leadingWidth: 100,
+              leading: Builder(
+                builder: (BuildContext ctx) {
+                  return Row(
+                    children: [
+                      BackButton(
+                        color: Colors.black87,
+                        onPressed: () => Navigator.pop(context),
                       ),
-                    ),
-                    const Divider(),
-                    Expanded(
-                      child: NewComScaleListWidget(
-                        listWidth: scaleListWidth,
-                        selScaleId: selScaleId,
-                        clickScale: (scale) {
-                          setState(() {
-                            changeScale(scale.scaleId);
-                          });
-                        },
+                      GestureDetector(
+                        onTap: () => Scaffold.of(ctx).openDrawer(),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                          child: getSvgIcon(
+                              weighingSvgIcon(), 24, 24, Colors.black87),
+                        ),
                       ),
-                    ),
-                  ],
-                ),
+                    ],
+                  );
+                },
               ),
+              title: Text(
+                localizedStrings?.menuBluetoothSetting ?? "Bluetooth Setting",
+                style: const TextStyle(
+                    color: Colors.black87,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold),
+              ),
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.help_outline, color: Colors.black87),
+                  onPressed: () {},
+                ),
+              ],
             )
           : null,
       body: Container(
         color: Theme.of(context).colorScheme.surface,
         child: Column(
           children: [
-            if (isMobile)
-              AppBar(
-                backgroundColor: Colors.transparent,
-                elevation: 0,
-                leading: Builder(builder: (context) {
-                  return IconButton(
-                    icon: Icon(Icons.menu_open,
-                        color: Theme.of(context).colorScheme.primary, size: 28),
-                    onPressed: () => Scaffold.of(context).openDrawer(),
-                  );
-                }),
-                title: Text(
-                  (localizedStrings?.menuBluetoothSetting ?? "menuBluetoothSetting"),
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-              ),
             Expanded(
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -257,13 +252,138 @@ class BluetoothPageState extends State<BluetoothPage> {
     );
   }
 
+  Widget _buildMobileDrawer(BuildContext context) {
+    List<Scale> comScales =
+        myAllScalesList.where((scale) => scale.tMedia == comScaleType).toList();
+
+    return Drawer(
+      width: 280,
+      backgroundColor: Colors.white,
+      child: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(left: 20, top: 20, bottom: 16, right: 16),
+              child: Text(
+                localizedStrings?.gTitleDeviceList ?? "Device List",
+                style: const TextStyle(
+                  color: Color(0xFF005696),
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            Expanded(
+              child: comScales.isEmpty
+                  ? showNoDeviceWidget(context)
+                  : ListView.separated(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      itemCount: comScales.length,
+                      separatorBuilder: (context, index) =>
+                          const SizedBox(height: 12),
+                      itemBuilder: (context, index) {
+                        final scale = comScales[index];
+                        final bool isSelect = (selScaleId == scale.scaleId);
+                        final bool isOnline = scale.isOnline;
+
+                        return GestureDetector(
+                          onTap: () {
+                            if (isSetting) {
+                              showTipInfo(
+                                localizedStrings?.gTipPerformingOperation ??
+                                    "Performing operation",
+                                context,
+                              );
+                              return;
+                            }
+                            Navigator.pop(context);
+                            setState(() {
+                              changeScale(scale.scaleId);
+                            });
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 12),
+                            decoration: BoxDecoration(
+                              color: isSelect
+                                  ? const Color(0xFF005696)
+                                  : const Color(0xFFF7F8FA),
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: Row(
+                              children: [
+                                Container(
+                                  width: 44,
+                                  height: 44,
+                                  decoration: BoxDecoration(
+                                    color: isSelect
+                                        ? Colors.white.withOpacity(0.2)
+                                        : const Color(0xFFE8EEF4),
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                  alignment: Alignment.center,
+                                  child: getSvgIcon(
+                                    serialPortSvgIcon(),
+                                    24,
+                                    24,
+                                    isSelect ? Colors.white : const Color(0xFF005696),
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        scale.scaleName,
+                                        style: TextStyle(
+                                          color:
+                                              isSelect ? Colors.white : Colors.black87,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        isOnline
+                                            ? (localizedStrings?.gTipOnline ?? "Online")
+                                            : (localizedStrings?.gTipOffline ??
+                                                "Offline"),
+                                        style: TextStyle(
+                                          color: isSelect
+                                              ? Colors.white.withOpacity(0.9)
+                                              : (isOnline
+                                                  ? const Color(0xFF005696)
+                                                  : const Color(0xFFFF4D4F)),
+                                          fontSize: 14,
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   //鍒囨崲鐨勬椂鍊欒淇敼鎺夌Г鐨勪俊鎭?
   void changeScale(int scaleId) {
     setState(() {
       selScaleId = scaleId;
     });
   }
-
 
   TextStyle getTextStyle({Color? color}) {
     return Theme.of(context).textTheme.bodySmall!.apply(
@@ -275,7 +395,6 @@ class BluetoothPageState extends State<BluetoothPage> {
     final bool isMobile = Adaptive.isMobile(context);
     return Container(
       width: double.infinity,
-
       alignment: Alignment.center,
       child: Column(
         children: [
@@ -285,13 +404,13 @@ class BluetoothPageState extends State<BluetoothPage> {
           ConstrainedBox(
             constraints: BoxConstraints(maxWidth: 700),
             child: Column(children: [
-
               Container(
-                height: 42,
+                padding: const EdgeInsets.symmetric(vertical: 8),
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  (localizedStrings?.tipBluetoothDisconnect ?? "tipBluetoothDisconnect"),
-                  overflow: TextOverflow.ellipsis,
+                  (localizedStrings?.tipBluetoothDisconnect ??
+                      "tipBluetoothDisconnect"),
+                  softWrap: true,
                   style: getTextStyle(color: colorScheme.error),
                 ),
               ),
@@ -342,7 +461,8 @@ class BluetoothPageState extends State<BluetoothPage> {
                                 child: showTextButton(
                                     context,
                                     38,
-                                    (localizedStrings?.gGetBluetoothName ?? "gGetBluetoothName"),
+                                    (localizedStrings?.gGetBluetoothName ??
+                                        "gGetBluetoothName"),
                                     isSetting || selScaleId == -1
                                         ? null
                                         : () {
@@ -365,7 +485,8 @@ class BluetoothPageState extends State<BluetoothPage> {
                       child: showTextButton(
                           context,
                           btnHeight,
-                          (localizedStrings?.gModifyBluetoothName ?? "gModifyBluetoothName"),
+                          (localizedStrings?.gModifyBluetoothName ??
+                              "gModifyBluetoothName"),
                           isSetting || selScaleId == -1
                               ? null
                               : () {
@@ -376,7 +497,8 @@ class BluetoothPageState extends State<BluetoothPage> {
                                   } catch (e) {
                                     setState(() {
                                       showTipInfo(
-                                          (localizedStrings?.gMsgSerialError ?? "gMsgSerialError"),
+                                          (localizedStrings?.gMsgSerialError ??
+                                              "gMsgSerialError"),
                                           context);
                                     });
                                   }
@@ -400,7 +522,8 @@ class BluetoothPageState extends State<BluetoothPage> {
                 height: 42,
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  (localizedStrings?.gBluetoothEmissionPower ?? "gBluetoothEmissionPower"),
+                  (localizedStrings?.gBluetoothEmissionPower ??
+                      "gBluetoothEmissionPower"),
                   overflow: TextOverflow.ellipsis,
                   style: getTextStyle(),
                 ),
@@ -416,48 +539,48 @@ class BluetoothPageState extends State<BluetoothPage> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Expanded(
-                                child: DropdownButtonFormField<String>(
-                                  borderRadius: BorderRadius.circular(0),
-                                  decoration: InputDecoration(
-                                      enabledBorder: OutlineInputBorder(
-                                          borderSide: BorderSide(
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .outlineVariant, // 璁剧疆杈规棰滆壊
-                                            width: 1.0, // 璁剧疆杈规瀹藉害
-                                          ),
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(0.0))),
-                                      border: OutlineInputBorder()),
-                                  // 璁剧疆榛樿鍊?
-                                  value: emissionPowerVale,
-                                  // 閫夋嫨鍥炶皟
-                                  onChanged: (String? newPosition) {
-                                    emissionPowerVale = newPosition.toString();
-                                    setState(() {});
-                                  },
-                                  // 浼犲叆鍙€夌殑鏁扮粍
+                              child: DropdownButtonFormField<String>(
+                                borderRadius: BorderRadius.circular(0),
+                                decoration: InputDecoration(
+                                    enabledBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .outlineVariant, // 璁剧疆杈规棰滆壊
+                                          width: 1.0, // 璁剧疆杈规瀹藉害
+                                        ),
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(0.0))),
+                                    border: OutlineInputBorder()),
+                                // 璁剧疆榛樿鍊?
+                                value: emissionPowerVale,
+                                // 閫夋嫨鍥炶皟
+                                onChanged: (String? newPosition) {
+                                  emissionPowerVale = newPosition.toString();
+                                  setState(() {});
+                                },
+                                // 浼犲叆鍙€夌殑鏁扮粍
 
-                                  items: emissionPowerMap.entries
-                                      .map<DropdownMenuItem<String>>((entry) {
-                                    return DropdownMenuItem(
-                                      value: entry.key,
-                                      child: Text(
-                                        entry.value,
-                                        style: getTextStyle(),
-                                      ),
-                                    );
-                                  }).toList(),
-                                ),
+                                items: emissionPowerMap.entries
+                                    .map<DropdownMenuItem<String>>((entry) {
+                                  return DropdownMenuItem(
+                                    value: entry.key,
+                                    child: Text(
+                                      entry.value,
+                                      style: getTextStyle(),
+                                    ),
+                                  );
+                                }).toList(),
                               ),
-                            ])),
-                    SizedBox(
-                      width: isMobile ? double.infinity : 320,
-                      child: showTextButton(
-
+                            ),
+                          ])),
+                  SizedBox(
+                    width: isMobile ? double.infinity : 320,
+                    child: showTextButton(
                         context,
                         btnHeight,
-                        (localizedStrings?.gModifyBluetoothEmission ?? "gModifyBluetoothEmission"),
+                        (localizedStrings?.gModifyBluetoothEmission ??
+                            "gModifyBluetoothEmission"),
                         isSetting || selScaleId == -1
                             ? null
                             : () {
@@ -492,7 +615,9 @@ class BluetoothPageState extends State<BluetoothPage> {
       _startTimer(15);
     } else {
       setState(() {
-        showTipInfo((localizedStrings?.gTipDeviceNameEmpty ?? "gTipDeviceNameEmpty"), context);
+        showTipInfo(
+            (localizedStrings?.gTipDeviceNameEmpty ?? "gTipDeviceNameEmpty"),
+            context);
       });
     }
   }
