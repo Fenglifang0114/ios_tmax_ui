@@ -40,6 +40,8 @@ import 'package:t_max/pages/mobile_data_page.dart';
 import 'package:t_max/pages/mobile_format_page.dart';
 import 'package:t_max/pages/mobile_sys_log_page.dart';
 import 'package:t_max/pages/mobile_sys_user_manager.dart';
+import 'package:t_max/pages/mobile_serial_output_design_page.dart';
+import 'package:t_max/pages/mobile_receipt_design_page.dart';
 
 class RouteData {
   RouteData({
@@ -589,14 +591,20 @@ Widget buildPageContent(dynamic Function(String) navigateContent,
       onNavigate: navigateContent,
       lastRouteName: lastRouteName,
     );
-  } else if (pageId == MenuId.receiptDesignPage) {
+  } else if (pageId == MenuId.receiptDesignPage || pageId == MenuId.appRcpDesignPage) {
+    if (Platform.isAndroid || Platform.isIOS) {
+      return const MobileReceiptDesignPage();
+    }
     return ReceiptDesignPage(
       type: formAppSetting ? "app" : "config",
       onNavigate: navigateContent,
       lastRouteName: lastRouteName,
     );
   } else if (pageId == MenuId.serialOutputDesignPage) {
-    return CustomSerialProtocol();
+    if (Platform.isAndroid || Platform.isIOS) {
+      return const MobileSerialOutputDesignPage();
+    }
+    return const CustomSerialProtocol();
   } else if (pageId == MenuId.basicDataCollectionPage) {
     return BasicDataPage();
   } else if (pageId == MenuId.sealManagmentPage) {

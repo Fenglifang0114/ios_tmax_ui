@@ -27,6 +27,8 @@ import 'package:t_max/widget/attibute_widget.dart';
 import 'package:t_max/widget/common_widget.dart';
 import 'package:t_max/widget/page_head.dart';
 import 'package:t_max/labeldesign/ai_design_dialog.dart';
+import 'package:t_max/labeldesign/mobile_label_design_page.dart';
+import 'package:t_max/functions/adaptive.dart';
 
 class LabelDesignPage extends StatefulWidget {
   final String type;
@@ -2982,7 +2984,13 @@ class LabelDesignPageState extends State<LabelDesignPage> {
 
   @override
   Widget build(BuildContext context) {
-    // final Size screenSize = MediaQuery.of(context).size;
+    if (Adaptive.isMobile(context)) {
+      return MobileLabelDesignPage(
+        onNavigate: widget.onNavigate,
+        lastRouteName: widget.lastRouteName,
+      );
+    }
+
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
 
