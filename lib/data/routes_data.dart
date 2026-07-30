@@ -42,6 +42,7 @@ import 'package:t_max/pages/mobile_sys_log_page.dart';
 import 'package:t_max/pages/mobile_sys_user_manager.dart';
 import 'package:t_max/pages/mobile_serial_output_design_page.dart';
 import 'package:t_max/pages/mobile_receipt_design_page.dart';
+import 'package:t_max/pages/mobile_weighing_data_collection_page.dart';
 
 class RouteData {
   RouteData({
@@ -633,6 +634,12 @@ Widget buildPageContent(dynamic Function(String) navigateContent,
       lastRouteName: lastRouteName,
     );
   } else if (pageId == MenuId.weightDataCollectionPage) {
+    if (Platform.isAndroid || Platform.isIOS) {
+      return MobileWeighingDataCollectionPage(
+        onNavigate: navigateContent,
+        lastRouteName: lastRouteName,
+      );
+    }
     return WeightDataCollectionPage(
       onNavigate: navigateContent,
       lastRouteName: lastRouteName,
