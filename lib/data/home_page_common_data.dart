@@ -90,12 +90,20 @@ Set<int> paidConfigMenuIds = {
 Set<int> selectedAppsPaidMenuIds = {
   MenuId.weightModePage,
   MenuId.retailReportPage,
+  MenuId.weightDataCollectionPage,
+  MenuId.checkWeighersPage,
+  MenuId.takeInPage,
+  MenuId.takeOutPage,
 };
 
 //免费的appId
 Set<int> freeAppMenuIds = {
   MenuId.weightModePage,
   MenuId.retailReportPage,
+  MenuId.weightDataCollectionPage,
+  MenuId.checkWeighersPage,
+  MenuId.takeInPage,
+  MenuId.takeOutPage,
 };
 
 //零售的appId

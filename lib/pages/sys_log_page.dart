@@ -3,7 +3,6 @@
 import 'package:flutter/material.dart';
 import 'package:t_max/data/g_data.dart';
 import 'package:t_max/data/home_page_common_data.dart';
-import 'package:t_max/data/icons.dart';
 import 'package:t_max/data/language.dart';
 import 'package:t_max/widget/log_cal_tab.dart';
 import 'package:t_max/widget/log_sys_tab.dart';

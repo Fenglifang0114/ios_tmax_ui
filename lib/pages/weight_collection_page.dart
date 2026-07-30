@@ -1110,7 +1110,7 @@ void sendDataToDb(
           null, null, null, null, null, null, null, '', '');
 
   final newAddRec = ReqAddWgtRec()
-    ..mode = mySettingParam.scaleMode
+    ..mode = int.parse(wgtCollectionMode)
     ..detailRec = [];
 
   // 构建 Header 通用部分
@@ -1129,9 +1129,6 @@ void sendDataToDb(
     limitHigh: tempPlu.limitHigh?.toString() ?? '',
     limitLow: tempPlu.limitLow?.toString() ?? '',
     weight: totalWeight.toString(),
-    // baseUnit == 'g'
-    //     ? totalWeight.toStringAsFixed(0)
-    //     : totalWeight.toString(),
     weightUnit: baseUnit,
     userNo: mySysUser.userId.toString(),
     userName: mySysUser.nickName,
@@ -1140,11 +1137,11 @@ void sendDataToDb(
 
   if (scaleWgtMapDetail.length == 1) {
     final scaleId = scaleWgtMapDetail.keys.first;
-    final tempScale = scaleIdToScaleMap[scaleId]!;
+    final tempScale = scaleIdToScaleMap[scaleId];
     newAddRec.headRec = headerCommon.copyWith(
-      scaleModel: tempScale.scaleModel,
-      scaleSn: tempScale.scaleSn,
-      scaleName: tempScale.scaleName,
+      scaleModel: tempScale?.scaleModel ?? '',
+      scaleSn: tempScale?.scaleSn ?? '',
+      scaleName: tempScale?.scaleName ?? '',
     );
     newAddRec.detailRec = [];
   } else {

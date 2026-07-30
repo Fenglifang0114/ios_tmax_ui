@@ -245,7 +245,6 @@ extension MultiScaleManagementListExt on MultiScaleManagementState {
               const SizedBox(height: smallPadding),
           itemBuilder: (context, index) {
             final scale = myAllScalesList[index];
-            bool isSelect = (scale.scaleId == selScaleId);
             return MouseRegion(
                 cursor: SystemMouseCursors.click,
                 child: GestureDetector(

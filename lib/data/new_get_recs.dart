@@ -1,4 +1,4 @@
-﻿// To parse this JSON data, do
+// To parse this JSON data, do
 //
 //     final reqGetAllWgtRecs = reqGetAllWgtRecsFromJson(jsonString);
 
@@ -62,13 +62,17 @@ class RevAllWgtRecs {
     this.totalCount,
   });
 
-  factory RevAllWgtRecs.fromJson(Map<String, dynamic> json) => RevAllWgtRecs(
-        scaleRecInfos: json["scale_rec_infos"] == null
-            ? []
-            : List<ScaleRecInfo>.from(
-                json["scale_rec_infos"]!.map((x) => ScaleRecInfo.fromJson(x))),
-        totalCount: json["total_count"],
-      );
+  factory RevAllWgtRecs.fromJson(Map<String, dynamic> json) {
+    var recs = json["scale_rec_infos"] ?? json["ScaleRecInfos"] ?? json["scaleRecInfos"];
+    var count = json["total_count"] ?? json["TotalCount"] ?? json["totalCount"];
+    return RevAllWgtRecs(
+      scaleRecInfos: recs == null
+          ? []
+          : List<ScaleRecInfo>.from(
+              recs.map((x) => ScaleRecInfo.fromJson(Map<String, dynamic>.from(x)))),
+      totalCount: count is int ? count : (int.tryParse(count?.toString() ?? '0') ?? 0),
+    );
+  }
 
   Map<String, dynamic> toJson() => {
         "scale_rec_infos": scaleRecInfos == null
@@ -87,13 +91,17 @@ class ScaleRecInfo {
     this.details,
   });
 
-  factory ScaleRecInfo.fromJson(Map<String, dynamic> json) => ScaleRecInfo(
-        header: json["Header"] == null ? null : Header.fromJson(json["Header"]),
-        details: json["Details"] == null
-            ? []
-            : List<NewWgtDetail>.from(
-                json["Details"]!.map((x) => NewWgtDetail.fromJson(x))),
-      );
+  factory ScaleRecInfo.fromJson(Map<String, dynamic> json) {
+    var headData = json["Header"] ?? json["header"] ?? json["headRec"] ?? json["HeadRec"];
+    var detailsData = json["Details"] ?? json["details"] ?? json["detailRec"] ?? json["DetailRec"];
+    return ScaleRecInfo(
+      header: headData == null ? null : Header.fromJson(Map<String, dynamic>.from(headData)),
+      details: detailsData == null
+          ? []
+          : List<NewWgtDetail>.from(
+              detailsData.map((x) => NewWgtDetail.fromJson(Map<String, dynamic>.from(x)))),
+    );
+  }
 
   Map<String, dynamic> toJson() => {
         "Header": header?.toJson(),
@@ -127,17 +135,17 @@ class NewWgtDetail {
   });
 
   factory NewWgtDetail.fromJson(Map<String, dynamic> json) => NewWgtDetail(
-        recId: json["RecId"],
-        headId: json["HeadId"],
-        no: json["No"],
-        scaleModel: json["ScaleModel"],
-        scaleSn: json["ScaleSn"],
-        weight: json["Weight"],
-        weightUnit: json["WeightUnit"],
-        scaleName: json["ScaleName"],
-        createdAt: json["CreatedAt"] == null
+        recId: json["RecId"] ?? json["recId"] ?? json["rec_id"],
+        headId: json["HeadId"] ?? json["headId"] ?? json["head_id"],
+        no: json["No"] ?? json["no"],
+        scaleModel: json["ScaleModel"] ?? json["scaleModel"] ?? json["scale_model"],
+        scaleSn: json["ScaleSn"] ?? json["scaleSn"] ?? json["scale_sn"],
+        weight: json["Weight"]?.toString() ?? json["weight"]?.toString(),
+        weightUnit: json["WeightUnit"]?.toString() ?? json["weightUnit"]?.toString() ?? json["weight_unit"]?.toString(),
+        scaleName: json["ScaleName"] ?? json["scaleName"] ?? json["scale_name"],
+        createdAt: json["CreatedAt"] == null && json["createdAt"] == null && json["created_at"] == null
             ? null
-            : DateTime.parse(json["CreatedAt"]).toLocal(),
+            : DateTime.tryParse((json["CreatedAt"] ?? json["createdAt"] ?? json["created_at"]).toString())?.toLocal(),
       );
 
   Map<String, dynamic> toJson() => {
@@ -254,31 +262,31 @@ class Header {
       );
 
   factory Header.fromJson(Map<String, dynamic> json) => Header(
-        recId: json["RecId"],
-        id: json["Id"],
-        scaleModel: json["ScaleModel"],
-        scaleSn: json["ScaleSn"],
-        plu: json["Plu"],
-        productCode: json["ProductCode"],
-        itemCode: json["ItemCode"],
-        category: json["Category"],
-        productName: json["ProductName"],
-        generalUnit: json["GeneralUnit"],
-        taxType: json["TaxType"],
-        price: json["Price"],
-        unitWeight: json["UnitWeight"],
-        pretare: json["Pretare"],
-        limitHigh: json["LimitHigh"],
-        limitLow: json["LimitLow"],
-        weight: json["Weight"],
-        weightUnit: json["WeightUnit"],
-        userNo: json["UserNo"],
-        userName: json["UserName"],
-        scaleMode: json["ScaleMode"],
-        scaleName: json["ScaleName"],
-        createdAt: json["CreatedAt"] == null
+        recId: json["RecId"] ?? json["recId"] ?? json["rec_id"],
+        id: json["Id"]?.toString() ?? json["id"]?.toString(),
+        scaleModel: json["ScaleModel"] ?? json["scaleModel"] ?? json["scale_model"],
+        scaleSn: json["ScaleSn"] ?? json["scaleSn"] ?? json["scale_sn"],
+        plu: json["Plu"]?.toString() ?? json["plu"]?.toString(),
+        productCode: json["ProductCode"]?.toString() ?? json["productCode"]?.toString() ?? json["product_code"]?.toString(),
+        itemCode: json["ItemCode"]?.toString() ?? json["itemCode"]?.toString() ?? json["item_code"]?.toString(),
+        category: json["Category"] ?? json["category"],
+        productName: json["ProductName"] ?? json["productName"] ?? json["product_name"],
+        generalUnit: json["GeneralUnit"]?.toString() ?? json["generalUnit"]?.toString(),
+        taxType: json["TaxType"]?.toString() ?? json["taxType"]?.toString(),
+        price: json["Price"]?.toString() ?? json["price"]?.toString(),
+        unitWeight: json["UnitWeight"]?.toString() ?? json["unitWeight"]?.toString(),
+        pretare: json["Pretare"]?.toString() ?? json["pretare"]?.toString(),
+        limitHigh: json["LimitHigh"]?.toString() ?? json["limitHigh"]?.toString(),
+        limitLow: json["LimitLow"]?.toString() ?? json["limitLow"]?.toString(),
+        weight: json["Weight"]?.toString() ?? json["weight"]?.toString(),
+        weightUnit: json["WeightUnit"]?.toString() ?? json["weightUnit"]?.toString() ?? json["weight_unit"]?.toString(),
+        userNo: json["UserNo"]?.toString() ?? json["userNo"]?.toString(),
+        userName: json["UserName"] ?? json["userName"],
+        scaleMode: json["ScaleMode"]?.toString() ?? json["scaleMode"]?.toString(),
+        scaleName: json["ScaleName"] ?? json["scaleName"] ?? json["scale_name"],
+        createdAt: json["CreatedAt"] == null && json["createdAt"] == null && json["created_at"] == null
             ? null
-            : DateTime.parse(json["CreatedAt"]).toLocal(),
+            : DateTime.tryParse((json["CreatedAt"] ?? json["createdAt"] ?? json["created_at"]).toString())?.toLocal(),
       );
 
   Map<String, dynamic> toJson() => {

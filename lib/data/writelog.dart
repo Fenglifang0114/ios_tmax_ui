@@ -1,6 +1,7 @@
-﻿import 'log_access.dart';
+import 'log_access.dart';
 
 void writelog(String dataStr) async {
+  print(dataStr);
   try {
     await mylogFileAccess.writeLog(dataStr);
   } catch (error) {

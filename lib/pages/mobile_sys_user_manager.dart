@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:t_max/data/g_data.dart';
 import 'package:t_max/data/sys_user_from_db.dart';
-import 'package:t_max/data/sys_user_req.dart';
 import 'package:t_max/dialog/custom_dialog_tip.dart';
 import 'package:t_max/eventbus/eventbus.dart';
 import 'package:t_max/functions/methods.dart';

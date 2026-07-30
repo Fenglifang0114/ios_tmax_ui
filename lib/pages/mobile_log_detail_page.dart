@@ -3,7 +3,6 @@ import 'package:t_max/data/language.dart';
 import 'package:t_max/data/log_data.dart';
 import 'package:intl/intl.dart';
 import 'package:t_max/functions/methods.dart';
-import 'package:t_max/dialog/custom_dialog_tip.dart';
 
 class MobileLogDetailPage extends StatelessWidget {
   final dynamic log;

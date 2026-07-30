@@ -1,8 +1,6 @@
 //重量收集页面 20250522
 
 import 'dart:async';
-import 'dart:io';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:t_max/data/g_data.dart';

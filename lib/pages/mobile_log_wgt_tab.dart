@@ -5,8 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:path/path.dart' as p;
 import 'package:permission_handler/permission_handler.dart';
-import 'package:t_max/data/g_data.dart';
-import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/data/language.dart';
 import 'package:t_max/data/log_data.dart';
 import 'package:t_max/eventbus/eventbus.dart';

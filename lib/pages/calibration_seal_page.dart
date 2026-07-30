@@ -19,7 +19,6 @@ import '../../functions/methods.dart';
 import '../data/language.dart';
 import '../data/timer_manager.dart';
 import 'package:t_max/functions/adaptive.dart';
-import 'package:t_max/data/manager_scale_channel.dart';
 
 class CalibrationSealPage extends StatefulWidget {
   const CalibrationSealPage({super.key});

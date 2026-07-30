@@ -680,7 +680,9 @@ class PublicFunctions {
   static void addSummaryData(String jsonStr) {
     myScaleCmd.cmdMode = "add_wgt_rec";
     myScaleCmd.cmdData = jsonStr;
-    sendMsgChan0(jsonEncode(myScaleCmd));
+    String payload = jsonEncode(myScaleCmd);
+    writelog("[WS_REQ] addSummaryData sending: $payload");
+    sendMsgChan0(payload);
   }
 
   static void exportAllRecords(
@@ -706,7 +708,9 @@ class PublicFunctions {
 
     myScaleCmd.cmdMode = "get_all_wgt_rec_list";
     myScaleCmd.cmdData = reqGetAllWgtRecsToJson(reqGetAllWgtRecs);
-    sendMsgChan0(jsonEncode(myScaleCmd));
+    String payload = jsonEncode(myScaleCmd);
+    writelog("[WS_REQ] newGetRecords sending: $payload");
+    sendMsgChan0(payload);
   }
 
   //通过配方单号获取称重记录

@@ -3734,5 +3734,9 @@
   "menuFormulaExecution": "配方执行",
   "@menuFormulaExecution": {
     "description": "Menu item for formula execution"
+  },
+  "gWeightSummaryMode": "重量汇总模式",
+  "@gWeightSummaryMode": {
+    "description": "Weight summary mode toggle"
   }
 }

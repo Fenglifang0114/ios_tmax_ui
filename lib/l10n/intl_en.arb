@@ -3734,5 +3734,9 @@
   "menuFormulaExecution": "Formula Execution",
   "@menuFormulaExecution": {
     "description": "Menu item for formula execution"
+  },
+  "gWeightSummaryMode": "Weight Summary Mode",
+  "@gWeightSummaryMode": {
+    "description": "Weight summary mode toggle"
   }
 }

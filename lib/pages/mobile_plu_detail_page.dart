@@ -129,7 +129,7 @@ class _MobilePluDetailPageState extends State<MobilePluDetailPage> {
       widget.type == 0 ? true : widget.pluInfo.enabled,
       DateTime.now().toIso8601String(),
       widget.type == 0 ? null : widget.pluInfo.createBy,
-      mySysUser.userId as int?,
+      mySysUser.userId,
       '',
       ''
     );

@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:t_max/data/manager_scale_channel.dart';
 import 'package:t_max/data/resp_sys_data.dart';
+import 'package:t_max/data/resp_type_data.dart';
 import 'package:t_max/data/writelog.dart';
 import 'package:t_max/eventbus/eventbus.dart';
 import 'package:t_max/functions/methods.dart';
@@ -176,11 +177,20 @@ class WebSocketManager {
         return;
       }
 
+      writelog("[WS_RECV_RAW] $data");
+
       // 处理业务消息
       var msgType = map['MsgType'];
-      if (msgType != null && RespSysMsgType.handlers.containsKey(msgType)) {
-        var handler = RespSysMsgType.handlers[msgType];
-        handler?.call(map);
+      if (msgType != null) {
+        if (RespSysMsgType.handlers.containsKey(msgType)) {
+          var handler = RespSysMsgType.handlers[msgType];
+          handler?.call(map);
+        } else if (RespMsgType.handlers.containsKey(msgType)) {
+          var handler = RespMsgType.handlers[msgType];
+          handler?.call(map);
+        } else {
+          writelog("[WS_RECV_UNHANDLED] Unknown MsgType: $msgType, full map: $map");
+        }
       }
     } catch (e) {
       _log('handle message failed: $e\nData: $data');

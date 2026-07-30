@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:t_max/data/g_data.dart';
 import 'package:t_max/data/routes_data.dart';
 import 'package:t_max/data/language.dart';
 

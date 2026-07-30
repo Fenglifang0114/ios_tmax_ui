@@ -332,7 +332,6 @@ class _ConfigurationPageState extends State<ConfigurationPage>
             return GestureDetector(
               onTap: () {
                 formAppSetting = true;
-                String route = "/settingsApp${menu.routeName!}";
                 Navigator.of(context, rootNavigator: true).push(
                   MaterialPageRoute(
                     builder: (context) => buildPageContent(widget.onNavigate, menu.routeName, widget.lastRouteName),

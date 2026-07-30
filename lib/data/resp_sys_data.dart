@@ -17,6 +17,7 @@ import 'package:t_max/bluetooth/bluetooth_manager.dart';
 import '../data/ipinfodata.dart';
 import '../data/manager_scale_channel.dart';
 import '../data/wifi_pwd_info.dart';
+import '../data/writelog.dart';
 import '../eventbus/eventbus.dart';
 
 class RespSysMsgType {
@@ -570,8 +571,16 @@ class RespSysMsgType {
   }
 
   static void handleGetAllWgtRecList(dynamic jsonData) {
-    String dataString = jsonData['MsgBody'];
-    eventBus.fire(EventRespGetAllWgtRecs(dataString));
+    try {
+      dynamic msgBody = jsonData['MsgBody'];
+      String dataString = msgBody is String
+          ? msgBody
+          : (msgBody != null ? jsonEncode(msgBody) : '');
+      writelog("[WS_RESP] handleGetAllWgtRecList: $dataString");
+      eventBus.fire(EventRespGetAllWgtRecs(dataString));
+    } catch (e) {
+      writelog("[WS_RESP_ERR] handleGetAllWgtRecList error: $e");
+    }
   }
 
   static void handleGetUiConfig(dynamic jsonData) {
@@ -592,6 +601,7 @@ class RespSysMsgType {
   }
 
   static void handleAddWgtRec(dynamic jsonData) {
+    writelog("[WS_RESP] handleAddWgtRec: $jsonData");
     eventBus.fire(EventAddWgtRec(''));
   }
 
