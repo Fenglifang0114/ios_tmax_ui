@@ -2,19 +2,18 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:t_max/data/const_var_data.dart';
 import 'package:t_max/data/g_data.dart';
-import 'package:t_max/data/home_page_common_data.dart';
-import 'package:t_max/data/language.dart';
 import 'package:t_max/data/new_get_recs.dart';
 import 'package:t_max/data/plu_data_source.dart';
 import 'package:t_max/data/reqweightdata_data.dart';
 import 'package:t_max/data/scale_info_from_db.dart';
-import 'package:t_max/data/sel_scales_in_app.dart';
+import 'package:t_max/data/scalecmd_data.dart';
 import 'package:t_max/data/settingparam_data.dart';
-import 'package:t_max/data/weight_report_data.dart';
 import 'package:t_max/data/wgt_value_data.dart';
 import 'package:t_max/data/writelog.dart';
 import 'package:t_max/dialog/custom_dialog_tip.dart';
+import 'package:t_max/dialog/sel_scale_dialog.dart';
 import 'package:t_max/eventbus/eventbus.dart';
 import 'package:t_max/functions/methods.dart';
 
@@ -40,6 +39,7 @@ class _MobileWeighingDataCollectionPageState
 
   // Local map to store weight data for each scale
   final Map<int, WeightInfo> _scaleWeightMap = {};
+  final Map<int, bool> _drawerDeviceCheckedMap = {};
 
   // PLU Selections
   PluData? _summaryPluData;
@@ -47,6 +47,13 @@ class _MobileWeighingDataCollectionPageState
 
   // Unit Dropdown Selection for Summary Mode
   String _summaryUnit = 'kg';
+
+  // Parameter Settings State
+  String _saveMode = "Manual";
+  String _stableTime = "2";
+  late TextEditingController _stableTimeController;
+  String _dateFormat = "yy-mm-dd";
+  String _dateSeparator = "/";
 
   // Records list
   List<ScaleRecInfo> _allWgtRecList = [];
@@ -81,12 +88,33 @@ class _MobileWeighingDataCollectionPageState
   dynamic _eventBusGetAllRecs;
   dynamic _eventBusAddRec;
   dynamic _eventBusDeleteRecs;
+  dynamic _eventBusSettingParam;
+  dynamic _eventBusScaleAdded;
+
+  void _startContinuousWeightStream() {
+    if (myAllScalesList.isEmpty) {
+      PublicFunctions.getScaleList();
+      return;
+    }
+    for (var scale in myAllScalesList) {
+      if (scale.isOnline) {
+        PublicFunctions.getWeight(scale.scaleId);
+      }
+    }
+  }
 
   @override
   void initState() {
     super.initState();
+    _stableTimeController = TextEditingController(text: _stableTime);
     PublicFunctions.getScaleList();
     PublicFunctions.getProductList();
+    PublicFunctions.getUIConfNormal(wgtCollectionMode);
+
+    // Initial continuous weight stream start
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _startContinuousWeightStream();
+    });
 
     // Fetch initial records
     _fetchRecords();
@@ -104,9 +132,33 @@ class _MobileWeighingDataCollectionPageState
       setState(() {});
     });
 
-    // Refresh UI timer
-    _timer = Timer.periodic(const Duration(milliseconds: 500), (timer) {
+    // Listen to Scale List updates and register continuous weight
+    _eventBusScaleAdded = eventBus.on<EventRespAddScale>().listen((event) {
+      if (!mounted) return;
+      _startContinuousWeightStream();
+      setState(() {});
+    });
+
+    // Listen to UI Config (Parameter Settings) updates from DB
+    _eventBusSettingParam = eventBus.on<EventSettingParam>().listen((event) {
+      if (!mounted) return;
+      SettingParam param = event.obj;
+      setState(() {
+        _isSummaryMode = param.wgtMode == 1;
+        _saveMode = param.recMode == msgAuto ? "False" : "Manual";
+        _stableTime = param.stableTime.isNotEmpty ? param.stableTime : "2";
+        _stableTimeController.text = _stableTime;
+        _dateFormat = param.dateFormat == "2"
+            ? "dd-mm-yy"
+            : (param.dateFormat == "3" ? "mm-dd-yy" : "yy-mm-dd");
+        _dateSeparator = param.dateSeparator.isNotEmpty ? param.dateSeparator : "/";
+      });
+    });
+
+    // Refresh UI timer & periodically send continuous weight registration
+    _timer = Timer.periodic(const Duration(seconds: 2), (timer) {
       if (mounted) {
+        _startContinuousWeightStream();
         setState(() {});
       }
     });
@@ -148,17 +200,34 @@ class _MobileWeighingDataCollectionPageState
 
   @override
   void dispose() {
+    _stableTimeController.dispose();
     _timer?.cancel();
     _eventBusWeightData?.cancel();
     _eventBusGetAllRecs?.cancel();
     _eventBusAddRec?.cancel();
     _eventBusDeleteRecs?.cancel();
+    _eventBusSettingParam?.cancel();
+    _eventBusScaleAdded?.cancel();
     super.dispose();
   }
 
   void _fetchRecords() {
     PublicFunctions.newGetRecords(
         int.parse(wgtCollectionMode), 1, 100, "CreatedAt", "desc");
+  }
+
+  void _saveUiConfToDb() {
+    myScaleCmd.cmdMode = "update_ui_conf";
+    mySettingParam.wgtMode = _isSummaryMode ? 1 : 0;
+    mySettingParam.recMode = _saveMode == "Manual" ? msgManual : msgAuto;
+    mySettingParam.stableTime = _stableTimeController.text;
+    mySettingParam.dateFormat = _dateFormat == "yy-mm-dd"
+        ? "1"
+        : (_dateFormat == "dd-mm-yy" ? "2" : "3");
+    mySettingParam.dateSeparator = _dateSeparator;
+    String updateString = jsonEncode(mySettingParam);
+    myScaleCmd.cmdData = updateString;
+    PublicFunctions.sendMsgChan0(jsonEncode(myScaleCmd));
   }
 
   // ---------------------------------------------------------------------------
@@ -182,13 +251,20 @@ class _MobileWeighingDataCollectionPageState
     List<int> selScaleList = [];
 
     // Calculate total weight from online scales
-    for (var scale in myAllScalesList) {
-      int id = scale.scaleId;
-      WeightInfo info = _scaleWeightMap[id] ?? WeightInfo(weight: '0.00', unit: 'kg', stable: false);
-      double w = double.tryParse(info.weight) ?? 0.0;
-      totalWgt += w;
-      scaleWgtMapDetail[id] = info;
-      selScaleList.add(id);
+    if (myAllScalesList.isEmpty) {
+      selScaleList.add(1);
+      WeightInfo info = _scaleWeightMap[1] ?? WeightInfo(weight: '0.00', unit: 'kg', stable: false);
+      scaleWgtMapDetail[1] = info;
+      totalWgt = double.tryParse(info.weight) ?? 0.0;
+    } else {
+      for (var scale in myAllScalesList) {
+        int id = scale.scaleId;
+        WeightInfo info = _scaleWeightMap[id] ?? WeightInfo(weight: '0.00', unit: 'kg', stable: false);
+        double w = double.tryParse(info.weight) ?? 0.0;
+        totalWgt += w;
+        scaleWgtMapDetail[id] = info;
+        selScaleList.add(id);
+      }
     }
 
     _sendDataToDb(
@@ -293,7 +369,7 @@ class _MobileWeighingDataCollectionPageState
     PublicFunctions.addSummaryData(jsonPayload);
 
     showTipInfo(
-      localizedStrings?.gTipRecordedSuccessfully ?? "Recorded successfully",
+      "Recorded successfully",
       context,
     );
   }
@@ -310,15 +386,27 @@ class _MobileWeighingDataCollectionPageState
         elevation: 0.5,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Color(0xFF1E293B)),
-          onPressed: () => widget.onNavigate(widget.lastRouteName),
+          onPressed: () {
+            if (Navigator.canPop(context)) {
+              Navigator.pop(context);
+            } else if (widget.lastRouteName.isNotEmpty) {
+              widget.onNavigate(widget.lastRouteName);
+            } else {
+              widget.onNavigate('/multiScaleManagement');
+            }
+          },
         ),
         title: Row(
           children: [
-            const Icon(Icons.scale, color: Color(0xFF1E293B), size: 22),
-            const SizedBox(width: 8),
-            Text(
-              localizedStrings?.menuWeighingDataCollection ?? "Weighing Data Collection",
-              style: const TextStyle(
+            // Clickable Scale Icon: Open Device List Drawer
+            IconButton(
+              icon: const Icon(Icons.scale, color: Color(0xFF1E293B), size: 22),
+              onPressed: _openDeviceListDrawer,
+            ),
+            const SizedBox(width: 4),
+            const Text(
+              "Weighing Data Collection",
+              style: TextStyle(
                 color: Color(0xFF1E293B),
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
@@ -358,12 +446,10 @@ class _MobileWeighingDataCollectionPageState
                           borderRadius: BorderRadius.circular(4),
                         ),
                         alignment: Alignment.center,
-                        child: Text(
-                          localizedStrings?.gBtnWeighing ?? "Weighing",
+                        child: const Text(
+                          "Weighing",
                           style: TextStyle(
-                            color: _selectedTab == 0
-                                ? Colors.white
-                                : const Color(0xFF64748B),
+                            color: Colors.white,
                             fontWeight: FontWeight.w600,
                             fontSize: 15,
                           ),
@@ -386,7 +472,7 @@ class _MobileWeighingDataCollectionPageState
                         ),
                         alignment: Alignment.center,
                         child: Text(
-                          localizedStrings?.gTabRecord ?? "Record",
+                          "Record",
                           style: TextStyle(
                             color: _selectedTab == 1
                                 ? Colors.white
@@ -744,10 +830,10 @@ class _MobileWeighingDataCollectionPageState
         // Records List
         Expanded(
           child: _allWgtRecList.isEmpty
-              ? Center(
+              ? const Center(
                   child: Text(
-                    localizedStrings?.gTipNoData ?? "No Data",
-                    style: const TextStyle(color: Color(0xFF94A3B8), fontSize: 15),
+                    "No Data",
+                    style: TextStyle(color: Color(0xFF94A3B8), fontSize: 15),
                   ),
                 )
               : ListView.builder(
@@ -790,9 +876,9 @@ class _MobileWeighingDataCollectionPageState
                             PublicFunctions.exportAllRecords(0, outputFile, selFields, selMap);
                           }
                         },
-                        child: Text(
-                          localizedStrings?.gBtnExport ?? "Export",
-                          style: const TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w600),
+                        child: const Text(
+                          "Export",
+                          style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w600),
                         ),
                       ),
                     ),
@@ -808,9 +894,9 @@ class _MobileWeighingDataCollectionPageState
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
                         ),
                         onPressed: _openReportSettingSheet,
-                        child: Text(
-                          localizedStrings?.gBtnReportSetting ?? "Report Setting",
-                          style: const TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w600),
+                        child: const Text(
+                          "Report Setting",
+                          style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w600),
                         ),
                       ),
                     ),
@@ -994,6 +1080,162 @@ class _MobileWeighingDataCollectionPageState
   }
 
   // ---------------------------------------------------------------------------
+  // DEVICE LIST DRAWER (Matches Design Mockup)
+  // ---------------------------------------------------------------------------
+  void _openDeviceListDrawer() {
+    showGeneralDialog(
+      context: context,
+      barrierDismissible: true,
+      barrierLabel: 'DeviceListDrawer',
+      barrierColor: Colors.black.withOpacity(0.5),
+      transitionDuration: const Duration(milliseconds: 250),
+      pageBuilder: (context, anim1, anim2) {
+        return Align(
+          alignment: Alignment.centerLeft,
+          child: Material(
+            color: Colors.transparent,
+            child: Container(
+              width: MediaQuery.of(context).size.width * 0.78,
+              height: double.infinity,
+              color: Colors.white,
+              padding: EdgeInsets.only(
+                top: MediaQuery.of(context).padding.top + 16,
+                left: 16,
+                right: 16,
+                bottom: 16,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    "Device List",
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF004884),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Expanded(
+                    child: myAllScalesList.isEmpty
+                        ? const Center(
+                            child: Text(
+                              "No Devices",
+                              style: TextStyle(color: Color(0xFF94A3B8), fontSize: 15),
+                            ),
+                          )
+                        : ListView.builder(
+                            itemCount: myAllScalesList.length,
+                            itemBuilder: (context, index) {
+                              Scale scale = myAllScalesList[index];
+                              int id = scale.scaleId;
+                              bool isOnline = scale.isOnline;
+                              bool isChecked = _drawerDeviceCheckedMap[id] ?? scale.isOnline;
+
+                              IconData mediaIcon = Icons.settings_input_component;
+                              if (scale.tMedia == netScaleType) {
+                                mediaIcon = Icons.language;
+                              } else if (scale.tMedia == btScaleType) {
+                                mediaIcon = Icons.bluetooth;
+                              }
+
+                              return StatefulBuilder(
+                                builder: (context, setDrawerState) {
+                                  return Container(
+                                    margin: const EdgeInsets.only(bottom: 12),
+                                    padding: const EdgeInsets.all(12),
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xFFF8FAFC),
+                                      borderRadius: BorderRadius.circular(6),
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        // Left Media Icon Box
+                                        Container(
+                                          width: 40,
+                                          height: 40,
+                                          decoration: BoxDecoration(
+                                            color: const Color(0xFFE2E8F0),
+                                            borderRadius: BorderRadius.circular(4),
+                                          ),
+                                          child: Icon(
+                                            mediaIcon,
+                                            color: const Color(0xFF004884),
+                                            size: 22,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 12),
+                                        // Text Area
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                scale.scaleName.isNotEmpty
+                                                    ? scale.scaleName
+                                                    : "Device No.$id",
+                                                style: const TextStyle(
+                                                  fontSize: 15,
+                                                  fontWeight: FontWeight.w600,
+                                                  color: Color(0xFF1E293B),
+                                                ),
+                                              ),
+                                              const SizedBox(height: 4),
+                                              Text(
+                                                isOnline ? "Online" : "Offline",
+                                                style: TextStyle(
+                                                  fontSize: 13,
+                                                  fontWeight: FontWeight.w500,
+                                                  color: isOnline
+                                                      ? const Color(0xFF10B981)
+                                                      : const Color(0xFFEF4444),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        // Right Checkbox
+                                        Checkbox(
+                                          value: isChecked,
+                                          activeColor: const Color(0xFF004884),
+                                          onChanged: (val) {
+                                            setDrawerState(() {
+                                              isChecked = val ?? false;
+                                              _drawerDeviceCheckedMap[id] = isChecked;
+                                            });
+                                            setState(() {});
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
+                              );
+                            },
+                          ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+      transitionBuilder: (context, anim1, anim2, child) {
+        return SlideTransition(
+          position: Tween<Offset>(
+            begin: const Offset(-1, 0),
+            end: Offset.zero,
+          ).animate(CurvedAnimation(
+            parent: anim1,
+            curve: Curves.easeOutCubic,
+          )),
+          child: child,
+        );
+      },
+    );
+  }
+
+  // ---------------------------------------------------------------------------
   // MODAL SHEETS
   // ---------------------------------------------------------------------------
 
@@ -1008,67 +1250,172 @@ class _MobileWeighingDataCollectionPageState
         return StatefulBuilder(
           builder: (context, setModalState) {
             return Container(
-              height: MediaQuery.of(context).size.height * 0.7,
+              height: MediaQuery.of(context).size.height * 0.9,
               decoration: const BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
               ),
-              padding: const EdgeInsets.all(16),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.arrow_back),
-                        onPressed: () => Navigator.pop(context),
-                      ),
-                      const Expanded(
-                        child: Text(
-                          "Parameter settings",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                  // Page Header (Back Arrow + Centered Title)
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+                    child: Row(
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.arrow_back, color: Color(0xFF1E293B)),
+                          onPressed: () => Navigator.pop(context),
+                        ),
+                        const Expanded(
+                          child: Text(
+                            "Parameter settings",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Color(0xFF1E293B),
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 48),
+                      ],
+                    ),
+                  ),
+                  const Divider(height: 1, color: Color(0xFFE2E8F0)),
+
+                  // List of Settings
+                  Expanded(
+                    child: ListView(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      children: [
+                        // Weight Summary Mode Row
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 4),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text("Weight Summary Mode", style: TextStyle(fontSize: 15, color: Color(0xFF334155))),
+                              Switch(
+                                value: tempSummaryMode,
+                                activeColor: const Color(0xFF10B981),
+                                onChanged: (val) {
+                                  setModalState(() => tempSummaryMode = val);
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                        const Divider(height: 1, color: Color(0xFFF1F5F9)),
+                        // Save Mode Row
+                        _buildSettingOptionRow(
+                          title: "Save Mode",
+                          val: _saveMode,
+                          onTap: () {
+                            _openSubSelectionModal(
+                              "Save Mode",
+                              ["Manual", "False"],
+                              _saveMode,
+                              (selected) {
+                                setState(() => _saveMode = selected);
+                                setModalState(() {});
+                              },
+                            );
+                          },
+                        ),
+                        const Divider(height: 1, color: Color(0xFFF1F5F9)),
+                        // Stable Time (s) Row (Editable input box)
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text("Stable Time (s)", style: TextStyle(fontSize: 15, color: Color(0xFF334155))),
+                              Container(
+                                width: 100,
+                                height: 38,
+                                decoration: BoxDecoration(
+                                  border: Border.all(color: const Color(0xFFCBD5E1)),
+                                  borderRadius: BorderRadius.circular(6),
+                                ),
+                                child: TextField(
+                                  controller: _stableTimeController,
+                                  keyboardType: TextInputType.number,
+                                  textAlign: TextAlign.right,
+                                  decoration: const InputDecoration(
+                                    contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                                    border: InputBorder.none,
+                                  ),
+                                  style: const TextStyle(fontSize: 15, color: Color(0xFF334155)),
+                                  onChanged: (val) {
+                                    _stableTime = val;
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const Divider(height: 1, color: Color(0xFFF1F5F9)),
+                        // Date Format Row
+                        _buildSettingOptionRow(
+                          title: "Date Format",
+                          val: _dateFormat,
+                          onTap: () {
+                            _openSubSelectionModal(
+                              "Date Format",
+                              ["yy-mm-dd", "dd-mm-yy", "mm-dd-yy"],
+                              _dateFormat,
+                              (selected) {
+                                setState(() => _dateFormat = selected);
+                                setModalState(() {});
+                              },
+                            );
+                          },
+                        ),
+                        const Divider(height: 1, color: Color(0xFFF1F5F9)),
+                        // Date Separator Row
+                        _buildSettingOptionRow(
+                          title: "Date Separator",
+                          val: _dateSeparator,
+                          onTap: () {
+                            _openSubSelectionModal(
+                              "Date Separator",
+                              [".", "-", "/"],
+                              _dateSeparator,
+                              (selected) {
+                                setState(() => _dateSeparator = selected);
+                                setModalState(() {});
+                              },
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  // Bottom Green Confirm Button
+                  Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: SizedBox(
+                      width: double.infinity,
+                      height: 48,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF10B981),
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _isSummaryMode = tempSummaryMode;
+                          });
+                          _saveUiConfToDb();
+                          Navigator.pop(context);
+                        },
+                        child: const Text(
+                          "Confirm",
+                          style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600),
                         ),
                       ),
-                      const SizedBox(width: 48),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text("Weight Summary Mode", style: TextStyle(fontSize: 15)),
-                      Switch(
-                        value: tempSummaryMode,
-                        activeColor: const Color(0xFF10B981),
-                        onChanged: (val) {
-                          setModalState(() => tempSummaryMode = val);
-                        },
-                      ),
-                    ],
-                  ),
-                  const Divider(),
-                  _buildSettingOptionRow("Save Mode", "Manual"),
-                  const Divider(),
-                  _buildSettingOptionRow("Stable Time (s)", "2"),
-                  const Divider(),
-                  _buildSettingOptionRow("Date Format", "yy-mm-dd"),
-                  const Divider(),
-                  _buildSettingOptionRow("Date Separator", "/"),
-                  const Spacer(),
-                  SizedBox(
-                    width: double.infinity,
-                    height: 46,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF10B981),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
-                      ),
-                      onPressed: () {
-                        setState(() => _isSummaryMode = tempSummaryMode);
-                        Navigator.pop(context);
-                      },
-                      child: const Text("Confirm", style: TextStyle(color: Colors.white, fontSize: 16)),
                     ),
                   ),
                 ],
@@ -1080,21 +1427,102 @@ class _MobileWeighingDataCollectionPageState
     );
   }
 
-  Widget _buildSettingOptionRow(String title, String val) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(title, style: const TextStyle(fontSize: 15, color: Color(0xFF334155))),
-          Row(
+  Widget _buildSettingOptionRow({
+    required String title,
+    required String val,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 14),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(title, style: const TextStyle(fontSize: 15, color: Color(0xFF334155))),
+            Row(
+              children: [
+                Text(val, style: const TextStyle(fontSize: 15, color: Color(0xFF64748B))),
+                const SizedBox(width: 4),
+                const Icon(Icons.chevron_right, color: Color(0xFF94A3B8), size: 20),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // Sub Selection Modal Sheet (Matches mockups for Save Mode, Date Format, Date Separator)
+  void _openSubSelectionModal(
+      String title, List<String> options, String currentValue, ValueChanged<String> onSelected) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        return Container(
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+          ),
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              Text(val, style: const TextStyle(fontSize: 15, color: Color(0xFF64748B))),
-              const Icon(Icons.chevron_right, color: Color(0xFF94A3B8)),
+              // Header: Title on Left, (X) Close Icon on Right
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFF1E293B),
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.cancel_outlined, color: Color(0xFF64748B), size: 24),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 14),
+              // Vertical Card Options
+              ...options.map((opt) {
+                bool isSelected = opt == currentValue;
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 10),
+                  child: InkWell(
+                    onTap: () {
+                      onSelected(opt);
+                      Navigator.pop(context);
+                    },
+                    child: Container(
+                      width: double.infinity,
+                      height: 48,
+                      decoration: BoxDecoration(
+                        color: isSelected ? const Color(0xFF004884) : const Color(0xFFF8FAFC),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      alignment: Alignment.center,
+                      child: Text(
+                        opt,
+                        style: TextStyle(
+                          color: isSelected ? Colors.white : const Color(0xFF334155),
+                          fontSize: 16,
+                          fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              }),
+              const SizedBox(height: 10),
             ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 
