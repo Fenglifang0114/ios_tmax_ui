@@ -17,6 +17,7 @@ import 'package:t_max/dialog/custom_dialog_tip.dart';
 import 'package:t_max/dialog/sel_scale_dialog.dart';
 import 'package:t_max/eventbus/eventbus.dart';
 import 'package:t_max/functions/methods.dart';
+import 'package:t_max/widget/f_open_file.dart';
 
 class MobileWeighingDataCollectionPage extends StatefulWidget {
   final Function(String) onNavigate;
@@ -91,6 +92,8 @@ class _MobileWeighingDataCollectionPageState
   dynamic _eventBusDeleteRecs;
   dynamic _eventBusSettingParam;
   dynamic _eventBusScaleAdded;
+  dynamic _eventBusProductList;
+  dynamic _eventBusExportRecs;
 
   // Auto Save State for Independent Mode
   final Map<int, bool> _scalePassedZeroMap = {};
@@ -281,6 +284,65 @@ class _MobileWeighingDataCollectionPageState
       });
       _fetchRecords();
     });
+
+    _eventBusProductList = eventBus.on<EventProductRecList>().listen((event) {
+      if (!mounted) return;
+      List<PluDataFromDb> pluInfoList = event.obj;
+      setState(() {
+        myPluInfoList.clear();
+        for (int i = 0; i < pluInfoList.length; i++) {
+          PluData newPlu = PluData(0, 0, 0, 0, '', '', 0, 0, 0, 0, 0, 0, 0,
+              '', false, '', 0, 0, '', '');
+          newPlu.enabled = pluInfoList[i].enabled ?? true;
+          if (!newPlu.enabled!) {
+            continue;
+          }
+          newPlu.recId = pluInfoList[i].recId;
+          newPlu.plu = int.tryParse(pluInfoList[i].plu ?? '0') ?? 0;
+          newPlu.productCode =
+              int.tryParse(pluInfoList[i].productCode ?? '0') ?? 0;
+          newPlu.itemCode =
+              int.tryParse(pluInfoList[i].itemCode ?? '0') ?? 0;
+          newPlu.category = pluInfoList[i].category;
+          newPlu.productName = pluInfoList[i].productName;
+          newPlu.price = double.tryParse(pluInfoList[i].price ?? '0') ?? 0;
+          newPlu.taxType = int.tryParse(pluInfoList[i].taxType ?? '0') ?? 0;
+          newPlu.generalUnit =
+              int.tryParse(pluInfoList[i].generalUnit ?? '0') ?? 0;
+          newPlu.unitWeight =
+              double.tryParse(pluInfoList[i].unitWeight ?? '0') ?? 0;
+          newPlu.pretare =
+              double.tryParse(pluInfoList[i].pretare ?? '0') ?? 0;
+          newPlu.limitHigh =
+              double.tryParse(pluInfoList[i].limitHigh ?? '0') ?? 0;
+          newPlu.limitLow =
+              double.tryParse(pluInfoList[i].limitLow ?? '0') ?? 0;
+          newPlu.creatAt =
+              pluInfoList[i].createdAt?.toIso8601String() ?? " ";
+          newPlu.updateAt =
+              pluInfoList[i].updatedAt?.toIso8601String() ?? " ";
+          newPlu.createBy = pluInfoList[i].createBy;
+          newPlu.updateBy = pluInfoList[i].updateBy;
+          myPluInfoList.add(newPlu);
+        }
+      });
+    });
+
+    _eventBusExportRecs = eventBus.on<EventExportAllRecs>().listen((event) {
+      if (!mounted) return;
+      String resString = event.obj;
+      if (resString.contains('ok')) {
+        String filePath = resString.contains(',') ? resString.split(',')[1] : resString;
+        showExportDialog(filePath, context);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Export Failed: $resString"),
+            backgroundColor: const Color(0xFFEF4444),
+          ),
+        );
+      }
+    });
   }
 
   @override
@@ -293,6 +355,8 @@ class _MobileWeighingDataCollectionPageState
     _eventBusDeleteRecs?.cancel();
     _eventBusSettingParam?.cancel();
     _eventBusScaleAdded?.cancel();
+    _eventBusProductList?.cancel();
+    _eventBusExportRecs?.cancel();
     super.dispose();
   }
 
@@ -304,6 +368,7 @@ class _MobileWeighingDataCollectionPageState
   void _saveUiConfToDb() {
     myScaleCmd.cmdMode = "update_ui_conf";
     mySettingParam.id = int.tryParse(wgtCollectionMode) ?? 0;
+    mySettingParam.scaleMode = int.tryParse(wgtCollectionMode) ?? 0;
     mySettingParam.wgtMode = _isSummaryMode ? 1 : 0;
     mySettingParam.recMode = _saveMode == "Auto" ? msgAuto : msgManual;
     mySettingParam.stableTime = _stableTimeController.text;
@@ -1102,7 +1167,7 @@ class _MobileWeighingDataCollectionPageState
                   if (_visibleFields['Weight Unit'] == true)
                     _buildFieldRow("Weight Unit", header?.weightUnit ?? ""),
                   if (_visibleFields['Date Time'] == true)
-                    _buildFieldRow("Date Time", header?.createdAt?.toString() ?? ""),
+                    _buildFieldRow("Date Time", _formatDateTimeStr(header?.createdAt)),
 
                   // Summary Details Section (Only for Summary Records)
                   if (isSummary) ...[
@@ -1165,6 +1230,12 @@ class _MobileWeighingDataCollectionPageState
         ],
       ),
     );
+  }
+
+  String _formatDateTimeStr(DateTime? dt) {
+    if (dt == null) return "";
+    String twoDigits(int n) => n.toString().padLeft(2, '0');
+    return "${dt.year}-${twoDigits(dt.month)}-${twoDigits(dt.day)} ${twoDigits(dt.hour)}:${twoDigits(dt.minute)}:${twoDigits(dt.second)}";
   }
 
   Widget _buildFieldRow(String label, String value) {
@@ -1348,6 +1419,10 @@ class _MobileWeighingDataCollectionPageState
       backgroundColor: Colors.transparent,
       builder: (context) {
         bool tempSummaryMode = _isSummaryMode;
+        String tempSaveMode = _saveMode;
+        String tempDateFormat = _dateFormat;
+        String tempDateSeparator = _dateSeparator;
+
         return StatefulBuilder(
           builder: (context, setModalState) {
             return Container(
@@ -1410,15 +1485,14 @@ class _MobileWeighingDataCollectionPageState
                         // Save Mode Row
                         _buildSettingOptionRow(
                           title: "Save Mode",
-                          val: _saveMode,
+                          val: tempSaveMode,
                           onTap: () {
                             _openSubSelectionModal(
                               "Save Mode",
                               ["Manual", "Auto"],
-                              _saveMode,
+                              tempSaveMode,
                               (selected) {
-                                setState(() => _saveMode = selected);
-                                setModalState(() {});
+                                setModalState(() => tempSaveMode = selected);
                               },
                             );
                           },
@@ -1459,15 +1533,14 @@ class _MobileWeighingDataCollectionPageState
                         // Date Format Row
                         _buildSettingOptionRow(
                           title: "Date Format",
-                          val: _dateFormat,
+                          val: tempDateFormat,
                           onTap: () {
                             _openSubSelectionModal(
                               "Date Format",
                               ["yy-mm-dd", "dd-mm-yy", "mm-dd-yy"],
-                              _dateFormat,
+                              tempDateFormat,
                               (selected) {
-                                setState(() => _dateFormat = selected);
-                                setModalState(() {});
+                                setModalState(() => tempDateFormat = selected);
                               },
                             );
                           },
@@ -1476,15 +1549,14 @@ class _MobileWeighingDataCollectionPageState
                         // Date Separator Row
                         _buildSettingOptionRow(
                           title: "Date Separator",
-                          val: _dateSeparator,
+                          val: tempDateSeparator,
                           onTap: () {
                             _openSubSelectionModal(
                               "Date Separator",
                               [".", "-", "/"],
-                              _dateSeparator,
+                              tempDateSeparator,
                               (selected) {
-                                setState(() => _dateSeparator = selected);
-                                setModalState(() {});
+                                setModalState(() => tempDateSeparator = selected);
                               },
                             );
                           },
@@ -1508,8 +1580,13 @@ class _MobileWeighingDataCollectionPageState
                         onPressed: () {
                           setState(() {
                             _isSummaryMode = tempSummaryMode;
+                            _saveMode = tempSaveMode;
+                            _dateFormat = tempDateFormat;
+                            _dateSeparator = tempDateSeparator;
+                            _stableTime = _stableTimeController.text;
                           });
                           _saveUiConfToDb();
+                          _saveLocalSettings();
                           Navigator.pop(context);
                         },
                         child: const Text(

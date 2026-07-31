@@ -388,12 +388,14 @@ class ReqExportAllWgtRecs {
   String? path;
   List<String>? fieldName;
   Map<String, String>? translation;
+  int? timezoneOffset;
 
   ReqExportAllWgtRecs({
     this.mode,
     this.path,
     this.fieldName,
     this.translation,
+    this.timezoneOffset,
   });
 
   Map<String, dynamic> toJson() => {
@@ -401,5 +403,6 @@ class ReqExportAllWgtRecs {
         "Path": path,
         "FieldName": fieldName,
         "Translation": translation,
+        "TimezoneOffset": timezoneOffset,
       };
 }

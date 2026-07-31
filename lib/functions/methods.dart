@@ -41,7 +41,7 @@ class PublicFunctions {
       if (selectedDirectory != null) {
         return "$selectedDirectory/$defaultFileName";
       }
-      return null;
+      return "/storage/emulated/0/Download/$defaultFileName";
     } else {
       String? outputFile = await FilePicker.platform.saveFile(
         initialDirectory: Directory.current.path,
@@ -687,8 +687,13 @@ class PublicFunctions {
 
   static void exportAllRecords(
       int mode, String path, List<String> fieldName, Map<String, String> map) {
+    int tzOffset = DateTime.now().timeZoneOffset.inMinutes;
     ReqExportAllWgtRecs req = ReqExportAllWgtRecs(
-        mode: mode, path: path, fieldName: fieldName, translation: map);
+        mode: mode,
+        path: path,
+        fieldName: fieldName,
+        translation: map,
+        timezoneOffset: tzOffset);
     String reqStr = reqExportAllWgtRecsToJson(req);
     myScaleCmd.cmdMode = "export_all_recs";
     myScaleCmd.cmdData = reqStr; //根据scale model scale sn  scale name(别名)
