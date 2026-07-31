@@ -2,6 +2,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:t_max/data/const_var_data.dart';
 import 'package:t_max/data/g_data.dart';
 import 'package:t_max/data/new_get_recs.dart';
@@ -91,6 +92,83 @@ class _MobileWeighingDataCollectionPageState
   dynamic _eventBusSettingParam;
   dynamic _eventBusScaleAdded;
 
+  // Auto Save State for Independent Mode
+  final Map<int, bool> _scalePassedZeroMap = {};
+  final Map<int, Timer?> _scaleStableTimerMap = {};
+  final Map<int, int> _scaleStableDurationMap = {};
+
+  void _checkScaleAutoSave(int scaleId, WeightInfo info) {
+    if (_isSummaryMode || _saveMode != "Auto") return;
+    int stableSecs = int.tryParse(_stableTime) ?? 2;
+    if (stableSecs <= 0) stableSecs = 2;
+
+    double weightVal = double.tryParse(info.weight) ?? 0.0;
+    if (info.stable && weightVal <= 0.001) {
+      _scalePassedZeroMap[scaleId] = true;
+    }
+
+    if (info.stable && weightVal > 0.001 && (_scalePassedZeroMap[scaleId] ?? true)) {
+      if (_scaleStableTimerMap[scaleId] == null) {
+        _scaleStableDurationMap[scaleId] = 0;
+        _scaleStableTimerMap[scaleId] = Timer.periodic(const Duration(seconds: 1), (timer) {
+          int duration = (_scaleStableDurationMap[scaleId] ?? 0) + 1;
+          _scaleStableDurationMap[scaleId] = duration;
+          if (duration >= stableSecs) {
+            timer.cancel();
+            _scaleStableTimerMap[scaleId] = null;
+            _scaleStableDurationMap[scaleId] = 0;
+            if (mounted && info.stable && (double.tryParse(info.weight) ?? 0.0) > 0.001) {
+              _scalePassedZeroMap[scaleId] = false;
+              _recordSingleScaleToDb(scaleId);
+            }
+          }
+        });
+      }
+    } else if (!info.stable) {
+      _scaleStableTimerMap[scaleId]?.cancel();
+      _scaleStableTimerMap[scaleId] = null;
+      _scaleStableDurationMap[scaleId] = 0;
+    }
+  }
+
+  Future<void> _loadLocalSettings() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      if (prefs.containsKey('mobile_wgt_mode_0')) {
+        _isSummaryMode = prefs.getBool('mobile_wgt_mode_0') ?? true;
+      }
+      if (prefs.containsKey('mobile_rec_mode_0')) {
+        _saveMode = prefs.getString('mobile_rec_mode_0') ?? "Manual";
+      }
+      if (prefs.containsKey('mobile_stable_time_0')) {
+        _stableTime = prefs.getString('mobile_stable_time_0') ?? "2";
+        _stableTimeController.text = _stableTime;
+      }
+      if (prefs.containsKey('mobile_date_format_0')) {
+        _dateFormat = prefs.getString('mobile_date_format_0') ?? "yy-mm-dd";
+      }
+      if (prefs.containsKey('mobile_date_separator_0')) {
+        _dateSeparator = prefs.getString('mobile_date_separator_0') ?? "/";
+      }
+      if (mounted) setState(() {});
+    } catch (e) {
+      writelog("[LOCAL_SETTINGS_ERR] $e");
+    }
+  }
+
+  Future<void> _saveLocalSettings() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool('mobile_wgt_mode_0', _isSummaryMode);
+      await prefs.setString('mobile_rec_mode_0', _saveMode);
+      await prefs.setString('mobile_stable_time_0', _stableTimeController.text);
+      await prefs.setString('mobile_date_format_0', _dateFormat);
+      await prefs.setString('mobile_date_separator_0', _dateSeparator);
+    } catch (e) {
+      writelog("[SAVE_LOCAL_SETTINGS_ERR] $e");
+    }
+  }
+
   void _startContinuousWeightStream() {
     if (myAllScalesList.isEmpty) {
       PublicFunctions.getScaleList();
@@ -107,6 +185,7 @@ class _MobileWeighingDataCollectionPageState
   void initState() {
     super.initState();
     _stableTimeController = TextEditingController(text: _stableTime);
+    _loadLocalSettings();
     PublicFunctions.getScaleList();
     PublicFunctions.getProductList();
     PublicFunctions.getUIConfNormal(wgtCollectionMode);
@@ -127,8 +206,9 @@ class _MobileWeighingDataCollectionPageState
       String wgtStr = reqWeight.msgBody?.weightVal ?? '0.00';
       String unitStr = reqWeight.msgBody?.weightUnit ?? 'kg';
       bool isStable = reqWeight.msgBody?.isStable ?? false;
-      _scaleWeightMap[scaleId] =
-          WeightInfo(weight: wgtStr, unit: unitStr, stable: isStable);
+      WeightInfo info = WeightInfo(weight: wgtStr, unit: unitStr, stable: isStable);
+      _scaleWeightMap[scaleId] = info;
+      _checkScaleAutoSave(scaleId, info);
       setState(() {});
     });
 
@@ -145,7 +225,7 @@ class _MobileWeighingDataCollectionPageState
       SettingParam param = event.obj;
       setState(() {
         _isSummaryMode = param.wgtMode == 1;
-        _saveMode = param.recMode == msgAuto ? "False" : "Manual";
+        _saveMode = (param.recMode == msgAuto || param.recMode == "auto") ? "Auto" : "Manual";
         _stableTime = param.stableTime.isNotEmpty ? param.stableTime : "2";
         _stableTimeController.text = _stableTime;
         _dateFormat = param.dateFormat == "2"
@@ -153,6 +233,7 @@ class _MobileWeighingDataCollectionPageState
             : (param.dateFormat == "3" ? "mm-dd-yy" : "yy-mm-dd");
         _dateSeparator = param.dateSeparator.isNotEmpty ? param.dateSeparator : "/";
       });
+      _saveLocalSettings();
     });
 
     // Refresh UI timer & periodically send continuous weight registration
@@ -174,10 +255,14 @@ class _MobileWeighingDataCollectionPageState
       writelog("[MOBILE_RECS] Received records json: $jsonString");
       try {
         RevAllWgtRecs getAllWgtInfo = revAllWgtRecsFromJson(jsonString);
-        setState(() {
-          _allWgtRecList =
-              List<ScaleRecInfo>.from(getAllWgtInfo.scaleRecInfos ?? []);
-        });
+        if (getAllWgtInfo.scaleRecInfos != null) {
+          List<ScaleRecInfo> recs = getAllWgtInfo.scaleRecInfos!;
+          if (recs.isNotEmpty || (getAllWgtInfo.totalCount ?? 0) == 0) {
+            setState(() {
+              _allWgtRecList = recs;
+            });
+          }
+        }
       } catch (e) {
         writelog("[MOBILE_RECS_ERR] Parsing error: $e");
       }
@@ -218,8 +303,9 @@ class _MobileWeighingDataCollectionPageState
 
   void _saveUiConfToDb() {
     myScaleCmd.cmdMode = "update_ui_conf";
+    mySettingParam.id = int.tryParse(wgtCollectionMode) ?? 0;
     mySettingParam.wgtMode = _isSummaryMode ? 1 : 0;
-    mySettingParam.recMode = _saveMode == "Manual" ? msgManual : msgAuto;
+    mySettingParam.recMode = _saveMode == "Auto" ? msgAuto : msgManual;
     mySettingParam.stableTime = _stableTimeController.text;
     mySettingParam.dateFormat = _dateFormat == "yy-mm-dd"
         ? "1"
@@ -250,19 +336,30 @@ class _MobileWeighingDataCollectionPageState
     Map<int, WeightInfo> scaleWgtMapDetail = {};
     List<int> selScaleList = [];
 
-    // Calculate total weight from online scales
+    // Calculate total weight from online scales with unit conversion
     if (myAllScalesList.isEmpty) {
       selScaleList.add(1);
       WeightInfo info = _scaleWeightMap[1] ?? WeightInfo(weight: '0.00', unit: 'kg', stable: false);
-      scaleWgtMapDetail[1] = info;
-      totalWgt = double.tryParse(info.weight) ?? 0.0;
+      double rawW = double.tryParse(info.weight) ?? 0.0;
+      double convertedW = convertUnit(rawW, info.unit.isNotEmpty ? info.unit : 'kg', _summaryUnit);
+      scaleWgtMapDetail[1] = WeightInfo(
+        weight: convertedW.toStringAsFixed(2),
+        unit: _summaryUnit,
+        stable: info.stable,
+      );
+      totalWgt = convertedW;
     } else {
       for (var scale in myAllScalesList) {
         int id = scale.scaleId;
         WeightInfo info = _scaleWeightMap[id] ?? WeightInfo(weight: '0.00', unit: 'kg', stable: false);
-        double w = double.tryParse(info.weight) ?? 0.0;
-        totalWgt += w;
-        scaleWgtMapDetail[id] = info;
+        double rawW = double.tryParse(info.weight) ?? 0.0;
+        double convertedW = convertUnit(rawW, info.unit.isNotEmpty ? info.unit : 'kg', _summaryUnit);
+        totalWgt += convertedW;
+        scaleWgtMapDetail[id] = WeightInfo(
+          weight: convertedW.toStringAsFixed(2),
+          unit: _summaryUnit,
+          stable: info.stable,
+        );
         selScaleList.add(id);
       }
     }
@@ -287,6 +384,7 @@ class _MobileWeighingDataCollectionPageState
       totalWeight: w,
       baseUnit: info.unit.isNotEmpty ? info.unit : 'kg',
       selPlu: plu,
+      rawWeightStr: info.weight.isNotEmpty ? info.weight : '0.00',
     );
   }
 
@@ -296,6 +394,7 @@ class _MobileWeighingDataCollectionPageState
     required double totalWeight,
     required String baseUnit,
     required PluData? selPlu,
+    String? rawWeightStr,
   }) {
     final scaleIdToScaleMap = <int, Scale>{};
     for (final scale in myAllScalesList) {
@@ -324,7 +423,7 @@ class _MobileWeighingDataCollectionPageState
       pretare: tempPlu.pretare?.toString() ?? '',
       limitHigh: tempPlu.limitHigh?.toString() ?? '',
       limitLow: tempPlu.limitLow?.toString() ?? '',
-      weight: totalWeight.toStringAsFixed(2),
+      weight: rawWeightStr ?? totalWeight.toStringAsFixed(2),
       weightUnit: baseUnit,
       userNo: mySysUser.userId.toString(),
       userName: mySysUser.nickName,
@@ -505,7 +604,9 @@ class _MobileWeighingDataCollectionPageState
     double totalWgt = 0.0;
     for (var scale in myAllScalesList) {
       WeightInfo info = _scaleWeightMap[scale.scaleId] ?? WeightInfo(weight: '0.00', unit: 'kg', stable: false);
-      totalWgt += double.tryParse(info.weight) ?? 0.0;
+      double rawW = double.tryParse(info.weight) ?? 0.0;
+      double convertedW = convertUnit(rawW, info.unit.isNotEmpty ? info.unit : 'kg', _summaryUnit);
+      totalWgt += convertedW;
     }
 
     return ListView(
@@ -568,7 +669,7 @@ class _MobileWeighingDataCollectionPageState
                         underline: const SizedBox(),
                         icon: const Icon(Icons.arrow_drop_down, color: Color(0xFF64748B)),
                         style: const TextStyle(color: Color(0xFF334155), fontSize: 16),
-                        items: ['kg', 'g', 'lb', 'oz'].map((u) {
+                        items: ['kg', 'g', 'lb'].map((u) {
                           return DropdownMenuItem(value: u, child: Text(u));
                         }).toList(),
                         onChanged: (val) {
@@ -781,7 +882,7 @@ class _MobileWeighingDataCollectionPageState
                   icon: Icons.save_outlined,
                   color: const Color(0xFF10B981),
                   isSave: true,
-                  onPressed: isOnline ? () => _recordSingleScaleToDb(id) : null,
+                  onPressed: (isOnline && _saveMode != "Auto") ? () => _recordSingleScaleToDb(id) : null,
                 ),
               ],
             ],
@@ -1313,7 +1414,7 @@ class _MobileWeighingDataCollectionPageState
                           onTap: () {
                             _openSubSelectionModal(
                               "Save Mode",
-                              ["Manual", "False"],
+                              ["Manual", "Auto"],
                               _saveMode,
                               (selected) {
                                 setState(() => _saveMode = selected);

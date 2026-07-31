@@ -22,16 +22,22 @@ class SettingParam {
       this.saveMode,
       this.wgtMode);
   SettingParam.fromJson(Map<String, dynamic> json)
-      : id = json['Id'] ?? 0,
-        recMode = json['RecMode']?.toString() ?? "0",
-        zeroRange = json['ZeroRange']?.toString() ?? "1",
-        stableTime = json['StableTime']?.toString() ?? "1",
-        dateFormat = json['DateFormat']?.toString() ?? "0",
-        dateSeparator = json['DateSeparator']?.toString() ?? "0",
-        scaleMode = json['ScaleMode'] ?? 0,
-        scaleSn = json['ScaleSn']?.toString() ?? "",
-        saveMode = json['SaveMode']?.toString() ?? "",
-        wgtMode = json['WgtMode'] ?? 0;
+      : id = json['Id'] is int
+            ? json['Id']
+            : (int.tryParse(json['Id']?.toString() ?? json['id']?.toString() ?? '0') ?? 0),
+        recMode = (json['RecMode'] ?? json['recMode'] ?? json['rec_mode'] ?? "manual").toString(),
+        zeroRange = (json['ZeroRange'] ?? json['zeroRange'] ?? "1").toString(),
+        stableTime = (json['StableTime'] ?? json['StableTimeToRec'] ?? json['stableTime'] ?? "1").toString(),
+        dateFormat = (json['DateFormat'] ?? json['dateFormat'] ?? "0").toString(),
+        dateSeparator = (json['DateSeparator'] ?? json['dateSeparator'] ?? "0").toString(),
+        scaleMode = json['ScaleMode'] is int
+            ? json['ScaleMode']
+            : (int.tryParse(json['ScaleMode']?.toString() ?? json['scaleMode']?.toString() ?? '0') ?? 0),
+        scaleSn = (json['ScaleSn'] ?? json['scaleSn'] ?? "").toString(),
+        saveMode = (json['SaveMode'] ?? json['saveMode'] ?? "").toString(),
+        wgtMode = json['WgtMode'] is int
+            ? json['WgtMode']
+            : (int.tryParse(json['WgtMode']?.toString() ?? json['wgtMode']?.toString() ?? json['wgt_mode']?.toString() ?? '0') ?? 0);
 
   Map<String, dynamic> toJson() {
     return {
