@@ -119,7 +119,7 @@ class MobileLogDetailPage extends StatelessWidget {
       _buildDetailRow(context, localizedStrings?.gTipResult ?? "Result", getSysLogTrans(sysLog.result ?? "")),
       _buildDetailRow(context, localizedStrings?.fCreatedAtCol ?? "Create Time", sysLog.createTime != null ? DateFormat('yyyy-MM-dd HH:mm:ss').format(sysLog.createTime!) : ""),
       if (sysLog.remarks != null && sysLog.remarks!.isNotEmpty)
-        _buildDetailsBlock(context, localizedStrings?.details ?? "Details", sysLog.remarks!),
+        _buildDetailsBlock(context, localizedStrings?.logDetails ?? "Details", sysLog.remarks!),
     ];
   }
 
@@ -136,7 +136,7 @@ class MobileLogDetailPage extends StatelessWidget {
       _buildDetailRow(context, localizedStrings?.gScaleSn ?? "SN", wgtLog.sn ?? ""),
       _buildDetailRow(context, localizedStrings?.fCreatedAtCol ?? "Create Time", wgtLog.createTime != null ? DateFormat('yyyy-MM-dd HH:mm:ss').format(wgtLog.createTime!) : ""),
       if (wgtLog.remarks != null && wgtLog.remarks!.isNotEmpty)
-        _buildDetailsBlock(context, localizedStrings?.details ?? "Details", wgtLog.remarks!),
+        _buildDetailsBlock(context, localizedStrings?.logDetails ?? "Details", wgtLog.remarks!),
     ];
   }
 
@@ -146,7 +146,7 @@ class MobileLogDetailPage extends StatelessWidget {
       ReqDelLogs reqDelLogs = ReqDelLogs(recId: [wgtLog.recId!]);
       PublicFunctions.deleteWgtLog(reqDelLogsToJson(reqDelLogs));
       Navigator.pop(context); // Close the detail page after delete
-    }, localizedStrings?.tipDelLogs ?? "Confirm deletion?", context);
+    }, localizedStrings?.fConfirmDelete ?? "Confirm deletion?", context);
   }
 
   @override

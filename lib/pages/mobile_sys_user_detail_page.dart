@@ -69,8 +69,8 @@ class _MobileSysUserDetailPageState extends State<MobileSysUserDetailPage> {
       context: context,
       builder: (BuildContext ctx) {
         return AlertDialog(
-          title: Text(localizedStrings?.tipTitle ?? "Tip"),
-          content: Text(localizedStrings?.tipDeleteSysUser ?? "Are you sure to delete this user?"),
+          title: Text(localizedStrings?.fTipTitle ?? "Tip"),
+          content: Text(localizedStrings?.fConfirmDelete ?? "Are you sure to delete this user?"),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(ctx).pop(),
@@ -142,7 +142,7 @@ class _MobileSysUserDetailPageState extends State<MobileSysUserDetailPage> {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          localizedStrings?.details ?? "Details",
+          localizedStrings?.logDetails ?? "Details",
           style: const TextStyle(color: Colors.black87, fontSize: 18),
         ),
         centerTitle: true,
@@ -160,12 +160,12 @@ class _MobileSysUserDetailPageState extends State<MobileSysUserDetailPage> {
               child: Column(
                 children: [
                   _buildRow(localizedStrings?.userAccount ?? "Account", _currentUser.userName ?? "-"),
-                  _buildRow(localizedStrings?.userName ?? "User name", _currentUser.nickName ?? "-"),
+                  _buildRow(localizedStrings?.userUsername ?? "User name", _currentUser.nickName ?? "-"),
                   _buildRow(localizedStrings?.userRole ?? "Role", roleName),
                   _buildRow(localizedStrings?.userPhone ?? "Phone number", _currentUser.phone ?? "-"),
                   _buildRow(localizedStrings?.userEmail ?? "Email", _currentUser.email ?? "-"),
-                  _buildRow(localizedStrings?.createdTime ?? "Create Time", _formatDate(_currentUser.createdTime)),
-                  _buildRow(localizedStrings?.updatedTime ?? "Update Time", _formatDate(_currentUser.updatedTime)),
+                  _buildRow(localizedStrings?.fCreatedTimeCol ?? "Create Time", _formatDate(_currentUser.createdTime)),
+                  _buildRow(localizedStrings?.fUpdateTimeCol ?? "Update Time", _formatDate(_currentUser.updatedTime)),
                   
                   // Enabled Switch
                   Padding(
@@ -173,7 +173,7 @@ class _MobileSysUserDetailPageState extends State<MobileSysUserDetailPage> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(localizedStrings?.userEnabled ?? "Enabled", style: const TextStyle(color: Colors.black54, fontSize: 16)),
+                        Text(localizedStrings?.userIsEnabled ?? "Enabled", style: const TextStyle(color: Colors.black54, fontSize: 16)),
                         Switch(
                           value: _currentUser.isEnabled ?? true,
                           activeColor: const Color(0xFF1ABC9C),

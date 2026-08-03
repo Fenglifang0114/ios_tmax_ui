@@ -189,7 +189,7 @@ class _MobileLogWgtTabState extends State<MobileLogWgtTab> {
     showDeleteDialog(() {
       ReqDelLogs reqDelLogs = ReqDelLogs(recId: allSelectedRecIds.toList());
       PublicFunctions.deleteWgtLog(reqDelLogsToJson(reqDelLogs));
-    }, localizedStrings?.tipDelLogs ?? "Confirm deletion?", context);
+    }, localizedStrings?.fConfirmDelete ?? "Confirm deletion?", context);
   }
 
   @override
