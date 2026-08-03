@@ -800,15 +800,27 @@ class _MobileCheckWeighingPageState extends State<MobileCheckWeighingPage> {
 
     double weightVal = double.tryParse(info.weight) ?? 0.0;
 
-    // Determine weight text color according to check weighing OK/HI/LO
-    Color weightColor = const Color(0xFF10B981); // Default Green
+    // Determine weight container background & text color according to check weighing OK/HI/LO
+    Color? rowBgColor;
+    Color weightTextColor = const Color(0xFF10B981); // Default Green
+    Color unitTextColor = const Color(0xFF64748B);
+
     if (lowLimit > 0 || highLimit > 0) {
       if (weightVal < lowLimit) {
-        weightColor = const Color(0xFF3B82F6); // Blue for LO
+        // LOW -> Solid Yellow/Orange background (#EAB308)
+        rowBgColor = const Color(0xFFEAB308);
+        weightTextColor = Colors.white;
+        unitTextColor = Colors.white;
       } else if (weightVal >= lowLimit && weightVal <= highLimit) {
-        weightColor = const Color(0xFF10B981); // Green for OK
+        // OK -> Solid Green background (#10B981)
+        rowBgColor = const Color(0xFF10B981);
+        weightTextColor = Colors.white;
+        unitTextColor = Colors.white;
       } else if (weightVal > highLimit) {
-        weightColor = const Color(0xFFEF4444); // Red for HI
+        // HIGH -> Solid Red background (#EF4444)
+        rowBgColor = const Color(0xFFEF4444);
+        weightTextColor = Colors.white;
+        unitTextColor = Colors.white;
       }
     }
 
@@ -866,9 +878,10 @@ class _MobileCheckWeighingPageState extends State<MobileCheckWeighingPage> {
           ),
           const Divider(height: 1, color: Color(0xFFF1F5F9)),
 
-          // 2. Weight Display & Status Tags Row
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          // 2. Weight Display & Status Tags Row (Full Container Fill)
+          Container(
+            color: rowBgColor ?? Colors.white,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -880,7 +893,9 @@ class _MobileCheckWeighingPageState extends State<MobileCheckWeighingPage> {
                     Text(
                       isOnline ? info.weight : "-- --",
                       style: TextStyle(
-                        color: isOnline ? weightColor : const Color(0xFFEF4444),
+                        color: isOnline
+                            ? weightTextColor
+                            : (rowBgColor != null ? Colors.white : const Color(0xFFEF4444)),
                         fontSize: 32,
                         fontWeight: FontWeight.bold,
                       ),
@@ -888,7 +903,7 @@ class _MobileCheckWeighingPageState extends State<MobileCheckWeighingPage> {
                     const SizedBox(width: 6),
                     Text(
                       isOnline ? info.unit : "",
-                      style: const TextStyle(color: Color(0xFF64748B), fontSize: 14),
+                      style: TextStyle(color: unitTextColor, fontSize: 14),
                     ),
                   ],
                 ),
@@ -902,13 +917,13 @@ class _MobileCheckWeighingPageState extends State<MobileCheckWeighingPage> {
                       decoration: BoxDecoration(
                         color: info.isZero
                             ? const Color(0xFF10B981)
-                            : const Color(0xFFF1F5F9),
+                            : (rowBgColor != null ? Colors.white.withValues(alpha: 0.8) : const Color(0xFFF1F5F9)),
                         borderRadius: BorderRadius.circular(3),
                       ),
                       child: Text(
                         "0",
                         style: TextStyle(
-                          color: info.isZero ? Colors.white : const Color(0xFF94A3B8),
+                          color: info.isZero ? Colors.white : (rowBgColor != null ? const Color(0xFF64748B) : const Color(0xFF94A3B8)),
                           fontSize: 12,
                           fontWeight: FontWeight.bold,
                         ),
@@ -919,7 +934,7 @@ class _MobileCheckWeighingPageState extends State<MobileCheckWeighingPage> {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFF1F5F9),
+                        color: rowBgColor != null ? Colors.white.withValues(alpha: 0.8) : const Color(0xFFF1F5F9),
                         borderRadius: BorderRadius.circular(3),
                       ),
                       child: Text(
@@ -927,7 +942,7 @@ class _MobileCheckWeighingPageState extends State<MobileCheckWeighingPage> {
                         style: TextStyle(
                           color: info.isNet
                               ? const Color(0xFF10B981)
-                              : const Color(0xFF94A3B8),
+                              : (rowBgColor != null ? const Color(0xFF64748B) : const Color(0xFF94A3B8)),
                           fontSize: 10,
                           fontWeight: FontWeight.bold,
                         ),
@@ -938,7 +953,7 @@ class _MobileCheckWeighingPageState extends State<MobileCheckWeighingPage> {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFF1F5F9),
+                        color: rowBgColor != null ? Colors.white.withValues(alpha: 0.8) : const Color(0xFFF1F5F9),
                         borderRadius: BorderRadius.circular(3),
                       ),
                       child: Text(
@@ -946,7 +961,7 @@ class _MobileCheckWeighingPageState extends State<MobileCheckWeighingPage> {
                         style: TextStyle(
                           color: info.isZero
                               ? const Color(0xFF10B981)
-                              : const Color(0xFF94A3B8),
+                              : (rowBgColor != null ? const Color(0xFF64748B) : const Color(0xFF94A3B8)),
                           fontSize: 10,
                           fontWeight: FontWeight.bold,
                         ),

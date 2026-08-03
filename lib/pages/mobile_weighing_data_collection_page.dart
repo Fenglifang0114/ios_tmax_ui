@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:t_max/data/const_var_data.dart';
 import 'package:t_max/data/g_data.dart';
+import 'package:t_max/data/icons.dart';
 import 'package:t_max/data/new_get_recs.dart';
 import 'package:t_max/data/plu_data_source.dart';
 import 'package:t_max/data/reqweightdata_data.dart';
@@ -389,9 +390,9 @@ class _MobileWeighingDataCollectionPageState
   // ---------------------------------------------------------------------------
   // SCALE COMMANDS & DB RECORDING
   // ---------------------------------------------------------------------------
-  void _clearTare(int scaleId) {
-    PublicFunctions.forceUntare(scaleId);
-  }
+  // void _clearTare(int scaleId) {
+  //   PublicFunctions.forceUntare(scaleId);
+  // }
 
   void _performTare(int scaleId) {
     PublicFunctions.performTareWithScaleId(scaleId);
@@ -957,44 +958,31 @@ class _MobileWeighingDataCollectionPageState
           ),
           const SizedBox(height: 14),
 
-          // Action Buttons Row
+          // Action Buttons Row (3 PC SVG Action Buttons: Tare, Zero, Save)
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              // Clear Tare (Only on Scale1 or when tare active)
-              if (id == 1) ...[
-                _buildActionButton(
-                  icon: Icons.cleaning_services_outlined,
-                  color: const Color(0xFF004884),
-                  onPressed: isOnline ? () => _clearTare(id) : null,
-                ),
-                const SizedBox(width: 8),
-              ],
-              // Tare
+              // ➔T Tare SVG Icon
               _buildActionButton(
-                icon: Icons.unarchive_outlined,
+                svgPath: performTareSvgIcon(),
                 color: const Color(0xFF004884),
                 onPressed: isOnline ? () => _performTare(id) : null,
               ),
-              const SizedBox(width: 8),
-              // Zero
+              const SizedBox(width: 10),
+              // ->0<- Zero SVG Icon
               _buildActionButton(
-                icon: Icons.center_focus_weak_outlined,
+                svgPath: performZeroSvgIcon(),
                 color: const Color(0xFF004884),
                 onPressed: isOnline ? () => _performZero(id) : null,
               ),
-              // Independent Mode Save Button
-              if (!_isSummaryMode) ...[
-                const SizedBox(width: 8),
-                _buildActionButton(
-                  icon: Icons.save_outlined,
-                  color: const Color(0xFF10B981),
-                  isSave: true,
-                  onPressed: (isOnline && _saveMode != "Auto")
-                      ? () => _recordSingleScaleToDb(id)
-                      : null,
-                ),
-              ],
+              const SizedBox(width: 10),
+              // 💾 Save SVG Icon
+              _buildActionButton(
+                svgPath: saveSvgIcon(),
+                color: const Color(0xFF10B981),
+                isSave: true,
+                onPressed: isOnline ? () => _recordSingleScaleToDb(id) : null,
+              ),
             ],
           ),
         ],
@@ -1003,15 +991,22 @@ class _MobileWeighingDataCollectionPageState
   }
 
   Widget _buildActionButton({
-    required IconData icon,
+    String? svgPath,
+    IconData? icon,
     required Color color,
     bool isSave = false,
     VoidCallback? onPressed,
   }) {
+    Color iconColor = onPressed == null
+        ? const Color(0xFF94A3B8)
+        : (isSave ? const Color(0xFF10B981) : color);
+
     return InkWell(
       onTap: onPressed,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        width: 48,
+        height: 40,
+        padding: const EdgeInsets.all(6),
         decoration: BoxDecoration(
           color: isSave ? const Color(0xFFF0FDF4) : const Color(0xFFF8FAFC),
           border: Border.all(
@@ -1019,15 +1014,16 @@ class _MobileWeighingDataCollectionPageState
                 ? const Color(0xFFE2E8F0)
                 : (isSave ? const Color(0xFF10B981) : const Color(0xFFCBD5E1)),
           ),
-          borderRadius: BorderRadius.circular(4),
+          borderRadius: BorderRadius.circular(6),
         ),
-        child: Icon(
-          icon,
-          size: 20,
-          color: onPressed == null
-              ? const Color(0xFF94A3B8)
-              : (isSave ? const Color(0xFF10B981) : color),
-        ),
+        alignment: Alignment.center,
+        child: svgPath != null
+            ? getSvgIcon(svgPath, 24, 24, iconColor)
+            : Icon(
+                icon,
+                size: 22,
+                color: iconColor,
+              ),
       ),
     );
   }
