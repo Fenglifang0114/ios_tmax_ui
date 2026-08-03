@@ -43,6 +43,7 @@ import 'package:t_max/pages/mobile_sys_user_manager.dart';
 import 'package:t_max/pages/mobile_serial_output_design_page.dart';
 import 'package:t_max/pages/mobile_receipt_design_page.dart';
 import 'package:t_max/pages/mobile_weighing_data_collection_page.dart';
+import 'package:t_max/pages/mobile_check_weighing_page.dart';
 
 class RouteData {
   RouteData({
@@ -645,6 +646,12 @@ Widget buildPageContent(dynamic Function(String) navigateContent,
       lastRouteName: lastRouteName,
     );
   } else if (pageId == MenuId.checkWeighersPage) {
+    if (Platform.isAndroid || Platform.isIOS) {
+      return MobileCheckWeighingPage(
+        onNavigate: navigateContent,
+        lastRouteName: lastRouteName,
+      );
+    }
     return CheckWeighersPage(
       onNavigate: navigateContent,
       lastRouteName: lastRouteName,

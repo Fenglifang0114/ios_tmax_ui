@@ -14,7 +14,6 @@ import 'package:t_max/data/settingparam_data.dart';
 import 'package:t_max/data/wgt_value_data.dart';
 import 'package:t_max/data/writelog.dart';
 import 'package:t_max/dialog/custom_dialog_tip.dart';
-import 'package:t_max/dialog/sel_scale_dialog.dart';
 import 'package:t_max/eventbus/eventbus.dart';
 import 'package:t_max/functions/methods.dart';
 import 'package:t_max/widget/f_open_file.dart';
@@ -37,7 +36,8 @@ class MobileWeighingDataCollectionPage extends StatefulWidget {
 class _MobileWeighingDataCollectionPageState
     extends State<MobileWeighingDataCollectionPage> {
   int _selectedTab = 0; // 0: Weighing, 1: Record
-  bool _isSummaryMode = true; // true: Weight Summary Mode, false: Weight Independent Mode
+  bool _isSummaryMode =
+      true; // true: Weight Summary Mode, false: Weight Independent Mode
 
   // Local map to store weight data for each scale
   final Map<int, WeightInfo> _scaleWeightMap = {};
@@ -110,17 +110,22 @@ class _MobileWeighingDataCollectionPageState
       _scalePassedZeroMap[scaleId] = true;
     }
 
-    if (info.stable && weightVal > 0.001 && (_scalePassedZeroMap[scaleId] ?? true)) {
+    if (info.stable &&
+        weightVal > 0.001 &&
+        (_scalePassedZeroMap[scaleId] ?? true)) {
       if (_scaleStableTimerMap[scaleId] == null) {
         _scaleStableDurationMap[scaleId] = 0;
-        _scaleStableTimerMap[scaleId] = Timer.periodic(const Duration(seconds: 1), (timer) {
+        _scaleStableTimerMap[scaleId] =
+            Timer.periodic(const Duration(seconds: 1), (timer) {
           int duration = (_scaleStableDurationMap[scaleId] ?? 0) + 1;
           _scaleStableDurationMap[scaleId] = duration;
           if (duration >= stableSecs) {
             timer.cancel();
             _scaleStableTimerMap[scaleId] = null;
             _scaleStableDurationMap[scaleId] = 0;
-            if (mounted && info.stable && (double.tryParse(info.weight) ?? 0.0) > 0.001) {
+            if (mounted &&
+                info.stable &&
+                (double.tryParse(info.weight) ?? 0.0) > 0.001) {
               _scalePassedZeroMap[scaleId] = false;
               _recordSingleScaleToDb(scaleId);
             }
@@ -209,7 +214,8 @@ class _MobileWeighingDataCollectionPageState
       String wgtStr = reqWeight.msgBody?.weightVal ?? '0.00';
       String unitStr = reqWeight.msgBody?.weightUnit ?? 'kg';
       bool isStable = reqWeight.msgBody?.isStable ?? false;
-      WeightInfo info = WeightInfo(weight: wgtStr, unit: unitStr, stable: isStable);
+      WeightInfo info =
+          WeightInfo(weight: wgtStr, unit: unitStr, stable: isStable);
       _scaleWeightMap[scaleId] = info;
       _checkScaleAutoSave(scaleId, info);
       setState(() {});
@@ -228,13 +234,16 @@ class _MobileWeighingDataCollectionPageState
       SettingParam param = event.obj;
       setState(() {
         _isSummaryMode = param.wgtMode == 1;
-        _saveMode = (param.recMode == msgAuto || param.recMode == "auto") ? "Auto" : "Manual";
+        _saveMode = (param.recMode == msgAuto || param.recMode == "auto")
+            ? "Auto"
+            : "Manual";
         _stableTime = param.stableTime.isNotEmpty ? param.stableTime : "2";
         _stableTimeController.text = _stableTime;
         _dateFormat = param.dateFormat == "2"
             ? "dd-mm-yy"
             : (param.dateFormat == "3" ? "mm-dd-yy" : "yy-mm-dd");
-        _dateSeparator = param.dateSeparator.isNotEmpty ? param.dateSeparator : "/";
+        _dateSeparator =
+            param.dateSeparator.isNotEmpty ? param.dateSeparator : "/";
       });
       _saveLocalSettings();
     });
@@ -248,8 +257,7 @@ class _MobileWeighingDataCollectionPageState
     });
 
     // Event bus listeners
-    _eventBusGetAllRecs =
-        eventBus.on<EventRespGetAllWgtRecs>().listen((event) {
+    _eventBusGetAllRecs = eventBus.on<EventRespGetAllWgtRecs>().listen((event) {
       if (!mounted) return;
       dynamic rawObj = event.obj;
       String jsonString = rawObj is String
@@ -291,8 +299,8 @@ class _MobileWeighingDataCollectionPageState
       setState(() {
         myPluInfoList.clear();
         for (int i = 0; i < pluInfoList.length; i++) {
-          PluData newPlu = PluData(0, 0, 0, 0, '', '', 0, 0, 0, 0, 0, 0, 0,
-              '', false, '', 0, 0, '', '');
+          PluData newPlu = PluData(0, 0, 0, 0, '', '', 0, 0, 0, 0, 0, 0, 0, '',
+              false, '', 0, 0, '', '');
           newPlu.enabled = pluInfoList[i].enabled ?? true;
           if (!newPlu.enabled!) {
             continue;
@@ -301,8 +309,7 @@ class _MobileWeighingDataCollectionPageState
           newPlu.plu = int.tryParse(pluInfoList[i].plu ?? '0') ?? 0;
           newPlu.productCode =
               int.tryParse(pluInfoList[i].productCode ?? '0') ?? 0;
-          newPlu.itemCode =
-              int.tryParse(pluInfoList[i].itemCode ?? '0') ?? 0;
+          newPlu.itemCode = int.tryParse(pluInfoList[i].itemCode ?? '0') ?? 0;
           newPlu.category = pluInfoList[i].category;
           newPlu.productName = pluInfoList[i].productName;
           newPlu.price = double.tryParse(pluInfoList[i].price ?? '0') ?? 0;
@@ -311,16 +318,13 @@ class _MobileWeighingDataCollectionPageState
               int.tryParse(pluInfoList[i].generalUnit ?? '0') ?? 0;
           newPlu.unitWeight =
               double.tryParse(pluInfoList[i].unitWeight ?? '0') ?? 0;
-          newPlu.pretare =
-              double.tryParse(pluInfoList[i].pretare ?? '0') ?? 0;
+          newPlu.pretare = double.tryParse(pluInfoList[i].pretare ?? '0') ?? 0;
           newPlu.limitHigh =
               double.tryParse(pluInfoList[i].limitHigh ?? '0') ?? 0;
           newPlu.limitLow =
               double.tryParse(pluInfoList[i].limitLow ?? '0') ?? 0;
-          newPlu.creatAt =
-              pluInfoList[i].createdAt?.toIso8601String() ?? " ";
-          newPlu.updateAt =
-              pluInfoList[i].updatedAt?.toIso8601String() ?? " ";
+          newPlu.creatAt = pluInfoList[i].createdAt?.toIso8601String() ?? " ";
+          newPlu.updateAt = pluInfoList[i].updatedAt?.toIso8601String() ?? " ";
           newPlu.createBy = pluInfoList[i].createBy;
           newPlu.updateBy = pluInfoList[i].updateBy;
           myPluInfoList.add(newPlu);
@@ -332,7 +336,8 @@ class _MobileWeighingDataCollectionPageState
       if (!mounted) return;
       String resString = event.obj;
       if (resString.contains('ok')) {
-        String filePath = resString.contains(',') ? resString.split(',')[1] : resString;
+        String filePath =
+            resString.contains(',') ? resString.split(',')[1] : resString;
         showExportDialog(filePath, context);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -404,9 +409,11 @@ class _MobileWeighingDataCollectionPageState
     // Calculate total weight from online scales with unit conversion
     if (myAllScalesList.isEmpty) {
       selScaleList.add(1);
-      WeightInfo info = _scaleWeightMap[1] ?? WeightInfo(weight: '0.00', unit: 'kg', stable: false);
+      WeightInfo info = _scaleWeightMap[1] ??
+          WeightInfo(weight: '0.00', unit: 'kg', stable: false);
       double rawW = double.tryParse(info.weight) ?? 0.0;
-      double convertedW = convertUnit(rawW, info.unit.isNotEmpty ? info.unit : 'kg', _summaryUnit);
+      double convertedW = convertUnit(
+          rawW, info.unit.isNotEmpty ? info.unit : 'kg', _summaryUnit);
       scaleWgtMapDetail[1] = WeightInfo(
         weight: convertedW.toStringAsFixed(2),
         unit: _summaryUnit,
@@ -416,9 +423,11 @@ class _MobileWeighingDataCollectionPageState
     } else {
       for (var scale in myAllScalesList) {
         int id = scale.scaleId;
-        WeightInfo info = _scaleWeightMap[id] ?? WeightInfo(weight: '0.00', unit: 'kg', stable: false);
+        WeightInfo info = _scaleWeightMap[id] ??
+            WeightInfo(weight: '0.00', unit: 'kg', stable: false);
         double rawW = double.tryParse(info.weight) ?? 0.0;
-        double convertedW = convertUnit(rawW, info.unit.isNotEmpty ? info.unit : 'kg', _summaryUnit);
+        double convertedW = convertUnit(
+            rawW, info.unit.isNotEmpty ? info.unit : 'kg', _summaryUnit);
         totalWgt += convertedW;
         scaleWgtMapDetail[id] = WeightInfo(
           weight: convertedW.toStringAsFixed(2),
@@ -439,7 +448,8 @@ class _MobileWeighingDataCollectionPageState
   }
 
   void _recordSingleScaleToDb(int scaleId) {
-    WeightInfo info = _scaleWeightMap[scaleId] ?? WeightInfo(weight: '0.00', unit: 'kg', stable: false);
+    WeightInfo info = _scaleWeightMap[scaleId] ??
+        WeightInfo(weight: '0.00', unit: 'kg', stable: false);
     double w = double.tryParse(info.weight) ?? 0.0;
     PluData? plu = _independentPluMap[scaleId];
 
@@ -467,11 +477,12 @@ class _MobileWeighingDataCollectionPageState
     }
 
     final tempPlu = selPlu ??
-        PluData(null, null, null, null, null, null, null, null, null, null, null,
-            null, null, null, null, null, null, null, '', '');
+        PluData(null, null, null, null, null, null, null, null, null, null,
+            null, null, null, null, null, null, null, null, '', '');
 
     final newAddRec = ReqAddWgtRec()
-      ..mode = int.parse(wgtCollectionMode) // Always 0 for Weighing Data Collection
+      ..mode =
+          int.parse(wgtCollectionMode) // Always 0 for Weighing Data Collection
       ..detailRec = [];
 
     final headerCommon = Header(
@@ -568,12 +579,16 @@ class _MobileWeighingDataCollectionPageState
               onPressed: _openDeviceListDrawer,
             ),
             const SizedBox(width: 4),
-            const Text(
-              "Weighing Data Collection",
-              style: TextStyle(
-                color: Color(0xFF1E293B),
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
+            const Expanded(
+              child: Text(
+                "Weighing Data Collection",
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  color: Color(0xFF1E293B),
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
           ],
@@ -605,15 +620,17 @@ class _MobileWeighingDataCollectionPageState
                       child: Container(
                         decoration: BoxDecoration(
                           color: _selectedTab == 0
-                              ? const Color(0xFF004884)
+                              ? Theme.of(context).colorScheme.primary
                               : Colors.transparent,
                           borderRadius: BorderRadius.circular(4),
                         ),
                         alignment: Alignment.center,
-                        child: const Text(
+                        child: Text(
                           "Weighing",
                           style: TextStyle(
-                            color: Colors.white,
+                            color: _selectedTab == 0
+                                ? Theme.of(context).colorScheme.onPrimary
+                                : const Color(0xFF64748B),
                             fontWeight: FontWeight.w600,
                             fontSize: 15,
                           ),
@@ -630,7 +647,7 @@ class _MobileWeighingDataCollectionPageState
                       child: Container(
                         decoration: BoxDecoration(
                           color: _selectedTab == 1
-                              ? const Color(0xFF004884)
+                              ? Theme.of(context).colorScheme.primary
                               : Colors.transparent,
                           borderRadius: BorderRadius.circular(4),
                         ),
@@ -639,7 +656,7 @@ class _MobileWeighingDataCollectionPageState
                           "Record",
                           style: TextStyle(
                             color: _selectedTab == 1
-                                ? Colors.white
+                                ? Theme.of(context).colorScheme.onPrimary
                                 : const Color(0xFF64748B),
                             fontWeight: FontWeight.w600,
                             fontSize: 15,
@@ -668,9 +685,11 @@ class _MobileWeighingDataCollectionPageState
   Widget _buildWeighingTab() {
     double totalWgt = 0.0;
     for (var scale in myAllScalesList) {
-      WeightInfo info = _scaleWeightMap[scale.scaleId] ?? WeightInfo(weight: '0.00', unit: 'kg', stable: false);
+      WeightInfo info = _scaleWeightMap[scale.scaleId] ??
+          WeightInfo(weight: '0.00', unit: 'kg', stable: false);
       double rawW = double.tryParse(info.weight) ?? 0.0;
-      double convertedW = convertUnit(rawW, info.unit.isNotEmpty ? info.unit : 'kg', _summaryUnit);
+      double convertedW = convertUnit(
+          rawW, info.unit.isNotEmpty ? info.unit : 'kg', _summaryUnit);
       totalWgt += convertedW;
     }
 
@@ -685,7 +704,9 @@ class _MobileWeighingDataCollectionPageState
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                _isSummaryMode ? "Weight Summary Mode" : "Weight Independent Mode",
+                _isSummaryMode
+                    ? "Weight Summary Mode"
+                    : "Weight Independent Mode",
                 style: const TextStyle(
                   color: Color(0xFF334155),
                   fontSize: 15,
@@ -693,7 +714,8 @@ class _MobileWeighingDataCollectionPageState
                 ),
               ),
               IconButton(
-                icon: const Icon(Icons.settings_outlined, color: Color(0xFF334155)),
+                icon: const Icon(Icons.settings_outlined,
+                    color: Color(0xFF334155)),
                 onPressed: _openParameterSettingsSheet,
               ),
             ],
@@ -732,8 +754,10 @@ class _MobileWeighingDataCollectionPageState
                       DropdownButton<String>(
                         value: _summaryUnit,
                         underline: const SizedBox(),
-                        icon: const Icon(Icons.arrow_drop_down, color: Color(0xFF64748B)),
-                        style: const TextStyle(color: Color(0xFF334155), fontSize: 16),
+                        icon: const Icon(Icons.arrow_drop_down,
+                            color: Color(0xFF64748B)),
+                        style: const TextStyle(
+                            color: Color(0xFF334155), fontSize: 16),
                         items: ['kg', 'g', 'lb'].map((u) {
                           return DropdownMenuItem(value: u, child: Text(u));
                         }).toList(),
@@ -754,7 +778,8 @@ class _MobileWeighingDataCollectionPageState
                       border: Border.all(color: const Color(0xFF10B981)),
                       borderRadius: BorderRadius.circular(6),
                     ),
-                    child: const Icon(Icons.save, color: Color(0xFF10B981), size: 24),
+                    child: const Icon(Icons.save,
+                        color: Color(0xFF10B981), size: 24),
                   ),
                   onPressed: _recordSummaryToDb,
                 ),
@@ -771,7 +796,8 @@ class _MobileWeighingDataCollectionPageState
     );
   }
 
-  Widget _buildPluSelectorRow({required PluData? pluData, required VoidCallback onTap}) {
+  Widget _buildPluSelectorRow(
+      {required PluData? pluData, required VoidCallback onTap}) {
     String displayText = "PLU";
     if (pluData != null) {
       displayText = "${pluData.plu ?? ''}:${pluData.productName ?? ''}";
@@ -788,7 +814,9 @@ class _MobileWeighingDataCollectionPageState
             Text(
               displayText,
               style: TextStyle(
-                color: pluData != null ? const Color(0xFF1E293B) : const Color(0xFF94A3B8),
+                color: pluData != null
+                    ? const Color(0xFF1E293B)
+                    : const Color(0xFF94A3B8),
                 fontSize: 15,
                 fontWeight: FontWeight.w500,
               ),
@@ -802,7 +830,8 @@ class _MobileWeighingDataCollectionPageState
 
   Widget _buildScaleCard(Scale scale) {
     int id = scale.scaleId;
-    WeightInfo info = _scaleWeightMap[id] ?? WeightInfo(weight: '0.00', unit: 'kg', stable: false);
+    WeightInfo info = _scaleWeightMap[id] ??
+        WeightInfo(weight: '0.00', unit: 'kg', stable: false);
     bool isOnline = scale.isOnline;
 
     return Container(
@@ -845,7 +874,8 @@ class _MobileWeighingDataCollectionPageState
                           fontSize: 14,
                         ),
                       ),
-                      const Icon(Icons.chevron_right, color: Color(0xFF94A3B8), size: 20),
+                      const Icon(Icons.chevron_right,
+                          color: Color(0xFF94A3B8), size: 20),
                     ],
                   ),
                 ),
@@ -864,7 +894,9 @@ class _MobileWeighingDataCollectionPageState
                   Text(
                     isOnline ? info.weight : "-- --",
                     style: TextStyle(
-                      color: isOnline ? const Color(0xFF10B981) : const Color(0xFFEF4444),
+                      color: isOnline
+                          ? const Color(0xFF10B981)
+                          : const Color(0xFFEF4444),
                       fontSize: 32,
                       fontWeight: FontWeight.bold,
                     ),
@@ -872,7 +904,8 @@ class _MobileWeighingDataCollectionPageState
                   const SizedBox(width: 6),
                   Text(
                     isOnline ? info.unit : "",
-                    style: const TextStyle(color: Color(0xFF64748B), fontSize: 14),
+                    style:
+                        const TextStyle(color: Color(0xFF64748B), fontSize: 14),
                   ),
                 ],
               ),
@@ -880,33 +913,43 @@ class _MobileWeighingDataCollectionPageState
               Row(
                 children: [
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                     decoration: BoxDecoration(
                       color: const Color(0xFF10B981),
                       borderRadius: BorderRadius.circular(3),
                     ),
                     child: const Text(
                       "0",
-                      style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold),
                     ),
                   ),
                   const SizedBox(width: 4),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
                     decoration: BoxDecoration(
                       color: const Color(0xFFF1F5F9),
                       borderRadius: BorderRadius.circular(3),
                     ),
-                    child: const Text("NET", style: TextStyle(color: Color(0xFF94A3B8), fontSize: 10)),
+                    child: const Text("NET",
+                        style:
+                            TextStyle(color: Color(0xFF94A3B8), fontSize: 10)),
                   ),
                   const SizedBox(width: 4),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
                     decoration: BoxDecoration(
                       color: const Color(0xFFF1F5F9),
                       borderRadius: BorderRadius.circular(3),
                     ),
-                    child: const Text("->0<-", style: TextStyle(color: Color(0xFF94A3B8), fontSize: 10)),
+                    child: const Text("->0<-",
+                        style:
+                            TextStyle(color: Color(0xFF94A3B8), fontSize: 10)),
                   ),
                 ],
               ),
@@ -947,7 +990,9 @@ class _MobileWeighingDataCollectionPageState
                   icon: Icons.save_outlined,
                   color: const Color(0xFF10B981),
                   isSave: true,
-                  onPressed: (isOnline && _saveMode != "Auto") ? () => _recordSingleScaleToDb(id) : null,
+                  onPressed: (isOnline && _saveMode != "Auto")
+                      ? () => _recordSingleScaleToDb(id)
+                      : null,
                 ),
               ],
             ],
@@ -1026,10 +1071,13 @@ class _MobileWeighingDataCollectionPageState
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF10B981),
                           elevation: 0,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(6)),
                         ),
                         onPressed: () async {
-                          String? outputFile = await PublicFunctions.pickSaveFilePath('report.csv');
+                          String? outputFile =
+                              await PublicFunctions.pickSaveFilePath(
+                                  'report.csv');
                           if (outputFile != null) {
                             List<String> selFields = [];
                             Map<String, String> selMap = {};
@@ -1039,12 +1087,16 @@ class _MobileWeighingDataCollectionPageState
                                 selMap[key] = key;
                               }
                             });
-                            PublicFunctions.exportAllRecords(0, outputFile, selFields, selMap);
+                            PublicFunctions.exportAllRecords(
+                                0, outputFile, selFields, selMap);
                           }
                         },
                         child: const Text(
                           "Export",
-                          style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w600),
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600),
                         ),
                       ),
                     ),
@@ -1057,12 +1109,16 @@ class _MobileWeighingDataCollectionPageState
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF004884),
                           elevation: 0,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(6)),
                         ),
                         onPressed: _openReportSettingSheet,
                         child: const Text(
                           "Report Setting",
-                          style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w600),
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600),
                         ),
                       ),
                     ),
@@ -1077,14 +1133,19 @@ class _MobileWeighingDataCollectionPageState
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFFEF4444),
                     elevation: 0,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(6)),
                   ),
                   onPressed: () {
-                    PublicFunctions.newDeleteAllRecords(int.parse(wgtCollectionMode));
+                    PublicFunctions.newDeleteAllRecords(
+                        int.parse(wgtCollectionMode));
                   },
                   child: const Text(
                     "Delete All",
-                    style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w600),
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600),
                   ),
                 ),
               ),
@@ -1132,14 +1193,18 @@ class _MobileWeighingDataCollectionPageState
                   Row(
                     children: [
                       // If Single Scale Record, display Scale Name next to expand icon
-                      if (!isSummary && (header?.scaleName?.isNotEmpty ?? false))
+                      if (!isSummary &&
+                          (header?.scaleName?.isNotEmpty ?? false))
                         Text(
                           header!.scaleName!,
-                          style: const TextStyle(color: Color(0xFF64748B), fontSize: 14),
+                          style: const TextStyle(
+                              color: Color(0xFF64748B), fontSize: 14),
                         ),
                       const SizedBox(width: 4),
                       Icon(
-                        isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
+                        isExpanded
+                            ? Icons.keyboard_arrow_up
+                            : Icons.keyboard_arrow_down,
                         color: const Color(0xFF64748B),
                       ),
                     ],
@@ -1167,7 +1232,8 @@ class _MobileWeighingDataCollectionPageState
                   if (_visibleFields['Weight Unit'] == true)
                     _buildFieldRow("Weight Unit", header?.weightUnit ?? ""),
                   if (_visibleFields['Date Time'] == true)
-                    _buildFieldRow("Date Time", _formatDateTimeStr(header?.createdAt)),
+                    _buildFieldRow(
+                        "Date Time", _formatDateTimeStr(header?.createdAt)),
 
                   // Summary Details Section (Only for Summary Records)
                   if (isSummary) ...[
@@ -1185,15 +1251,27 @@ class _MobileWeighingDataCollectionPageState
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Text("Scale Name", style: TextStyle(color: Color(0xFF94A3B8), fontSize: 12)),
-                                  Text(detail.scaleName ?? "", style: const TextStyle(color: Color(0xFF004884), fontWeight: FontWeight.w600)),
+                                  const Text("Scale Name",
+                                      style: TextStyle(
+                                          color: Color(0xFF94A3B8),
+                                          fontSize: 12)),
+                                  Text(detail.scaleName ?? "",
+                                      style: const TextStyle(
+                                          color: Color(0xFF004884),
+                                          fontWeight: FontWeight.w600)),
                                 ],
                               ),
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.end,
                                 children: [
-                                  const Text("Weight", style: TextStyle(color: Color(0xFF94A3B8), fontSize: 12)),
-                                  Text(detail.weight ?? "", style: const TextStyle(color: Color(0xFF004884), fontWeight: FontWeight.w600)),
+                                  const Text("Weight",
+                                      style: TextStyle(
+                                          color: Color(0xFF94A3B8),
+                                          fontSize: 12)),
+                                  Text(detail.weight ?? "",
+                                      style: const TextStyle(
+                                          color: Color(0xFF004884),
+                                          fontWeight: FontWeight.w600)),
                                 ],
                               ),
                             ],
@@ -1244,8 +1322,13 @@ class _MobileWeighingDataCollectionPageState
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label, style: const TextStyle(color: Color(0xFF94A3B8), fontSize: 13)),
-          Text(value, style: const TextStyle(color: Color(0xFF1E293B), fontSize: 13, fontWeight: FontWeight.w500)),
+          Text(label,
+              style: const TextStyle(color: Color(0xFF94A3B8), fontSize: 13)),
+          Text(value,
+              style: const TextStyle(
+                  color: Color(0xFF1E293B),
+                  fontSize: 13,
+                  fontWeight: FontWeight.w500)),
         ],
       ),
     );
@@ -1293,7 +1376,8 @@ class _MobileWeighingDataCollectionPageState
                         ? const Center(
                             child: Text(
                               "No Devices",
-                              style: TextStyle(color: Color(0xFF94A3B8), fontSize: 15),
+                              style: TextStyle(
+                                  color: Color(0xFF94A3B8), fontSize: 15),
                             ),
                           )
                         : ListView.builder(
@@ -1302,9 +1386,11 @@ class _MobileWeighingDataCollectionPageState
                               Scale scale = myAllScalesList[index];
                               int id = scale.scaleId;
                               bool isOnline = scale.isOnline;
-                              bool isChecked = _drawerDeviceCheckedMap[id] ?? scale.isOnline;
+                              bool isChecked =
+                                  _drawerDeviceCheckedMap[id] ?? scale.isOnline;
 
-                              IconData mediaIcon = Icons.settings_input_component;
+                              IconData mediaIcon =
+                                  Icons.settings_input_component;
                               if (scale.tMedia == netScaleType) {
                                 mediaIcon = Icons.language;
                               } else if (scale.tMedia == btScaleType) {
@@ -1328,7 +1414,8 @@ class _MobileWeighingDataCollectionPageState
                                           height: 40,
                                           decoration: BoxDecoration(
                                             color: const Color(0xFFE2E8F0),
-                                            borderRadius: BorderRadius.circular(4),
+                                            borderRadius:
+                                                BorderRadius.circular(4),
                                           ),
                                           child: Icon(
                                             mediaIcon,
@@ -1340,7 +1427,8 @@ class _MobileWeighingDataCollectionPageState
                                         // Text Area
                                         Expanded(
                                           child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
                                             children: [
                                               Text(
                                                 scale.scaleName.isNotEmpty
@@ -1373,7 +1461,8 @@ class _MobileWeighingDataCollectionPageState
                                           onChanged: (val) {
                                             setDrawerState(() {
                                               isChecked = val ?? false;
-                                              _drawerDeviceCheckedMap[id] = isChecked;
+                                              _drawerDeviceCheckedMap[id] =
+                                                  isChecked;
                                             });
                                             setState(() {});
                                           },
@@ -1435,11 +1524,13 @@ class _MobileWeighingDataCollectionPageState
                 children: [
                   // Page Header (Back Arrow + Centered Title)
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
                     child: Row(
                       children: [
                         IconButton(
-                          icon: const Icon(Icons.arrow_back, color: Color(0xFF1E293B)),
+                          icon: const Icon(Icons.arrow_back,
+                              color: Color(0xFF1E293B)),
                           onPressed: () => Navigator.pop(context),
                         ),
                         const Expanded(
@@ -1462,7 +1553,8 @@ class _MobileWeighingDataCollectionPageState
                   // List of Settings
                   Expanded(
                     child: ListView(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 8),
                       children: [
                         // Weight Summary Mode Row
                         Padding(
@@ -1470,7 +1562,9 @@ class _MobileWeighingDataCollectionPageState
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const Text("Weight Summary Mode", style: TextStyle(fontSize: 15, color: Color(0xFF334155))),
+                              const Text("Weight Summary Mode",
+                                  style: TextStyle(
+                                      fontSize: 15, color: Color(0xFF334155))),
                               Switch(
                                 value: tempSummaryMode,
                                 activeColor: const Color(0xFF10B981),
@@ -1504,12 +1598,15 @@ class _MobileWeighingDataCollectionPageState
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const Text("Stable Time (s)", style: TextStyle(fontSize: 15, color: Color(0xFF334155))),
+                              const Text("Stable Time (s)",
+                                  style: TextStyle(
+                                      fontSize: 15, color: Color(0xFF334155))),
                               Container(
                                 width: 100,
                                 height: 38,
                                 decoration: BoxDecoration(
-                                  border: Border.all(color: const Color(0xFFCBD5E1)),
+                                  border: Border.all(
+                                      color: const Color(0xFFCBD5E1)),
                                   borderRadius: BorderRadius.circular(6),
                                 ),
                                 child: TextField(
@@ -1517,10 +1614,12 @@ class _MobileWeighingDataCollectionPageState
                                   keyboardType: TextInputType.number,
                                   textAlign: TextAlign.right,
                                   decoration: const InputDecoration(
-                                    contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                                    contentPadding: EdgeInsets.symmetric(
+                                        horizontal: 10, vertical: 8),
                                     border: InputBorder.none,
                                   ),
-                                  style: const TextStyle(fontSize: 15, color: Color(0xFF334155)),
+                                  style: const TextStyle(
+                                      fontSize: 15, color: Color(0xFF334155)),
                                   onChanged: (val) {
                                     _stableTime = val;
                                   },
@@ -1556,7 +1655,8 @@ class _MobileWeighingDataCollectionPageState
                               [".", "-", "/"],
                               tempDateSeparator,
                               (selected) {
-                                setModalState(() => tempDateSeparator = selected);
+                                setModalState(
+                                    () => tempDateSeparator = selected);
                               },
                             );
                           },
@@ -1575,7 +1675,8 @@ class _MobileWeighingDataCollectionPageState
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF10B981),
                           elevation: 0,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(6)),
                         ),
                         onPressed: () {
                           setState(() {
@@ -1591,7 +1692,10 @@ class _MobileWeighingDataCollectionPageState
                         },
                         child: const Text(
                           "Confirm",
-                          style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600),
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600),
                         ),
                       ),
                     ),
@@ -1617,12 +1721,16 @@ class _MobileWeighingDataCollectionPageState
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(title, style: const TextStyle(fontSize: 15, color: Color(0xFF334155))),
+            Text(title,
+                style: const TextStyle(fontSize: 15, color: Color(0xFF334155))),
             Row(
               children: [
-                Text(val, style: const TextStyle(fontSize: 15, color: Color(0xFF64748B))),
+                Text(val,
+                    style: const TextStyle(
+                        fontSize: 15, color: Color(0xFF64748B))),
                 const SizedBox(width: 4),
-                const Icon(Icons.chevron_right, color: Color(0xFF94A3B8), size: 20),
+                const Icon(Icons.chevron_right,
+                    color: Color(0xFF94A3B8), size: 20),
               ],
             ),
           ],
@@ -1632,8 +1740,8 @@ class _MobileWeighingDataCollectionPageState
   }
 
   // Sub Selection Modal Sheet (Matches mockups for Save Mode, Date Format, Date Separator)
-  void _openSubSelectionModal(
-      String title, List<String> options, String currentValue, ValueChanged<String> onSelected) {
+  void _openSubSelectionModal(String title, List<String> options,
+      String currentValue, ValueChanged<String> onSelected) {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -1660,7 +1768,8 @@ class _MobileWeighingDataCollectionPageState
                     ),
                   ),
                   IconButton(
-                    icon: const Icon(Icons.cancel_outlined, color: Color(0xFF64748B), size: 24),
+                    icon: const Icon(Icons.cancel_outlined,
+                        color: Color(0xFF64748B), size: 24),
                     onPressed: () => Navigator.pop(context),
                   ),
                 ],
@@ -1680,16 +1789,21 @@ class _MobileWeighingDataCollectionPageState
                       width: double.infinity,
                       height: 48,
                       decoration: BoxDecoration(
-                        color: isSelected ? const Color(0xFF004884) : const Color(0xFFF8FAFC),
+                        color: isSelected
+                            ? const Color(0xFF004884)
+                            : const Color(0xFFF8FAFC),
                         borderRadius: BorderRadius.circular(6),
                       ),
                       alignment: Alignment.center,
                       child: Text(
                         opt,
                         style: TextStyle(
-                          color: isSelected ? Colors.white : const Color(0xFF334155),
+                          color: isSelected
+                              ? Colors.white
+                              : const Color(0xFF334155),
                           fontSize: 16,
-                          fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                          fontWeight:
+                              isSelected ? FontWeight.w600 : FontWeight.normal,
                         ),
                       ),
                     ),
@@ -1711,7 +1825,8 @@ class _MobileWeighingDataCollectionPageState
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (context) {
-        PluData? tempSelected = isSummary ? _summaryPluData : _independentPluMap[scaleId];
+        PluData? tempSelected =
+            isSummary ? _summaryPluData : _independentPluMap[scaleId];
         return StatefulBuilder(
           builder: (context, setModalState) {
             return Container(
@@ -1733,7 +1848,8 @@ class _MobileWeighingDataCollectionPageState
                         child: Text(
                           "PLU",
                           textAlign: TextAlign.center,
-                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.w600),
                         ),
                       ),
                       const SizedBox(width: 48),
@@ -1761,7 +1877,8 @@ class _MobileWeighingDataCollectionPageState
                     child: myPluInfoList.isEmpty
                         ? const Center(child: Text("No PLU available"))
                         : GridView.builder(
-                            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                            gridDelegate:
+                                const SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: 2,
                               childAspectRatio: 3.2,
                               crossAxisSpacing: 10,
@@ -1777,9 +1894,13 @@ class _MobileWeighingDataCollectionPageState
                                 },
                                 child: Container(
                                   decoration: BoxDecoration(
-                                    color: isSelected ? const Color(0xFF004884) : Colors.white,
+                                    color: isSelected
+                                        ? const Color(0xFF004884)
+                                        : Colors.white,
                                     border: Border.all(
-                                      color: isSelected ? const Color(0xFF004884) : const Color(0xFFE2E8F0),
+                                      color: isSelected
+                                          ? const Color(0xFF004884)
+                                          : const Color(0xFFE2E8F0),
                                     ),
                                     borderRadius: BorderRadius.circular(6),
                                   ),
@@ -1787,7 +1908,9 @@ class _MobileWeighingDataCollectionPageState
                                   child: Text(
                                     "${plu.plu ?? ''}:${plu.productName ?? ''}",
                                     style: TextStyle(
-                                      color: isSelected ? Colors.white : const Color(0xFF334155),
+                                      color: isSelected
+                                          ? Colors.white
+                                          : const Color(0xFF334155),
                                       fontWeight: FontWeight.w500,
                                     ),
                                   ),
@@ -1803,7 +1926,8 @@ class _MobileWeighingDataCollectionPageState
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF10B981),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(6)),
                       ),
                       onPressed: () {
                         setState(() {
@@ -1815,7 +1939,8 @@ class _MobileWeighingDataCollectionPageState
                         });
                         Navigator.pop(context);
                       },
-                      child: const Text("Confirm", style: TextStyle(color: Colors.white, fontSize: 16)),
+                      child: const Text("Confirm",
+                          style: TextStyle(color: Colors.white, fontSize: 16)),
                     ),
                   ),
                 ],
@@ -1857,9 +1982,10 @@ class _MobileWeighingDataCollectionPageState
                       ),
                       const Expanded(
                         child: Text(
-                          "PLU Field",
+                          "Report Setting",
                           textAlign: TextAlign.center,
-                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.w600),
                         ),
                       ),
                       const SizedBox(width: 48),
@@ -1873,7 +1999,8 @@ class _MobileWeighingDataCollectionPageState
                         GridView.builder(
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),
-                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 2,
                             childAspectRatio: 4,
                             crossAxisSpacing: 10,
@@ -1885,18 +2012,20 @@ class _MobileWeighingDataCollectionPageState
                               children: [
                                 Checkbox(
                                   value: tempFields[key],
-                                  activeColor: const Color(0xFF004884),
+                                  activeColor: const Color(0xFF10B981),
                                   onChanged: (val) {
                                     setModalState(() {
                                       tempFields[key] = val ?? false;
-                                      selectAll = tempFields.values.every((v) => v);
+                                      selectAll =
+                                          tempFields.values.every((v) => v);
                                     });
                                   },
                                 ),
                                 Expanded(
                                   child: Text(
                                     key,
-                                    style: const TextStyle(fontSize: 14, color: Color(0xFF334155)),
+                                    style: const TextStyle(
+                                        fontSize: 14, color: Color(0xFF334155)),
                                   ),
                                 ),
                               ],
@@ -1908,7 +2037,7 @@ class _MobileWeighingDataCollectionPageState
                           children: [
                             Checkbox(
                               value: selectAll,
-                              activeColor: const Color(0xFF004884),
+                              activeColor: const Color(0xFF10B981),
                               onChanged: (val) {
                                 bool boolVal = val ?? false;
                                 setModalState(() {
@@ -1917,7 +2046,9 @@ class _MobileWeighingDataCollectionPageState
                                 });
                               },
                             ),
-                            const Text("Select all", style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+                            const Text("Select all",
+                                style: TextStyle(
+                                    fontSize: 14, fontWeight: FontWeight.w600)),
                           ],
                         ),
                       ],
@@ -1929,8 +2060,9 @@ class _MobileWeighingDataCollectionPageState
                     height: 46,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFFCBD5E1),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+                        backgroundColor: const Color(0xFF10B981),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(6)),
                       ),
                       onPressed: () {
                         setState(() {
@@ -1938,7 +2070,8 @@ class _MobileWeighingDataCollectionPageState
                         });
                         Navigator.pop(context);
                       },
-                      child: const Text("Confirm", style: TextStyle(color: Colors.white, fontSize: 16)),
+                      child: const Text("Confirm",
+                          style: TextStyle(color: Colors.white, fontSize: 16)),
                     ),
                   ),
                 ],
