@@ -44,6 +44,7 @@ import 'package:t_max/pages/mobile_serial_output_design_page.dart';
 import 'package:t_max/pages/mobile_receipt_design_page.dart';
 import 'package:t_max/pages/mobile_weighing_data_collection_page.dart';
 import 'package:t_max/pages/mobile_check_weighing_page.dart';
+import 'package:t_max/pages/mobile_take_out_page.dart';
 
 class RouteData {
   RouteData({
@@ -506,6 +507,9 @@ bool isFreeApp(int pId) => freeAppMenuIds.contains(pId);
 Widget buildPageContent(dynamic Function(String) navigateContent,
     String? pageName, String? lastRouteName) {
   lastRouteName ??= '/setConfig';
+  if (pageName != null && pageName.contains('/settingsApp')) {
+    pageName = pageName.replaceAll('/settingsApp', '');
+  }
   if (pageName == '/setConfig') {
     return ConfigurationPage(
         onNavigate: navigateContent, lastRouteName: lastRouteName);
@@ -662,6 +666,12 @@ Widget buildPageContent(dynamic Function(String) navigateContent,
       lastRouteName: lastRouteName,
     );
   } else if (pageId == MenuId.takeOutPage) {
+    if (Platform.isAndroid || Platform.isIOS) {
+      return MobileTakeOutPage(
+        onNavigate: navigateContent,
+        lastRouteName: lastRouteName,
+      );
+    }
     return TakeOutPage(
       onNavigate: navigateContent,
       lastRouteName: lastRouteName,
