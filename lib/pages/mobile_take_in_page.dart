@@ -1815,7 +1815,7 @@ class _MobileTakeInPageState extends State<MobileTakeInPage> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          localizedStrings?.gMenuParamSetting ??
+                          localizedStrings?.gParameterSettingsTitle ??
                               "Parameter Setting",
                           style: const TextStyle(
                             fontSize: 18,
