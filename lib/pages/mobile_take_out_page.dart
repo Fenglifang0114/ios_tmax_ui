@@ -1258,76 +1258,7 @@ class _MobileTakeOutPageState extends State<MobileTakeOutPage> {
   Widget _buildRecordTabContent() {
     return Column(
       children: [
-        Container(
-          color: Colors.white,
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                "${localizedStrings?.fRecordTitle ?? "Record"} (${_allWgtRecList.length})",
-                style: const TextStyle(
-                  color: Color(0xFF1E293B),
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              Row(
-                children: [
-                  OutlinedButton.icon(
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: const Color(0xFF334155),
-                      side: const BorderSide(color: Color(0xFFCBD5E1)),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(6)),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 6),
-                    ),
-                    onPressed: () => _openReportSettingSheet(),
-                    icon: const Icon(Icons.filter_list, size: 18),
-                    label: Text(
-                        localizedStrings?.gBtnReportSetting ?? "Report Setting",
-                        style: const TextStyle(fontSize: 13)),
-                  ),
-                  const SizedBox(width: 8),
-                  ElevatedButton.icon(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF10B981),
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(6)),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 6),
-                    ),
-                    onPressed: () async {
-                      String? outputFile =
-                          await PublicFunctions.pickSaveFilePath('export.csv');
-                      if (outputFile != null) {
-                        List<String> selFields = [];
-                        Map<String, String> selMap = {};
-                        _visibleFields.forEach((key, val) {
-                          if (val) {
-                            selFields.add(key);
-                            selMap[key] = key;
-                          }
-                        });
-                        PublicFunctions.exportAllRecords(
-                            int.parse(wgtTakeOutMode),
-                            outputFile,
-                            selFields,
-                            selMap);
-                      }
-                    },
-                    icon: const Icon(Icons.download, size: 18),
-                    label: Text(localizedStrings?.gBtnExport ?? "Export",
-                        style: const TextStyle(fontSize: 13)),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-        const Divider(height: 1, color: Color(0xFFE2E8F0)),
+        // Records List
         Expanded(
           child: _allWgtRecList.isEmpty
               ? Center(
@@ -1341,21 +1272,120 @@ class _MobileTakeOutPageState extends State<MobileTakeOutPage> {
                   padding: const EdgeInsets.all(12),
                   itemCount: _allWgtRecList.length,
                   itemBuilder: (context, index) {
-                    ScaleRecInfo rec = _allWgtRecList[index];
-                    return _buildRecordCard(rec, index);
+                    return _buildRecordCard(_allWgtRecList[index], index + 1);
                   },
                 ),
+        ),
+
+        // Bottom Action Buttons
+        Container(
+          color: Colors.white,
+          padding: const EdgeInsets.all(12),
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: SizedBox(
+                      height: 42,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF10B981),
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(6)),
+                        ),
+                        onPressed: () async {
+                          String? outputFile =
+                              await PublicFunctions.pickSaveFilePath('export.csv');
+                          if (outputFile != null) {
+                            List<String> selFields = [];
+                            Map<String, String> selMap = {};
+                            _visibleFields.forEach((key, val) {
+                              if (val) {
+                                selFields.add(key);
+                                selMap[key] = key;
+                              }
+                            });
+                            PublicFunctions.exportAllRecords(
+                                int.parse(wgtTakeOutMode),
+                                outputFile,
+                                selFields,
+                                selMap);
+                          }
+                        },
+                        child: Text(
+                          localizedStrings?.gBtnExport ?? "Export",
+                          style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: SizedBox(
+                      height: 42,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF004884),
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(6)),
+                        ),
+                        onPressed: _openReportSettingSheet,
+                        child: Text(
+                          localizedStrings?.gBtnReportSetting ?? "Report Setting",
+                          style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              SizedBox(
+                width: double.infinity,
+                height: 42,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFFEF4444),
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(6)),
+                  ),
+                  onPressed: () {
+                    PublicFunctions.newDeleteAllRecords(
+                        int.parse(wgtTakeOutMode));
+                  },
+                  child: Text(
+                    localizedStrings?.gBtnDeleteAll ?? "Delete All",
+                    style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ],
     );
   }
 
-  Widget _buildRecordCard(ScaleRecInfo rec, int index) {
-    Header? header = rec.header;
-    bool isExpanded = _expandedRecords[index] ?? false;
+  Widget _buildRecordCard(ScaleRecInfo record, int indexNo) {
+    bool isSummary = record.details != null && record.details!.isNotEmpty;
+    bool isExpanded = _expandedRecords[indexNo] ?? true;
+    Header? header = record.header;
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 10),
+      margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(8),
@@ -1363,90 +1393,219 @@ class _MobileTakeOutPageState extends State<MobileTakeOutPage> {
       ),
       child: Column(
         children: [
+          // Header Row
           InkWell(
             onTap: () {
               setState(() {
-                _expandedRecords[index] = !isExpanded;
+                _expandedRecords[indexNo] = !isExpanded;
               });
             },
             child: Padding(
-              padding: const EdgeInsets.all(14),
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "ID: ${header?.id ?? '--'} | ${header?.scaleName ?? 'Scale'}",
-                          style: const TextStyle(
-                            color: Color(0xFF1E293B),
-                            fontWeight: FontWeight.bold,
-                            fontSize: 15,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          "Weight: ${header?.weight ?? '0.00'} ${header?.weightUnit ?? 'kg'}",
-                          style: const TextStyle(
-                            color: Color(0xFF10B981),
-                            fontWeight: FontWeight.w600,
-                            fontSize: 14,
-                          ),
-                        ),
-                      ],
+                  Text(
+                    indexNo < 10 ? "0$indexNo" : "$indexNo",
+                    style: const TextStyle(
+                      color: Color(0xFF004884),
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                  Icon(
-                    isExpanded
-                        ? Icons.keyboard_arrow_up
-                        : Icons.keyboard_arrow_down,
-                    color: const Color(0xFF64748B),
+                  Row(
+                    children: [
+                      if (!isSummary &&
+                          (header?.scaleName?.isNotEmpty ?? false))
+                        Text(
+                          header!.scaleName!,
+                          style: const TextStyle(
+                              color: Color(0xFF64748B), fontSize: 14),
+                        ),
+                      const SizedBox(width: 4),
+                      Icon(
+                        isExpanded
+                            ? Icons.keyboard_arrow_up
+                            : Icons.keyboard_arrow_down,
+                        color: const Color(0xFF64748B),
+                      ),
+                    ],
                   ),
                 ],
               ),
             ),
           ),
-          if (isExpanded) ...[
-            const Divider(height: 1, color: Color(0xFFF1F5F9)),
-            Container(
-              color: const Color(0xFFF8FAFC),
-              padding: const EdgeInsets.all(12),
+          const Divider(height: 1, color: Color(0xFFE2E8F0)),
+
+          // Card Content
+          if (isExpanded)
+            Padding(
+              padding: const EdgeInsets.all(14),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildRecordDetailRow("PLU", header?.plu),
-                  _buildRecordDetailRow("Product Code", header?.productCode),
-                  _buildRecordDetailRow("Item Code", header?.itemCode),
-                  _buildRecordDetailRow("Product Name", header?.productName),
-                  _buildRecordDetailRow("Price", header?.price),
-                  _buildRecordDetailRow("General Unit", header?.generalUnit),
-                  _buildRecordDetailRow("Unit Weight", header?.unitWeight),
-                  _buildRecordDetailRow("Pretare", header?.pretare),
-                  _buildRecordDetailRow("Operator", header?.userName),
+                  // Base Record Attributes
+                  if (_visibleFields['PLU'] == true)
+                    _buildFieldRow("PLU", header?.plu ?? ""),
+                  if (_visibleFields['Product Name'] == true)
+                    _buildFieldRow("Product Name", header?.productName ?? ""),
+                  if (_visibleFields['Weight'] == true)
+                    _buildFieldRow("Weight", header?.weight ?? ""),
+                  if (_visibleFields['Weight Unit'] == true)
+                    _buildFieldRow("Weight Unit", header?.weightUnit ?? ""),
+                  if (_visibleFields['Date Time'] == true)
+                    _buildFieldRow(
+                        "Date Time", _formatDateTimeStr(header?.createdAt)),
+
+                  // Summary Details Section (Only for Summary Records)
+                  if (isSummary) ...[
+                    const SizedBox(height: 10),
+                    ...record.details!.map((detail) => Container(
+                          margin: const EdgeInsets.only(bottom: 6),
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFF8FAFC),
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text("Scale Name",
+                                      style: TextStyle(
+                                          color: Color(0xFF94A3B8),
+                                          fontSize: 12)),
+                                  Text(detail.scaleName ?? "",
+                                      style: const TextStyle(
+                                          color: Color(0xFF004884),
+                                          fontWeight: FontWeight.w600)),
+                                ],
+                              ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  const Text("Weight",
+                                      style: TextStyle(
+                                          color: Color(0xFF94A3B8),
+                                          fontSize: 12)),
+                                  Text(detail.weight ?? "",
+                                      style: const TextStyle(
+                                          color: Color(0xFF004884),
+                                          fontWeight: FontWeight.w600)),
+                                ],
+                              ),
+                            ],
+                          ),
+                        )),
+                  ],
+
+                  const SizedBox(height: 10),
+
+                  // 3-Column Fields Grid for Extended Attributes
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            if (_visibleFields['Product Code'] == true)
+                              _buildGridCell(
+                                  "Product Code", header?.productCode ?? ""),
+                            if (_visibleFields['Price'] == true)
+                              _buildGridCell("Price", header?.price ?? ""),
+                            if (_visibleFields['Unit Weight'] == true)
+                              _buildGridCell(
+                                  "Unit Weight", header?.unitWeight ?? ""),
+                            if (_visibleFields['Operator'] == true)
+                              _buildGridCell(
+                                  "Operator", header?.userName ?? ""),
+                          ],
+                        ),
+                      ),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            if (_visibleFields['Item Code'] == true)
+                              _buildGridCell(
+                                  "Item Code", header?.itemCode ?? ""),
+                            if (_visibleFields['Unit'] == true)
+                              _buildGridCell(
+                                  "Unit", header?.generalUnit ?? ""),
+                            if (_visibleFields['Limit High'] == true)
+                              _buildGridCell(
+                                  "Limit High", header?.limitHigh ?? ""),
+                            if (isSummary && _visibleFields['Scale Name'] == true)
+                              _buildGridCell(
+                                  "Scale Name", header?.scaleName ?? ""),
+                          ],
+                        ),
+                      ),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            if (_visibleFields['Tax Type'] == true)
+                              _buildGridCell("Tax Type", header?.taxType ?? ""),
+                            if (_visibleFields['Limit Low'] == true)
+                              _buildGridCell(
+                                  "Limit Low", header?.limitLow ?? ""),
+                            if (_visibleFields['Pretare'] == true)
+                              _buildGridCell("Pretare", header?.pretare ?? ""),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ),
-          ],
         ],
       ),
     );
   }
 
-  Widget _buildRecordDetailRow(String label, String? value) {
-    if (!(_visibleFields[label] ?? true)) return const SizedBox.shrink();
+  String _formatDateTimeStr(DateTime? dt) {
+    if (dt == null) return "";
+    String twoDigits(int n) => n.toString().padLeft(2, '0');
+    return "${dt.year}.${twoDigits(dt.month)}.${twoDigits(dt.day)} ${twoDigits(dt.hour)}:${twoDigits(dt.minute)}:${twoDigits(dt.second)}";
+  }
+
+  Widget _buildFieldRow(String label, String value) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 3),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(label,
-              style: const TextStyle(color: Color(0xFF64748B), fontSize: 13)),
-          Text(value != null && value.isNotEmpty ? value : "--",
+              style: const TextStyle(color: Color(0xFF94A3B8), fontSize: 13)),
+          Text(value,
               style: const TextStyle(
                   color: Color(0xFF1E293B),
                   fontSize: 13,
                   fontWeight: FontWeight.w500)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildGridCell(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(label,
+              style: const TextStyle(color: Color(0xFF94A3B8), fontSize: 11)),
+          const SizedBox(height: 2),
+          Text(value.isNotEmpty ? value : "--",
+              style: const TextStyle(
+                  color: Color(0xFF1E293B),
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600)),
         ],
       ),
     );
