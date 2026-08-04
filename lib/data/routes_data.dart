@@ -45,6 +45,7 @@ import 'package:t_max/pages/mobile_receipt_design_page.dart';
 import 'package:t_max/pages/mobile_weighing_data_collection_page.dart';
 import 'package:t_max/pages/mobile_check_weighing_page.dart';
 import 'package:t_max/pages/mobile_take_out_page.dart';
+import 'package:t_max/pages/mobile_take_in_page.dart';
 
 class RouteData {
   RouteData({
@@ -661,6 +662,12 @@ Widget buildPageContent(dynamic Function(String) navigateContent,
       lastRouteName: lastRouteName,
     );
   } else if (pageId == MenuId.takeInPage) {
+    if (Platform.isAndroid || Platform.isIOS) {
+      return MobileTakeInPage(
+        onNavigate: navigateContent,
+        lastRouteName: lastRouteName,
+      );
+    }
     return TakeInPage(
       onNavigate: navigateContent,
       lastRouteName: lastRouteName,
