@@ -1875,20 +1875,20 @@ class _MobileTakeInPageState extends State<MobileTakeInPage> {
                         // Save Mode: Manual vs Auto
                         _buildSettingOptionRow(
                           title:
-                              localizedStrings?.gSaveMode ?? "Save Mode",
+                              localizedStrings?.save_mode ?? "Save Mode",
                           val: tempSaveMode == "Auto"
-                              ? (localizedStrings?.gAutoSave ?? "Auto")
-                              : (localizedStrings?.gManualSave ?? "Manual"),
+                              ? (localizedStrings?.gTipAuto ?? "Auto")
+                              : (localizedStrings?.gTipManual ?? "Manual"),
                           onTap: () {
                             _openSubSelectionModal(
-                              localizedStrings?.gSaveMode ?? "Save Mode",
+                              localizedStrings?.save_mode ?? "Save Mode",
                               [
-                                localizedStrings?.gManualSave ?? "Manual",
-                                localizedStrings?.gAutoSave ?? "Auto",
+                                localizedStrings?.gTipManual ?? "Manual",
+                                localizedStrings?.gTipAuto ?? "Auto",
                               ],
                               tempSaveMode == "Auto"
-                                  ? (localizedStrings?.gAutoSave ?? "Auto")
-                                  : (localizedStrings?.gManualSave ?? "Manual"),
+                                  ? (localizedStrings?.gTipAuto ?? "Auto")
+                                  : (localizedStrings?.gTipManual ?? "Manual"),
                               (selected) {
                                 setModalState(() {
                                   tempSaveMode =
@@ -1910,7 +1910,7 @@ class _MobileTakeInPageState extends State<MobileTakeInPage> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                localizedStrings?.gStableTime ??
+                                localizedStrings?.gTipStableTime ??
                                     "Stable Time (Sec)",
                                 style: const TextStyle(
                                     fontSize: 15, color: Color(0xFF334155)),
