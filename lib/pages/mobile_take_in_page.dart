@@ -303,7 +303,9 @@ class _MobileTakeInPageState extends State<MobileTakeInPage> {
 
   void _requestAllScalesWeight() {
     for (var scale in myAllScalesList) {
-      if (scale.isOnline) {
+      bool isChecked =
+          _drawerDeviceCheckedMap[scale.scaleId] ?? scale.isOnline;
+      if (scale.isOnline && isChecked) {
         PublicFunctions.getWeight(scale.scaleId);
       }
     }
@@ -797,7 +799,10 @@ class _MobileTakeInPageState extends State<MobileTakeInPage> {
                   ),
                 ))
               : Column(
-                  children: myAllScalesList.map((scale) {
+                  children: myAllScalesList
+                      .where((scale) =>
+                          _drawerDeviceCheckedMap[scale.scaleId] ?? scale.isOnline)
+                      .map((scale) {
                     return _buildScaleCard(scale);
                   }).toList(),
                 ),
@@ -819,7 +824,9 @@ class _MobileTakeInPageState extends State<MobileTakeInPage> {
       grandTotal = convertedW;
     } else {
       for (var scale in myAllScalesList) {
-        if (scale.isOnline) {
+        bool isChecked =
+            _drawerDeviceCheckedMap[scale.scaleId] ?? scale.isOnline;
+        if (scale.isOnline && isChecked) {
           int id = scale.scaleId;
           TakeInWeightInfo info = _scaleWeightMap[id] ??
               TakeInWeightInfo(weight: '0.00', unit: 'kg', stable: false);

@@ -16,6 +16,8 @@ import 'package:t_max/data/writelog.dart';
 import 'package:t_max/dialog/custom_dialog_tip.dart';
 import 'package:t_max/eventbus/eventbus.dart';
 import 'package:t_max/functions/methods.dart';
+import 'package:t_max/data/language.dart';
+import 'package:t_max/generated/l10n.dart';
 import 'package:t_max/widget/f_open_file.dart';
 
 class CheckWeightInfo {
@@ -204,7 +206,9 @@ class _MobileCheckWeighingPageState extends State<MobileCheckWeighingPage> {
       return;
     }
     for (var scale in myAllScalesList) {
-      if (scale.isOnline) {
+      bool isChecked =
+          _drawerDeviceCheckedMap[scale.scaleId] ?? scale.isOnline;
+      if (scale.isOnline && isChecked) {
         PublicFunctions.getWeight(scale.scaleId);
       }
     }
@@ -648,6 +652,7 @@ class _MobileCheckWeighingPageState extends State<MobileCheckWeighingPage> {
   // ---------------------------------------------------------------------------
   @override
   Widget build(BuildContext context) {
+    localizedStrings = S.of(context);
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),
       appBar: AppBar(
@@ -783,7 +788,10 @@ class _MobileCheckWeighingPageState extends State<MobileCheckWeighingPage> {
     return ListView(
       padding: const EdgeInsets.only(top: 12, bottom: 24),
       children: [
-        ...myAllScalesList.map((scale) => _buildScaleCard(scale)),
+        ...myAllScalesList
+            .where((scale) =>
+                _drawerDeviceCheckedMap[scale.scaleId] ?? scale.isOnline)
+            .map((scale) => _buildScaleCard(scale)),
       ],
     );
   }
@@ -1352,48 +1360,45 @@ class _MobileCheckWeighingPageState extends State<MobileCheckWeighingPage> {
   // DEVICE LIST DRAWER
   // ---------------------------------------------------------------------------
   void _openDeviceListDrawer() {
-    showModalBottomSheet(
+    showGeneralDialog(
       context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) {
-        return StatefulBuilder(
-          builder: (context, setDrawerState) {
-            return Container(
-              height: MediaQuery.of(context).size.height * 0.7,
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      barrierDismissible: true,
+      barrierLabel: 'DeviceListDrawer',
+      barrierColor: Colors.black54,
+      transitionDuration: const Duration(milliseconds: 250),
+      pageBuilder: (context, anim1, anim2) {
+        return Align(
+          alignment: Alignment.centerLeft,
+          child: Material(
+            color: Colors.transparent,
+            child: Container(
+              width: MediaQuery.of(context).size.width * 0.78,
+              height: double.infinity,
+              color: Colors.white,
+              padding: EdgeInsets.only(
+                top: MediaQuery.of(context).padding.top + 16,
+                left: 16,
+                right: 16,
+                bottom: 16,
               ),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text(
-                          "Device List",
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF1E293B),
-                          ),
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.close, color: Color(0xFF64748B)),
-                          onPressed: () => Navigator.pop(context),
-                        ),
-                      ],
+                  Text(
+                    localizedStrings?.fScaleList ?? "Device List",
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF004884),
                     ),
                   ),
-                  const Divider(height: 1, color: Color(0xFFE2E8F0)),
+                  const SizedBox(height: 20),
                   Expanded(
                     child: myAllScalesList.isEmpty
-                        ? const Center(
+                        ? Center(
                             child: Text(
-                              "No Devices",
-                              style: TextStyle(
+                              localizedStrings?.gTipNoDevice ?? "No Devices",
+                              style: const TextStyle(
                                   color: Color(0xFF94A3B8), fontSize: 15),
                             ),
                           )
@@ -1414,67 +1419,139 @@ class _MobileCheckWeighingPageState extends State<MobileCheckWeighingPage> {
                                 mediaIcon = Icons.bluetooth;
                               }
 
-                              return Container(
-                                margin: const EdgeInsets.symmetric(
-                                    horizontal: 16, vertical: 6),
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFFF8FAFC),
-                                  borderRadius: BorderRadius.circular(8),
-                                  border: Border.all(color: const Color(0xFFE2E8F0)),
-                                ),
-                                child: ListTile(
-                                  leading: Container(
-                                    width: 40,
-                                    height: 40,
+                              Color cardBg = isOnline
+                                  ? const Color(0xFF004884)
+                                  : const Color(0xFFEF4444);
+                              Color txtColor = Colors.white;
+                              Color statusColor = Colors.white70;
+
+                              if (scale.tMedia == btScaleType && isOnline) {
+                                cardBg = const Color(0xFFF8FAFC);
+                                txtColor = const Color(0xFF1E293B);
+                                statusColor = const Color(0xFF10B981);
+                              }
+
+                              return StatefulBuilder(
+                                builder: (context, setDrawerState) {
+                                  return Container(
+                                    margin: const EdgeInsets.only(bottom: 12),
+                                    padding: const EdgeInsets.all(12),
                                     decoration: BoxDecoration(
-                                      color: const Color(0xFFE2E8F0),
-                                      borderRadius:
-                                          BorderRadius.circular(4),
+                                      color: cardBg,
+                                      borderRadius: BorderRadius.circular(8),
                                     ),
-                                    child: Icon(
-                                      mediaIcon,
-                                      color: const Color(0xFF64748B),
+                                    child: Row(
+                                      children: [
+                                        Container(
+                                          width: 40,
+                                          height: 40,
+                                          decoration: BoxDecoration(
+                                            color:
+                                                (scale.tMedia == btScaleType &&
+                                                        isOnline)
+                                                    ? const Color(0xFFE2E8F0)
+                                                    : const Color(0x33FFFFFF),
+                                            borderRadius:
+                                                BorderRadius.circular(20),
+                                          ),
+                                          alignment: Alignment.center,
+                                          child: Icon(
+                                            mediaIcon,
+                                            color: (scale.tMedia ==
+                                                        btScaleType &&
+                                                    isOnline)
+                                                ? const Color(0xFF004884)
+                                                : Colors.white,
+                                            size: 22,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 12),
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                scale.scaleName.isNotEmpty
+                                                    ? scale.scaleName
+                                                    : "Scale$id",
+                                                style: TextStyle(
+                                                  color: txtColor,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 16,
+                                                ),
+                                              ),
+                                              const SizedBox(height: 2),
+                                              Text(
+                                                isOnline
+                                                    ? (localizedStrings
+                                                            ?.gTipOnline ??
+                                                        "Online")
+                                                    : (localizedStrings
+                                                            ?.gTipOffline ??
+                                                        "Offline"),
+                                                style: TextStyle(
+                                                  color: statusColor,
+                                                  fontSize: 12,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        Checkbox(
+                                          value: isChecked,
+                                          activeColor:
+                                              (scale.tMedia == btScaleType &&
+                                                      isOnline)
+                                                  ? const Color(0xFF004884)
+                                                  : Colors.white,
+                                          checkColor: (scale.tMedia ==
+                                                      btScaleType &&
+                                                  isOnline)
+                                              ? Colors.white
+                                              : (isOnline
+                                                  ? const Color(0xFF004884)
+                                                  : const Color(0xFFEF4444)),
+                                          side: BorderSide(
+                                            color:
+                                                (scale.tMedia == btScaleType &&
+                                                        isOnline)
+                                                    ? const Color(0xFFCBD5E1)
+                                                    : Colors.white,
+                                          ),
+                                          onChanged: (val) {
+                                            setDrawerState(() {
+                                              isChecked = val ?? false;
+                                              _drawerDeviceCheckedMap[id] =
+                                                  isChecked;
+                                            });
+                                            setState(() {});
+                                          },
+                                        ),
+                                      ],
                                     ),
-                                  ),
-                                  title: Text(
-                                    scale.scaleName.isNotEmpty
-                                        ? scale.scaleName
-                                        : "Scale$id",
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                      color: Color(0xFF1E293B),
-                                    ),
-                                  ),
-                                  subtitle: Text(
-                                    isOnline ? "Online" : "Offline",
-                                    style: TextStyle(
-                                      color: isOnline
-                                          ? const Color(0xFF10B981)
-                                          : const Color(0xFFEF4444),
-                                      fontSize: 12,
-                                    ),
-                                  ),
-                                  trailing: Checkbox(
-                                    value: isChecked,
-                                    activeColor: const Color(0xFF10B981),
-                                    onChanged: (val) {
-                                      setDrawerState(() {
-                                        isChecked = val ?? false;
-                                        _drawerDeviceCheckedMap[id] =
-                                            isChecked;
-                                      });
-                                      setState(() {});
-                                    },
-                                  ),
-                                ),
+                                  );
+                                },
                               );
                             },
                           ),
                   ),
                 ],
               ),
-            );
-          },
+            ),
+          ),
+        );
+      },
+      transitionBuilder: (context, anim1, anim2, child) {
+        return SlideTransition(
+          position: Tween<Offset>(
+            begin: const Offset(-1, 0),
+            end: Offset.zero,
+          ).animate(CurvedAnimation(
+            parent: anim1,
+            curve: Curves.easeOutCubic,
+          )),
+          child: child,
         );
       },
     );

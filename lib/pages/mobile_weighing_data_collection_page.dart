@@ -184,7 +184,9 @@ class _MobileWeighingDataCollectionPageState
       return;
     }
     for (var scale in myAllScalesList) {
-      if (scale.isOnline) {
+      bool isChecked =
+          _drawerDeviceCheckedMap[scale.scaleId] ?? scale.isOnline;
+      if (scale.isOnline && isChecked) {
         PublicFunctions.getWeight(scale.scaleId);
       }
     }
@@ -424,6 +426,8 @@ class _MobileWeighingDataCollectionPageState
     } else {
       for (var scale in myAllScalesList) {
         int id = scale.scaleId;
+        bool isChecked = _drawerDeviceCheckedMap[id] ?? scale.isOnline;
+        if (!isChecked) continue;
         WeightInfo info = _scaleWeightMap[id] ??
             WeightInfo(weight: '0.00', unit: 'kg', stable: false);
         double rawW = double.tryParse(info.weight) ?? 0.0;
@@ -686,6 +690,9 @@ class _MobileWeighingDataCollectionPageState
   Widget _buildWeighingTab() {
     double totalWgt = 0.0;
     for (var scale in myAllScalesList) {
+      bool isChecked =
+          _drawerDeviceCheckedMap[scale.scaleId] ?? scale.isOnline;
+      if (!isChecked) continue;
       WeightInfo info = _scaleWeightMap[scale.scaleId] ??
           WeightInfo(weight: '0.00', unit: 'kg', stable: false);
       double rawW = double.tryParse(info.weight) ?? 0.0;
@@ -792,7 +799,10 @@ class _MobileWeighingDataCollectionPageState
         const SizedBox(height: 12),
 
         // Scale Cards List
-        ...myAllScalesList.map((scale) => _buildScaleCard(scale)),
+        ...myAllScalesList
+            .where((scale) =>
+                _drawerDeviceCheckedMap[scale.scaleId] ?? scale.isOnline)
+            .map((scale) => _buildScaleCard(scale)),
       ],
     );
   }

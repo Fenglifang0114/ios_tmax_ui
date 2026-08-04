@@ -296,7 +296,9 @@ class _MobileTakeOutPageState extends State<MobileTakeOutPage> {
 
   void _startContinuousWeightStream() {
     for (var scale in myAllScalesList) {
-      if (scale.isOnline) {
+      bool isChecked =
+          _drawerDeviceCheckedMap[scale.scaleId] ?? scale.isOnline;
+      if (scale.isOnline && isChecked) {
         PublicFunctions.getWeight(scale.scaleId);
       }
     }
@@ -823,7 +825,10 @@ class _MobileTakeOutPageState extends State<MobileTakeOutPage> {
                   ),
                 ))
               : Column(
-                  children: myAllScalesList.map((scale) {
+                  children: myAllScalesList
+                      .where((scale) =>
+                          _drawerDeviceCheckedMap[scale.scaleId] ?? scale.isOnline)
+                      .map((scale) {
                     return _buildScaleCard(scale);
                   }).toList(),
                 ),
@@ -845,7 +850,9 @@ class _MobileTakeOutPageState extends State<MobileTakeOutPage> {
       grandTotal = convertedW;
     } else {
       for (var scale in myAllScalesList) {
-        if (scale.isOnline) {
+        bool isChecked =
+            _drawerDeviceCheckedMap[scale.scaleId] ?? scale.isOnline;
+        if (scale.isOnline && isChecked) {
           int id = scale.scaleId;
           TakeOutWeightInfo info = _scaleWeightMap[id] ??
               TakeOutWeightInfo(weight: '0.00', unit: 'kg', stable: false);
