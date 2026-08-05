@@ -1,4 +1,4 @@
-﻿//保密配方 暂存的和正常称重的公用页面  保密的配方不会有修改配方的按钮
+//保密配方 暂存的和正常称重的公用页面  保密的配方不会有修改配方的按钮
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -390,11 +390,34 @@ class FormulaSecretWeighingPageState extends State<FormulaSecretWeighingPage>
     fmaUnit = widget.fmaUnit; //获取传入的配方单位
 
     _tabController = TabController(length: 2, vsync: this);
+    Scale? foundScale;
     for (var scale in myAllScalesList) {
       if (scale.scaleId == widget.selScaleId) {
-        myScale = scale;
+        foundScale = scale;
         break;
       }
+    }
+    if (foundScale != null) {
+      myScale = foundScale;
+    } else {
+      myScale = UnifiedScale(
+        isOnline: false,
+        scaleModel: '',
+        scaleCat: 0,
+        scaleSn: '',
+        scaleId: widget.selScaleId,
+        tMedia: 0,
+        isDefault: false,
+        scaleName: 'Scale ${widget.selScaleId}',
+        sendService: false,
+        mediaConfig: SerialMediaConfig(
+          devPath: '',
+          baudRate: 9600,
+          dataBits: 8,
+          stopBits: 1,
+          parity: 0,
+        ),
+      );
     }
     autoNextStepNotifier.addListener(() {
       if (autoNextStepNotifier.value) {

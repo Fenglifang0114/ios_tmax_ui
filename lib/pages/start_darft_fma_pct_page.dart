@@ -22,6 +22,7 @@ import 'package:t_max/eventbus/eventbus.dart';
 import 'package:t_max/functions/methods.dart';
 import 'package:t_max/data/formula_from_db_data.dart';
 import 'package:t_max/pages/edit_darft_fma_page.dart';
+import 'package:t_max/pages/mobile_edit_formula_page.dart';
 import 'package:t_max/pages/fma_report_print.dart';
 import 'package:t_max/widget/common_widget.dart';
 import 'package:t_max/widget/fma_parameter_setting.dart';
@@ -588,6 +589,7 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
     );
     PublicFunctions.getRawOutputByFmaId(jsonEncode(getRawOutputByFmaId));
 
+    _switchScaleByRawId('-');
     initScaleMap();
     initTotalWgtUnit(); //初始化百分比的总重量和单位
     initWgtList();
@@ -1341,7 +1343,11 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) =>
-                                                  EditDarftFmaPage(
+                                                   Adaptive.isMobile(context)
+                                                       ? MobileEditFormulaPage(
+                                                           formulaInfo: myFmaInfo,
+                                                         )
+                                                       : EditDarftFmaPage(
                                                     editFormulaInfo: myFmaInfo,
                                                   ))).then((value) {
                                         setState(() {});
@@ -2081,11 +2087,34 @@ class DarftFmaPctWgtPageState extends State<DarftFmaPctWgtPage>
       targetScaleId = rawScaleMap[rawId] ?? widget.selScaleId;
     }
 
+    Scale? foundScale;
     for (var scale in myAllScalesList) {
       if (scale.scaleId == targetScaleId) {
-        myScale = scale;
+        foundScale = scale;
         break;
       }
+    }
+    if (foundScale != null) {
+      myScale = foundScale;
+    } else {
+      myScale = UnifiedScale(
+        isOnline: false,
+        scaleModel: '',
+        scaleCat: 0,
+        scaleSn: '',
+        scaleId: targetScaleId,
+        tMedia: 0,
+        isDefault: false,
+        scaleName: 'Scale $targetScaleId',
+        sendService: false,
+        mediaConfig: SerialMediaConfig(
+          devPath: '',
+          baudRate: 9600,
+          dataBits: 8,
+          stopBits: 1,
+          parity: 0,
+        ),
+      );
     }
   }
 

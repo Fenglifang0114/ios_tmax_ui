@@ -20,7 +20,12 @@ import 'package:t_max/eventbus/eventbus.dart';
 import 'package:t_max/functions/methods.dart';
 import 'package:t_max/data/formula_from_db_data.dart';
 import 'package:t_max/pages/edit_darft_fma_page.dart';
+import 'package:t_max/pages/mobile_edit_formula_page.dart';
 import 'package:t_max/pages/fma_report_print.dart';
+import 'package:t_max/pages/mobile_ingredient_record_detail_page.dart';
+import 'package:t_max/pages/mobile_check_code_dialog.dart';
+import 'package:t_max/pages/mobile_parameter_settings_page.dart';
+import 'package:t_max/pages/mobile_prompt_dialog.dart';
 import 'package:t_max/widget/common_widget.dart';
 import 'package:t_max/widget/fma_parameter_setting.dart';
 import 'package:t_max/widget/fma_process_bar.dart';
@@ -79,6 +84,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
   bool checkCodeDialogShowing = false;
   bool isPrint = false; //是否打印配方
   bool openIoPortFlag = false; //是否打开输出端口 开启后才能自动送出原料开启仓门
+  bool _isFormulaInfoExpanded = true; //配方详细信息展开/收起状态
 
   CurrentPortSetting currentPortSetting = CurrentPortSetting(
       isEnable: false,
@@ -225,11 +231,34 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
       targetScaleId = rawScaleMap[rawId] ?? widget.selScaleId;
     }
 
+    Scale? foundScale;
     for (var scale in myAllScalesList) {
       if (scale.scaleId == targetScaleId) {
-        myScale = scale;
+        foundScale = scale;
         break;
       }
+    }
+    if (foundScale != null) {
+      myScale = foundScale;
+    } else {
+      myScale = UnifiedScale(
+        isOnline: false,
+        scaleModel: '',
+        scaleCat: 0,
+        scaleSn: '',
+        scaleId: targetScaleId,
+        tMedia: 0,
+        isDefault: false,
+        scaleName: 'Scale $targetScaleId',
+        sendService: false,
+        mediaConfig: SerialMediaConfig(
+          devPath: '',
+          baudRate: 9600,
+          dataBits: 8,
+          stopBits: 1,
+          parity: 0,
+        ),
+      );
     }
   }
 
@@ -926,6 +955,23 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
 
   // 显示新增配方类型对话框
   void showDeleteDialog() {
+    if (Adaptive.isMobile(context)) {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return MobilePromptDialog(
+            title: localizedStrings?.fTipTitle ?? "Prompt",
+            msg: localizedStrings?.fClearWeighingDataMsg ?? "Current weighing data will be cleared.\nConfirm Continue?",
+          );
+        },
+      ).then((value) {
+        if (value == true) {
+          restartWgt();
+        }
+      });
+      return;
+    }
     showDialog(
       context: context,
       barrierDismissible: false, // 点击对话框外部不关闭对话框
@@ -1155,6 +1201,31 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
 
   void performAbandonBtn() {
     if (!isFinish) {
+      if (Adaptive.isMobile(context)) {
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (BuildContext context) {
+            return MobilePromptDialog(
+              title: localizedStrings?.fTipTitle ?? "Prompt",
+              msg: localizedStrings?.fClearWeighingDataMsg ?? "Current weighing data will be cleared.\nConfirm Continue?",
+            );
+          },
+        ).then((value) {
+          if (value == true) {
+            setState(() {
+              stopAllWgt();
+              closeIoPort();
+              Navigator.pop(context);
+            });
+          } else {
+            if (checkCodeflag && !checkCodeOk) {
+              showCheckCodeDialog();
+            }
+          }
+        });
+        return;
+      }
       showDialog(
         context: context,
         barrierDismissible: false, // 点击对话框外部不关闭对话框
@@ -1297,8 +1368,802 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
     );
   }
 
+  // ---------------------------------------------------------------------------
+  // MOBILE DESIGN SCAFFOLD & COMPONENTS (Weight Mode & Percentage Mode)
+  // ---------------------------------------------------------------------------
+  Widget _buildMobileScaffold(BuildContext context) {
+    String modeTitle = (myFmaInfo.header?.formulaMode ?? '') == 'pct'
+        ? (localizedStrings?.fPctMode ?? 'Percentage mode')
+        : (localizedStrings?.fWeightMode ?? 'Weight mode');
+
+    return Scaffold(
+      backgroundColor: const Color(0xFFF8FAFC),
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0.5,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.black87),
+          onPressed: () {
+            performAbandonBtn();
+          },
+        ),
+        title: Text(
+          modeTitle,
+          style: const TextStyle(
+            color: Colors.black87,
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        centerTitle: true,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.edit_note, color: Colors.black87),
+            onPressed: () {
+              if (isEnableNext) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => MobileEditFormulaPage(
+                      formulaInfo: myFmaInfo,
+                    ),
+                  ),
+                ).then((_) => setState(() {}));
+              }
+            },
+          ),
+        ],
+      ),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // 1. Device Name Bar
+              _buildMobileDeviceNameBar(),
+              const SizedBox(height: 12),
+
+              // 2. Weight Display & Active Ingredient Area
+              _buildMobileWeightDisplayCard(),
+              const SizedBox(height: 16),
+
+              // 3. Collapsible Formula Info Panel
+              _buildMobileCollapsibleFormulaInfoCard(),
+              const SizedBox(height: 16),
+
+              // 4. Ingredient Records List Table
+              _buildMobileRecordListSection(),
+              const SizedBox(height: 16),
+            ],
+          ),
+        ),
+      ),
+      bottomNavigationBar: _buildMobileStickyBottomBar(),
+    );
+  }
+
+  Widget _buildMobileDeviceNameBar() {
+    return Row(
+      children: [
+        Expanded(
+          child: Text(
+            '${(localizedStrings?.gDeviceName ?? "Device name")} : ${myScale.scaleName.isNotEmpty ? myScale.scaleName : "Scale1"}',
+            style: const TextStyle(
+              fontSize: 15,
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
+            ),
+          ),
+        ),
+        IconButton(
+          icon: const Icon(Icons.delete_outline, color: Colors.black54, size: 20),
+          onPressed: () {
+            showDeleteDialog();
+          },
+          padding: EdgeInsets.zero,
+          constraints: const BoxConstraints(),
+        ),
+        const SizedBox(width: 16),
+        IconButton(
+          icon: const Icon(Icons.settings_outlined, color: Colors.black54, size: 20),
+          onPressed: () {},
+          padding: EdgeInsets.zero,
+          constraints: const BoxConstraints(),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildMobileWeightDisplayCard() {
+    bool isPctMode = (myFmaInfo.header?.formulaMode ?? '') == 'pct';
+
+    String targetStr = selectedProcessWgt.no == 0
+        ? '-'
+        : (isPctMode
+            ? '${selectedProcessWgt.targetPct}'
+            : '${selectedProcessWgt.targetWgt}');
+    String targetUnit = isPctMode ? '%' : fmaUnit;
+
+    String errorStr = selectedProcessWgt.no == 0
+        ? '-'
+        : '±${selectedProcessWgt.errorWgt}';
+    String errorUnit = isPctMode ? '%' : fmaUnit;
+
+    String activeRawName = selectedProcessWgt.no == 0
+        ? (localizedStrings?.fFmaContainer ?? "Container")
+        : (selectedProcessWgt.rawName ?? "");
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade200),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Target Weight & Allowable Error Header Row
+          Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      localizedStrings?.fTargetWeightLabel ?? 'Target Weight',
+                      style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                    ),
+                    const SizedBox(height: 2),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.baseline,
+                      textBaseline: TextBaseline.alphabetic,
+                      children: [
+                        Text(
+                          targetStr,
+                          style: const TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black87,
+                          ),
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          targetUnit,
+                          style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                height: 32,
+                width: 1,
+                color: Colors.grey.shade200,
+              ),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        localizedStrings?.fAllowableError ?? 'Allowable Error',
+                        style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                      ),
+                      const SizedBox(height: 2),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.baseline,
+                        textBaseline: TextBaseline.alphabetic,
+                        children: [
+                          Text(
+                            errorStr,
+                            style: const TextStyle(
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black87,
+                            ),
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            errorUnit,
+                            style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+
+          // Live Measured Weight & Active Raw Material Tag (Pepper box)
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.baseline,
+                textBaseline: TextBaseline.alphabetic,
+                children: [
+                  ValueListenableBuilder<String>(
+                    valueListenable: currentWgtStrNotifier,
+                    builder: (context, val, child) {
+                      return Text(
+                        val,
+                        style: const TextStyle(
+                          fontSize: 36,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF00B074), // Emerald green highlight
+                        ),
+                      );
+                    },
+                  ),
+                  const SizedBox(width: 6),
+                  Text(
+                    fmaUnit,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      color: Color(0xFF00B074),
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+              // Active Raw Material Tag Box (pepper box as in design mockup)
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(6),
+                  border: Border.all(color: const Color(0xFF004884), width: 1.5),
+                ),
+                child: Text(
+                  activeRawName,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF004884),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+
+          // Ingredient Weight Progress Bar
+          Text(
+            'Ingredient Weight',
+            style: TextStyle(fontSize: 13, color: Colors.grey.shade700, fontWeight: FontWeight.w500),
+          ),
+          const SizedBox(height: 6),
+          LayoutBuilder(
+            builder: (context, constraints) {
+              double minVal = double.tryParse((selectedProcessWgt.minWgt! - selectedProcessWgt.currentWgt!).toStringAsFixed(3)) ?? 0.0;
+              double maxVal = double.tryParse((selectedProcessWgt.maxWgt! - selectedProcessWgt.currentWgt!).toStringAsFixed(3)) ?? 0.0;
+              double targetVal = double.tryParse((selectedProcessWgt.targetWgt! - selectedProcessWgt.currentWgt!).toStringAsFixed(3)) ?? 0.0;
+
+              return SizedBox(
+                height: 20,
+                width: constraints.maxWidth,
+                child: CustomProgressBar(
+                  value: currentRawWgt < 0 ? 0 : currentRawWgt,
+                  minValue: minVal < 0 ? 0.0 : minVal,
+                  maxValue: maxVal < 0 ? 0.0 : maxVal,
+                  targetValue: targetVal < 0 ? 0.0 : targetVal,
+                  maxWidth: constraints.maxWidth,
+                  maxHeight: 20,
+                ),
+              );
+            },
+          ),
+          const SizedBox(height: 12),
+
+          // Formula Progress Bar
+          Text(
+            'Formula Progress',
+            style: TextStyle(fontSize: 13, color: Colors.grey.shade700, fontWeight: FontWeight.w500),
+          ),
+          const SizedBox(height: 6),
+          LayoutBuilder(
+            builder: (context, constraints) {
+              return SizedBox(
+                height: 20,
+                width: constraints.maxWidth,
+                child: CustomFmaProgressBar(
+                  currentValue: getOKCount(),
+                  max: processWgtList.isEmpty ? 1 : processWgtList.length,
+                  maxWidth: constraints.maxWidth,
+                  maxHeight: 20,
+                ),
+              );
+            },
+          ),
+          const SizedBox(height: 16),
+
+          // Action Buttons: Zero, Tare, Next Step
+          Row(
+            children: [
+              Expanded(
+                child: OutlinedButton(
+                  onPressed: () => PublicFunctions.performZeroWithScaleId(myScale.scaleId),
+                  style: OutlinedButton.styleFrom(
+                    side: const BorderSide(color: Color(0xFF004884)),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                  ),
+                  child: Text(
+                    localizedStrings?.iBtnZero ?? 'Zero',
+                    style: const TextStyle(color: Color(0xFF004884), fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: OutlinedButton(
+                  onPressed: () => PublicFunctions.performTareWithScaleId(myScale.scaleId),
+                  style: OutlinedButton.styleFrom(
+                    side: const BorderSide(color: Color(0xFF004884)),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                  ),
+                  child: Text(
+                    localizedStrings?.gBtnTare ?? 'Tare',
+                    style: const TextStyle(color: Color(0xFF004884), fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: isEnableNext ? () => handleNexBtn() : null,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF004884),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                  ),
+                  child: Text(
+                    localizedStrings?.fNextStepBtn ?? 'Next Step',
+                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMobileCollapsibleFormulaInfoCard() {
+    String formulaNo = myFmaInfo.header?.formulaId?.isNotEmpty == true
+        ? myFmaInfo.header!.formulaId!
+        : (recRecNumber.isNotEmpty ? recRecNumber : 'F-20260630164733');
+    String formulaName = myFmaInfo.header?.formulaName ?? '';
+    String barcode = myFmaInfo.header?.formulaBarcode ?? '';
+    String totalWgtStr = '${myFmaInfo.header?.totalWeight ?? 0.0} ${myFmaInfo.header?.formulaUnit ?? fmaUnit}';
+    String notesStr = myFmaInfo.header?.remark ?? '';
+
+    return Container(
+      decoration: BoxDecoration(
+        color: const Color(0xFFFAFAFA),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: Colors.grey.shade200),
+      ),
+      child: Column(
+        children: [
+          // Header Row with toggle button
+          InkWell(
+            onTap: () {
+              setState(() {
+                _isFormulaInfoExpanded = !_isFormulaInfoExpanded;
+              });
+            },
+            borderRadius: BorderRadius.circular(10),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              child: Row(
+                children: [
+                  Text(
+                    'No.:$formulaNo',
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black87,
+                    ),
+                  ),
+                  const Spacer(),
+                  Text(
+                    '001',
+                    style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
+                  ),
+                  const SizedBox(width: 8),
+                  Icon(
+                    _isFormulaInfoExpanded
+                        ? Icons.keyboard_arrow_up
+                        : Icons.keyboard_arrow_down,
+                    color: Colors.black54,
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          // Collapsible Content Section
+          if (_isFormulaInfoExpanded) ...[
+            const Divider(height: 1, thickness: 1),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Name',
+                              style: TextStyle(fontSize: 12, color: Colors.grey.shade500),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              formulaName.isNotEmpty ? formulaName : '-',
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black87,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
+                        ),
+                      ),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Barcode',
+                              style: TextStyle(fontSize: 12, color: Colors.grey.shade500),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              barcode.isNotEmpty ? barcode : '-',
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black87,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
+                        ),
+                      ),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Total Weight',
+                              style: TextStyle(fontSize: 12, color: Colors.grey.shade500),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              totalWgtStr,
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black87,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    'Notes',
+                    style: TextStyle(fontSize: 12, color: Colors.grey.shade500),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    notesStr.isNotEmpty ? notesStr : '-',
+                    style: const TextStyle(fontSize: 13, color: Colors.black87),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMobileRecordListSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        InkWell(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => MobileIngredientRecordDetailPage(
+                  processWgtList: processWgtList,
+                  fmaUnit: fmaUnit,
+                ),
+              ),
+            );
+          },
+          borderRadius: BorderRadius.circular(6),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 4.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: const [
+                Text(
+                  'Record',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
+                ),
+                Icon(Icons.chevron_right, color: Colors.black54),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(height: 10),
+
+        // Record Table Container
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: Colors.grey.shade200),
+          ),
+          child: Column(
+            children: [
+              // Header Row
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                decoration: const BoxDecoration(
+                  color: Color(0xFFF8FAFC),
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(8)),
+                ),
+                child: Row(
+                  children: const [
+                    SizedBox(width: 40, child: Text('Order', style: TextStyle(fontSize: 13, color: Colors.grey, fontWeight: FontWeight.w500))),
+                    Expanded(flex: 2, child: Text('Ingredient Name', style: TextStyle(fontSize: 13, color: Colors.grey, fontWeight: FontWeight.w500))),
+                    Expanded(child: Text('Target Weight', style: TextStyle(fontSize: 13, color: Colors.grey, fontWeight: FontWeight.w500))),
+                    SizedBox(width: 80, child: Text('Pass', textAlign: TextAlign.right, style: TextStyle(fontSize: 13, color: Colors.grey, fontWeight: FontWeight.w500))),
+                  ],
+                ),
+              ),
+              const Divider(height: 1, thickness: 1),
+
+              // Item Rows
+              ListView.separated(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: processWgtList.length,
+                separatorBuilder: (_, __) => const Divider(height: 1, thickness: 0.5),
+                itemBuilder: (context, index) {
+                  var item = processWgtList[index];
+                  bool isSelected = index == clickedRow;
+                  String rawName = item.no == 0
+                      ? (localizedStrings?.fFmaContainer ?? "Container")
+                      : (item.rawName ?? "");
+                  String targetStr = item.no == 0 ? "-" : "${item.targetWgt}";
+
+                  Widget passWidget;
+                  if (item.isOK == "ok") {
+                    passWidget = const Icon(Icons.check, color: Color(0xFF00B074), size: 20);
+                  } else if (item.isOK == "high") {
+                    passWidget = const Icon(Icons.close, color: Colors.red, size: 20);
+                  } else {
+                    passWidget = const Text(
+                      'Incomplete',
+                      textAlign: TextAlign.right,
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                        color: Color(0xFF004884),
+                      ),
+                    );
+                  }
+
+                  return InkWell(
+                    onTap: () {
+                      if (enableSelRaw) {
+                        setState(() {
+                          clickedRow = index;
+                          selectedProcessWgt = processWgtList[index];
+                          _switchScaleByRawId(selectedProcessWgt.rawId!);
+                        });
+                      }
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                      color: isSelected ? const Color(0xFFF0F7FF) : Colors.white,
+                      child: Row(
+                        children: [
+                          SizedBox(
+                            width: 40,
+                            child: Text(
+                              '${item.no}',
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: isSelected ? const Color(0xFF004884) : Colors.black87,
+                                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            flex: 2,
+                            child: Text(
+                              rawName,
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: isSelected ? const Color(0xFF004884) : Colors.black87,
+                                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          Expanded(
+                            child: Text(
+                              targetStr,
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: isSelected ? const Color(0xFF004884) : Colors.black87,
+                                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            width: 80,
+                            child: Align(
+                              alignment: Alignment.centerRight,
+                              child: passWidget,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildMobileStickyBottomBar() {
+    bool allOk = checkAllOK();
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            offset: const Offset(0, -2),
+            blurRadius: 10,
+          ),
+        ],
+      ),
+      child: SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Row 1: Abandon | Restart
+            Row(
+              children: [
+                Expanded(
+                  child: SizedBox(
+                    height: 44,
+                    child: ElevatedButton(
+                      onPressed: !isFinish ? () => performAbandonBtn() : null,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFFFF4D4F),
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+                      ),
+                      child: Text(
+                        localizedStrings?.fAbandonIngredientsBtn ?? 'Abandon',
+                        style: const TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: SizedBox(
+                    height: 44,
+                    child: ElevatedButton(
+                      onPressed: !isFinish ? () => showDeleteDialog() : null,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFFFF4D4F),
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+                      ),
+                      child: Text(
+                        localizedStrings?.btnRestart ?? 'Restart',
+                        style: const TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+
+            // Row 2: Complete / Temporary Save
+            Row(
+              children: [
+                if (allOk) ...[
+                  Expanded(
+                    child: SizedBox(
+                      height: 44,
+                      child: ElevatedButton(
+                        onPressed: !isFinish ? () => performFinishBtn() : null,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF00B074),
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+                        ),
+                        child: Text(
+                          localizedStrings?.fCompleteIngredientsBtn ?? 'Complete',
+                          style: const TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                ],
+                Expanded(
+                  child: SizedBox(
+                    height: 44,
+                    child: ElevatedButton(
+                      onPressed: !isEnableNext ? null : () => performDarfFmaSave(),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF004884),
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+                      ),
+                      child: Text(
+                        localizedStrings?.btnTemporarySave ?? 'Temporary Save',
+                        style: const TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (Adaptive.isMobile(context)) {
+      return _buildMobileScaffold(context);
+    }
     final width = MediaQuery.of(context).size.width;
 
     return Scaffold(
@@ -2933,6 +3798,15 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
         context: context,
         barrierDismissible: false,
         builder: (BuildContext context) {
+          if (Adaptive.isMobile(context)) {
+            return MobileCheckCodeDialog(
+              title: localizedStrings?.ingredientVerification ?? "Ingredient Verification",
+              rawId: selectedProcessWgt.rawId!,
+              rawName: selectedProcessWgt.rawName!,
+              rawCode: selectedProcessWgt.checkCode!,
+              canSave: getCanSaveFlag(),
+            );
+          }
           return ShowCheckCodeDialog(
             title: (localizedStrings?.ingredientVerification ?? "ingredientVerification"),
             rawId: selectedProcessWgt.rawId!,
@@ -2957,6 +3831,8 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
         } else if (value == "save") {
           performDarfFmaSave();
         }
+      } else {
+        checkCodeDialogShowing = false;
       }
     });
   }
@@ -3352,6 +4228,42 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
   }
 
   void showSettigDialog() {
+    if (Adaptive.isMobile(context)) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => MobileParameterSettingsPage(
+            autoNextStep: autoNextStep,
+            autoTare: autoTare,
+            stableTime: stableTime,
+            checkCode: checkCodeflag,
+          ),
+        ),
+      ).then((value) {
+        if (value != null && value != false && value is FmaSettingInfo) {
+          setState(() {
+            autoNextStep = value.autoNextStep;
+            autoTare = value.autoTare;
+            stableTime = value.stableTime;
+            checkCodeflag = value.checkCode;
+            stableTimeCtl.text = stableTime.toString();
+            autoNextStepNotifier.value = autoNextStep;
+          });
+
+          setAutoNext();
+          if (checkCodeflag && selectedProcessWgt.no != 0) {
+            checkCodeOk = false;
+            showCheckCodeDialog();
+          }
+        } else {
+          if (checkCodeflag && selectedProcessWgt.no != 0) {
+            checkCodeOk = false;
+            showCheckCodeDialog();
+          }
+        }
+      });
+      return;
+    }
     showDialog(
         context: context,
         builder: (context) {
@@ -3362,7 +4274,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
             checkCode: checkCodeflag,
           );
         }).then((value) {
-      if (value != null && value != false) {
+      if (value != null && value != false && value is FmaSettingInfo) {
         setState(() {
           autoNextStep = value.autoNextStep;
           autoTare = value.autoTare;

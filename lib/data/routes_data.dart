@@ -20,6 +20,7 @@ import 'package:t_max/pages/serial_protocol_page.dart';
 import 'package:t_max/pages/down_recipt_fmt_page.dart';
 import 'package:t_max/pages/flow_rate_page.dart';
 import 'package:t_max/pages/formula_scale_page.dart';
+import 'package:t_max/pages/mobile_formula_scale_page.dart';
 import 'package:t_max/pages/lable_down_prn_fmt_page.dart';
 import 'package:t_max/pages/multi_scale_management_page.dart';
 import 'package:t_max/pages/plu_edit_page.dart';
@@ -684,6 +685,12 @@ Widget buildPageContent(dynamic Function(String) navigateContent,
       lastRouteName: lastRouteName,
     );
   } else if (pageId == MenuId.formulationScalePage) {
+    if (Platform.isAndroid || Platform.isIOS) {
+      return MobileFormulaScalePage(
+        onNavigate: navigateContent,
+        lastRouteName: lastRouteName,
+      );
+    }
     return FormulationScalePage(
       onNavigate: navigateContent,
       lastRouteName: lastRouteName,

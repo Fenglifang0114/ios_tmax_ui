@@ -16,3 +16,4 @@ export 'package:t_max/pages/formula_scale_page.dart';
 export 'package:t_max/pages/flow_rate_page.dart';
 export 'package:t_max/pages/mobile_setting_page.dart';
 export 'package:t_max/pages/mobile_take_in_page.dart';
+export 'package:t_max/pages/mobile_formula_scale_page.dart';
