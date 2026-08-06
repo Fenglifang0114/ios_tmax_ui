@@ -456,10 +456,13 @@ List<RouteData> getAllAppsMenus() {
     ),
   ];
 
-  // 允许所有平台显示零售报表
-  // if (Platform.isAndroid || Platform.isIOS) {
-  //   appsMenus.removeWhere((menu) => menu.id == MenuId.retailReportPage);
-  // }
+  if (Platform.isAndroid || Platform.isIOS) {
+    appsMenus.removeWhere((menu) =>
+        menu.id == MenuId.formulationScalePage ||
+        menu.id == MenuId.flowRatePage ||
+        menu.id == MenuId.appLabelDesignPage ||
+        menu.id == MenuId.appRcpDesignPage);
+  }
 
   return appsMenus;
 }
