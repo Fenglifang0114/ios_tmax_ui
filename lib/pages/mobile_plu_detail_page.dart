@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:t_max/data/plu_data_source.dart';
 import 'package:t_max/data/language.dart';
 import 'package:t_max/dialog/custom_dialog_tip.dart';
 import 'package:t_max/data/g_data.dart';
+import 'package:t_max/data/plu_data.dart';
 
 class MobilePluDetailPage extends StatefulWidget {
   final int type; // 0 for Add, 1 for Edit
@@ -39,22 +41,57 @@ class _MobilePluDetailPageState extends State<MobilePluDetailPage> {
   int _selectedUnit = 0;
   int _selectedTax = 0;
 
-  final Map<int, String> pluWgtUnit = {
-    0: 'kg',
-    1: 'g',
-    2: 'lb',
-    3: 'oz',
-    4: 'pcs',
-  };
+  List<TextInputFormatter> get _pluFormatters => [
+        FilteringTextInputFormatter.digitsOnly,
+        LengthLimitingTextInputFormatter(5),
+        TextInputFormatter.withFunction((oldValue, newValue) {
+          if (newValue.text.isEmpty) return newValue;
+          final regExp = RegExp(r'^0$|^[1-9]\d{0,4}$');
+          if (regExp.hasMatch(newValue.text)) {
+            return newValue;
+          }
+          return oldValue;
+        }),
+      ];
 
-  final Map<int, String> pluTax = {
-    0: 'tax1',
-    1: 'tax2',
-    2: 'tax3',
-    3: 'tax4',
-    4: 'tax5',
-    5: 'tax6',
-  };
+  List<TextInputFormatter> get _codeFormatters => [
+        FilteringTextInputFormatter.digitsOnly,
+        LengthLimitingTextInputFormatter(10),
+        TextInputFormatter.withFunction((oldValue, newValue) {
+          if (newValue.text.isEmpty) return newValue;
+          final regExp = RegExp(r'^0$|^[1-9]\d{0,9}$');
+          if (regExp.hasMatch(newValue.text)) {
+            return newValue;
+          }
+          return oldValue;
+        }),
+      ];
+
+  List<TextInputFormatter> get _decimalFormatters => [
+        FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
+        LengthLimitingTextInputFormatter(11),
+        TextInputFormatter.withFunction((oldValue, newValue) {
+          if (newValue.text.isEmpty) return newValue;
+          if (newValue.text.split('.').length > 2) {
+            return oldValue;
+          }
+          final regExp = RegExp(
+            r'^0$|^0\.$|^[1-9]\d{0,6}$|^[1-9]\d{0,6}\.$|'
+            r'^0\.\d{1,3}$|^[1-9]\d{0,6}\.\d{1,3}$',
+          );
+          if (!regExp.hasMatch(newValue.text)) {
+            return oldValue;
+          }
+          final String valueToCheck = newValue.text.endsWith('.')
+              ? newValue.text.substring(0, newValue.text.length - 1)
+              : newValue.text;
+          final number = double.tryParse(valueToCheck);
+          if (number != null && number > 9999999) {
+            return oldValue;
+          }
+          return newValue;
+        }),
+      ];
 
   @override
   void initState() {
@@ -71,7 +108,13 @@ class _MobilePluDetailPageState extends State<MobilePluDetailPage> {
     itemCodeCtl = TextEditingController(text: widget.type == 0 ? '' : widget.pluInfo.itemCode.toString());
 
     _selectedUnit = widget.pluInfo.generalUnit ?? 0;
+    if (!pluUnit.containsKey(_selectedUnit)) {
+      _selectedUnit = 0;
+    }
     _selectedTax = widget.pluInfo.taxType ?? 0;
+    if (!pluTax.containsKey(_selectedTax)) {
+      _selectedTax = 0;
+    }
   }
 
   @override
@@ -138,7 +181,15 @@ class _MobilePluDetailPageState extends State<MobilePluDetailPage> {
     Navigator.pop(context);
   }
 
-  Widget _buildTextFieldRow(String title, TextEditingController ctl, String hint, {bool isRequired = false, bool isNumber = false, bool isEnabled = true}) {
+  Widget _buildTextFieldRow(
+    String title,
+    TextEditingController ctl,
+    String hint, {
+    bool isRequired = false,
+    bool isEnabled = true,
+    TextInputType keyboardType = TextInputType.text,
+    List<TextInputFormatter>? inputFormatters,
+  }) {
     return Container(
       decoration: const BoxDecoration(
         border: Border(bottom: BorderSide(color: Color(0xFFEEEEEE))),
@@ -159,7 +210,8 @@ class _MobilePluDetailPageState extends State<MobilePluDetailPage> {
             child: TextField(
               controller: ctl,
               enabled: isEnabled,
-              keyboardType: isNumber ? TextInputType.number : TextInputType.text,
+              keyboardType: keyboardType,
+              inputFormatters: inputFormatters,
               textAlign: TextAlign.right,
               style: const TextStyle(fontSize: 16, color: Colors.black87),
               decoration: InputDecoration(
@@ -232,29 +284,100 @@ class _MobilePluDetailPageState extends State<MobilePluDetailPage> {
             child: ListView(
               children: [
                 if (widget.selField.contains('plu'))
-                  _buildTextFieldRow(localizedStrings?.gPluPlu ?? "PLU", pluCtl, "0-99999", isNumber: true, isRequired: true, isEnabled: widget.type == 0),
+                  _buildTextFieldRow(
+                    localizedStrings?.gPluPlu ?? "PLU",
+                    pluCtl,
+                    "0-99999",
+                    keyboardType: TextInputType.number,
+                    inputFormatters: _pluFormatters,
+                    isRequired: true,
+                    isEnabled: widget.type == 0,
+                  ),
                 if (widget.selField.contains('productName'))
-                  _buildTextFieldRow(localizedStrings?.gPluPluName ?? "Product Name", pluNameCtl, "0-30 characters", isRequired: true),
+                  _buildTextFieldRow(
+                    localizedStrings?.gPluPluName ?? "Product Name",
+                    pluNameCtl,
+                    "0-30 characters",
+                    inputFormatters: [LengthLimitingTextInputFormatter(30)],
+                    isRequired: true,
+                  ),
                 if (widget.selField.contains('price'))
-                  _buildTextFieldRow(localizedStrings?.gPluPrice ?? "Price", priceCtl, "0-9999999", isNumber: true),
+                  _buildTextFieldRow(
+                    localizedStrings?.gPluPrice ?? "Price",
+                    priceCtl,
+                    "0-9999999",
+                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                    inputFormatters: _decimalFormatters,
+                  ),
                 if (widget.selField.contains('generalUnit'))
-                  _buildDropdownRow(localizedStrings?.gPluWgtUnit ?? "Unit", _selectedUnit, pluWgtUnit, (v) => setState(() => _selectedUnit = v)),
+                  _buildDropdownRow(
+                    localizedStrings?.gPluWgtUnit ?? "Unit",
+                    _selectedUnit,
+                    pluUnit,
+                    (v) => setState(() => _selectedUnit = v),
+                  ),
                 if (widget.selField.contains('taxType'))
-                  _buildDropdownRow(localizedStrings?.gPluTaxType ?? "Tax Type", _selectedTax, pluTax, (v) => setState(() => _selectedTax = v)),
+                  _buildDropdownRow(
+                    localizedStrings?.gPluTaxType ?? "Tax Type",
+                    _selectedTax,
+                    pluTax,
+                    (v) => setState(() => _selectedTax = v),
+                  ),
                 if (widget.selField.contains('unitWeight'))
-                  _buildTextFieldRow(localizedStrings?.gPluUnitWgt ?? "Unit Weight(g)", unitWgtCtl, "", isNumber: true),
+                  _buildTextFieldRow(
+                    localizedStrings?.gPluUnitWgt ?? "Unit Weight(g)",
+                    unitWgtCtl,
+                    "0-9999999",
+                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                    inputFormatters: _decimalFormatters,
+                  ),
                 if (widget.selField.contains('pretare'))
-                  _buildTextFieldRow(localizedStrings?.gPluPretare ?? "Pretare(kg)", pretareCtl, "", isNumber: true),
+                  _buildTextFieldRow(
+                    localizedStrings?.gPluPretare ?? "Pretare(kg)",
+                    pretareCtl,
+                    "0-9999999",
+                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                    inputFormatters: _decimalFormatters,
+                  ),
                 if (widget.selField.contains('limitHigh'))
-                  _buildTextFieldRow(localizedStrings?.gPluLimitHigh ?? "Limit High", limitHighCtl, "", isNumber: true),
+                  _buildTextFieldRow(
+                    localizedStrings?.gPluLimitHigh ?? "Limit High",
+                    limitHighCtl,
+                    "0-9999999",
+                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                    inputFormatters: _decimalFormatters,
+                  ),
                 if (widget.selField.contains('limitLow'))
-                  _buildTextFieldRow(localizedStrings?.gPluLimitLow ?? "Limit Low", limitLowCtl, "", isNumber: true),
+                  _buildTextFieldRow(
+                    localizedStrings?.gPluLimitLow ?? "Limit Low",
+                    limitLowCtl,
+                    "0-9999999",
+                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                    inputFormatters: _decimalFormatters,
+                  ),
                 if (widget.selField.contains('category'))
-                  _buildTextFieldRow(localizedStrings?.gPluCategory ?? "Category", categoryCtl, ""),
+                  _buildTextFieldRow(
+                    localizedStrings?.gPluCategory ?? "Category",
+                    categoryCtl,
+                    "0-30 characters",
+                    inputFormatters: [LengthLimitingTextInputFormatter(30)],
+                  ),
                 if (widget.selField.contains('productCode'))
-                  _buildTextFieldRow(localizedStrings?.gPluPluCode ?? "Product Code", pluCodeCtl, "", isNumber: true),
+                  _buildTextFieldRow(
+                    localizedStrings?.gPluPluCode ?? "Product Code",
+                    pluCodeCtl,
+                    "0-9999999999",
+                    keyboardType: TextInputType.number,
+                    inputFormatters: _codeFormatters,
+                  ),
                 if (widget.selField.contains('itemCode'))
-                  _buildTextFieldRow(localizedStrings?.gPluItemCode ?? "Item Code", itemCodeCtl, "", isNumber: true),
+                  _buildTextFieldRow(
+                    localizedStrings?.gPluItemCode ?? "Item Code",
+                    itemCodeCtl,
+                    "0-9999999999",
+                    keyboardType: TextInputType.number,
+                    inputFormatters: _codeFormatters,
+                  ),
               ],
             ),
           ),

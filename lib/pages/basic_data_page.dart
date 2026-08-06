@@ -12,6 +12,7 @@ import '../data/manager_scale_channel.dart';
 import '../data/language.dart';
 import '../data/timer_manager.dart';
 import 'package:t_max/functions/adaptive.dart';
+import 'package:t_max/dialog/mobile_page_help_dialog.dart';
 
 class BasicDataPage extends StatefulWidget {
   const BasicDataPage({super.key});
@@ -362,7 +363,15 @@ class BasicDataPageState extends State<BasicDataPage> {
           ),
           IconButton(
             icon: const Icon(Icons.help_outline, color: Colors.black87, size: 24),
-            onPressed: () {},
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (context) => MobilePageHelpDialog(
+                  title: localizedStrings?.menuBasicDataCollection ?? "Basic Data Collection",
+                  helpInfo: localizedStrings?.gTipBasicDataPageHelp ?? "",
+                ),
+              );
+            },
           ),
           const SizedBox(width: 8),
         ],
@@ -459,9 +468,9 @@ class BasicDataPageState extends State<BasicDataPage> {
 
   Widget _buildMobileDataRow(String title, String value, bool isEven) {
     return Container(
-      color: isEven ? Colors.white : const Color(0xFFFAFAFA),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       decoration: BoxDecoration(
+        color: isEven ? Colors.white : const Color(0xFFFAFAFA),
         border: Border(
           top: BorderSide(color: Colors.grey.withAlpha(25)),
         ),

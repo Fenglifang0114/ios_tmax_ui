@@ -24,6 +24,7 @@ import 'package:t_max/data/plu_field_status_data.dart';
 import 'package:t_max/data/scalecmd_data.dart';
 import 'package:t_max/dialog/add_plu_info_dialog.dart';
 import 'package:t_max/dialog/custom_dialog_tip.dart';
+import 'package:t_max/dialog/mobile_page_help_dialog.dart';
 import 'package:t_max/dialog/show_options_dialog.dart';
 import 'package:t_max/eventbus/eventbus.dart';
 import 'package:t_max/functions/methods.dart';
@@ -2444,7 +2445,15 @@ class _PluEidtPageState extends State<PluEidtPage> {
         actions: [
           IconButton(
             icon: const Icon(Icons.help_outline, color: Colors.black87),
-            onPressed: () {},
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (context) => MobilePageHelpDialog(
+                  title: localizedStrings?.menuPluManagement ?? "PLU Management",
+                  helpInfo: localizedStrings?.gTipPlueditPageHelp ?? "",
+                ),
+              );
+            },
           ),
           IconButton(
             icon: const Icon(Icons.add_circle_outline, color: Colors.black87),
@@ -2629,13 +2638,20 @@ class _PluEidtPageState extends State<PluEidtPage> {
                 ],
               ),
             ),
-            const SizedBox(width: 16),
-            Switch(
-              value: dataModels.where((m) => m.isSelected).every((m) => m.pluData.enabled == true),
-              onChanged: (val) {
-                _updateEnabledItems(val);
-              },
-              activeColor: const Color(0xFF26A69A),
+            const SizedBox(width: 10),
+            SizedBox(
+              width: 36,
+              height: 24,
+              child: Transform.scale(
+                scale: 0.55,
+                child: Switch(
+                  value: dataModels.where((m) => m.isSelected).every((m) => m.pluData.enabled == true),
+                  onChanged: (val) {
+                    _updateEnabledItems(val);
+                  },
+                  activeColor: const Color(0xFF26A69A),
+                ),
+              ),
             ),
           ] else ...[
             Expanded(
@@ -2821,12 +2837,19 @@ class _PluEidtPageState extends State<PluEidtPage> {
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
-                Switch(
-                  value: model.pluData.enabled ?? true,
-                  onChanged: (val) {
-                    _handleEnabled(model);
-                  },
-                  activeColor: const Color(0xFF26A69A),
+                SizedBox(
+                  width: 36,
+                  height: 24,
+                  child: Transform.scale(
+                    scale: 0.55,
+                    child: Switch(
+                      value: model.pluData.enabled ?? true,
+                      onChanged: (val) {
+                        _handleEnabled(model);
+                      },
+                      activeColor: const Color(0xFF26A69A),
+                    ),
+                  ),
                 ),
                 const SizedBox(width: 4),
                 InkWell(
