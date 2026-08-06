@@ -7,6 +7,7 @@ import 'package:t_max/data/scale_info_from_db.dart';
 import 'package:t_max/dialog/custom_dialog_tip.dart';
 import 'package:t_max/functions/methods.dart';
 import 'package:t_max/pages/mobile_edit_ingredient_page.dart';
+import 'package:t_max/pages/mobile_formula_detail_page.dart';
 
 import 'package:t_max/eventbus/eventbus.dart';
 
@@ -138,20 +139,32 @@ class _MobileIngredientDetailPageState extends State<MobileIngredientDetailPage>
     return cat.isNotEmpty ? cat : '-';
   }
 
+  String _formatDateTime(DateTime dt) {
+    String y = dt.year.toString();
+    String m = dt.month.toString().padLeft(2, '0');
+    String d = dt.day.toString().padLeft(2, '0');
+    String hh = dt.hour.toString().padLeft(2, '0');
+    String mm = dt.minute.toString().padLeft(2, '0');
+    String ss = dt.second.toString().padLeft(2, '0');
+    return '$y-$m-$d $hh:$mm:$ss';
+  }
+
   @override
   Widget build(BuildContext context) {
     List<FormulaInfoDb> involvedFormulas = _getInvolvedFormulas();
 
-    String idStr = _currentRaw.materialId ?? '01';
-    String nameStr = _currentRaw.materialName ?? '02';
+    String idStr = (_currentRaw.materialId != null && _currentRaw.materialId!.isNotEmpty) ? _currentRaw.materialId! : '-';
+    String nameStr = (_currentRaw.materialName != null && _currentRaw.materialName!.isNotEmpty) ? _currentRaw.materialName! : '-';
     String checkCodeStr = (_currentRaw.checkCode != null && _currentRaw.checkCode!.isNotEmpty)
         ? _currentRaw.checkCode!
-        : '02';
+        : '-';
     String deviceStr = _getDeviceName();
     String categoryStr = _getCategoryName();
+    String createTimeStr = _currentRaw.createdAt != null ? _formatDateTime(_currentRaw.createdAt!) : '-';
+    String updateTimeStr = _currentRaw.updatedAt != null ? _formatDateTime(_currentRaw.updatedAt!) : '-';
     String notesStr = (_currentRaw.ingredient != null && _currentRaw.ingredient!.isNotEmpty)
         ? _currentRaw.ingredient!
-        : (_currentRaw.remark ?? 'Environmentally friendly, pure natural, and pollution-free rice');
+        : ((_currentRaw.remark != null && _currentRaw.remark!.isNotEmpty) ? _currentRaw.remark! : '-');
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -194,8 +207,8 @@ class _MobileIngredientDetailPageState extends State<MobileIngredientDetailPage>
                     _buildDetailRow('Verification code', checkCodeStr),
                     _buildDetailRow('Device name', deviceStr),
                     _buildDetailRow('Category', categoryStr),
-                    _buildDetailRow('Create Time', '2026-06-26 10:22:48'),
-                    _buildDetailRow('Update Time', '2026-06-26 10:22:48'),
+                    _buildDetailRow('Create Time', createTimeStr),
+                    _buildDetailRow('Update Time', updateTimeStr),
 
                     const SizedBox(height: 16),
 
@@ -232,21 +245,18 @@ class _MobileIngredientDetailPageState extends State<MobileIngredientDetailPage>
                     const SizedBox(height: 10),
 
                     involvedFormulas.isEmpty
-                        ? Row(
-                            children: [
-                              _buildFormulaBadge('01'),
-                              const SizedBox(width: 12),
-                              _buildFormulaBadge('02'),
-                              const SizedBox(width: 12),
-                              _buildFormulaBadge('03'),
-                            ],
+                        ? Text(
+                            '-',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey.shade500,
+                            ),
                           )
                         : Wrap(
                             spacing: 12,
                             runSpacing: 10,
                             children: involvedFormulas.map((fma) {
-                              String fId = fma.header?.formulaId ?? '01';
-                              return _buildFormulaBadge(fId);
+                              return _buildFormulaBadge(fma);
                             }).toList(),
                           ),
                   ],
@@ -318,21 +328,37 @@ class _MobileIngredientDetailPageState extends State<MobileIngredientDetailPage>
     );
   }
 
-  Widget _buildFormulaBadge(String formulaId) {
-    return Container(
-      width: 90,
-      height: 42,
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-        color: const Color(0xFFF3F4F6),
-        borderRadius: BorderRadius.circular(4),
-      ),
-      child: Text(
-        formulaId,
-        style: const TextStyle(
-          fontSize: 14,
-          fontWeight: FontWeight.w500,
-          color: Colors.black87,
+  Widget _buildFormulaBadge(FormulaInfoDb fma) {
+    String? name = fma.header?.formulaName;
+    String? fId = fma.header?.formulaId;
+    String formulaName = (name != null && name.isNotEmpty)
+        ? name
+        : ((fId != null && fId.isNotEmpty) ? fId : '-');
+
+    return InkWell(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => MobileFormulaDetailPage(formula: fma),
+          ),
+        );
+      },
+      borderRadius: BorderRadius.circular(4),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: const Color(0xFFF3F4F6),
+          borderRadius: BorderRadius.circular(4),
+        ),
+        child: Text(
+          formulaName,
+          style: const TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+            color: Colors.black87,
+          ),
         ),
       ),
     );

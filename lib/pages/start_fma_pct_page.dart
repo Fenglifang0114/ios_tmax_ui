@@ -1457,7 +1457,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
           ),
         ),
         IconButton(
-          icon: const Icon(Icons.delete_outline, color: Colors.black54, size: 20),
+          icon: const Icon(Icons.cleaning_services_outlined, color: Colors.black54, size: 20),
           onPressed: () {
             showDeleteDialog();
           },
@@ -1467,7 +1467,9 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
         const SizedBox(width: 16),
         IconButton(
           icon: const Icon(Icons.settings_outlined, color: Colors.black54, size: 20),
-          onPressed: () {},
+          onPressed: () {
+            showSettigDialog();
+          },
           padding: EdgeInsets.zero,
           constraints: const BoxConstraints(),
         ),
@@ -1740,9 +1742,11 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
   }
 
   Widget _buildMobileCollapsibleFormulaInfoCard() {
-    String formulaNo = myFmaInfo.header?.formulaId?.isNotEmpty == true
-        ? myFmaInfo.header!.formulaId!
-        : (recRecNumber.isNotEmpty ? recRecNumber : 'F-20260630164733');
+    if (recRecNumber.isEmpty) {
+      createRecNumber();
+    }
+    String orderNo = recRecNumber;
+    String formulaId = myFmaInfo.header?.formulaId ?? '';
     String formulaName = myFmaInfo.header?.formulaName ?? '';
     String barcode = myFmaInfo.header?.formulaBarcode ?? '';
     String totalWgtStr = '${myFmaInfo.header?.totalWeight ?? 0.0} ${myFmaInfo.header?.formulaUnit ?? fmaUnit}';
@@ -1769,7 +1773,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
               child: Row(
                 children: [
                   Text(
-                    'No.:$formulaNo',
+                    '${localizedStrings?.fOrderNo ?? "No."}:$orderNo',
                     style: const TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
@@ -1778,7 +1782,7 @@ class FormulaPctWeighingPageState extends State<FormulaPctWeighingPage>
                   ),
                   const Spacer(),
                   Text(
-                    '001',
+                    formulaId,
                     style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
                   ),
                   const SizedBox(width: 8),
