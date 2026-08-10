@@ -2863,7 +2863,14 @@ class _PluEidtPageState extends State<PluEidtPage> {
                           pluList: getPluList(),
                           pluInfo: model.pluData,
                           onSave: (updatedPlu) {
-                            performModifyPlu(PluDataModel(pluData: updatedPlu));
+                            setState(() {
+                              dataModels[index] = PluDataModel(
+                                pluData: updatedPlu,
+                                isSelected: model.isSelected,
+                              );
+                              _onDataChanged();
+                              performModifyPlu(dataModels[index]);
+                            });
                           },
                         ),
                       ),
@@ -2914,21 +2921,6 @@ class _PluEidtPageState extends State<PluEidtPage> {
 
   List<Widget> _buildDynamicExpandedFields(PluDataModel model) {
     List<Widget> items = [];
-    final Map<int, String> pluWgtUnit = {
-      0: 'kg',
-      1: 'g',
-      2: 'lb',
-      3: 'oz',
-      4: 'pcs',
-    };
-    final Map<int, String> pluTax = {
-      0: 'tax1',
-      1: 'tax2',
-      2: 'tax3',
-      3: 'tax4',
-      4: 'tax5',
-      5: 'tax6',
-    };
 
     for (String field in fieldOrder) {
       if (field == 'plu' || field == 'productName' || field == 'enabled') continue;
@@ -2943,11 +2935,11 @@ class _PluEidtPageState extends State<PluEidtPage> {
           break;
         case 'generalUnit':
           title = localizedStrings?.gPluWgtUnit ?? "Unit";
-          value = pluWgtUnit[model.pluData.generalUnit] ?? model.pluData.generalUnit.toString();
+          value = getPluUnit(model.pluData.generalUnit ?? 0) ?? model.pluData.generalUnit.toString();
           break;
         case 'taxType':
           title = localizedStrings?.gPluTaxType ?? "Tax Type";
-          value = pluTax[model.pluData.taxType] ?? model.pluData.taxType.toString();
+          value = getPluTax(model.pluData.taxType ?? 0);
           break;
         case 'unitWeight':
           title = localizedStrings?.gPluUnitWgt ?? "Unit Weight(g)";

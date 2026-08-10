@@ -1,4 +1,4 @@
-﻿class ReceiptItemData {
+class ReceiptItemData {
   String type;
   int xPos;
   int yPos;
@@ -58,34 +58,34 @@
       this.fontBold,
       this.fontReverse);
   ReceiptItemData.fromJson(Map<String, dynamic> json)
-      : type = json['Type'],
-        alignment = json['Alignment'],
-        content = json['Content'],
-        defaultValue = json['DefaultValue'],
-        fontHeightRatio = json['FontHeightRatio'],
-        fontSize = json['FontSize'],
-        fontWidthRatio = json['FontWidthRatio'],
-        height = json['Height'],
-        maxLength = json['MaxLength'],
-        rotation = json['Rotation'],
-        style = json['Style'],
-        tabOrder = json['TabOrder'],
-        varName = json['VarName'],
-        width = json['Width'],
-        xPos = json['XPos'],
-        yPos = json['YPos'],
-        barcodeName = json['barcodeName'],
-        barcodeType = json['barcodeType'],
-        hralignment = json['Hralignment'],
-        varcontent = json['Varcontent'],
-        x2Pos = json['X2Pos'],
-        y2Pos = json['Y2Pos'],
-        lineWidth = json['LineWidth'],
-        qrWidth = json['QrWidth'],
-        qrcodeName = json['qrcodeName'],
-        qrcodeType = json['qrcodeType'],
-        fontBold = json['fontBold'],
-        fontReverse = json['fontReverse'];
+      : type = json['Type'] ?? 'TEXT',
+        alignment = json['Alignment'] ?? 1,
+        content = json['Content'] ?? '',
+        defaultValue = json['DefaultValue'] ?? '',
+        fontHeightRatio = json['FontHeightRatio'] ?? 1,
+        fontSize = json['FontSize'] ?? 24,
+        fontWidthRatio = json['FontWidthRatio'] ?? 1,
+        height = json['Height'] ?? 26,
+        maxLength = json['MaxLength'] ?? 10,
+        rotation = json['Rotation'] ?? 0,
+        style = json['Style'] ?? 0,
+        tabOrder = json['TabOrder'] ?? 0,
+        varName = json['VarName'] ?? '',
+        width = json['Width'] ?? 50,
+        xPos = (json['XPos'] as num?)?.toInt() ?? 0,
+        yPos = (json['YPos'] as num?)?.toInt() ?? 0,
+        barcodeName = json['barcodeName'] ?? '',
+        barcodeType = json['barcodeType'] ?? '',
+        hralignment = json['Hralignment'] ?? '',
+        varcontent = json['Varcontent'] ?? [],
+        x2Pos = (json['X2Pos'] as num?)?.toInt() ?? 0,
+        y2Pos = (json['Y2Pos'] as num?)?.toInt() ?? 0,
+        lineWidth = (json['LineWidth'] as num?)?.toDouble() ?? 1.0,
+        qrWidth = json['QrWidth']?.toString() ?? '3',
+        qrcodeName = json['qrcodeName'] ?? '',
+        qrcodeType = json['qrcodeType'] ?? '',
+        fontBold = json['fontBold']?.toString() ?? 'false',
+        fontReverse = json['fontReverse']?.toString() ?? 'false';
 
   Map<String, dynamic> toJson() {
     return {

@@ -1,8 +1,9 @@
-﻿import 'dart:async';
+import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:web_socket_channel/io.dart';
 import '../data/resp_type_data.dart';
+import '../data/writelog.dart';
 
 class WebSocketScaleManager {
   static final WebSocketScaleManager _instance =
@@ -200,7 +201,12 @@ class _ScaleConnection {
 
   void sendMessage(String message) {
     if (_isConnected && _channel != null) {
+      if (!message.contains('"code":9999')) {
+        writelog("[WS_OUT] ScaleId $scaleId send: $message");
+      }
       _channel!.sink.add(message);
+    } else {
+      writelog("[WS_OUT_ERR] ScaleId $scaleId not connected! message: $message");
     }
   }
 
@@ -242,12 +248,14 @@ class _ScaleConnection {
 
   void _onError(error) {
     debugPrint('ScaleId $scaleId 连接错误: $error');
+    writelog("[WS_ERR] ScaleId $scaleId error: $error");
     _isConnected = false;
     scheduleReconnect();
   }
 
   void _onDone() {
     debugPrint('ScaleId $scaleId 连接关闭');
+    writelog("[WS_DONE] ScaleId $scaleId connection done/closed");
     _isConnected = false;
     scheduleReconnect();
   }
@@ -261,6 +269,8 @@ class _ScaleConnection {
         // debugPrint('ScaleId $scaleId 收到心跳响应');
         return;
       }
+
+      writelog("[WS_IN] ScaleId $scaleId recv: $data");
 
       // 处理业务消息
       if (RespMsgType.handlers.containsKey(map['MsgType'])) {

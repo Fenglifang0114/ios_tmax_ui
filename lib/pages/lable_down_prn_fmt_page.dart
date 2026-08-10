@@ -603,6 +603,93 @@ class _DownloadPageState extends State<DownloadLabelPage> {
   }
 
   void _jumpCfmDialog(BuildContext context) {
+    if (Adaptive.isMobile(context)) {
+      showDialog(
+        context: context,
+        builder: (BuildContext ctx) {
+          return Dialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            backgroundColor: Colors.white,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(left: 16, right: 8, top: 8),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        localizedStrings?.gTitleConfirm ?? "Confirmation",
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87,
+                        ),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.close, color: Colors.black54),
+                        onPressed: () => Navigator.of(ctx).pop(false),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 20),
+                  child: Image.asset(
+                    'assets/images/person.png',
+                    height: 110,
+                    fit: BoxFit.contain,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Text(
+                    localizedStrings?.jump_confirm_info ?? "jump_confirm_info",
+                    style: const TextStyle(fontSize: 15, color: Colors.black87),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                const SizedBox(height: 28),
+                SizedBox(
+                  width: double.infinity,
+                  height: 50,
+                  child: ElevatedButton(
+                    onPressed: () => Navigator.of(ctx).pop(true),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF1CB079),
+                      foregroundColor: Colors.white,
+                      elevation: 0,
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.only(
+                          bottomLeft: Radius.circular(16),
+                          bottomRight: Radius.circular(16),
+                        ),
+                      ),
+                    ),
+                    child: Text(
+                      localizedStrings?.gBtnConfirm ?? "Confirm",
+                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      ).then((confirmed) {
+        if (confirmed == true) {
+          if (mounted && context.mounted) {
+            Navigator.push(context, MaterialPageRoute(builder: (context) {
+              return const DefaultPrnFmtPage();
+            }));
+          }
+        }
+      });
+      return;
+    }
+
     showDialog(
       context: context,
       builder: (BuildContext ctx) {
@@ -656,6 +743,90 @@ class _DownloadPageState extends State<DownloadLabelPage> {
   }
 
   void _showConfirmationDialog(BuildContext context) {
+    if (Adaptive.isMobile(context)) {
+      showDialog(
+        context: context,
+        builder: (BuildContext ctx) {
+          return Dialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            backgroundColor: Colors.white,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(left: 16, right: 8, top: 8),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        localizedStrings?.gTitleConfirm ?? "Confirmation",
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87,
+                        ),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.close, color: Colors.black54),
+                        onPressed: () => Navigator.of(ctx).pop(false),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 20),
+                  child: Image.asset(
+                    'assets/images/person.png',
+                    height: 110,
+                    fit: BoxFit.contain,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Text(
+                    localizedStrings?.gConfirmPrnFmtOrderTip ?? "Please confirm the order of the printing formats.",
+                    style: const TextStyle(fontSize: 15, color: Colors.black87),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                const SizedBox(height: 28),
+                SizedBox(
+                  width: double.infinity,
+                  height: 50,
+                  child: ElevatedButton(
+                    onPressed: () => Navigator.of(ctx).pop(true),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF1CB079),
+                      foregroundColor: Colors.white,
+                      elevation: 0,
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.only(
+                          bottomLeft: Radius.circular(16),
+                          bottomRight: Radius.circular(16),
+                        ),
+                      ),
+                    ),
+                    child: Text(
+                      localizedStrings?.gBtnConfirm ?? "Confirm",
+                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      ).then((confirmed) {
+        if (confirmed == true) {
+          String msgStr = getSendMsgStr(printFormatSequence);
+          showSelScaleDialog(1, msgStr);
+        }
+      });
+      return;
+    }
+
     showDialog(
       context: context,
       builder: (BuildContext ctx) {
@@ -765,9 +936,24 @@ class _DownloadPageState extends State<DownloadLabelPage> {
       allowedExtensions: Platform.isAndroid ? null : ['fmt'],
     );
     if (result != null) {
-      setState(() {
-        showFilePath.text = result.files.single.path!;
-      });
+      String path = result.files.single.path!;
+      if (path.toLowerCase().endsWith('.fmt')) {
+        setState(() {
+          showFilePath.text = path;
+        });
+      } else {
+        if (mounted && context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: const Text('Please select a .fmt file.',
+                  style: TextStyle(
+                      fontSize: 20, fontWeight: FontWeight.normal)),
+              duration: const Duration(seconds: 3),
+              backgroundColor: Theme.of(context).colorScheme.error));
+        }
+        setState(() {
+          showFilePath.text = '';
+        });
+      }
     } else {
       setState(() {
         showFilePath.text = '';

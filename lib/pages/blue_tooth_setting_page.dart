@@ -1,6 +1,7 @@
 //钃濈墮璁剧疆鐣岄潰   钃濈墮璁剧疆鍙兘閫氳繃涓插彛
 
 import 'dart:async';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/data/scale_info_from_db.dart';
@@ -14,6 +15,7 @@ import 'package:t_max/functions/methods.dart';
 import '../../eventbus/eventbus.dart';
 import '../data/language.dart';
 import '../functions/adaptive.dart';
+import '../data/writelog.dart';
 
 class BluetoothPage extends StatefulWidget {
   final Function(String) onNavigate;
@@ -26,14 +28,15 @@ class BluetoothPage extends StatefulWidget {
 }
 
 class BluetoothPageState extends State<BluetoothPage> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final TextEditingController _deviceNameController = TextEditingController();
-  // List<String> emissionPowerList = ['Strong', 'Normal', 'Weak'];
   String emissionPowerVale = '';
   Timer? _timer;
 
   bool isSetting = false;
   dynamic _eventbus1;
   dynamic _eventbus2;
+  dynamic _eventbus3;
   Map<String, String> emissionPowerMap = {};
   int selScaleId = -1;
 
@@ -44,6 +47,7 @@ class BluetoothPageState extends State<BluetoothPage> {
   @override
   void initState() {
     super.initState();
+    writelog("[BT_PAGE] initState called");
     emissionPowerMap = {
       "Strong": (localizedStrings?.gEPStrong ?? "gEPStrong"),
       "Normal": (localizedStrings?.gEPNormal ?? "gEPNormal"),
@@ -52,10 +56,11 @@ class BluetoothPageState extends State<BluetoothPage> {
     _deviceNameController.text = '';
     emissionPowerVale = 'Strong';
 
-    for (var scale in myAllScalesList) {
-      if (scale.tMedia == comScaleType) {
-        comScalesList.add(scale);
-      }
+    PublicFunctions.getScaleList();
+
+    comScalesList = List.from(myAllScalesList);
+    if (comScalesList.isNotEmpty && selScaleId == -1) {
+      selScaleId = comScalesList.first.scaleId;
     }
     _eventbus1 = eventBus.on<EventConnectBTResponse>().listen((event) {
       if (mounted) {
@@ -80,8 +85,8 @@ class BluetoothPageState extends State<BluetoothPage> {
           myRespDataFromScale = event.obj;
           isSetting = false;
           if (myRespDataFromScale.msgBody.isNotEmpty) {
-            // if (myRespDataFromScale.msgBody.contains("TTM:NAM")) {
-            if (myRespDataFromScale.msgBody.contains("+BLENAME:")) {
+            if (myRespDataFromScale.msgBody.contains("+BLENAME:") ||
+                myRespDataFromScale.msgBody.contains("TTM:NAM")) {
               _deviceNameController.text =
                   getBtName(myRespDataFromScale.msgBody);
             } else if (myRespDataFromScale.msgBody.contains("OK")) {
@@ -98,39 +103,62 @@ class BluetoothPageState extends State<BluetoothPage> {
         });
       }
     });
-    // 鍦ㄩ〉闈㈡瀯寤哄畬鎴愬悗鏄剧ず鎻愮ず
+    _eventbus3 = eventBus.on<EventRespAddScale>().listen((event) {
+      if (mounted) {
+        setState(() {
+          comScalesList = List.from(myAllScalesList);
+          if (comScalesList.isNotEmpty && selScaleId == -1) {
+            selScaleId = comScalesList.first.scaleId;
+          }
+        });
+      }
+    });
+    // 在页面构建完成后显示提示
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (comScalesList.isEmpty) {
+      if (myAllScalesList.isEmpty) {
         showTipInfo(
             (localizedStrings?.gTipNoDeviceAddFirst ?? "gTipNoDeviceAddFirst"),
             context);
-      } else {
-        if (selScaleId == -1) {
-          showTipInfo(
-              (localizedStrings?.gTipSelectDeviceFirst ??
-                  "gTipSelectDeviceFirst"),
-              context);
-        }
       }
     });
   }
 
   String getBtName(String data) {
-    int blNameIndex = data.indexOf('+BLENAME:');
-    String afterBlName = data.substring(blNameIndex + '+BLENAME:'.length);
-    int newlineIndex = afterBlName.indexOf('\r\n');
-    if (newlineIndex != -1) {
-      return afterBlName.substring(0, newlineIndex);
-    } else {
-      return afterBlName;
+    if (data.contains('+BLENAME:')) {
+      int blNameIndex = data.indexOf('+BLENAME:');
+      String afterBlName = data.substring(blNameIndex + '+BLENAME:'.length);
+      int newlineIndex = afterBlName.indexOf('\r\n');
+      if (newlineIndex != -1) {
+        return afterBlName.substring(0, newlineIndex).trim();
+      } else {
+        return afterBlName.trim();
+      }
+    } else if (data.contains('TTM:NAM-')) {
+      int start = data.indexOf('TTM:NAM-') + 'TTM:NAM-'.length;
+      int end = data.indexOf('\r\n');
+      if (end != -1 && end > start) {
+        return data.substring(start, end).trim();
+      } else {
+        return data.substring(start).replaceAll('\u0000', '').trim();
+      }
+    } else if (data.contains('TTM:NAM')) {
+      int start = data.indexOf('TTM:NAM') + 'TTM:NAM'.length;
+      int end = data.indexOf('\r\n');
+      if (end != -1 && end > start) {
+        return data.substring(start, end).trim();
+      } else {
+        return data.substring(start).replaceAll('\u0000', '').trim();
+      }
     }
+    return data.trim();
   }
 
   @override
   void dispose() {
     _deviceNameController.dispose();
-    _eventbus1.cancel();
-    _eventbus2.cancel();
+    _eventbus1?.cancel();
+    _eventbus2?.cancel();
+    _eventbus3?.cancel();
     _stopTimer();
     _timer?.cancel();
     super.dispose();
@@ -138,52 +166,72 @@ class BluetoothPageState extends State<BluetoothPage> {
 
   @override
   Widget build(BuildContext context) {
-    final bool isMobile = Adaptive.isMobile(context);
+    final bool isMobile = Platform.isAndroid || Platform.isIOS || Adaptive.isMobile(context);
+    writelog("[BT_PAGE] build called: isMobile=$isMobile, platformIsAndroid=${Platform.isAndroid}, screenWidth=${MediaQuery.of(context).size.width}, selScaleId=$selScaleId");
+
+    if (myAllScalesList.isNotEmpty) {
+      comScalesList = List.from(myAllScalesList);
+      if (selScaleId == -1) {
+        selScaleId = comScalesList.first.scaleId;
+      }
+    }
 
     return Scaffold(
-      drawer: isMobile ? _buildMobileDrawer(context) : null,
-      appBar: isMobile
-          ? AppBar(
-              backgroundColor: Colors.white,
-              elevation: 0,
-              scrolledUnderElevation: 0,
-              centerTitle: true,
-              leadingWidth: 100,
-              leading: Builder(
-                builder: (BuildContext ctx) {
-                  return Row(
-                    children: [
-                      BackButton(
-                        color: Colors.black87,
-                        onPressed: () => Navigator.pop(context),
-                      ),
-                      GestureDetector(
-                        onTap: () => Scaffold.of(ctx).openDrawer(),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                          child: getSvgIcon(
-                              weighingSvgIcon(), 24, 24, Colors.black87),
+        key: _scaffoldKey,
+        drawer: isMobile ? _buildMobileDrawer(context) : null,
+        appBar: isMobile
+            ? AppBar(
+                backgroundColor: Colors.white,
+                elevation: 0,
+                scrolledUnderElevation: 0,
+                centerTitle: true,
+                leadingWidth: 100,
+                leading: Builder(
+                  builder: (BuildContext ctx) {
+                    return Row(
+                      children: [
+                        BackButton(
+                          color: Colors.black87,
+                          onPressed: () {
+                            writelog("[BT_PAGE] Back arrow pressed");
+                            if (Navigator.canPop(context)) {
+                              Navigator.pop(context);
+                            } else {
+                              widget.onNavigate(widget.lastRouteName);
+                            }
+                          },
                         ),
-                      ),
-                    ],
-                  );
-                },
-              ),
-              title: Text(
-                localizedStrings?.menuBluetoothSetting ?? "Bluetooth Setting",
-                style: const TextStyle(
-                    color: Colors.black87,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold),
-              ),
-              actions: [
-                IconButton(
-                  icon: const Icon(Icons.help_outline, color: Colors.black87),
-                  onPressed: () {},
+                        GestureDetector(
+                          behavior: HitTestBehavior.opaque,
+                          onTap: () {
+                            writelog("[BT_PAGE] Scale icon clicked -> opening drawer");
+                            _scaffoldKey.currentState?.openDrawer();
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                            child: getSvgIcon(
+                                weighingSvgIcon(), 24, 24, Colors.black87),
+                          ),
+                        ),
+                      ],
+                    );
+                  },
                 ),
-              ],
-            )
-          : null,
+                title: Text(
+                  localizedStrings?.menuBluetoothSetting ?? "Bluetooth Setting",
+                  style: const TextStyle(
+                      color: Colors.black87,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold),
+                ),
+                actions: [
+                  IconButton(
+                    icon: const Icon(Icons.help_outline, color: Colors.black87),
+                    onPressed: () {},
+                  ),
+                ],
+              )
+            : null,
       body: Container(
         color: Theme.of(context).colorScheme.surface,
         child: Column(
@@ -214,32 +262,12 @@ class BluetoothPageState extends State<BluetoothPage> {
                             width: 1,
                             color: Theme.of(context).colorScheme.outlineVariant,
                           ),
-                        comScalesList.isEmpty
-                            ? const SizedBox()
-                            : Expanded(
-                                child: LayoutBuilder(
-                                  builder: (context, constraints) {
-                                    return SingleChildScrollView(
-                                      child: ConstrainedBox(
-                                        constraints: BoxConstraints(
-                                          minHeight: constraints.maxHeight,
-                                          maxWidth: constraints.maxWidth,
-                                        ),
-                                        child: IntrinsicHeight(
-                                          child: Container(
-                                            padding: const EdgeInsets.all(
-                                                regularPadding),
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .surface,
-                                            child: showRightWigdet(),
-                                          ),
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ),
+                        Expanded(
+                          child: SingleChildScrollView(
+                            padding: const EdgeInsets.all(regularPadding),
+                            child: showRightWigdet(),
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -253,8 +281,7 @@ class BluetoothPageState extends State<BluetoothPage> {
   }
 
   Widget _buildMobileDrawer(BuildContext context) {
-    List<Scale> comScales =
-        myAllScalesList.where((scale) => scale.tMedia == comScaleType).toList();
+    List<Scale> comScales = myAllScalesList;
 
     return Drawer(
       width: 280,
@@ -274,10 +301,10 @@ class BluetoothPageState extends State<BluetoothPage> {
                 ),
               ),
             ),
-            Expanded(
-              child: comScales.isEmpty
-                  ? showNoDeviceWidget(context)
-                  : ListView.separated(
+            comScales.isEmpty
+                ? showNoDeviceWidget(context)
+                : Expanded(
+                    child: ListView.separated(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       itemCount: comScales.length,
                       separatorBuilder: (context, index) =>
@@ -378,8 +405,9 @@ class BluetoothPageState extends State<BluetoothPage> {
     );
   }
 
-  //鍒囨崲鐨勬椂鍊欒淇敼鎺夌Г鐨勪俊鎭?
+  //切换的时候要修改掉秤的信息
   void changeScale(int scaleId) {
+    writelog("[BT_PAGE] Scale changed to: $scaleId");
     setState(() {
       selScaleId = scaleId;
     });
@@ -463,9 +491,17 @@ class BluetoothPageState extends State<BluetoothPage> {
                                     38,
                                     (localizedStrings?.gGetBluetoothName ??
                                         "gGetBluetoothName"),
-                                    isSetting || selScaleId == -1
+                                    isSetting
                                         ? null
                                         : () {
+                                            if (selScaleId == -1) {
+                                              showTipInfo(
+                                                  (localizedStrings?.gTipSelectDeviceFirst ??
+                                                      "gTipSelectDeviceFirst"),
+                                                  context);
+                                              return;
+                                            }
+                                            writelog("[BT_PAGE] Get Bluetooth Name clicked for scaleId: $selScaleId");
                                             setState(() {
                                               _deviceNameController.clear();
                                             });
@@ -487,9 +523,17 @@ class BluetoothPageState extends State<BluetoothPage> {
                           btnHeight,
                           (localizedStrings?.gModifyBluetoothName ??
                               "gModifyBluetoothName"),
-                          isSetting || selScaleId == -1
+                          isSetting
                               ? null
                               : () {
+                                  if (selScaleId == -1) {
+                                    showTipInfo(
+                                        (localizedStrings?.gTipSelectDeviceFirst ??
+                                            "gTipSelectDeviceFirst"),
+                                    context);
+                                    return;
+                                  }
+                                  writelog("[BT_PAGE] Modify Bluetooth Name clicked for scaleId: $selScaleId");
                                   try {
                                     setState(() {
                                       sendBluetoothName();
@@ -581,9 +625,17 @@ class BluetoothPageState extends State<BluetoothPage> {
                         btnHeight,
                         (localizedStrings?.gModifyBluetoothEmission ??
                             "gModifyBluetoothEmission"),
-                        isSetting || selScaleId == -1
+                        isSetting
                             ? null
                             : () {
+                                if (selScaleId == -1) {
+                                  showTipInfo(
+                                      (localizedStrings?.gTipSelectDeviceFirst ??
+                                          "gTipSelectDeviceFirst"),
+                                  context);
+                                  return;
+                                }
+                                writelog("[BT_PAGE] Modify Emission Power clicked for scaleId: $selScaleId, power: $emissionPowerVale");
                                 if (emissionPowerVale == 'Strong') {
                                   PublicFunctions.modifyBtPowerStrong(
                                       selScaleId);

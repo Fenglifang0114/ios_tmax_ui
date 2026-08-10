@@ -9,6 +9,8 @@ import 'package:t_max/data/barcoderowdata.dart';
 import 'package:t_max/dialog/custom_dialog_tip.dart';
 import 'package:t_max/labeldesign/label_element.dart';
 import 'package:t_max/labeldesign/label_formatdata.dart';
+import 'package:csv/csv.dart';
+import 'package:t_max/data/encrypt_data.dart';
 import 'package:t_max/labeldesign/mobile_tag_style_canvas_page.dart';
 import 'package:t_max/labeldesign/mobile_barcode_manage_page.dart';
 import 'package:t_max/labeldesign/widgets/mobile_canvas_element_widget.dart';
@@ -271,8 +273,11 @@ class _MobileLabelDesignPageState extends State<MobileLabelDesignPage> {
       final jsonFile = File(jsonPath);
       await jsonFile.writeAsString(jsonEncode(formatContent));
 
+      final csvString = _exportCSV();
+      final encryptedCsv = myFilePassword.encryptCsv(csvString);
+
       final fmtFile = File(fmtPath);
-      await fmtFile.writeAsString(jsonEncode(formatContent));
+      await fmtFile.writeAsString(encryptedCsv);
 
       if (mounted) {
         showTipInfo("Format saved to:\n$saveDir", context);
@@ -282,6 +287,188 @@ class _MobileLabelDesignPageState extends State<MobileLabelDesignPage> {
         showTipInfo("Save failed: $e", context);
       }
     }
+  }
+
+  String _exportCSV() {
+    List<List<dynamic>> csvData = <List<dynamic>>[];
+
+    if (selectedDirection == '180') {
+      csvData.add(['ROTATE', '180']);
+    } else {
+      csvData.add(['ROTATE', '0']);
+    }
+
+    int width = ((double.tryParse(widthController.text) ?? 55.0) * 8).toInt();
+    int height = ((double.tryParse(heightController.text) ?? 55.0) * 8).toInt();
+
+    csvData.add(['P', width.toString(), height.toString()]);
+
+    for (var i = 0; i < elements.length; i++) {
+      final el = elements[i];
+      if (el.type == ElementType.text) {
+        int fontsize = int.tryParse(el.fontSize ?? '23') ?? 23;
+        List fontlist = _getFontSize(fontsize);
+        csvData.add([
+          'TB',
+          el.position.dx.toInt(),
+          el.position.dy.toInt(),
+          el.size.width.toInt(),
+          el.size.height.toInt(),
+          fontlist[0],
+          fontlist[1],
+          fontlist[2],
+          _getstyle(el.fontBold ?? 'false', el.fontReverse ?? 'false'),
+          _getRotation(el.rotation ?? 0),
+          'TEXT',
+          el.content ?? '',
+          el.index ?? (i + 1),
+        ]);
+      } else if (el.type == ElementType.data) {
+        int fontsize = int.tryParse(el.fontSize ?? '23') ?? 23;
+        List fontlist = _getFontSize(fontsize);
+        csvData.add([
+          'TB',
+          el.position.dx.toInt(),
+          el.position.dy.toInt(),
+          el.size.width.toInt(),
+          el.size.height.toInt(),
+          fontlist[0],
+          fontlist[1],
+          fontlist[2],
+          _getstyle(el.fontBold ?? 'false', el.fontReverse ?? 'false'),
+          _getRotation(el.rotation ?? 0),
+          'DATA',
+          el.varName ?? '',
+          el.defaultValue ?? '',
+          el.alignment ?? 'Left',
+          el.maxLength ?? 10,
+          el.index ?? (i + 1),
+        ]);
+      } else if (el.type == ElementType.barcode) {
+        String tempContent = _barcodeContent(el.varcontent ?? []);
+        String barcodeType = '1';
+        if (el.barcodeType == 'Code39') barcodeType = 'CODE39';
+        else if (el.barcodeType == 'EAN8') barcodeType = 'EAN8';
+        else if (el.barcodeType == 'EAN13') barcodeType = 'EAN13';
+        else if (el.barcodeType == 'UPC-A') barcodeType = 'UPCA';
+        else if (el.barcodeType == 'UPC-E') barcodeType = 'UPCE';
+
+        String hrAlignment = 'N';
+        if (el.hralignment == 'Top') hrAlignment = 'TC';
+        else if (el.hralignment == 'Bottom') hrAlignment = 'BC';
+
+        csvData.add([
+          'B',
+          el.position.dx.toInt(),
+          el.position.dy.toInt(),
+          el.size.width.toInt(),
+          el.size.height.toInt(),
+          '2',
+          barcodeType,
+          _getRotation(el.rotation ?? 0),
+          hrAlignment,
+          tempContent,
+          el.index ?? (i + 1),
+        ]);
+      } else if (el.type == ElementType.qrcode) {
+        String tempContent = _barcodeContent(el.varcontent ?? []);
+        csvData.add([
+          'QR',
+          el.position.dx.toInt(),
+          el.position.dy.toInt(),
+          '1',
+          el.qrWidth ?? '3',
+          '1',
+          '',
+          tempContent,
+          el.index ?? (i + 1),
+        ]);
+      } else if (el.type == ElementType.line) {
+        int lineWidth = el.size.width.toInt();
+        int lineHeight = el.size.height.toInt();
+        if (lineHeight <= lineWidth) {
+          csvData.add([
+            'L',
+            el.position.dx.toInt(),
+            el.position.dy.toInt(),
+            (lineWidth + el.position.dx.toInt()),
+            el.position.dy.toInt(),
+            lineHeight,
+            0,
+            el.index ?? (i + 1),
+          ]);
+        } else {
+          csvData.add([
+            'L',
+            el.position.dx.toInt(),
+            el.position.dy.toInt(),
+            el.position.dx.toInt(),
+            (lineHeight + el.position.dy.toInt()),
+            lineWidth,
+            0,
+            el.index ?? (i + 1),
+          ]);
+        }
+      }
+    }
+    csvData.add(['F', selectedPrinter, 'L']);
+    csvData.add(['']);
+
+    return const ListToCsvConverter(textDelimiter: '').convert(csvData);
+  }
+
+  String _barcodeContent(List<dynamic> con) {
+    final barcodedata = StringBuffer();
+    if (con.isEmpty) return barcodedata.toString();
+    for (final item in con) {
+      if (barcodedata.isNotEmpty) barcodedata.write(',');
+      if (item is Map) {
+        if (item['type'] == 'TEXT') {
+          barcodedata.write('TEXT,${item['content']}');
+        } else {
+          var varalignment = item['alignment'] == 'Center' ? 2 : (item['alignment'] == 'Right' ? 3 : 1);
+          barcodedata.write('DATA,${item['type']},${item['defaultvalue']},$varalignment,${item['maxlength']}');
+        }
+      } else {
+        if (item.type == 'TEXT') {
+          barcodedata.write('TEXT,${item.content}');
+        } else {
+          var varalignment = item.alignment == 'Center' ? 2 : (item.alignment == 'Right' ? 3 : 1);
+          barcodedata.write('DATA,${item.type},${item.defaultvalue},$varalignment,${item.maxlength}');
+        }
+      }
+    }
+    return barcodedata.toString();
+  }
+
+  int _getRotation(int rotation) {
+    if (rotation == 90) return 1;
+    if (rotation == 180) return 2;
+    if (rotation == 270) return 3;
+    return 0;
+  }
+
+  String _getstyle(String fontBold, String fontReverse) {
+    if (fontBold == 'true' && fontReverse == 'false') return '2';
+    if (fontBold == 'true' && fontReverse == 'true') return '3';
+    if (fontBold == 'false' && fontReverse == 'true') return '1';
+    return '0';
+  }
+
+  List _getFontSize(int sFont) {
+    int fontsize = 4;
+    int width = 1;
+    int height = 1;
+    if (sFont == 23) fontsize = 4;
+    else if (sFont == 20) fontsize = 1;
+    else if (sFont == 39) { fontsize = 1; width = 2; height = 2; }
+    else if (sFont == 46) { fontsize = 4; width = 2; height = 2; }
+    else if (sFont == 69) { fontsize = 4; width = 3; height = 3; }
+    else if (sFont == 95) { width = 4; height = 4; }
+    else if (sFont == 115) { fontsize = 4; width = 5; height = 5; }
+    else if (sFont == 137) { width = 6; height = 6; }
+    else if (sFont == 165) { width = 7; height = 7; }
+    return [fontsize, width, height];
   }
 
   void _navigateToCanvasPage() {

@@ -7,6 +7,7 @@ import '../data/downloadresponse.dart';
 import '../data/language.dart';
 import '../data/home_page_common_data.dart';
 import '../data/scale_info_from_db.dart';
+import '../data/writelog.dart';
 import '../usb_serial_manager.dart';
 import 'update_firmware_page.dart'; // For normalSend, sendServerIp, sendOnline, ScaleDownRes
 
@@ -56,6 +57,8 @@ class _MobileSelectScalesPageState extends State<MobileSelectScalesPage> {
 
     _eventbus1 = eventBus.on<EventDownPrnFmtResp>().listen((event) {
       if (mounted) {
+        debugPrint("[MobileSelScales] EventDownPrnFmtResp received: scaleId=${event.obj.scaleId}, msgBody=${event.obj.msgBody}");
+        writelog("[MobileSelScales] EventDownPrnFmtResp: scaleId=${event.obj.scaleId}, msgBody=${event.obj.msgBody}");
         setState(() {
           myRespDataFromScale = event.obj;
           if (myRespDataFromScale.msgBody.isNotEmpty) {
@@ -68,6 +71,8 @@ class _MobileSelectScalesPageState extends State<MobileSelectScalesPage> {
 
     _eventbus2 = eventBus.on<EventDownDefPrnFmtResp>().listen((event) {
       if (mounted) {
+        debugPrint("[MobileSelScales] EventDownDefPrnFmtResp received: scaleId=${event.obj.scaleId}, msgBody=${event.obj.msgBody}");
+        writelog("[MobileSelScales] EventDownDefPrnFmtResp: scaleId=${event.obj.scaleId}, msgBody=${event.obj.msgBody}");
         setState(() {
           myRespDataFromScale = event.obj;
           if (myRespDataFromScale.msgBody.isNotEmpty) {
@@ -224,12 +229,21 @@ class _MobileSelectScalesPageState extends State<MobileSelectScalesPage> {
   }
 
   void parseRecInfo(int scaleId) {
-    if (scaleResMap.containsKey(scaleId)) {
-      scaleTimerMap[scaleId]?.cancel();
-      if (myRespDataFromScale.msgBody.contains('ok')) {
-        scaleResMap[scaleId]!.process = 1;
+    debugPrint("[MobileSelScales] parseRecInfo: received scaleId=$scaleId, msgBody=${myRespDataFromScale.msgBody}, scaleResMap keys=${scaleResMap.keys.toList()}");
+    writelog("[MobileSelScales] parseRecInfo: scaleId=$scaleId, msgBody=${myRespDataFromScale.msgBody}");
+
+    int targetKey = scaleId;
+    if (!scaleResMap.containsKey(targetKey) && scaleResMap.isNotEmpty) {
+      targetKey = scaleResMap.keys.first;
+      debugPrint("[MobileSelScales] parseRecInfo fallback key: $targetKey");
+    }
+
+    if (scaleResMap.containsKey(targetKey)) {
+      scaleTimerMap[targetKey]?.cancel();
+      if (myRespDataFromScale.msgBody.contains('ok') || myRespDataFromScale.msgBody.contains('OK')) {
+        scaleResMap[targetKey]!.process = 1;
       }
-      scaleResMap[scaleId]!.res = myRespDataFromScale.msgBody;
+      scaleResMap[targetKey]!.res = myRespDataFromScale.msgBody;
     }
   }
 
@@ -257,9 +271,25 @@ class _MobileSelectScalesPageState extends State<MobileSelectScalesPage> {
     super.dispose();
   }
 
+  void _updateScaleResMap() {
+    scaleResMap.clear();
+    checkboxStatesMap.forEach((scaleId, selected) {
+      if (selected) {
+        scaleResMap[scaleId] = ScaleDownRes(scaleId, '', 0.0);
+      }
+    });
+  }
+
+  bool _isWaitingState(String res) {
+    if (res.isEmpty) return true;
+    if (res == "Downloading..." || res == "Please Wait...." || res == "Please wait...") return true;
+    if (localizedStrings?.gTipWait != null && res == localizedStrings!.gTipWait) return true;
+    return false;
+  }
+
   bool checkAllNotEmpty() {
     for (var value in scaleResMap.values) {
-      if (value.res.isEmpty) return false;
+      if (_isWaitingState(value.res)) return false;
     }
     return true;
   }
@@ -267,13 +297,18 @@ class _MobileSelectScalesPageState extends State<MobileSelectScalesPage> {
   void buildProcessTimer(int downTime) {
     scaleResMap.forEach((int id, ScaleDownRes value) {
       final timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-        if (scaleResMap[id]!.res != "" && !scaleResMap[id]!.res.startsWith("Step:")) {
-          scaleResMap[id]!.process = 1;
-          timer.cancel();
-        } else if (scaleResMap[id]!.process < 0.9) {
-          setState(() {
-            scaleResMap[id]!.process += 0.9 / downTime;
-          });
+        if (scaleResMap[id] != null) {
+          if (!_isWaitingState(scaleResMap[id]!.res) &&
+              !scaleResMap[id]!.res.startsWith("Step:")) {
+            setState(() {
+              scaleResMap[id]!.process = 1;
+            });
+            timer.cancel();
+          } else if (scaleResMap[id]!.process < 0.9) {
+            setState(() {
+              scaleResMap[id]!.process += 0.9 / downTime;
+            });
+          }
         }
       });
       scaleTimerMap[id] = timer;
@@ -281,15 +316,7 @@ class _MobileSelectScalesPageState extends State<MobileSelectScalesPage> {
   }
 
   bool checkSelect() {
-    scaleResMap.clear();
-    if (checkboxStatesMap.isEmpty) return false;
-
-    checkboxStatesMap.forEach((scaleId, selected) {
-      if (selected) {
-        scaleResMap[scaleId] = ScaleDownRes(scaleId, '', 0.0);
-      }
-    });
-    return scaleResMap.isNotEmpty;
+    return checkboxStatesMap.values.any((selected) => selected);
   }
 
   void performSend() {
@@ -300,12 +327,17 @@ class _MobileSelectScalesPageState extends State<MobileSelectScalesPage> {
   }
 
   void sendMessage(int scaleId) {
+    writelog("[MobileSelScales] sendMessage: scaleId=$scaleId, funcNo=${widget.funcNo}, sendMsgStr=${widget.sendMsgStr}");
     if (widget.funcNo == normalSend) {
       PublicFunctions.sendMsg(scaleId, widget.sendMsgStr);
     } else if (widget.funcNo == sendServerIp) {
       PublicFunctions.sendServerIpToScale(widget.sendMsgStr, scaleId);
     } else if (widget.funcNo == sendOnline) {
       PublicFunctions.updateFirmWareOnline(widget.sendMsgStr, scaleId);
+    } else if (widget.funcNo == comScaleSerialSend) {
+      if (widget.jsonList != null && widget.jsonList!.isNotEmpty) {
+        PublicFunctions.sendOutputFmtToScale(widget.jsonList!, scaleId);
+      }
     }
   }
 
@@ -378,6 +410,7 @@ class _MobileSelectScalesPageState extends State<MobileSelectScalesPage> {
                               onChanged: isDownloading ? null : (val) {
                                 setState(() {
                                   checkboxStatesMap[id] = val ?? false;
+                                  _updateScaleResMap();
                                 });
                               },
                             ),
@@ -516,7 +549,7 @@ class _MobileSelectScalesPageState extends State<MobileSelectScalesPage> {
                         setState(() {
                           isDownloading = true;
                           for (var entry in scaleResMap.entries) {
-                            entry.value.res = "";
+                            entry.value.res = localizedStrings?.gTipWait ?? "Downloading...";
                             scaleResMap[entry.key]!.process = 0;
                           }
                         });

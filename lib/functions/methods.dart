@@ -1070,38 +1070,49 @@ class PublicFunctions {
     myScaleCmd.cmdMode = "send_data_to_bt";
     // myScaleCmd.cmdData = "TTM:TPL-(+10)";
     myScaleCmd.cmdData = "AT+RFPOWER=78,14,14,14";
-    sendMsg(scaleId, jsonEncode(myScaleCmd));
-    writelog(jsonEncode(myScaleCmd));
+    String payload = jsonEncode(myScaleCmd);
+    sendMsgChan0(payload);
+    sendMsg(scaleId, payload);
+    writelog("[BT_CMD] modifyBtPowerStrong: $payload");
   }
 
   static void modifyBtPowerNormal(int scaleId) {
     myScaleCmd.cmdMode = "send_data_to_bt";
     // myScaleCmd.cmdData = "TTM:TPL-(+6)";
     myScaleCmd.cmdData = "AT+RFPOWER=78,11,11,11";
-    sendMsg(scaleId, jsonEncode(myScaleCmd));
-    writelog(jsonEncode(myScaleCmd));
+    String payload = jsonEncode(myScaleCmd);
+    sendMsgChan0(payload);
+    sendMsg(scaleId, payload);
+    writelog("[BT_CMD] modifyBtPowerNormal: $payload");
   }
 
   static void modifyBtPowerWeak(int scaleId) {
     myScaleCmd.cmdMode = "send_data_to_bt";
     // myScaleCmd.cmdData = "TTM:TPL-(0)";
     myScaleCmd.cmdData = "AT+RFPOWER=78,5,5,5";
-    sendMsg(scaleId, jsonEncode(myScaleCmd));
-    writelog(jsonEncode(myScaleCmd));
+    String payload = jsonEncode(myScaleCmd);
+    sendMsgChan0(payload);
+    sendMsg(scaleId, payload);
+    writelog("[BT_CMD] modifyBtPowerWeak: $payload");
   }
 
   static void getBtName(int scaleId) {
     myScaleCmd.cmdMode = "send_data_to_bt";
     // myScaleCmd.cmdData = "TTM:NAM-?";
     myScaleCmd.cmdData = "AT+BLENAME?";
-    sendMsg(scaleId, jsonEncode(myScaleCmd));
+    String payload = jsonEncode(myScaleCmd);
+    sendMsgChan0(payload);
+    sendMsg(scaleId, payload);
+    writelog("[BT_CMD] getBtName: $payload");
   }
 
   static void modifyBtName(String btName, int scaleId) {
     myScaleCmd.cmdMode = "modify_bt_name";
     myScaleCmd.cmdData = btName;
-    sendMsg(scaleId, jsonEncode(myScaleCmd));
-    writelog(jsonEncode(myScaleCmd));
+    String payload = jsonEncode(myScaleCmd);
+    sendMsgChan0(payload);
+    sendMsg(scaleId, payload);
+    writelog("[BT_CMD] modifyBtName: $payload");
   }
 
   static void setLowHighLimit(String data, int scaleId) {

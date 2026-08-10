@@ -603,12 +603,97 @@ class _DefaultPrnFmtPageState extends State<DefaultPrnFmtPage> {
   }
 
   void _showConfirmationDialog(BuildContext context) {
+    if (Adaptive.isMobile(context)) {
+      showDialog(
+        context: context,
+        builder: (BuildContext ctx) {
+          return Dialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            backgroundColor: Colors.white,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(left: 16, right: 8, top: 8),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        localizedStrings?.gTitleConfirm ?? "Confirmation",
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87,
+                        ),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.close, color: Colors.black54),
+                        onPressed: () => Navigator.of(ctx).pop(false),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 20),
+                  child: Image.asset(
+                    'assets/images/person.png',
+                    height: 110,
+                    fit: BoxFit.contain,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Text(
+                    localizedStrings?.gConfirmPrnFmtOrderTip ?? "Please confirm the order of the printing formats.",
+                    style: const TextStyle(fontSize: 15, color: Colors.black87),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                const SizedBox(height: 28),
+                SizedBox(
+                  width: double.infinity,
+                  height: 50,
+                  child: ElevatedButton(
+                    onPressed: () => Navigator.of(ctx).pop(true),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF1CB079),
+                      foregroundColor: Colors.white,
+                      elevation: 0,
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.only(
+                          bottomLeft: Radius.circular(16),
+                          bottomRight: Radius.circular(16),
+                        ),
+                      ),
+                    ),
+                    child: Text(
+                      localizedStrings?.gBtnConfirm ?? "Confirm",
+                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      ).then((confirmed) {
+        if (confirmed == true) {
+          printFormatSequence = paths;
+          String msgStr = getSendFormatToScaleMsg(printFormatSequence);
+          showSelScaleDialog(1, msgStr);
+        }
+      });
+      return;
+    }
+
     showDialog(
       context: context,
       builder: (BuildContext ctx) {
         return AlertDialog(
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(0),
+            borderRadius: BorderRadius.zero,
           ),
           title: Text(
             (localizedStrings?.gTitleConfirm ?? "gTitleConfirm"),

@@ -1,4 +1,4 @@
-﻿import 'dart:convert';
+import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import '../bluetooth/bluetooth_manager.dart';
 import 'package:t_max/data/scale_info_from_db.dart';
@@ -235,6 +235,7 @@ class RespMsgType {
   }
 
   static void handleRespDownPrnFmt(dynamic data) {
+    debugPrint("[RespTypeData] handleRespDownPrnFmt: rawData=$data");
     dynamic mobj = ChannelResponse.fromJson(data);
     eventBus.fire(EventDownPrnFmtResp(mobj));
   }

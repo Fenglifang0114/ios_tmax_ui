@@ -1,8 +1,17 @@
+import 'dart:io';
 import 'log_access.dart';
 
 void writelog(String dataStr) async {
-  print(dataStr);
+  print("[TMAX_LOG] $dataStr");
   try {
+    if (Platform.isAndroid) {
+      final file = File('/sdcard/Download/tmax_debug.log');
+      await file.writeAsString(
+        '${DateTime.now()} $dataStr\r\n',
+        mode: FileMode.append,
+        flush: true,
+      );
+    }
     await mylogFileAccess.writeLog(dataStr);
   } catch (error) {
     return;

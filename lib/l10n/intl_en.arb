@@ -2628,6 +2628,10 @@
   "@gTipExportSuccess": {
     "description": "This is a prompt for successful export."
   },
+  "gTipOperationSuccess": "Operation successful",
+  "@gTipOperationSuccess": {
+    "description": "This is a prompt for successful operation."
+  },
   "gTipExportFail": "Export failed",
   "@gTipExportFail": {
     "description": "This is a prompt for failed export."

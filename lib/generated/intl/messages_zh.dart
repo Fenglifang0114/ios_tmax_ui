@@ -584,6 +584,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "gTipExportFileError": MessageLookupByLibrary.simpleMessage("导出文件错误或文件被占用"),
     "gTipExportIOError": MessageLookupByLibrary.simpleMessage("导出IO错误"),
     "gTipExportSuccess": MessageLookupByLibrary.simpleMessage("导出成功"),
+    "gTipOperationSuccess": MessageLookupByLibrary.simpleMessage("操作成功"),
     "gTipFailedGetTime": MessageLookupByLibrary.simpleMessage("获取设备时间失败"),
     "gTipFilling": MessageLookupByLibrary.simpleMessage("填充"),
     "gTipFirmwareZipFile": MessageLookupByLibrary.simpleMessage("软件Zip:"),

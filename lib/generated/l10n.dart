@@ -6331,6 +6331,16 @@ class S {
     );
   }
 
+  /// `Operation successful`
+  String get gTipOperationSuccess {
+    return Intl.message(
+      'Operation successful',
+      name: 'gTipOperationSuccess',
+      desc: 'This is a prompt for successful operation.',
+      args: [],
+    );
+  }
+
   /// `Export failed`
   String get gTipExportFail {
     return Intl.message(

@@ -1,5 +1,10 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:t_max/data/home_page_common_data.dart';
+import 'package:flutter/services.dart';
+import 'package:t_max/data/header_footer.dart';
+import 'package:t_max/data/scalecmd_data.dart';
+import 'package:t_max/dialog/custom_dialog_tip.dart';
+import 'package:t_max/data/writelog.dart';
 import 'package:t_max/pages/mobile_receipt_variable_edit_page.dart';
 import 'package:t_max/pages/mobile_sel_scales_page.dart';
 import 'package:t_max/pages/update_firmware_page.dart';
@@ -14,7 +19,6 @@ class MobileReceiptVariableSettingPage extends StatefulWidget {
 
 class _MobileReceiptVariableSettingPageState
     extends State<MobileReceiptVariableSettingPage> {
-  // Exact PC fields matching HeaderFooterPage
   final Map<String, List<String>> _groupedFields = {
     "Header": ["Header 1", "Header 2", "Header 3"],
     "Footer": ["Footer 1", "Footer 2", "Footer 3"],
@@ -22,7 +26,7 @@ class _MobileReceiptVariableSettingPageState
   };
 
   final Map<String, String> _fieldValues = {
-    "Header 1": "Display company name...",
+    "Header 1": "",
     "Header 2": "",
     "Header 3": "",
     "Footer 1": "",
@@ -34,13 +38,65 @@ class _MobileReceiptVariableSettingPageState
     "Operator 4": "",
   };
 
+  List<MyvariableData> _varList = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _openVarListJson();
+  }
+
+  void _openVarListJson() async {
+    try {
+      final ByteData bytes =
+          await rootBundle.load('assets/template/modify_var.json');
+      final jsonString = utf8.decode(bytes.buffer.asUint8List());
+      Map<String, dynamic> jsonDataMap = json.decode(jsonString);
+      var data = jsonDataMap['Print_var'] as List;
+      setState(() {
+        _varList = data.map((e) => MyvariableData.fromJson(e)).toList();
+      });
+    } catch (e) {
+      debugPrint("Error loading modify_var.json: $e");
+    }
+  }
+
+  int? _getVarId(String fieldName) {
+    String keyName = fieldName.replaceAll(" ", "");
+    var data = _varList.firstWhere(
+      (element) => element.valuename == keyName,
+      orElse: () =>
+          MyvariableData(valuename: '', id: -1, comment: '', maxLen: 0),
+    );
+    return data.id != -1 ? data.id : null;
+  }
+
   void _handleDownload() {
+    HeaderFooterList headerFooterList = HeaderFooterList([]);
+    _fieldValues.forEach((field, val) {
+      if (val.trim().isNotEmpty) {
+        int? varId = _getVarId(field);
+        if (varId != null) {
+          headerFooterList.listData.add(HeaderFooterData(varId, val.trim()));
+        }
+      }
+    });
+
+    if (headerFooterList.listData.isEmpty) {
+      showTipInfo("Please enter at least one variable value to download", context);
+      return;
+    }
+
+    ScaleCmd cmd = ScaleCmd('modify_var_value', json.encode(headerFooterList));
+    String sendMsgStr = jsonEncode(cmd);
+    writelog("[MobileVariableSetting] Prepared sendMsgStr: $sendMsgStr");
+
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (ctx) => MobileSelectScalesPage(
-          funcNo: comScaleSerialSend,
-          sendMsgStr: '',
+          funcNo: normalSend,
+          sendMsgStr: sendMsgStr,
           jsonList: const [],
         ),
       ),
@@ -186,6 +242,29 @@ class _MobileReceiptVariableSettingPageState
           ),
         ],
       ),
+    );
+  }
+}
+
+class MyvariableData {
+  final String valuename;
+  final int id;
+  final String comment;
+  final int maxLen;
+
+  MyvariableData({
+    required this.valuename,
+    required this.id,
+    required this.comment,
+    required this.maxLen,
+  });
+
+  factory MyvariableData.fromJson(Map<String, dynamic> json) {
+    return MyvariableData(
+      valuename: json['valuename'] ?? '',
+      id: json['id'] ?? -1,
+      comment: json['comment'] ?? '',
+      maxLen: json['maxLen'] ?? 0,
     );
   }
 }

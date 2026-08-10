@@ -5,6 +5,8 @@ import 'package:t_max/data/routes_data.dart';
 import 'package:t_max/data/icons.dart';
 import 'package:t_max/functions/adaptive.dart';
 
+import 'package:t_max/data/writelog.dart';
+
 class MobileFormatPage extends StatefulWidget {
   final Function(String) onNavigate;
   final String? lastRouteName;
@@ -53,17 +55,15 @@ class _MobileFormatPageState extends State<MobileFormatPage> {
           return MouseRegion(
             cursor: SystemMouseCursors.click,
             child: GestureDetector(
+              behavior: HitTestBehavior.opaque,
               onTap: () {
+                writelog("[MOBILE_FORMAT] Tapped menu item: ${menu.title}, route: ${menu.routeName}");
                 if (menu.routeName != null) {
-                  if (Adaptive.isMobile(context)) {
-                    Navigator.of(context, rootNavigator: true).push(
-                      MaterialPageRoute(
-                        builder: (context) => buildPageContent(widget.onNavigate, menu.routeName, widget.lastRouteName),
-                      ),
-                    );
-                  } else {
-                    widget.onNavigate(menu.routeName!);
-                  }
+                  Navigator.of(context, rootNavigator: true).push(
+                    MaterialPageRoute(
+                      builder: (context) => buildPageContent(widget.onNavigate, menu.routeName, widget.lastRouteName),
+                    ),
+                  );
                 }
               },
               child: Container(

@@ -848,6 +848,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "gTipExportSuccess": MessageLookupByLibrary.simpleMessage(
       "Export successful",
     ),
+    "gTipOperationSuccess": MessageLookupByLibrary.simpleMessage(
+      "Operation successful",
+    ),
     "gTipFailedGetTime": MessageLookupByLibrary.simpleMessage(
       "failed to get time",
     ),
