@@ -1294,29 +1294,27 @@ class WifiSettingPageState extends State<WifiSettingPage> {
   }
 
   bool isValidData() {
-    bool res = false;
+    if (selScaleId == -1) return false;
+
+    if (ssidController.text.trim().isEmpty ||
+        passwordController.text.trim().isEmpty) {
+      return false;
+    }
 
     if (_isStatic) {
-      if (ssidController.text.isNotEmpty &&
-          passwordController.text.isNotEmpty &&
-          ipController.text.isNotEmpty &&
-          gateWayController.text.isNotEmpty &&
-          // dnsController.text.isNotEmpty &&
-          netMaskController.text.isNotEmpty &&
-          // _isValidDns &&
-          _isValidGateway &&
-          _isValidMask &&
-          _isValidIP) {
-        res = true;
+      if (ipController.text.trim().isEmpty ||
+          netMaskController.text.trim().isEmpty ||
+          gateWayController.text.trim().isEmpty) {
+        return false;
       }
-    } else {
-      if (ssidController.text.isNotEmpty &&
-          passwordController.text.isNotEmpty) {
-        res = true;
+      if (!validateIpFlag(ipController.text.trim()) ||
+          !validateIpFlag(netMaskController.text.trim()) ||
+          !validateIpFlag(gateWayController.text.trim())) {
+        return false;
       }
     }
 
-    return res;
+    return true;
   }
 
   String getWifiPwd(String ssid) {
@@ -1414,8 +1412,11 @@ class WifiSettingPageState extends State<WifiSettingPage> {
     bool canConnect =
         (selScaleId != -1 && isValidData() && !isConnecting && !isSetting);
 
+    final bool isKeyboardOpen = MediaQuery.of(context).viewInsets.bottom > 0;
+
     return Scaffold(
       backgroundColor: Colors.white,
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
@@ -1561,6 +1562,9 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                   const SizedBox(height: 4),
                   TextField(
                     controller: ssidController,
+                    inputFormatters: [
+                      LengthLimitingTextInputFormatter(28),
+                    ],
                     onChanged: (val) => setState(() {}),
                     decoration: const InputDecoration(
                       isDense: true,
@@ -1577,6 +1581,9 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                   TextField(
                     controller: passwordController,
                     obscureText: passwordLock,
+                    inputFormatters: [
+                      LengthLimitingTextInputFormatter(20),
+                    ],
                     onChanged: (val) => setState(() {}),
                     decoration: InputDecoration(
                       isDense: true,
@@ -1606,10 +1613,16 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                   TextField(
                     controller: ipController,
                     readOnly: !_isStatic,
+                    keyboardType: TextInputType.number,
                     onChanged: (val) => setState(() {}),
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       isDense: true,
-                      border: UnderlineInputBorder(),
+                      border: const UnderlineInputBorder(),
+                      errorText: (_isStatic &&
+                              ipController.text.isNotEmpty &&
+                              !validateIpFlag(ipController.text))
+                          ? (localizedStrings?.gTipErrorIp ?? "Invalid IP")
+                          : null,
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -1622,10 +1635,16 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                   TextField(
                     controller: netMaskController,
                     readOnly: !_isStatic,
+                    keyboardType: TextInputType.number,
                     onChanged: (val) => setState(() {}),
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       isDense: true,
-                      border: UnderlineInputBorder(),
+                      border: const UnderlineInputBorder(),
+                      errorText: (_isStatic &&
+                              netMaskController.text.isNotEmpty &&
+                              !validateIpFlag(netMaskController.text))
+                          ? (localizedStrings?.gTipErrorIp ?? "Invalid IP")
+                          : null,
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -1638,10 +1657,16 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                   TextField(
                     controller: gateWayController,
                     readOnly: !_isStatic,
+                    keyboardType: TextInputType.number,
                     onChanged: (val) => setState(() {}),
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       isDense: true,
-                      border: UnderlineInputBorder(),
+                      border: const UnderlineInputBorder(),
+                      errorText: (_isStatic &&
+                              gateWayController.text.isNotEmpty &&
+                              !validateIpFlag(gateWayController.text))
+                          ? (localizedStrings?.gTipErrorIp ?? "Invalid IP")
+                          : null,
                     ),
                   ),
                 ],
@@ -1649,8 +1674,9 @@ class WifiSettingPageState extends State<WifiSettingPage> {
             ),
           ),
           // Bottom Buttons
-          Container(
-            padding: const EdgeInsets.all(16),
+          if (!isKeyboardOpen)
+            Container(
+              padding: const EdgeInsets.all(16),
             color: Colors.white,
             child: SafeArea(
               child: Column(
@@ -1704,22 +1730,32 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                             }
                           : null,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: (selScaleId != -1 && _isStatic)
+                        backgroundColor: _isStatic
                             ? const Color(0xFF005696)
-                            : (canToggleStatic
-                                ? const Color(0xFF005696)
-                                : Colors.grey[300]),
-                        foregroundColor: Colors.white,
-                        disabledBackgroundColor: (selScaleId != -1 && _isStatic)
+                            : (canToggleStatic ? Colors.white : Colors.grey[200]),
+                        foregroundColor: _isStatic
+                            ? Colors.white
+                            : (canToggleStatic ? const Color(0xFF005696) : Colors.grey[500]),
+                        disabledBackgroundColor: _isStatic
                             ? const Color(0xFF005696)
-                            : Colors.grey[300],
-                        disabledForegroundColor: Colors.white,
+                            : Colors.grey[200],
+                        disabledForegroundColor: _isStatic
+                            ? Colors.white
+                            : Colors.grey[500],
+                        side: BorderSide(
+                          color: (selScaleId == -1 || isConnecting || isSetting)
+                              ? Colors.grey[300]!
+                              : const Color(0xFF005696),
+                          width: 1.5,
+                        ),
                         elevation: 0,
                         shape: const RoundedRectangleBorder(
                             borderRadius: BorderRadius.zero),
                       ),
                       child: Text(
-                        localizedStrings?.gBtnStatic ?? "Static",
+                        _isStatic
+                            ? "${localizedStrings?.gBtnStatic ?? "Static"}  ✓"
+                            : (localizedStrings?.gBtnStatic ?? "Static"),
                         style: const TextStyle(
                             fontSize: 16, fontWeight: FontWeight.bold),
                       ),
@@ -1743,22 +1779,32 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                             }
                           : null,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: (selScaleId != -1 && !_isStatic)
+                        backgroundColor: !_isStatic
                             ? const Color(0xFF005696)
-                            : (canToggleDynamic
-                                ? const Color(0xFF005696)
-                                : Colors.grey[300]),
-                        foregroundColor: Colors.white,
-                        disabledBackgroundColor: (selScaleId != -1 && !_isStatic)
+                            : (canToggleDynamic ? Colors.white : Colors.grey[200]),
+                        foregroundColor: !_isStatic
+                            ? Colors.white
+                            : (canToggleDynamic ? const Color(0xFF005696) : Colors.grey[500]),
+                        disabledBackgroundColor: !_isStatic
                             ? const Color(0xFF005696)
-                            : Colors.grey[300],
-                        disabledForegroundColor: Colors.white,
+                            : Colors.grey[200],
+                        disabledForegroundColor: !_isStatic
+                            ? Colors.white
+                            : Colors.grey[500],
+                        side: BorderSide(
+                          color: (selScaleId == -1 || isConnecting || isSetting)
+                              ? Colors.grey[300]!
+                              : const Color(0xFF005696),
+                          width: 1.5,
+                        ),
                         elevation: 0,
                         shape: const RoundedRectangleBorder(
                             borderRadius: BorderRadius.zero),
                       ),
                       child: Text(
-                        localizedStrings?.gBtnDynamic ?? "Dynamic",
+                        !_isStatic
+                            ? "${localizedStrings?.gBtnDynamic ?? "Dynamic"}  ✓"
+                            : (localizedStrings?.gBtnDynamic ?? "Dynamic"),
                         style: const TextStyle(
                             fontSize: 16, fontWeight: FontWeight.bold),
                       ),

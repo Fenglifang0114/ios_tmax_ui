@@ -542,16 +542,16 @@ class WiredSettingPageState extends State<WiredSettingPage> {
   }
 
   bool isValidData() {
-    if (!_isStatic) {
+    if (!_isStatic || selScaleId == -1) {
       return false;
     }
 
-    if (ipController.text.isNotEmpty &&
-        gateWayController.text.isNotEmpty &&
-        netMaskController.text.isNotEmpty &&
-        validateIpFlag(ipController.text) &&
-        validateIpFlag(gateWayController.text) &&
-        validateIpFlag(netMaskController.text)) {
+    if (ipController.text.trim().isNotEmpty &&
+        gateWayController.text.trim().isNotEmpty &&
+        netMaskController.text.trim().isNotEmpty &&
+        validateIpFlag(ipController.text.trim()) &&
+        validateIpFlag(gateWayController.text.trim()) &&
+        validateIpFlag(netMaskController.text.trim())) {
       return true;
     }
 
@@ -613,8 +613,11 @@ class WiredSettingPageState extends State<WiredSettingPage> {
   }
 
   Widget _buildMobileContent(BuildContext context, double width) {
+    final bool isKeyboardOpen = MediaQuery.of(context).viewInsets.bottom > 0;
+
     return Scaffold(
       backgroundColor: Colors.white,
+      resizeToAvoidBottomInset: true,
       drawer: _buildMobileDrawer(context),
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -674,7 +677,7 @@ class WiredSettingPageState extends State<WiredSettingPage> {
               ),
             ),
           ),
-          _buildMobileBottomButtons(context),
+          if (!isKeyboardOpen) _buildMobileBottomButtons(context),
         ],
       ),
     );
@@ -807,38 +810,55 @@ class WiredSettingPageState extends State<WiredSettingPage> {
   }
 
   Widget _buildMobileField(String label, TextEditingController controller) {
+    final bool isInvalid = _isStatic &&
+        controller.text.isNotEmpty &&
+        !validateIpFlag(controller.text);
+
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       color: Colors.white,
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            label,
-            style: const TextStyle(fontSize: 16, color: Colors.black87),
+          Row(
+            children: [
+              Text(
+                label,
+                style: const TextStyle(fontSize: 16, color: Colors.black87),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: TextField(
+                  readOnly: !_isStatic,
+                  controller: controller,
+                  keyboardType: TextInputType.number,
+                  textAlign: TextAlign.right,
+                  decoration: const InputDecoration(
+                    hintText: "0.0.0.0",
+                    hintStyle: TextStyle(fontSize: 16, color: Colors.black54),
+                    border: InputBorder.none,
+                    isDense: true,
+                    contentPadding: EdgeInsets.zero,
+                  ),
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: isInvalid
+                        ? Colors.red
+                        : (!_isStatic ? Colors.black54 : Colors.black87),
+                  ),
+                  onChanged: (value) => setState(() {}),
+                ),
+              ),
+            ],
           ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: TextField(
-              readOnly: !_isStatic,
-              controller: controller,
-              keyboardType: TextInputType.number,
-              textAlign: TextAlign.right,
-              decoration: const InputDecoration(
-                hintText: "0.0.0.0",
-                hintStyle: TextStyle(fontSize: 16, color: Colors.black54),
-                border: InputBorder.none,
-                isDense: true,
-                contentPadding: EdgeInsets.zero,
+          if (isInvalid)
+            Padding(
+              padding: const EdgeInsets.only(top: 4),
+              child: Text(
+                localizedStrings?.gTipErrorIp ?? "Invalid IP address format",
+                style: const TextStyle(color: Colors.red, fontSize: 12),
               ),
-              style: TextStyle(
-                fontSize: 16,
-                color: !validateIpFlag(controller.text)
-                    ? Colors.red
-                    : (!_isStatic ? Colors.black54 : Colors.black87),
-              ),
-              onChanged: (value) => setState(() {}),
             ),
-          ),
         ],
       ),
     );

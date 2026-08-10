@@ -26,6 +26,7 @@ class _MobileSerialPreviewPageState extends State<MobileSerialPreviewPage> {
   late int activeScaleId;
   final ScrollController _scrollController = ScrollController();
   dynamic _eventbusListener;
+  dynamic _eventbusReqWeight;
 
   @override
   void initState() {
@@ -39,13 +40,24 @@ class _MobileSerialPreviewPageState extends State<MobileSerialPreviewPage> {
       PublicFunctions.getWeight(activeScaleId);
     }
 
+    _eventbusReqWeight = eventBus.on<EventReqWeightCountine>().listen((event) {
+      if (mounted) {
+        final req = event.obj;
+        if (req.scaleId == activeScaleId) {
+          PublicFunctions.openScalePassth(activeScaleId);
+        }
+      }
+    });
+
     _eventbusListener = eventBus.on<EventScalePassthData>().listen((event) {
       if (mounted) {
         setState(() {
           final resp = event.obj;
-          outputData.add(resp.msgBody);
-          if (outputData.length > 1000) {
-            outputData.clear();
+          if (resp.scaleId == activeScaleId || resp.scaleId == null) {
+            outputData.add(resp.msgBody);
+            if (outputData.length > 1000) {
+              outputData.clear();
+            }
           }
         });
         _scrollToBottom();
@@ -73,6 +85,7 @@ class _MobileSerialPreviewPageState extends State<MobileSerialPreviewPage> {
   @override
   void dispose() {
     _eventbusListener?.cancel();
+    _eventbusReqWeight?.cancel();
     _scrollController.dispose();
     if (activeScaleId != -1) {
       PublicFunctions.stopWeight(activeScaleId);
