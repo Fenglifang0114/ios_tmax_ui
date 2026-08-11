@@ -10,19 +10,17 @@ extension MultiScaleManagementInfoExt on MultiScaleManagementState {
             child: LayoutBuilder(
                 builder: (BuildContext context, BoxConstraints constraints) {
               return ListView(
+                padding: const EdgeInsets.only(top: 8),
                 children: [
-                  const SizedBox(
-                    height: regularPadding,
-                  ),
                   buildItemInfo(
                       showItemNameWithStar(
-                          context, (localizedStrings?.gScaleName ?? "gScaleName"), false),
+                          context, (localizedStrings?.gScaleName ?? "Scale Name"), false),
                       showScaleNameInputBox(
                           context,
                           scaleNameCtl,
                           '',
                           IconButton(
-                            icon: Icon(Icons.edit_outlined), // 缂栬緫鎸夐挳鍥炬爣
+                            icon: Icon(Icons.edit_outlined),
                             onPressed: () {
                               setState(() {
                                 isRename = true;
@@ -32,63 +30,40 @@ extension MultiScaleManagementInfoExt on MultiScaleManagementState {
                         setState(() {});
                       }, isRename),
                       showItemNameWithStar(
-                          context, (localizedStrings?.gModelName ?? "gModelName"), false),
+                          context, (localizedStrings?.gModelName ?? "Model Name"), false),
                       showInputBox(context, scaleModelCtl, '', (value) {
                         setState(() {});
                       }, false)),
                   const SizedBox(
-                    height: regularPadding,
+                    height: 8,
                   ),
                   buildItemInfo(
                       showItemNameWithStar(
-                          context, (localizedStrings?.gScaleSn ?? "gScaleSn"), false),
-                      showInputBox(context, snCtl, '', (value) {
+                          context, "Protocol Name", false),
+                      showInputBox(context, protocolCtl, '', (value) {
                         setState(() {});
                       }, false),
                       showItemNameWithStar(
-                          context, (localizedStrings?.gTipPort ?? "gTipPort"), false),
-                      showInputBox(context, portCtl, '', (value) {
+                          context, (localizedStrings?.gScaleSn ?? "SN"), false),
+                      showInputBox(context, snCtl, '', (value) {
                         setState(() {});
                       }, false)),
                   const SizedBox(
-                    height: regularPadding,
+                    height: 8,
                   ),
-                  Wrap(
-                    alignment: WrapAlignment.spaceEvenly,
-                    spacing: regularPadding,
-                    runSpacing: regularPadding,
-                    children: [
-                      Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            SizedBox(
-                                width: inputWidth,
-                                child: showItemNameWithStar(context,
-                                    (localizedStrings?.gIpAddress ?? "gIpAddress"), false)),
-                            SizedBox(
-                                width: inputWidth,
-                                child:
-                                    showInputBox(context, ipCtl, '', (value) {
-                                  setState(() {});
-                                }, false))
-                          ]),
-                      Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            SizedBox(
-                              width: inputWidth,
-                            ),
-                            SizedBox(
-                              width: inputWidth,
-                            )
-                          ])
-                    ],
-                  ),
+                  buildItemInfo(
+                      showItemNameWithStar(
+                          context, (localizedStrings?.gTipPort ?? "Port"), false),
+                      showInputBox(context, portCtl, '', (value) {
+                        setState(() {});
+                      }, false),
+                      showItemNameWithStar(
+                          context, (localizedStrings?.gIpAddress ?? "IPv4"), false),
+                      showInputBox(context, ipCtl, '', (value) {
+                        setState(() {});
+                      }, false)),
                   const SizedBox(
-                    height: regularPadding,
-                  ),
-                  const SizedBox(
-                    height: regularPadding,
+                    height: 16,
                   ),
                   isRename
                       ? showRenameConfirmBtn()
@@ -98,6 +73,7 @@ extension MultiScaleManagementInfoExt on MultiScaleManagementState {
             })));
   }
 
+
   Widget showBluetoothScaleInfo() {
     return Expanded(
         child: SizedBox(
@@ -105,19 +81,17 @@ extension MultiScaleManagementInfoExt on MultiScaleManagementState {
             child: LayoutBuilder(
                 builder: (BuildContext context, BoxConstraints constraints) {
               return ListView(
+                padding: const EdgeInsets.only(top: 8),
                 children: [
-                  const SizedBox(
-                    height: regularPadding,
-                  ),
                   buildItemInfo(
                       showItemNameWithStar(
-                          context, (localizedStrings?.gScaleName ?? "gScaleName"), false),
+                          context, (localizedStrings?.gScaleName ?? "Scale Name"), false),
                       showScaleNameInputBox(
                           context,
                           scaleNameCtl,
                           '',
                           IconButton(
-                            icon: Icon(Icons.edit_outlined), // 缂栬緫鎸夐挳鍥炬爣
+                            icon: Icon(Icons.edit_outlined),
                             onPressed: () {
                               setState(() {
                                 isRename = true;
@@ -127,46 +101,47 @@ extension MultiScaleManagementInfoExt on MultiScaleManagementState {
                         setState(() {});
                       }, isRename),
                       showItemNameWithStar(
-                          context, (localizedStrings?.gModelName ?? "gModelName"), false),
+                          context, (localizedStrings?.gModelName ?? "Model Name"), false),
                       showInputBox(context, scaleModelCtl, '', (value) {
                         setState(() {});
                       }, false)),
                   const SizedBox(
-                    height: regularPadding,
+                    height: 8,
                   ),
                   buildItemInfo(
                       showItemNameWithStar(
-                          context, (localizedStrings?.gScaleSn ?? "gScaleSn"), false),
-                      showInputBox(context, snCtl, '', (value) {
+                          context, "Protocol Name", false),
+                      showInputBox(context, protocolCtl, '', (value) {
                         setState(() {});
                       }, false),
                       showItemNameWithStar(
-                          context, (localizedStrings?.bluetoothName ?? "bluetoothName"), false),
-                      showInputBox(context, btNameCtl, '', (value) {
+                          context, (localizedStrings?.gScaleSn ?? "SN"), false),
+                      showInputBox(context, snCtl, '', (value) {
                         setState(() {});
                       }, false)),
                   const SizedBox(
-                    height: regularPadding,
+                    height: 8,
                   ),
                   buildItemInfo(
                       showItemNameWithStar(
-                          context, (localizedStrings?.bluetoothAddress ?? "bluetoothAddress"), false),
-                      showInputBox(context, macCtl, '', (value) {
+                          context, (localizedStrings?.bluetoothName ?? "Bluetooth Name"), false),
+                      showInputBox(context, btNameCtl, '', (value) {
                         setState(() {});
                       }, false),
-                      const SizedBox(),
-                      const SizedBox()),
+                      showItemNameWithStar(
+                          context, (localizedStrings?.bluetoothAddress ?? "MAC Address"), false),
+                      showInputBox(context, macCtl, '', (value) {
+                        setState(() {});
+                      }, false)),
                   const SizedBox(
-                    height: regularPadding,
-                  ),
-                  const SizedBox(
-                    height: regularPadding,
+                    height: 16,
                   ),
                   isRename ? showRenameConfirmBtn() : buttonRow(),
                 ],
               );
             })));
   }
+
 
   Widget showComScaleInfo() {
     return Expanded(
@@ -175,19 +150,17 @@ extension MultiScaleManagementInfoExt on MultiScaleManagementState {
             child: LayoutBuilder(
                 builder: (BuildContext context, BoxConstraints constraints) {
               return ListView(
+                padding: const EdgeInsets.only(top: 8),
                 children: [
-                  const SizedBox(
-                    height: regularPadding,
-                  ),
                   buildItemInfo(
                       showItemNameWithStar(
-                          context, (localizedStrings?.gScaleName ?? "gScaleName"), false),
+                          context, (localizedStrings?.gScaleName ?? "Scale Name"), false),
                       showScaleNameInputBox(
                           context,
                           scaleNameCtl,
                           '',
                           IconButton(
-                            icon: Icon(Icons.edit_outlined), // 缂栬緫鎸夐挳鍥炬爣
+                            icon: Icon(Icons.edit_outlined),
                             onPressed: () {
                               setState(() {
                                 isRename = true;
@@ -197,69 +170,47 @@ extension MultiScaleManagementInfoExt on MultiScaleManagementState {
                         setState(() {});
                       }, isRename),
                       showItemNameWithStar(
-                          context, (localizedStrings?.gModelName ?? "gModelName"), false),
+                          context, (localizedStrings?.gModelName ?? "Model Name"), false),
                       showInputBox(context, scaleModelCtl, '', (value) {
                         setState(() {});
                       }, false)),
                   const SizedBox(
-                    height: regularPadding,
+                    height: 8,
                   ),
                   buildItemInfo(
                       showItemNameWithStar(
-                          context, (localizedStrings?.gScaleSn ?? "gScaleSn"), false),
-                      showInputBox(context, snCtl, '', (value) {
+                          context, "Protocol Name", false),
+                      showInputBox(context, protocolCtl, '', (value) {
                         setState(() {});
                       }, false),
+                      showItemNameWithStar(
+                          context, (localizedStrings?.gScaleSn ?? "SN"), false),
+                      showInputBox(context, snCtl, '', (value) {
+                        setState(() {});
+                      }, false)),
+                  const SizedBox(
+                    height: 8,
+                  ),
+                  buildItemInfo(
                       showItemNameWithStar(
                           context, (localizedStrings?.gTipPort ?? "Port"), false),
                       showInputBox(context, comPortCtl, '', (value) {
                         setState(() {});
+                      }, false),
+                      showItemNameWithStar(
+                          context, (localizedStrings?.gBaudRate ?? "Baud Rate"), false),
+                      showInputBox(context, baudRateCtl, '', (value) {
+                        setState(() {});
                       }, false)),
                   const SizedBox(
-                    height: regularPadding,
-                  ),
-                  Wrap(
-                    alignment: WrapAlignment.spaceEvenly,
-                    spacing: regularPadding,
-                    runSpacing: regularPadding,
-                    children: [
-                      Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            SizedBox(
-                                width: inputWidth,
-                                child: showItemNameWithStar(context,
-                                    (localizedStrings?.gBaudRate ?? "Baud Rate"), false)),
-                            SizedBox(
-                                width: inputWidth,
-                                child:
-                                    showInputBox(context, baudRateCtl, '', (value) {
-                                  setState(() {});
-                                }, false))
-                          ]),
-                      Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            SizedBox(
-                              width: inputWidth,
-                            ),
-                            SizedBox(
-                              width: inputWidth,
-                            )
-                          ])
-                    ],
-                  ),
-                  const SizedBox(
-                    height: regularPadding,
-                  ),
-                  const SizedBox(
-                    height: regularPadding,
+                    height: 16,
                   ),
                   isRename ? showRenameConfirmBtn() : buttonRow(),
                 ],
               );
             })));
   }
+
 
 
   Widget showRenameConfirmBtn() {

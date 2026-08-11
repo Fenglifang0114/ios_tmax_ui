@@ -365,22 +365,65 @@ extension MultiScaleManagementAddExt on MultiScaleManagementState {
                     });
                   },
                 ),
-                // Common checkbox
-                Container(
-                  color: Colors.white,
-                  child: ListTile(
-                    title: Text(localizedStrings?.commonApp ?? "Common", style: const TextStyle(color: Colors.black87, fontSize: 16)),
-                    trailing: Switch(
-                      value: isDC500,
-                      activeColor: const Color(0xFF0D558E),
-                      onChanged: (val) => setState(() => isDC500 = val),
-                    ),
-                  ),
+                _buildMobileListTile(
+                  localizedStrings?.gModelName ?? "Model Name",
+                  selectedModelInfo?.customScaleName ?? "Select Model",
+                  () async {
+                    final result = await Navigator.push<Map<String, dynamic>>(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => MobileSelectModelPage(
+                          modelList: modelNameInfoList.modelNameInfoList,
+                          initialModel: selectedModelInfo,
+                          initialProtocol: selectedSubModel?.protocolName,
+                          onlyScpX: false,
+                        ),
+                      ),
+                    );
+                    if (result != null) {
+                      setState(() {
+                        selectedModelInfo = result['model'] as ModelNameInfo?;
+                        selectedSubModel = result['subModel'] as SubModel?;
+                        if (selectedModelInfo != null) {
+                          scaleModelCtl.text = selectedModelInfo!.customScaleName ?? '';
+                        }
+                      });
+                    }
+                  },
                 ),
+                _buildMobileListTile(
+                  "Protocol Name",
+                  selectedSubModel?.protocolName ?? "Select Protocol",
+                  () async {
+                    final result = await Navigator.push<Map<String, dynamic>>(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => MobileSelectModelPage(
+                          modelList: modelNameInfoList.modelNameInfoList,
+                          initialModel: selectedModelInfo,
+                          initialProtocol: selectedSubModel?.protocolName,
+                          onlyScpX: false,
+                        ),
+                      ),
+                    );
+                    if (result != null) {
+                      setState(() {
+                        selectedModelInfo = result['model'] as ModelNameInfo?;
+                        selectedSubModel = result['subModel'] as SubModel?;
+                        if (selectedModelInfo != null) {
+                          scaleModelCtl.text = selectedModelInfo!.customScaleName ?? '';
+                        }
+                      });
+                    }
+                  },
+                ),
+
+
               ],
             ),
           ),
         ),
+
         // Bottom Confirm Button
         Container(
           color: Colors.white,
@@ -486,8 +529,70 @@ extension MultiScaleManagementAddExt on MultiScaleManagementState {
             child: _buildMobileBtBody(),
           ),
         ),
-        // Bottom Confirm Button
-        if (isBtSearched)
+        if (isBtSearched) ...[
+          Container(
+            color: Colors.white,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _buildMobileListTile(
+                  localizedStrings?.gModelName ?? "Model Name",
+                  selectedModelInfo?.customScaleName ?? "Select Model",
+                  () async {
+                    final result = await Navigator.push<Map<String, dynamic>>(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => MobileSelectModelPage(
+                          modelList: modelNameInfoList.modelNameInfoList,
+                          initialModel: selectedModelInfo,
+                          initialProtocol: selectedSubModel?.protocolName,
+                          onlyScpX: true,
+                        ),
+                      ),
+                    );
+                    if (result != null) {
+                      setState(() {
+                        selectedModelInfo = result['model'] as ModelNameInfo?;
+                        selectedSubModel = result['subModel'] as SubModel?;
+                        if (selectedModelInfo != null) {
+                          scaleModelCtl.text = selectedModelInfo!.customScaleName ?? '';
+                        }
+                      });
+                    }
+                  },
+                ),
+                _buildMobileListTile(
+                  "Protocol Name",
+                  selectedSubModel?.protocolName ?? "Select Protocol",
+                  () async {
+                    final result = await Navigator.push<Map<String, dynamic>>(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => MobileSelectModelPage(
+                          modelList: modelNameInfoList.modelNameInfoList,
+                          initialModel: selectedModelInfo,
+                          initialProtocol: selectedSubModel?.protocolName,
+                          onlyScpX: true,
+                        ),
+                      ),
+                    );
+                    if (result != null) {
+                      setState(() {
+                        selectedModelInfo = result['model'] as ModelNameInfo?;
+                        selectedSubModel = result['subModel'] as SubModel?;
+                        if (selectedModelInfo != null) {
+                          scaleModelCtl.text = selectedModelInfo!.customScaleName ?? '';
+                        }
+                      });
+                    }
+                  },
+                ),
+              ],
+            ),
+
+
+          ),
           Container(
             color: Colors.white,
             padding: const EdgeInsets.all(16.0),
@@ -521,9 +626,12 @@ extension MultiScaleManagementAddExt on MultiScaleManagementState {
               ),
             ),
           ),
+        ],
       ],
     );
   }
+
+
 
   Widget _buildMobileBtBody() {
     if (isBtSearching) {
@@ -924,10 +1032,65 @@ extension MultiScaleManagementAddExt on MultiScaleManagementState {
                   "", // removed localizedStrings?.gTipPleaseInput to prevent crash
                   TextInputType.number,
                 ),
+                _buildMobileListTile(
+                  localizedStrings?.gModelName ?? "Model Name",
+                  selectedModelInfo?.customScaleName ?? "Select Model",
+                  () async {
+                    final result = await Navigator.push<Map<String, dynamic>>(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => MobileSelectModelPage(
+                          modelList: modelNameInfoList.modelNameInfoList,
+                          initialModel: selectedModelInfo,
+                          initialProtocol: selectedSubModel?.protocolName,
+                          onlyScpX: true,
+                        ),
+                      ),
+                    );
+                    if (result != null) {
+                      setState(() {
+                        selectedModelInfo = result['model'] as ModelNameInfo?;
+                        selectedSubModel = result['subModel'] as SubModel?;
+                        if (selectedModelInfo != null) {
+                          scaleModelCtl.text = selectedModelInfo!.customScaleName ?? '';
+                        }
+                      });
+                    }
+                  },
+                ),
+                _buildMobileListTile(
+                  "Protocol Name",
+                  selectedSubModel?.protocolName ?? "Select Protocol",
+                  () async {
+                    final result = await Navigator.push<Map<String, dynamic>>(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => MobileSelectModelPage(
+                          modelList: modelNameInfoList.modelNameInfoList,
+                          initialModel: selectedModelInfo,
+                          initialProtocol: selectedSubModel?.protocolName,
+                          onlyScpX: true,
+                        ),
+                      ),
+                    );
+                    if (result != null) {
+                      setState(() {
+                        selectedModelInfo = result['model'] as ModelNameInfo?;
+                        selectedSubModel = result['subModel'] as SubModel?;
+                        if (selectedModelInfo != null) {
+                          scaleModelCtl.text = selectedModelInfo!.customScaleName ?? '';
+                        }
+                      });
+                    }
+                  },
+                ),
+
+
               ],
             ),
           ),
         ),
+
         // Bottom Confirm Button
         Container(
           color: Colors.white,

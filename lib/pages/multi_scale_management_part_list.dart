@@ -221,12 +221,6 @@ extension MultiScaleManagementListExt on MultiScaleManagementState {
       duration: Duration(milliseconds: 300),
       child: Column(
         children: [
-          SizedBox(
-            height: regularPadding,
-          ),
-          SizedBox(
-            height: smallPadding,
-          ),
           myAllScalesList.isEmpty
               ? showNoDeviceWidget(context)
               : showAllDevicesWidget()
@@ -256,7 +250,21 @@ extension MultiScaleManagementListExt on MultiScaleManagementState {
                         scaleNameCtl.text = scale.scaleName;
                         scaleModelCtl.text = scale.scaleModel;
                         snCtl.text = scale.scaleSn;
-                        // 判断 scaleModel 是否为 TMax，且 sn 是否为 10 位并以 174 开头
+
+                        String foundProtocol = '';
+                        for (var modelInfo in modelNameInfoList.modelNameInfoList) {
+                          if (modelInfo.customScaleName == scale.scaleModel || modelInfo.innerScaleName == scale.scaleModel) {
+                            if (modelInfo.subModel != null && modelInfo.subModel!.isNotEmpty) {
+                              foundProtocol = modelInfo.subModel!.first.protocolName ?? '';
+                              break;
+                            }
+                          }
+                        }
+                        if (foundProtocol.isEmpty) {
+                          foundProtocol = scale.scaleModel == "DC500" ? "C51" : "SCP-X";
+                        }
+                        protocolCtl.text = foundProtocol;
+
 
                         if (scale.tMedia == comScaleType) {
                           final serialConfig =
@@ -380,8 +388,9 @@ extension MultiScaleManagementListExt on MultiScaleManagementState {
     return Wrap(
       alignment: WrapAlignment.spaceEvenly,
       spacing: regularPadding,
-      runSpacing: regularPadding,
+      runSpacing: 4,
       children: [
+
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           SizedBox(width: inputWidth, child: title1),
           SizedBox(width: inputWidth, child: content1)

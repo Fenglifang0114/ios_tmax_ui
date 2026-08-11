@@ -31,10 +31,13 @@ import '../eventbus/eventbus.dart';
 import '../functions/methods.dart';
 import '../widget/page_head.dart';
 import 'multi_scale_management_dialog.dart';
+import '../data/custom_model_info.dart';
+import '../dialog/mobile_select_model_dialog.dart';
 part 'multi_scale_management_part_list.dart';
 part 'multi_scale_management_part_add.dart';
 part 'multi_scale_management_part_edit.dart';
 part 'multi_scale_management_part_info.dart';
+
 
 class MultiScaleManagement extends StatefulWidget {
   const MultiScaleManagement({super.key});
@@ -134,6 +137,10 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
     return tempValid;
   }
 
+  ModelNameInfoList modelNameInfoList = ModelNameInfoList([]);
+  ModelNameInfo? selectedModelInfo;
+  SubModel? selectedSubModel;
+
   @override
   void initState() {
     super.initState();
@@ -143,11 +150,20 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
     PublicFunctions.getScaleList();
 
     checkPortList();
+    _loadModelNameInfo();
 
     scaleNameCtl.addListener(_onScaleNameChanged);
     ipCtl.addListener(_onIpChanged);
     portCtl.addListener(_onPortChanged);
   }
+
+  void _loadModelNameInfo() async {
+    await modelNameInfoList.getModelName();
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
 
   void initScaleList() {}
 
@@ -585,7 +601,8 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
     myMediaConf.mediaInfoJson = netInfoStr;
     myMediaConf.type = 1;
     myAddNetScale.scaleId = 10;
-    myAddNetScale.scaleModel = 'TMax';
+    String targetModel = selectedModelInfo?.customScaleName ?? (scaleModelCtl.text.isNotEmpty ? scaleModelCtl.text : 'TMax');
+    myAddNetScale.scaleModel = targetModel;
     myAddNetScale.mediaConf = myMediaConf;
     PublicFunctions.sendAddScale(jsonEncode(myAddNetScale));
     isAddNewScale = true;
@@ -599,14 +616,12 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
     tempPort.parity = 0;
     tempPort.stopBits = 0;
     String infoString = jsonEncode(tempPort);
-    AddNetScale addNetScale = AddNetScale(scaleModel: 'TMax');
+    String targetModel = selectedModelInfo?.customScaleName ?? (scaleModelCtl.text.isNotEmpty ? scaleModelCtl.text : 'TMax');
+    AddNetScale addNetScale = AddNetScale(scaleModel: targetModel);
     myMediaConf.mediaInfoJson = infoString;
     myMediaConf.type = 0;
     addNetScale.scaleId = 10;
-    addNetScale.scaleModel = 'TMax';
-    if (isDC500) {
-      addNetScale.scaleModel = 'DC500';
-    }
+    addNetScale.scaleModel = targetModel;
     addNetScale.mediaConf = myMediaConf;
     PublicFunctions.sendAddScale(jsonEncode(addNetScale));
     isDC500 = false;
@@ -627,11 +642,13 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
     myMediaConf.mediaInfoJson = btInfoStr;
     myMediaConf.type = 2;
     myAddNetScale.scaleId = 10;
-    myAddNetScale.scaleModel = 'TMax';
+    String targetModel = selectedModelInfo?.customScaleName ?? (scaleModelCtl.text.isNotEmpty ? scaleModelCtl.text : 'TMax');
+    myAddNetScale.scaleModel = targetModel;
     myAddNetScale.mediaConf = myMediaConf;
     PublicFunctions.sendAddScale(jsonEncode(myAddNetScale));
     isAddNewScale = true;
   }
+
 
   bool isValidScaleName(String name) {
     for (Scale tempScale in myAllScalesList) {
