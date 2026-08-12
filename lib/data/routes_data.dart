@@ -47,6 +47,8 @@ import 'package:t_max/pages/mobile_weighing_data_collection_page.dart';
 import 'package:t_max/pages/mobile_check_weighing_page.dart';
 import 'package:t_max/pages/mobile_take_out_page.dart';
 import 'package:t_max/pages/mobile_take_in_page.dart';
+import 'package:t_max/pages/mobile_retail_report_page.dart';
+
 
 class RouteData {
   RouteData({
@@ -385,8 +387,6 @@ List<RouteData> getAllAppsMenus() {
       subtitle: (localizedStrings?.subTitleWeighing ?? "subTitleWeighing"),
       iconPath: weighingSvgIcon(),
     ),
-    /*
-    // 暂时屏蔽 Retail Report
     RouteData(
         id: MenuId.retailReportPage,
         title: (localizedStrings?.menuRetailReport ?? "menuRetailReport"),
@@ -394,7 +394,6 @@ List<RouteData> getAllAppsMenus() {
         subtitle:
             (localizedStrings?.subTitleRetailReport ?? "subTitleRetailReport"),
         iconPath: detailReportSvgIcon()),
-    */
     RouteData(
         id: MenuId.weightDataCollectionPage,
         title: (localizedStrings?.menuWeighingDataCollection ??
@@ -639,6 +638,12 @@ Widget buildPageContent(dynamic Function(String) navigateContent,
   } else if (pageId == MenuId.downReciptPage) {
     return DownReciptPage();
   } else if (pageId == MenuId.retailReportPage) {
+    if (Platform.isAndroid || Platform.isIOS) {
+      return MobileRetailReportPage(
+        onNavigate: navigateContent,
+        lastRouteName: lastRouteName,
+      );
+    }
     return RetailReportPage(
       onNavigate: navigateContent,
       lastRouteName: lastRouteName,
@@ -805,6 +810,7 @@ List<RouteDataGroup> getHierarchicalConfigMenus() {
         originalMenus
             .firstWhereOrNull((m) => m.id == MenuId.basicDataCollectionPage),
         originalMenus.firstWhereOrNull((m) => m.id == MenuId.pluEditPage),
+        appMemu.firstWhereOrNull((m) => m.id == MenuId.retailReportPage),
       ].whereType<RouteData>().toList(),
     ),
     // App管理组
