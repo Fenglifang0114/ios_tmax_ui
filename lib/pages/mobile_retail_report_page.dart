@@ -16,6 +16,7 @@ import 'package:t_max/data/scalelist_data.dart';
 import 'package:t_max/eventbus/eventbus.dart';
 import 'package:t_max/functions/methods.dart';
 import 'package:t_max/widget/show_error_dialog.dart';
+import 'package:t_max/widget/mobile_scale_drawer_widget.dart';
 
 class TransactionWithExpansion extends DetailInfoRev {
   bool isExpanded;
@@ -78,11 +79,44 @@ class _MobileRetailReportPageState extends State<MobileRetailReportPage> {
     }).toList();
   }
 
+  Timer? _heartbeatTimer;
+
+  void netScaleOpenBill() {
+    if (myAllScalesList.isNotEmpty) {
+      for (int i = 0; i < myAllScalesList.length; i++) {
+        if (myAllScalesList[i].tMedia == 1 || myAllScalesList[i].tMedia == 2) {
+          PublicFunctions.openBillSend(myAllScalesList[i].scaleId);
+        }
+      }
+    }
+  }
+
+  void startHeartbeatTimer() {
+    if (_heartbeatTimer == null || !_heartbeatTimer!.isActive) {
+      _heartbeatTimer = Timer.periodic(const Duration(seconds: 3), (timer) {
+        if (myAllScalesList.isNotEmpty) {
+          for (int i = 0; i < myAllScalesList.length; i++) {
+            if (myAllScalesList[i].tMedia == 1 || myAllScalesList[i].tMedia == 2) {
+              PublicFunctions.sendCalHeartBeat(myAllScalesList[i].scaleId);
+            }
+          }
+        }
+      });
+    }
+  }
+
+  void stopHeartbeatTimer() {
+    _heartbeatTimer?.cancel();
+    _heartbeatTimer = null;
+  }
+
   @override
   void initState() {
     super.initState();
     PublicFunctions.getScaleList();
     PublicFunctions.getScaleSrvList(serviceId);
+    netScaleOpenBill();
+    startHeartbeatTimer();
     PublicFunctions.getDetailList();
 
     // Listen to real transaction detail info response from backend SQLite DB
@@ -158,6 +192,7 @@ class _MobileRetailReportPageState extends State<MobileRetailReportPage> {
     // Listen to scale list updates
     _eventBusScaleList = eventBus.on<EventScaleList>().listen((event) {
       if (mounted) {
+        netScaleOpenBill();
         setState(() {});
       }
     });
@@ -175,6 +210,7 @@ class _MobileRetailReportPageState extends State<MobileRetailReportPage> {
     _eventBusScaleSrvList?.cancel();
     _eventBusScaleOnline?.cancel();
     _eventBusScaleList?.cancel();
+    stopHeartbeatTimer();
     _searchController.dispose();
     super.dispose();
   }
@@ -184,6 +220,7 @@ class _MobileRetailReportPageState extends State<MobileRetailReportPage> {
       mySelScaleIdList.remove(scaleId);
     } else {
       mySelScaleIdList.add(scaleId);
+      PublicFunctions.openBillSend(scaleId);
     }
     setScaleRelStatus(scaleId, getStatus(scaleId));
   }
@@ -449,9 +486,8 @@ class _MobileRetailReportPageState extends State<MobileRetailReportPage> {
             icon: const Icon(Icons.arrow_back, color: Colors.black87, size: 24),
             onPressed: _handleBack,
           ),
-          IconButton(
-            icon: Icon(Icons.balance, color: Theme.of(context).colorScheme.primary, size: 24),
-            onPressed: () {
+          MobileScaleHeaderIconButton(
+            onTap: () {
               _scaffoldKey.currentState?.openDrawer();
             },
           ),
@@ -659,136 +695,14 @@ class _MobileRetailReportPageState extends State<MobileRetailReportPage> {
   Widget _buildDeviceListDrawer() {
     final netScales = _networkScalesList;
 
-    return Drawer(
-      width: MediaQuery.of(context).size.width * 0.75,
-      child: Container(
-        color: Colors.white,
-        child: SafeArea(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                child: Row(
-                  children: [
-                    Text(
-                      localizedStrings?.gTitleDeviceList ?? 'Device List',
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF0D558E),
-                      ),
-                    ),
-                    const Spacer(),
-                    IconButton(
-                      icon: const Icon(Icons.help_outline, color: Colors.black87),
-                      onPressed: () {},
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 8),
-
-              Expanded(
-                child: netScales.isEmpty
-                    ? Center(
-                        child: Text(
-                          localizedStrings?.gTipNoDevice ?? 'No Device',
-                          style: const TextStyle(color: Colors.grey, fontSize: 16),
-                        ),
-                      )
-                    : ListView.separated(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        itemCount: netScales.length,
-                        separatorBuilder: (context, index) => const SizedBox(height: 12),
-                        itemBuilder: (context, index) {
-                          final scale = netScales[index];
-                          final isSelected = mySelScaleIdList.contains(scale.scaleId);
-                          return _buildDrawerDeviceCard(
-                            scale: scale,
-                            isSelected: isSelected,
-                          );
-                        },
-                      ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDrawerDeviceCard({
-    required Scale scale,
-    required bool isSelected,
-  }) {
-    final isOnline = scale.isOnline;
-    final statusText = isOnline
-        ? (localizedStrings?.gTipOnline ?? "Online")
-        : (localizedStrings?.gTipOffline ?? "Offline");
-
-    return InkWell(
-      onTap: () {
+    return UnifiedDeviceDrawerContent(
+      scaleList: netScales,
+      isSelected: (scale) => mySelScaleIdList.contains(scale.scaleId),
+      onScaleTap: (scale) {
         setState(() {
           addOrRemoveSelScale(scale.scaleId);
         });
       },
-      child: Container(
-        height: 64,
-        decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFF0D558E) : const Color(0xFFF9F9F9),
-          borderRadius: BorderRadius.circular(4),
-        ),
-        padding: const EdgeInsets.symmetric(horizontal: 12),
-        child: Row(
-          children: [
-            Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                color: isSelected ? Colors.white.withValues(alpha: 0.2) : const Color(0xFFEBF3FA),
-                borderRadius: BorderRadius.circular(4),
-              ),
-              child: Icon(
-                scale.tMedia == 1
-                    ? Icons.wifi
-                    : (scale.tMedia == 2 ? Icons.bluetooth : Icons.language),
-                color: isSelected ? Colors.white : const Color(0xFF0D558E),
-                size: 24,
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    scale.scaleName,
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: isSelected ? Colors.white : Colors.black87,
-                    ),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    statusText,
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: isSelected
-                          ? Colors.white.withValues(alpha: 0.9)
-                          : (isOnline ? const Color(0xFF1BB984) : Colors.red),
-                    ),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

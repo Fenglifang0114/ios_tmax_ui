@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/data/olul_err_data.dart';
@@ -13,6 +14,7 @@ import '../data/language.dart';
 import '../data/timer_manager.dart';
 import 'package:t_max/functions/adaptive.dart';
 import 'package:t_max/dialog/mobile_page_help_dialog.dart';
+import 'package:t_max/widget/mobile_scale_drawer_widget.dart';
 
 class BasicDataPage extends StatefulWidget {
   const BasicDataPage({super.key});
@@ -97,7 +99,9 @@ class BasicDataPageState extends State<BasicDataPage> {
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
-    if (Adaptive.isMobile(context)) {
+    final bool isMobile =
+        Platform.isAndroid || Platform.isIOS || Adaptive.isMobile(context);
+    if (isMobile) {
       return mobileLayout(context, width);
     }
     return Scaffold(
@@ -294,53 +298,46 @@ class BasicDataPageState extends State<BasicDataPage> {
   Widget mobileLayout(BuildContext context, double width) {
     return Scaffold(
       backgroundColor: Colors.white,
-      drawer: Drawer(
-        width: 250,
-        child: SafeArea(
-          child: Container(
-            color: Theme.of(context).colorScheme.surface,
-            child: Column(
-              children: [
-                Container(
-                  height: 48,
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    (localizedStrings?.gTitleDeviceList ?? "Device List"),
-                    style: Theme.of(context).textTheme.labelLarge!.apply(
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                  ),
-                ),
-                const Divider(height: 1),
-                Expanded(
-                  child: NewAllScaleListWidget(
-                    listWidth: 250,
-                    selScaleId: selScaleId,
-                    clickScale: (scale) {
-                      if (!enabledGetDataBtn) {
-                        showTipInfo((localizedStrings?.gTipPerformingOperation ?? "Performing"), context);
-                        return;
-                      }
-                      setState(() {
-                        changeScale(scale.scaleId);
-                      });
-                      Navigator.pop(context); // close drawer
-                    },
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
+      drawer: UnifiedDeviceDrawerContent(
+        scaleList: myAllScalesList,
+        isSelected: (scale) => selScaleId == scale.scaleId,
+        onScaleTap: (scale) {
+          if (!enabledGetDataBtn) {
+            showTipInfo(
+                (localizedStrings?.gTipPerformingOperation ?? "Performing"),
+                context);
+            return;
+          }
+          Navigator.pop(context);
+          setState(() {
+            changeScale(scale.scaleId);
+          });
+        },
       ),
       appBar: AppBar(
         backgroundColor: Colors.white,
-        foregroundColor: Colors.black87,
         elevation: 0,
-        leading: BackButton(
-          onPressed: () {
-            Navigator.pop(context);
+        scrolledUnderElevation: 0,
+        centerTitle: true,
+        leadingWidth: 96,
+        leading: Builder(
+          builder: (BuildContext ctx) {
+            return Row(
+              children: [
+                const SizedBox(width: 4),
+                BackButton(
+                  color: Colors.black87,
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+                MobileScaleHeaderIconButton(
+                  onTap: () {
+                    Scaffold.of(ctx).openDrawer();
+                  },
+                ),
+              ],
+            );
           },
         ),
         title: Text(
@@ -348,21 +345,12 @@ class BasicDataPageState extends State<BasicDataPage> {
           style: const TextStyle(
             color: Colors.black87,
             fontSize: 18,
-            fontWeight: FontWeight.w500,
+            fontWeight: FontWeight.bold,
           ),
         ),
-        centerTitle: true,
         actions: [
-          Builder(
-            builder: (context) => IconButton(
-              icon: const Icon(Icons.scale_outlined, color: Colors.black87, size: 24),
-              onPressed: () {
-                Scaffold.of(context).openDrawer();
-              },
-            ),
-          ),
           IconButton(
-            icon: const Icon(Icons.help_outline, color: Colors.black87, size: 24),
+            icon: const Icon(Icons.help_outline, color: Colors.black87),
             onPressed: () {
               showDialog(
                 context: context,
@@ -373,7 +361,6 @@ class BasicDataPageState extends State<BasicDataPage> {
               );
             },
           ),
-          const SizedBox(width: 8),
         ],
       ),
       body: Column(

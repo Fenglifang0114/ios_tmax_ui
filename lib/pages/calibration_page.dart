@@ -18,6 +18,7 @@ import '../../functions/methods.dart';
 import '../data/language.dart';
 import '../functions/adaptive.dart';
 import '../widget/page_head.dart';
+import 'package:t_max/widget/mobile_scale_drawer_widget.dart';
 
 const int step1 = 1; //姝ラ1
 const int step2 = 2; //姝ラ2
@@ -625,52 +626,25 @@ class CalibrationPageState extends State<CalibrationPage> {
     return Scaffold(
 
       drawer: isMobile
-          ? Drawer(
-              width: thisScaleListWidth + 20,
-              child: Container(
-                color: Theme.of(context).colorScheme.surface,
-                child: Column(
-                  children: [
-                    Container(
-                      height: btnHeight + 40,
-                      padding:
-                          const EdgeInsets.only(left: regularPadding, top: 40),
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        (localizedStrings?.gTitleDeviceList ?? "gTitleDeviceList"),
-                        style: Theme.of(context).textTheme.labelLarge!.apply(
-                              color: Theme.of(context).colorScheme.primary,
-                            ),
-                      ),
-                    ),
-                    const Divider(),
-                    Expanded(
-                      child: NewAllScaleListWidget(
-                        listWidth: thisScaleListWidth,
-                        selScaleId: selScaleId,
-                        clickScale: (scale) {
-                          setState(() {
-                            bool isS15 = false;
-                            for (var item in myAllScalesList) {
-                              if (item.scaleId == scale.scaleId) {
-                                if (item.scaleModel != "S15") {
-                                  showTipInfo(
-                                      "Please select S15 scale", context);
-                                } else {
-                                  isS15 = true;
-                                }
-                              }
-                            }
-                            if (isS15) {
-                              changeScale(scale.scaleId);
-                            }
-                          });
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+          ? UnifiedDeviceDrawerContent(
+              scaleList: myAllScalesList,
+              isSelected: (scale) => selScaleId == scale.scaleId,
+              onScaleTap: (scale) {
+                bool isS15 = false;
+                for (var item in myAllScalesList) {
+                  if (item.scaleId == scale.scaleId) {
+                    if (item.scaleModel != "S15") {
+                      showTipInfo("Please select S15 scale", context);
+                    } else {
+                      isS15 = true;
+                    }
+                  }
+                }
+                if (isS15) {
+                  Navigator.pop(context);
+                  changeScale(scale.scaleId);
+                }
+              },
             )
           : null,
       body: Container(
@@ -683,15 +657,19 @@ class CalibrationPageState extends State<CalibrationPage> {
             },
                 showBackBtn: false,
                 leading: isMobile
-                    ? Padding(
-                        padding: const EdgeInsets.only(left: regularPadding),
-                        child: Builder(
-                          builder: (context) => IconButton(
-                            icon: Icon(Icons.menu_open,
-                                color: Theme.of(context).colorScheme.primary,
-                                size: 28),
-                            onPressed: () => Scaffold.of(context).openDrawer(),
-                          ),
+                    ? Builder(
+                        builder: (context) => Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const SizedBox(width: 4),
+                            IconButton(
+                              icon: const Icon(Icons.arrow_back, color: Colors.black87),
+                              onPressed: () => widget.onNavigate(widget.lastRouteName),
+                            ),
+                            MobileScaleHeaderIconButton(
+                              onTap: () => Scaffold.of(context).openDrawer(),
+                            ),
+                          ],
                         ),
                       )
                     : null),

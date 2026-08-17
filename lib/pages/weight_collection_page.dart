@@ -27,7 +27,9 @@ import '../../eventbus/eventbus.dart';
 import '../../functions/methods.dart';
 import '../data/downloadresponse.dart';
 import '../data/language.dart';
+import '../functions/adaptive.dart';
 import '../widget/page_head.dart';
+import 'package:t_max/widget/mobile_scale_drawer_widget.dart';
 
 class WeightDataCollectionPage extends StatefulWidget {
   final Function(String) onNavigate;
@@ -461,7 +463,21 @@ class WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
       );
     }
     final width = MediaQuery.of(context).size.width;
+    final bool isMobile = Adaptive.isMobile(context);
     return Scaffold(
+      drawer: isMobile
+          ? UnifiedDeviceDrawerContent(
+              scaleList: myAllScalesList,
+              isSelected: (scale) => mySelScaleIdList.contains(scale.scaleId),
+              onScaleTap: (scale) {
+                if (mounted) {
+                  setState(() {
+                    addOrRemoveSelScale(scale.scaleId);
+                  });
+                }
+              },
+            )
+          : null,
       body: Container(
           width: width,
           decoration:
@@ -484,36 +500,37 @@ class WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
                   color: Theme.of(context).colorScheme.surfaceTint,
                   child: Row(
                     children: [
-                      Container(
-                        width: appScaleListWidth,
-                        color: Theme.of(context).colorScheme.surfaceTint,
-                        child: SizedBox(
-                          height: MediaQuery.of(context).size.height,
-                          child: Column(
-                            mainAxisSize: MainAxisSize.max,
-                            children: [
-                              SizedBox(
-                                height: regularPadding,
-                              ),
-                              Expanded(
-                                child: NewMutiScaleListWidget(
-                                  listWidth: appScaleListWidth, // 列表宽度
-                                  selScaleList: mySelScaleIdList,
-                                  clickScale: (scale) {
-                                    if (mounted) {
-                                      if (mounted) {
-                                        setState(() {
-                                          addOrRemoveSelScale(scale.scaleId);
-                                        });
-                                      }
-                                    }
-                                  },
+                      if (!isMobile)
+                        Container(
+                          width: appScaleListWidth,
+                          color: Theme.of(context).colorScheme.surfaceTint,
+                          child: SizedBox(
+                            height: MediaQuery.of(context).size.height,
+                            child: Column(
+                              mainAxisSize: MainAxisSize.max,
+                              children: [
+                                SizedBox(
+                                  height: regularPadding,
                                 ),
-                              ),
-                            ],
+                                Expanded(
+                                  child: NewMutiScaleListWidget(
+                                    listWidth: appScaleListWidth, // 列表宽度
+                                    selScaleList: mySelScaleIdList,
+                                    clickScale: (scale) {
+                                      if (mounted) {
+                                        if (mounted) {
+                                          setState(() {
+                                            addOrRemoveSelScale(scale.scaleId);
+                                          });
+                                        }
+                                      }
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
-                      ),
                       Container(
                         width: regularPadding,
                         color:
@@ -1045,6 +1062,7 @@ class WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
 
   Widget myPageHeadInfo(
       dynamic context, double maxWidth, String pageTitle, String helpInfo) {
+    final bool isMobile = Adaptive.isMobile(context);
     return Container(
         height: pageTopTitleHeight,
         color: Theme.of(context).colorScheme.surface,
@@ -1053,11 +1071,39 @@ class WeightDataCollectionPageState extends State<WeightDataCollectionPage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                subTitle(context, pageTitle, () {
-                  Future.delayed(Duration.zero, () {
-                    widget.onNavigate(widget.lastRouteName);
-                  });
-                }),
+                Expanded(
+                  child: pageHeadInfo(
+                    context,
+                    maxWidth,
+                    pageTitle,
+                    helpInfo,
+                    () {
+                      Future.delayed(Duration.zero, () {
+                        widget.onNavigate(widget.lastRouteName);
+                      });
+                    },
+                    showHelp: false,
+                    leading: isMobile
+                        ? Builder(
+                            builder: (ctx) => Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const SizedBox(width: 4),
+                                IconButton(
+                                  icon: const Icon(Icons.arrow_back,
+                                      color: Colors.black87),
+                                  onPressed: () =>
+                                      widget.onNavigate(widget.lastRouteName),
+                                ),
+                                MobileScaleHeaderIconButton(
+                                  onTap: () => Scaffold.of(ctx).openDrawer(),
+                                ),
+                              ],
+                            ),
+                          )
+                        : null,
+                  ),
+                ),
                 Row(mainAxisAlignment: MainAxisAlignment.end, children: [
                   Text(
                     mySettingParam.wgtMode == 0

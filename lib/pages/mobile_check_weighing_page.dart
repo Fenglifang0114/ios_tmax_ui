@@ -18,6 +18,7 @@ import 'package:t_max/eventbus/eventbus.dart';
 import 'package:t_max/functions/methods.dart';
 import 'package:t_max/data/language.dart';
 import 'package:t_max/generated/l10n.dart';
+import 'package:t_max/widget/mobile_scale_drawer_widget.dart';
 import 'package:t_max/widget/f_open_file.dart';
 
 class CheckWeightInfo {
@@ -207,8 +208,8 @@ class _MobileCheckWeighingPageState extends State<MobileCheckWeighingPage> {
     }
     for (var scale in myAllScalesList) {
       bool isChecked =
-          _drawerDeviceCheckedMap[scale.scaleId] ?? scale.isOnline;
-      if (scale.isOnline && isChecked) {
+          _drawerDeviceCheckedMap[scale.scaleId] ?? true;
+      if (isChecked) {
         PublicFunctions.getWeight(scale.scaleId);
       }
     }
@@ -457,7 +458,7 @@ class _MobileCheckWeighingPageState extends State<MobileCheckWeighingPage> {
                       icon: const Icon(Icons.arrow_back, color: Color(0xFF1E293B)),
                       onPressed: () => Navigator.pop(context),
                     ),
-                    const Icon(Icons.scale, color: Color(0xFF1E293B), size: 22),
+                    getSvgIcon(weighingSvgIcon(), 22, 22, const Color(0xFF1E293B)),
                     const SizedBox(width: 8),
                     const Expanded(
                       child: Text(
@@ -658,38 +659,34 @@ class _MobileCheckWeighingPageState extends State<MobileCheckWeighingPage> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0.5,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Color(0xFF1E293B)),
-          onPressed: () {
-            if (Navigator.canPop(context)) {
-              Navigator.pop(context);
-            } else if (widget.lastRouteName.isNotEmpty) {
-              widget.onNavigate(widget.lastRouteName);
-            } else {
-              widget.onNavigate('/multiScaleManagement');
-            }
-          },
-        ),
-        title: Row(
+        leadingWidth: 96,
+        leading: Row(
           children: [
-            IconButton(
-              icon: const Icon(Icons.scale, color: Color(0xFF1E293B), size: 22),
-              onPressed: _openDeviceListDrawer,
-            ),
             const SizedBox(width: 4),
-            const Expanded(
-              child: Text(
-                "Check Weighing",
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  color: Color(0xFF1E293B),
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
+            IconButton(
+              icon: const Icon(Icons.arrow_back, color: Color(0xFF1E293B)),
+              onPressed: () {
+                if (Navigator.canPop(context)) {
+                  Navigator.pop(context);
+                } else if (widget.lastRouteName.isNotEmpty) {
+                  widget.onNavigate(widget.lastRouteName);
+                } else {
+                  widget.onNavigate('/multiScaleManagement');
+                }
+              },
+            ),
+            MobileScaleHeaderIconButton(
+              onTap: _openDeviceListDrawer,
             ),
           ],
+        ),
+        title: const Text(
+          "Check Weighing",
+          style: TextStyle(
+            color: Color(0xFF1E293B),
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         actions: [
           IconButton(
@@ -790,7 +787,7 @@ class _MobileCheckWeighingPageState extends State<MobileCheckWeighingPage> {
       children: [
         ...myAllScalesList
             .where((scale) =>
-                _drawerDeviceCheckedMap[scale.scaleId] ?? scale.isOnline)
+                _drawerDeviceCheckedMap[scale.scaleId] ?? true)
             .map((scale) => _buildScaleCard(scale)),
       ],
     );
@@ -1369,176 +1366,25 @@ class _MobileCheckWeighingPageState extends State<MobileCheckWeighingPage> {
       pageBuilder: (context, anim1, anim2) {
         return Align(
           alignment: Alignment.centerLeft,
-          child: Material(
-            color: Colors.transparent,
-            child: Container(
-              width: MediaQuery.of(context).size.width * 0.78,
-              height: double.infinity,
-              color: Colors.white,
-              padding: EdgeInsets.only(
-                top: MediaQuery.of(context).padding.top + 16,
-                left: 16,
-                right: 16,
-                bottom: 16,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    localizedStrings?.fScaleList ?? "Device List",
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF004884),
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  Expanded(
-                    child: myAllScalesList.isEmpty
-                        ? Center(
-                            child: Text(
-                              localizedStrings?.gTipNoDevice ?? "No Devices",
-                              style: const TextStyle(
-                                  color: Color(0xFF94A3B8), fontSize: 15),
-                            ),
-                          )
-                        : ListView.builder(
-                            itemCount: myAllScalesList.length,
-                            itemBuilder: (context, index) {
-                              Scale scale = myAllScalesList[index];
-                              int id = scale.scaleId;
-                              bool isOnline = scale.isOnline;
-                              bool isChecked =
-                                  _drawerDeviceCheckedMap[id] ?? scale.isOnline;
-
-                              IconData mediaIcon =
-                                  Icons.settings_input_component;
-                              if (scale.tMedia == netScaleType) {
-                                mediaIcon = Icons.language;
-                              } else if (scale.tMedia == btScaleType) {
-                                mediaIcon = Icons.bluetooth;
-                              }
-
-                              Color cardBg = isOnline
-                                  ? const Color(0xFF004884)
-                                  : const Color(0xFFEF4444);
-                              Color txtColor = Colors.white;
-                              Color statusColor = Colors.white70;
-
-                              if (scale.tMedia == btScaleType && isOnline) {
-                                cardBg = const Color(0xFFF8FAFC);
-                                txtColor = const Color(0xFF1E293B);
-                                statusColor = const Color(0xFF10B981);
-                              }
-
-                              return StatefulBuilder(
-                                builder: (context, setDrawerState) {
-                                  return Container(
-                                    margin: const EdgeInsets.only(bottom: 12),
-                                    padding: const EdgeInsets.all(12),
-                                    decoration: BoxDecoration(
-                                      color: cardBg,
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        Container(
-                                          width: 40,
-                                          height: 40,
-                                          decoration: BoxDecoration(
-                                            color:
-                                                (scale.tMedia == btScaleType &&
-                                                        isOnline)
-                                                    ? const Color(0xFFE2E8F0)
-                                                    : const Color(0x33FFFFFF),
-                                            borderRadius:
-                                                BorderRadius.circular(20),
-                                          ),
-                                          alignment: Alignment.center,
-                                          child: Icon(
-                                            mediaIcon,
-                                            color: (scale.tMedia ==
-                                                        btScaleType &&
-                                                    isOnline)
-                                                ? const Color(0xFF004884)
-                                                : Colors.white,
-                                            size: 22,
-                                          ),
-                                        ),
-                                        const SizedBox(width: 12),
-                                        Expanded(
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                scale.scaleName.isNotEmpty
-                                                    ? scale.scaleName
-                                                    : "Scale$id",
-                                                style: TextStyle(
-                                                  color: txtColor,
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 16,
-                                                ),
-                                              ),
-                                              const SizedBox(height: 2),
-                                              Text(
-                                                isOnline
-                                                    ? (localizedStrings
-                                                            ?.gTipOnline ??
-                                                        "Online")
-                                                    : (localizedStrings
-                                                            ?.gTipOffline ??
-                                                        "Offline"),
-                                                style: TextStyle(
-                                                  color: statusColor,
-                                                  fontSize: 12,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        Checkbox(
-                                          value: isChecked,
-                                          activeColor:
-                                              (scale.tMedia == btScaleType &&
-                                                      isOnline)
-                                                  ? const Color(0xFF004884)
-                                                  : Colors.white,
-                                          checkColor: (scale.tMedia ==
-                                                      btScaleType &&
-                                                  isOnline)
-                                              ? Colors.white
-                                              : (isOnline
-                                                  ? const Color(0xFF004884)
-                                                  : const Color(0xFFEF4444)),
-                                          side: BorderSide(
-                                            color:
-                                                (scale.tMedia == btScaleType &&
-                                                        isOnline)
-                                                    ? const Color(0xFFCBD5E1)
-                                                    : Colors.white,
-                                          ),
-                                          onChanged: (val) {
-                                            setDrawerState(() {
-                                              isChecked = val ?? false;
-                                              _drawerDeviceCheckedMap[id] =
-                                                  isChecked;
-                                            });
-                                            setState(() {});
-                                          },
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                },
-                              );
-                            },
-                          ),
-                  ),
-                ],
-              ),
-            ),
+          child: StatefulBuilder(
+            builder: (context, setDrawerState) {
+              return UnifiedDeviceDrawerContent(
+                scaleList: myAllScalesList,
+                isSelected: (scale) => _drawerDeviceCheckedMap[scale.scaleId] ?? true,
+                onScaleTap: (scale) {
+                  bool newChecked = !(_drawerDeviceCheckedMap[scale.scaleId] ?? true);
+                  setDrawerState(() {
+                    _drawerDeviceCheckedMap[scale.scaleId] = newChecked;
+                  });
+                  if (newChecked) {
+                    PublicFunctions.getWeight(scale.scaleId);
+                  } else {
+                    PublicFunctions.stopWeight(scale.scaleId);
+                  }
+                  setState(() {});
+                },
+              );
+            },
           ),
         );
       },

@@ -17,6 +17,7 @@ import 'package:t_max/pages/mobile_formula_record_detail_page.dart';
 import 'package:t_max/pages/mobile_formula_detail_page.dart';
 import 'package:t_max/pages/start_fma_pct_page.dart';
 import 'package:t_max/pages/start_fma_secret_page.dart';
+import 'package:t_max/widget/mobile_scale_drawer_widget.dart';
 
 class MobileFormulaScalePage extends StatefulWidget {
   final Function(String)? onNavigate;
@@ -346,114 +347,19 @@ class _MobileFormulaScalePageState extends State<MobileFormulaScalePage> {
       pageBuilder: (context, anim1, anim2) {
         return Align(
           alignment: Alignment.centerLeft,
-          child: Material(
-            color: Colors.transparent,
-            child: StatefulBuilder(
-              builder: (context, setDrawerState) {
-                return Container(
-                  width: MediaQuery.of(context).size.width * 0.75,
-                  height: double.infinity,
-                  color: Colors.white,
-                  child: SafeArea(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Header
-                        Padding(
-                          padding: const EdgeInsets.all(20.0),
-                          child: Text(
-                            localizedStrings?.fScaleList ?? 'Scale List',
-                            style: const TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFF004884),
-                            ),
-                          ),
-                        ),
-                        const Divider(height: 1, thickness: 1),
-
-                        // Device List
-                        Expanded(
-                          child: myAllScalesList.isEmpty
-                              ? Center(
-                                  child: Text(
-                                    localizedStrings?.gTipNoDevice ?? 'No devices found',
-                                    style: TextStyle(color: Colors.grey.shade500, fontSize: 14),
-                                  ),
-                                )
-                              : ListView.separated(
-                                  padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                                  itemCount: myAllScalesList.length,
-                                  separatorBuilder: (_, __) => const SizedBox(height: 10),
-                                  itemBuilder: (context, index) {
-                                    Scale scale = myAllScalesList[index];
-                                    int id = scale.scaleId;
-                                    bool isChecked = _drawerDeviceCheckedMap[id] ?? scale.isOnline;
-
-                                    return Container(
-                                      decoration: BoxDecoration(
-                                        color: isChecked ? const Color(0xFF004884) : const Color(0xFFF8FAFC),
-                                        borderRadius: BorderRadius.circular(8),
-                                        border: Border.all(
-                                          color: isChecked ? const Color(0xFF004884) : Colors.grey.shade200,
-                                        ),
-                                      ),
-                                      child: ListTile(
-                                        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                                        leading: Container(
-                                          width: 40,
-                                          height: 40,
-                                          decoration: BoxDecoration(
-                                            color: isChecked
-                                                ? Colors.white.withValues(alpha: 0.2)
-                                                : Colors.grey.shade200,
-                                            borderRadius: BorderRadius.circular(8),
-                                          ),
-                                          child: Icon(
-                                            Icons.language,
-                                            color: isChecked ? Colors.white : const Color(0xFF004884),
-                                          ),
-                                        ),
-                                        title: Text(
-                                          scale.scaleName.isNotEmpty
-                                              ? scale.scaleName
-                                              : 'Device No.${scale.scaleId}',
-                                          style: TextStyle(
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.bold,
-                                            color: isChecked ? Colors.white : Colors.black87,
-                                          ),
-                                        ),
-                                        subtitle: Text(
-                                          scale.isOnline
-                                              ? (localizedStrings?.gTipOnline ?? 'Online')
-                                              : (localizedStrings?.gTipOffline ?? 'Offline'),
-                                          style: TextStyle(
-                                            fontSize: 12,
-                                            color: isChecked
-                                                ? Colors.white.withValues(alpha: 0.8)
-                                                : (scale.isOnline
-                                                    ? Colors.green.shade600
-                                                    : Colors.red.shade400),
-                                          ),
-                                        ),
-                                        onTap: () {
-                                          setDrawerState(() {
-                                            _drawerDeviceCheckedMap[id] = !isChecked;
-                                          });
-                                          setState(() {});
-                                        },
-                                      ),
-                                    );
-                                  },
-                                ),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            ),
+          child: StatefulBuilder(
+            builder: (context, setDrawerState) {
+              return UnifiedDeviceDrawerContent(
+                scaleList: myAllScalesList,
+                isSelected: (scale) => _drawerDeviceCheckedMap[scale.scaleId] ?? scale.isOnline,
+                onScaleTap: (scale) {
+                  setDrawerState(() {
+                    _drawerDeviceCheckedMap[scale.scaleId] = !(_drawerDeviceCheckedMap[scale.scaleId] ?? scale.isOnline);
+                  });
+                  setState(() {});
+                },
+              );
+            },
           ),
         );
       },
@@ -654,32 +560,32 @@ class _MobileFormulaScalePageState extends State<MobileFormulaScalePage> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0.5,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black87),
-          onPressed: () {
-            if (widget.onNavigate != null && widget.lastRouteName != null) {
-              widget.onNavigate!(widget.lastRouteName!);
-            } else {
-              Navigator.of(context).pop();
-            }
-          },
-        ),
-        title: Row(
+        leadingWidth: 96,
+        leading: Row(
           children: [
-            IconButton(
-              icon: const Icon(Icons.scale, color: Color(0xFF004884)),
-              onPressed: _openDeviceListDrawer,
-            ),
             const SizedBox(width: 4),
-            const Text(
-              'Formula',
-              style: TextStyle(
-                color: Colors.black87,
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
+            IconButton(
+              icon: const Icon(Icons.arrow_back, color: Colors.black87),
+              onPressed: () {
+                if (widget.onNavigate != null && widget.lastRouteName != null) {
+                  widget.onNavigate!(widget.lastRouteName!);
+                } else {
+                  Navigator.of(context).pop();
+                }
+              },
+            ),
+            MobileScaleHeaderIconButton(
+              onTap: _openDeviceListDrawer,
             ),
           ],
+        ),
+        title: const Text(
+          'Formula',
+          style: TextStyle(
+            color: Colors.black87,
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         actions: [
           IconButton(

@@ -8,8 +8,7 @@ import 'package:t_max/data/scale_info_from_db.dart';
 import 'package:t_max/dialog/custom_dialog_tip.dart';
 import 'package:t_max/widget/common_widget.dart';
 import 'package:t_max/widget/scale_list.dart';
-import 'package:t_max/widget/no_device_widget.dart';
-import 'package:t_max/data/icons.dart';
+import 'package:t_max/widget/mobile_scale_drawer_widget.dart';
 import '../data/downloadresponse.dart';
 import 'package:t_max/functions/methods.dart';
 import '../../eventbus/eventbus.dart';
@@ -58,7 +57,8 @@ class BluetoothPageState extends State<BluetoothPage> {
 
     PublicFunctions.getScaleList();
 
-    comScalesList = List.from(myAllScalesList);
+    comScalesList =
+        myAllScalesList.where((scale) => scale.tMedia == comScaleType).toList();
     if (comScalesList.isNotEmpty && selScaleId == -1) {
       selScaleId = comScalesList.first.scaleId;
     }
@@ -106,7 +106,8 @@ class BluetoothPageState extends State<BluetoothPage> {
     _eventbus3 = eventBus.on<EventRespAddScale>().listen((event) {
       if (mounted) {
         setState(() {
-          comScalesList = List.from(myAllScalesList);
+          comScalesList =
+              myAllScalesList.where((scale) => scale.tMedia == comScaleType).toList();
           if (comScalesList.isNotEmpty && selScaleId == -1) {
             selScaleId = comScalesList.first.scaleId;
           }
@@ -170,8 +171,9 @@ class BluetoothPageState extends State<BluetoothPage> {
     writelog("[BT_PAGE] build called: isMobile=$isMobile, platformIsAndroid=${Platform.isAndroid}, screenWidth=${MediaQuery.of(context).size.width}, selScaleId=$selScaleId");
 
     if (myAllScalesList.isNotEmpty) {
-      comScalesList = List.from(myAllScalesList);
-      if (selScaleId == -1) {
+      comScalesList =
+          myAllScalesList.where((scale) => scale.tMedia == comScaleType).toList();
+      if (selScaleId == -1 && comScalesList.isNotEmpty) {
         selScaleId = comScalesList.first.scaleId;
       }
     }
@@ -185,11 +187,12 @@ class BluetoothPageState extends State<BluetoothPage> {
                 elevation: 0,
                 scrolledUnderElevation: 0,
                 centerTitle: true,
-                leadingWidth: 100,
+                leadingWidth: 96,
                 leading: Builder(
                   builder: (BuildContext ctx) {
                     return Row(
                       children: [
+                        const SizedBox(width: 4),
                         BackButton(
                           color: Colors.black87,
                           onPressed: () {
@@ -201,17 +204,11 @@ class BluetoothPageState extends State<BluetoothPage> {
                             }
                           },
                         ),
-                        GestureDetector(
-                          behavior: HitTestBehavior.opaque,
+                        MobileScaleHeaderIconButton(
                           onTap: () {
                             writelog("[BT_PAGE] Scale icon clicked -> opening drawer");
                             _scaffoldKey.currentState?.openDrawer();
                           },
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                            child: getSvgIcon(
-                                weighingSvgIcon(), 24, 24, Colors.black87),
-                          ),
                         ),
                       ],
                     );
@@ -281,127 +278,25 @@ class BluetoothPageState extends State<BluetoothPage> {
   }
 
   Widget _buildMobileDrawer(BuildContext context) {
-    List<Scale> comScales = myAllScalesList;
+    List<Scale> comScales =
+        myAllScalesList.where((scale) => scale.tMedia == comScaleType).toList();
 
-    return Drawer(
-      width: 280,
-      backgroundColor: Colors.white,
-      child: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 20, top: 20, bottom: 16, right: 16),
-              child: Text(
-                localizedStrings?.gTitleDeviceList ?? "Device List",
-                style: const TextStyle(
-                  color: Color(0xFF005696),
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            comScales.isEmpty
-                ? showNoDeviceWidget(context)
-                : Expanded(
-                    child: ListView.separated(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      itemCount: comScales.length,
-                      separatorBuilder: (context, index) =>
-                          const SizedBox(height: 12),
-                      itemBuilder: (context, index) {
-                        final scale = comScales[index];
-                        final bool isSelect = (selScaleId == scale.scaleId);
-                        final bool isOnline = scale.isOnline;
-
-                        return GestureDetector(
-                          onTap: () {
-                            if (isSetting) {
-                              showTipInfo(
-                                localizedStrings?.gTipPerformingOperation ??
-                                    "Performing operation",
-                                context,
-                              );
-                              return;
-                            }
-                            Navigator.pop(context);
-                            setState(() {
-                              changeScale(scale.scaleId);
-                            });
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 12, vertical: 12),
-                            decoration: BoxDecoration(
-                              color: isSelect
-                                  ? const Color(0xFF005696)
-                                  : const Color(0xFFF7F8FA),
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                            child: Row(
-                              children: [
-                                Container(
-                                  width: 44,
-                                  height: 44,
-                                  decoration: BoxDecoration(
-                                    color: isSelect
-                                        ? Colors.white.withOpacity(0.2)
-                                        : const Color(0xFFE8EEF4),
-                                    borderRadius: BorderRadius.circular(4),
-                                  ),
-                                  alignment: Alignment.center,
-                                  child: getSvgIcon(
-                                    serialPortSvgIcon(),
-                                    24,
-                                    24,
-                                    isSelect ? Colors.white : const Color(0xFF005696),
-                                  ),
-                                ),
-                                const SizedBox(width: 12),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        scale.scaleName,
-                                        style: TextStyle(
-                                          color:
-                                              isSelect ? Colors.white : Colors.black87,
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                      const SizedBox(height: 4),
-                                      Text(
-                                        isOnline
-                                            ? (localizedStrings?.gTipOnline ?? "Online")
-                                            : (localizedStrings?.gTipOffline ??
-                                                "Offline"),
-                                        style: TextStyle(
-                                          color: isSelect
-                                              ? Colors.white.withOpacity(0.9)
-                                              : (isOnline
-                                                  ? const Color(0xFF005696)
-                                                  : const Color(0xFFFF4D4F)),
-                                          fontSize: 14,
-                                        ),
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-            ),
-          ],
-        ),
-      ),
+    return UnifiedDeviceDrawerContent(
+      scaleList: comScales,
+      isSelected: (scale) => selScaleId == scale.scaleId,
+      onScaleTap: (scale) {
+        if (isSetting) {
+          showTipInfo(
+            localizedStrings?.gTipPerformingOperation ?? "Performing operation",
+            context,
+          );
+          return;
+        }
+        Navigator.pop(context);
+        setState(() {
+          changeScale(scale.scaleId);
+        });
+      },
     );
   }
 

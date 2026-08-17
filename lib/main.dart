@@ -43,9 +43,7 @@ Future<void> main() async {
         padding: const EdgeInsets.all(20),
         child: SingleChildScrollView(
           child: Text(
-            details.exceptionAsString() +
-                '\n' +
-                (details.stack?.toString() ?? ''),
+            '${details.exceptionAsString()}\n${details.stack?.toString() ?? ''}',
             style: const TextStyle(color: Colors.white, fontSize: 14),
           ),
         ),

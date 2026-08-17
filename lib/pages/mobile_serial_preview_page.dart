@@ -1,12 +1,8 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:t_max/data/home_page_common_data.dart';
-import 'package:t_max/data/icons.dart';
-import 'package:t_max/data/language.dart';
 import 'package:t_max/data/scale_info_from_db.dart';
 import 'package:t_max/eventbus/eventbus.dart';
 import 'package:t_max/functions/methods.dart';
-import 'package:t_max/widget/no_device_widget.dart';
+import 'package:t_max/widget/mobile_scale_drawer_widget.dart';
 
 class MobileSerialPreviewPage extends StatefulWidget {
   final int selScaleId;
@@ -94,132 +90,13 @@ class _MobileSerialPreviewPageState extends State<MobileSerialPreviewPage> {
   }
 
   Widget _buildDeviceDrawer(BuildContext context) {
-    return Drawer(
-      width: 280,
-      backgroundColor: Colors.white,
-      child: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(
-                  left: 20, top: 20, bottom: 16, right: 16),
-              child: Text(
-                localizedStrings?.gTitleDeviceList ?? "Device List",
-                style: const TextStyle(
-                  color: Color(0xFF005696),
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            Expanded(
-              child: myAllScalesList.isEmpty
-                  ? showNoDeviceWidget(context)
-                  : ListView.separated(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      itemCount: myAllScalesList.length,
-                      separatorBuilder: (context, index) =>
-                          const SizedBox(height: 12),
-                      itemBuilder: (context, index) {
-                        final scale = myAllScalesList[index];
-                        final bool isSelect = (activeScaleId == scale.scaleId);
-                        final bool isOnline = scale.isOnline;
-
-                        String iconPath = serialPortSvgIcon();
-                        if (scale.tMedia == netScaleType) {
-                          iconPath = networkSvgIcon();
-                        } else if (scale.tMedia == btScaleType) {
-                          iconPath = btSvgIcon();
-                        }
-
-                        final String displayName = scale.scaleName.isNotEmpty
-                            ? scale.scaleName
-                            : "Device No.${index + 1}";
-
-                        return GestureDetector(
-                          onTap: () {
-                            Navigator.pop(context);
-                            _changeScale(scale.scaleId!);
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 12, vertical: 12),
-                            decoration: BoxDecoration(
-                              color: isSelect
-                                  ? const Color(0xFF005696)
-                                  : const Color(0xFFF7F8FA),
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                            child: Row(
-                              children: [
-                                Container(
-                                  width: 44,
-                                  height: 44,
-                                  decoration: BoxDecoration(
-                                    color: isSelect
-                                        ? Colors.white.withOpacity(0.2)
-                                        : const Color(0xFFE8EEF4),
-                                    borderRadius: BorderRadius.circular(4),
-                                  ),
-                                  alignment: Alignment.center,
-                                  child: getSvgIcon(
-                                    iconPath,
-                                    24,
-                                    24,
-                                    isSelect
-                                        ? Colors.white
-                                        : const Color(0xFF005696),
-                                  ),
-                                ),
-                                const SizedBox(width: 12),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        displayName,
-                                        style: TextStyle(
-                                          color: isSelect
-                                              ? Colors.white
-                                              : Colors.black87,
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                      const SizedBox(height: 4),
-                                      Text(
-                                        isOnline
-                                            ? (localizedStrings?.gTipOnline ??
-                                                "Online")
-                                            : (localizedStrings?.gTipOffline ??
-                                                "Offline"),
-                                        style: TextStyle(
-                                          color: isOnline
-                                              ? (isSelect
-                                                  ? Colors.white
-                                                      .withOpacity(0.8)
-                                                  : const Color(0xFF005696))
-                                              : Colors.redAccent,
-                                          fontSize: 13,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-            ),
-          ],
-        ),
-      ),
+    return UnifiedDeviceDrawerContent(
+      scaleList: myAllScalesList,
+      isSelected: (scale) => activeScaleId == scale.scaleId,
+      onScaleTap: (scale) {
+        Navigator.pop(context);
+        _changeScale(scale.scaleId!);
+      },
     );
   }
 
@@ -233,23 +110,19 @@ class _MobileSerialPreviewPageState extends State<MobileSerialPreviewPage> {
         elevation: 0,
         scrolledUnderElevation: 0,
         centerTitle: true,
-        leadingWidth: 84,
+        leadingWidth: 96,
         leading: Builder(
           builder: (BuildContext ctx) {
             return Row(
               mainAxisSize: MainAxisSize.min,
               children: [
+                const SizedBox(width: 4),
                 BackButton(
                   color: Colors.black87,
                   onPressed: () => Navigator.pop(context),
                 ),
-                GestureDetector(
+                MobileScaleHeaderIconButton(
                   onTap: () => Scaffold.of(ctx).openDrawer(),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                    child:
-                        getSvgIcon(weighingSvgIcon(), 24, 24, Colors.black87),
-                  ),
                 ),
               ],
             );

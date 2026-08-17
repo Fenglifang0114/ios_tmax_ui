@@ -28,6 +28,7 @@ import '../data/downloadresponse.dart';
 import '../data/language.dart';
 import '../functions/adaptive.dart';
 import '../widget/page_head.dart';
+import 'package:t_max/widget/mobile_scale_drawer_widget.dart';
 
 class CheckWeighersPage extends StatefulWidget {
   final Function(String) onNavigate;
@@ -410,40 +411,16 @@ class CheckWeighersPageState extends State<CheckWeighersPage> {
 
     return Scaffold(
       drawer: isMobile
-          ? Drawer(
-              width: appScaleListWidth + 20,
-              child: Container(
-                color: Theme.of(context).colorScheme.surface,
-                child: Column(
-                  children: [
-                    Container(
-                      height: btnHeight + 40,
-                      padding:
-                          const EdgeInsets.only(left: regularPadding, top: 40),
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        localizedStrings?.gTitleDeviceList ?? "",
-                        style: Theme.of(context).textTheme.labelLarge!.apply(
-                              color: Theme.of(context).colorScheme.primary,
-                            ),
-                      ),
-                    ),
-                    const Divider(),
-                    Expanded(
-                      child: NewMutiScaleListWidget(
-                        listWidth: appScaleListWidth,
-                        selScaleList: mySelScaleIdList,
-                        clickScale: (scale) {
-                          if (mounted)
-                            setState(() {
-                              addOrRemoveSelScale(scale.scaleId);
-                            });
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+          ? UnifiedDeviceDrawerContent(
+              scaleList: myAllScalesList,
+              isSelected: (scale) => mySelScaleIdList.contains(scale.scaleId),
+              onScaleTap: (scale) {
+                if (mounted) {
+                  setState(() {
+                    addOrRemoveSelScale(scale.scaleId);
+                  });
+                }
+              },
             )
           : null,
       body: Container(
@@ -458,15 +435,19 @@ class CheckWeighersPageState extends State<CheckWeighersPage> {
               widget.onNavigate(widget.lastRouteName);
             },
                 leading: isMobile
-                    ? Padding(
-                        padding: const EdgeInsets.only(left: regularPadding),
-                        child: Builder(
-                          builder: (context) => IconButton(
-                            icon: Icon(Icons.menu_open,
-                                color: Theme.of(context).colorScheme.primary,
-                                size: 28),
-                            onPressed: () => Scaffold.of(context).openDrawer(),
-                          ),
+                    ? Builder(
+                        builder: (context) => Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const SizedBox(width: 4),
+                            IconButton(
+                              icon: const Icon(Icons.arrow_back, color: Colors.black87),
+                              onPressed: () => widget.onNavigate(widget.lastRouteName),
+                            ),
+                            MobileScaleHeaderIconButton(
+                              onTap: () => Scaffold.of(context).openDrawer(),
+                            ),
+                          ],
                         ),
                       )
                     : null),

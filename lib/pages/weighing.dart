@@ -11,10 +11,10 @@ import 'package:t_max/widget/wgt_value_widget.dart';
 import 'package:t_max/eventbus/eventbus.dart';
 import 'package:t_max/functions/methods.dart';
 import '../data/downloadresponse.dart';
-import '../data/icons.dart';
 import '../data/language.dart';
 import '../functions/adaptive.dart';
 import '../widget/page_head.dart';
+import 'package:t_max/widget/mobile_scale_drawer_widget.dart';
 
 class WeightModePage extends StatefulWidget {
   final Function(String) onNavigate;
@@ -37,6 +37,7 @@ class WeightModePageState extends State<WeightModePage> {
   dynamic eventBus5;
   dynamic eventBus6;
   dynamic eventBus7;
+  dynamic eventBus8;
 
   // 添加定时器变量
   Timer? _scaleCheckTimer;
@@ -79,6 +80,13 @@ class WeightModePageState extends State<WeightModePage> {
         setState(() {});
       }
     });
+
+    eventBus8 = eventBus.on<EventScaleList>().listen((event) {
+      if (mounted) {
+        getSelScaleInApp();
+        setState(() {});
+      }
+    });
   }
 
   @override
@@ -96,6 +104,7 @@ class WeightModePageState extends State<WeightModePage> {
     eventBus5.cancel();
     eventBus6.cancel();
     eventBus7.cancel();
+    eventBus8?.cancel();
     _scaleCheckTimer?.cancel();
 
     for (var item in mySelScaleIdList) {
@@ -114,8 +123,12 @@ class WeightModePageState extends State<WeightModePage> {
     List<int> savedScales =
         await AppSelScalesManager.getIntList(AppNames.weighing);
     for (var item in myAllScalesList) {
-      if (savedScales.contains(item.scaleId)) {
-        addOrRemoveSelScale(item.scaleId);
+      if (savedScales.isEmpty || savedScales.contains(item.scaleId)) {
+        if (!mySelScaleIdList.contains(item.scaleId)) {
+          addOrRemoveSelScale(item.scaleId);
+        } else {
+          PublicFunctions.getWeight(item.scaleId);
+        }
       }
     }
   }
@@ -132,11 +145,12 @@ class WeightModePageState extends State<WeightModePage> {
               elevation: 0,
               scrolledUnderElevation: 0,
               centerTitle: true,
-              leadingWidth: 100,
+              leadingWidth: 96,
               leading: Builder(
                 builder: (BuildContext ctx) {
                   return Row(
                     children: [
+                      const SizedBox(width: 4),
                       BackButton(
                         color: Colors.black87,
                         onPressed: () {
@@ -144,13 +158,8 @@ class WeightModePageState extends State<WeightModePage> {
                           Navigator.pop(context);
                         },
                       ),
-                      GestureDetector(
+                      MobileScaleHeaderIconButton(
                         onTap: () => Scaffold.of(ctx).openDrawer(),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                          child: getSvgIcon(
-                              weighingSvgIcon(), 24, 24, Colors.black87),
-                        ),
                       ),
                     ],
                   );
@@ -172,41 +181,14 @@ class WeightModePageState extends State<WeightModePage> {
             )
           : null,
       drawer: isMobile
-          ? Drawer(
-              width: scaleListWidth + 20,
-              child: SafeArea(
-                child: Container(
-                  color: Theme.of(context).colorScheme.surface,
-                  child: Column(
-                    children: [
-                      Container(
-                        height: btnHeight,
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: regularPadding),
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          (localizedStrings?.gTitleDeviceList ?? "gTitleDeviceList"),
-                          style: Theme.of(context).textTheme.labelLarge!.apply(
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
-                        ),
-                      ),
-                      const Divider(height: 1),
-                      Expanded(
-                        child: NewMutiScaleListWidget(
-                          listWidth: scaleListWidth,
-                          selScaleList: mySelScaleIdList,
-                          clickScale: (scale) {
-                            setState(() {
-                              addOrRemoveSelScale(scale.scaleId);
-                            });
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+          ? UnifiedDeviceDrawerContent(
+              scaleList: myAllScalesList,
+              isSelected: (scale) => mySelScaleIdList.contains(scale.scaleId),
+              onScaleTap: (scale) {
+                setState(() {
+                  addOrRemoveSelScale(scale.scaleId);
+                });
+              },
             )
           : null,
       body: Container(

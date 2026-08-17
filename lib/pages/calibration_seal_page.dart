@@ -14,6 +14,7 @@ import 'package:t_max/widget/common_widget.dart';
 import 'package:t_max/widget/dialog_head_style.dart';
 import 'package:t_max/widget/scale_list.dart';
 import 'package:t_max/widget/version.dart';
+import 'package:t_max/widget/mobile_scale_drawer_widget.dart';
 import '../../eventbus/eventbus.dart';
 import '../../functions/methods.dart';
 import '../data/language.dart';
@@ -812,79 +813,58 @@ class CalibrationSealPageState extends State<CalibrationSealPage> {
   Widget mobileLayout(BuildContext context, double width) {
     return Scaffold(
       backgroundColor: Colors.grey[100],
-      drawer: Drawer(
-        width: 250,
-        child: SafeArea(
-          child: Container(
-            color: Theme.of(context).colorScheme.surface,
-            child: Column(
-              children: [
-                Container(
-                  height: 48,
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    (localizedStrings?.gTitleDeviceList ?? "Device List"),
-                    style: Theme.of(context).textTheme.labelLarge!.apply(
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                  ),
-                ),
-                const Divider(height: 1),
-                Expanded(
-                  child: NewAllScaleListWidget(
-                    listWidth: 250,
-                    selScaleId: selScaleId,
-                    clickScale: (scale) {
-                      if (!enabledGetInfo) {
-                        showTipInfo((localizedStrings?.gTipPerformingOperation ?? "Performing"), context);
-                        return;
-                      }
-                      setState(() {
-                        changeScale(scale.scaleId);
-                        enabledGetInfo = false;
-                      });
-                      PublicFunctions.getSealStatus(scale.scaleId);
-                      Navigator.pop(context); // 关闭抽屉
-                    },
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
+      drawer: UnifiedDeviceDrawerContent(
+        scaleList: myAllScalesList,
+        isSelected: (scale) => selScaleId == scale.scaleId,
+        onScaleTap: (scale) {
+          if (!enabledGetInfo) {
+            showTipInfo(
+                (localizedStrings?.gTipPerformingOperation ?? "Performing"),
+                context);
+            return;
+          }
+          setState(() {
+            changeScale(scale.scaleId);
+            enabledGetInfo = false;
+          });
+          PublicFunctions.getSealStatus(scale.scaleId);
+          Navigator.pop(context);
+        },
       ),
       appBar: AppBar(
         backgroundColor: Colors.white,
         foregroundColor: Colors.black87,
         elevation: 0,
-        leading: BackButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-        title: Builder(
-          builder: (context) => GestureDetector(
-            onTap: () {
-              Scaffold.of(context).openDrawer();
-            },
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
+        leadingWidth: 96,
+        leading: Builder(
+          builder: (BuildContext ctx) {
+            return Row(
               children: [
-                Icon(Icons.scale_outlined, color: Theme.of(context).colorScheme.primary, size: 24),
-                const SizedBox(width: 8),
-                Text(
-                  localizedStrings?.menuSealManagment ?? "Calibration Lock",
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                const SizedBox(width: 4),
+                BackButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+                MobileScaleHeaderIconButton(
+                  onTap: () => Scaffold.of(ctx).openDrawer(),
                 ),
               ],
-            ),
-          ),
+            );
+          },
+        ),
+        title: Text(
+          localizedStrings?.menuSealManagment ?? "Calibration Lock",
+          style: Theme.of(context)
+              .textTheme
+              .titleMedium
+              ?.copyWith(fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
         actions: [
           IconButton(
-            icon: Icon(Icons.help_outline, color: Theme.of(context).colorScheme.primary),
+            icon: Icon(Icons.help_outline,
+                color: Theme.of(context).colorScheme.primary),
             onPressed: () {
               // Help action
             },

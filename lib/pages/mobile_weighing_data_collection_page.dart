@@ -18,6 +18,7 @@ import 'package:t_max/dialog/custom_dialog_tip.dart';
 import 'package:t_max/eventbus/eventbus.dart';
 import 'package:t_max/functions/methods.dart';
 import 'package:t_max/widget/f_open_file.dart';
+import 'package:t_max/widget/mobile_scale_drawer_widget.dart';
 
 class MobileWeighingDataCollectionPage extends StatefulWidget {
   final Function(String) onNavigate;
@@ -185,8 +186,8 @@ class _MobileWeighingDataCollectionPageState
     }
     for (var scale in myAllScalesList) {
       bool isChecked =
-          _drawerDeviceCheckedMap[scale.scaleId] ?? scale.isOnline;
-      if (scale.isOnline && isChecked) {
+          _drawerDeviceCheckedMap[scale.scaleId] ?? true;
+      if (isChecked) {
         PublicFunctions.getWeight(scale.scaleId);
       }
     }
@@ -564,39 +565,34 @@ class _MobileWeighingDataCollectionPageState
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0.5,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Color(0xFF1E293B)),
-          onPressed: () {
-            if (Navigator.canPop(context)) {
-              Navigator.pop(context);
-            } else if (widget.lastRouteName.isNotEmpty) {
-              widget.onNavigate(widget.lastRouteName);
-            } else {
-              widget.onNavigate('/multiScaleManagement');
-            }
-          },
-        ),
-        title: Row(
+        leadingWidth: 96,
+        leading: Row(
           children: [
-            // Clickable Scale Icon: Open Device List Drawer
-            IconButton(
-              icon: const Icon(Icons.scale, color: Color(0xFF1E293B), size: 22),
-              onPressed: _openDeviceListDrawer,
-            ),
             const SizedBox(width: 4),
-            const Expanded(
-              child: Text(
-                "Weighing Data Collection",
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  color: Color(0xFF1E293B),
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
+            IconButton(
+              icon: const Icon(Icons.arrow_back, color: Color(0xFF1E293B)),
+              onPressed: () {
+                if (Navigator.canPop(context)) {
+                  Navigator.pop(context);
+                } else if (widget.lastRouteName.isNotEmpty) {
+                  widget.onNavigate(widget.lastRouteName);
+                } else {
+                  widget.onNavigate('/multiScaleManagement');
+                }
+              },
+            ),
+            MobileScaleHeaderIconButton(
+              onTap: _openDeviceListDrawer,
             ),
           ],
+        ),
+        title: const Text(
+          "Weighing Data Collection",
+          style: TextStyle(
+            color: Color(0xFF1E293B),
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         actions: [
           IconButton(
@@ -691,7 +687,7 @@ class _MobileWeighingDataCollectionPageState
     double totalWgt = 0.0;
     for (var scale in myAllScalesList) {
       bool isChecked =
-          _drawerDeviceCheckedMap[scale.scaleId] ?? scale.isOnline;
+          _drawerDeviceCheckedMap[scale.scaleId] ?? true;
       if (!isChecked) continue;
       WeightInfo info = _scaleWeightMap[scale.scaleId] ??
           WeightInfo(weight: '0.00', unit: 'kg', stable: false);
@@ -801,7 +797,7 @@ class _MobileWeighingDataCollectionPageState
         // Scale Cards List
         ...myAllScalesList
             .where((scale) =>
-                _drawerDeviceCheckedMap[scale.scaleId] ?? scale.isOnline)
+                _drawerDeviceCheckedMap[scale.scaleId] ?? true)
             .map((scale) => _buildScaleCard(scale)),
       ],
     );
@@ -1353,137 +1349,25 @@ class _MobileWeighingDataCollectionPageState
       pageBuilder: (context, anim1, anim2) {
         return Align(
           alignment: Alignment.centerLeft,
-          child: Material(
-            color: Colors.transparent,
-            child: Container(
-              width: MediaQuery.of(context).size.width * 0.78,
-              height: double.infinity,
-              color: Colors.white,
-              padding: EdgeInsets.only(
-                top: MediaQuery.of(context).padding.top + 16,
-                left: 16,
-                right: 16,
-                bottom: 16,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    "Device List",
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF004884),
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  Expanded(
-                    child: myAllScalesList.isEmpty
-                        ? const Center(
-                            child: Text(
-                              "No Devices",
-                              style: TextStyle(
-                                  color: Color(0xFF94A3B8), fontSize: 15),
-                            ),
-                          )
-                        : ListView.builder(
-                            itemCount: myAllScalesList.length,
-                            itemBuilder: (context, index) {
-                              Scale scale = myAllScalesList[index];
-                              int id = scale.scaleId;
-                              bool isOnline = scale.isOnline;
-                              bool isChecked =
-                                  _drawerDeviceCheckedMap[id] ?? scale.isOnline;
-
-                              IconData mediaIcon =
-                                  Icons.settings_input_component;
-                              if (scale.tMedia == netScaleType) {
-                                mediaIcon = Icons.language;
-                              } else if (scale.tMedia == btScaleType) {
-                                mediaIcon = Icons.bluetooth;
-                              }
-
-                              return StatefulBuilder(
-                                builder: (context, setDrawerState) {
-                                  return Container(
-                                    margin: const EdgeInsets.only(bottom: 12),
-                                    padding: const EdgeInsets.all(12),
-                                    decoration: BoxDecoration(
-                                      color: const Color(0xFFF8FAFC),
-                                      borderRadius: BorderRadius.circular(6),
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        // Left Media Icon Box
-                                        Container(
-                                          width: 40,
-                                          height: 40,
-                                          decoration: BoxDecoration(
-                                            color: const Color(0xFFE2E8F0),
-                                            borderRadius:
-                                                BorderRadius.circular(4),
-                                          ),
-                                          child: Icon(
-                                            mediaIcon,
-                                            color: const Color(0xFF004884),
-                                            size: 22,
-                                          ),
-                                        ),
-                                        const SizedBox(width: 12),
-                                        // Text Area
-                                        Expanded(
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                scale.scaleName.isNotEmpty
-                                                    ? scale.scaleName
-                                                    : "Device No.$id",
-                                                style: const TextStyle(
-                                                  fontSize: 15,
-                                                  fontWeight: FontWeight.w600,
-                                                  color: Color(0xFF1E293B),
-                                                ),
-                                              ),
-                                              const SizedBox(height: 4),
-                                              Text(
-                                                isOnline ? "Online" : "Offline",
-                                                style: TextStyle(
-                                                  fontSize: 13,
-                                                  fontWeight: FontWeight.w500,
-                                                  color: isOnline
-                                                      ? const Color(0xFF10B981)
-                                                      : const Color(0xFFEF4444),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        // Right Checkbox
-                                        Checkbox(
-                                          value: isChecked,
-                                          activeColor: const Color(0xFF004884),
-                                          onChanged: (val) {
-                                            setDrawerState(() {
-                                              isChecked = val ?? false;
-                                              _drawerDeviceCheckedMap[id] =
-                                                  isChecked;
-                                            });
-                                            setState(() {});
-                                          },
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                },
-                              );
-                            },
-                          ),
-                  ),
-                ],
-              ),
-            ),
+          child: StatefulBuilder(
+            builder: (context, setDrawerState) {
+              return UnifiedDeviceDrawerContent(
+                scaleList: myAllScalesList,
+                isSelected: (scale) => _drawerDeviceCheckedMap[scale.scaleId] ?? true,
+                onScaleTap: (scale) {
+                  bool newChecked = !(_drawerDeviceCheckedMap[scale.scaleId] ?? true);
+                  setDrawerState(() {
+                    _drawerDeviceCheckedMap[scale.scaleId] = newChecked;
+                  });
+                  if (newChecked) {
+                    PublicFunctions.getWeight(scale.scaleId);
+                  } else {
+                    PublicFunctions.stopWeight(scale.scaleId);
+                  }
+                  setState(() {});
+                },
+              );
+            },
           ),
         );
       },
