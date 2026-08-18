@@ -19,6 +19,9 @@ import 'package:t_max/eventbus/eventbus.dart';
 import 'package:t_max/functions/methods.dart';
 import 'package:t_max/widget/f_open_file.dart';
 import 'package:t_max/widget/mobile_scale_drawer_widget.dart';
+import 'package:t_max/data/language.dart';
+import 'package:t_max/generated/l10n.dart';
+import 'package:t_max/dialog/mobile_page_help_dialog.dart';
 
 class MobileWeighingDataCollectionPage extends StatefulWidget {
   final Function(String) onNavigate;
@@ -560,6 +563,7 @@ class _MobileWeighingDataCollectionPageState
   // ---------------------------------------------------------------------------
   @override
   Widget build(BuildContext context) {
+    localizedStrings = S.of(context);
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),
       appBar: AppBar(
@@ -597,7 +601,14 @@ class _MobileWeighingDataCollectionPageState
         actions: [
           IconButton(
             icon: const Icon(Icons.help_outline, color: Color(0xFF1E293B)),
-            onPressed: () {},
+            onPressed: () {
+              showMobilePageHelpDialog(
+                context,
+                localizedStrings?.menuWeighingDataCollection ?? "Weighing Data Collection",
+                localizedStrings?.gTipWgtDataCollectionHelp ??
+                    "1. Connect scales to view live weight data.\n2. Select PLU item or total summary mode.\n3. Click Save button to store weighing data collection record.",
+              );
+            },
           ),
         ],
       ),

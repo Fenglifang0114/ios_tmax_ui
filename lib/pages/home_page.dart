@@ -28,6 +28,7 @@ import 'package:t_max/eventbus/eventbus.dart';
 import 'package:t_max/functions/methods.dart';
 import 'package:t_max/generated/l10n.dart';
 import 'package:t_max/widget/home_widget.dart';
+import 'package:t_max/dialog/mobile_page_help_dialog.dart';
 import 'package:t_max/widget/page_info.dart';
 import 'package:t_max/widget/version.dart';
 import 'package:t_max/common/window_lifecycle_mixin.dart';
@@ -639,7 +640,13 @@ class MyHomePageState extends State<MyHomePage> with WindowLifecycleMixin {
                               IconButton(
                                 icon: const Icon(Icons.help_outline,
                                     color: Colors.black87),
-                                onPressed: () {},
+                                onPressed: () {
+                                  showMobilePageHelpDialog(
+                                    context,
+                                    localizedStrings?.menuMultiScaleManagement ?? "Multi-scale Management",
+                                    localizedStrings?.gTipScaleMgrPageHelp ?? "Help instructions for Multi-scale Management.",
+                                  );
+                                },
                               ),
                             if (_selectedNavRoute == '/multiScaleManagement')
                               IconButton(

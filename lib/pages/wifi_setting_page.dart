@@ -26,6 +26,8 @@ import '../data/timer_manager.dart';
 import '../data/wifi_pwd_info.dart';
 import '../eventbus/eventbus.dart';
 import '../functions/methods.dart';
+import 'package:t_max/generated/l10n.dart';
+import 'package:t_max/dialog/mobile_page_help_dialog.dart';
 
 class WifiSettingPage extends StatefulWidget {
   final Function(String) onNavigate;
@@ -1447,7 +1449,13 @@ class WifiSettingPageState extends State<WifiSettingPage> {
         actions: [
           IconButton(
             icon: const Icon(Icons.help_outline, color: Colors.black87),
-            onPressed: () {},
+            onPressed: () {
+              showMobilePageHelpDialog(
+                context,
+                localizedStrings?.menuWifiSetting ?? "Wi-Fi Setting",
+                localizedStrings?.gTipWifiSettingPageHelp ?? "Help instructions for Wi-Fi Setting page.",
+              );
+            },
           ),
         ],
       ),

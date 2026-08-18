@@ -17,6 +17,7 @@ import 'package:t_max/eventbus/eventbus.dart';
 import 'package:t_max/functions/methods.dart';
 import 'package:t_max/widget/show_error_dialog.dart';
 import 'package:t_max/widget/mobile_scale_drawer_widget.dart';
+import 'package:t_max/dialog/mobile_page_help_dialog.dart';
 
 class TransactionWithExpansion extends DetailInfoRev {
   bool isExpanded;
@@ -500,11 +501,6 @@ class _MobileRetailReportPageState extends State<MobileRetailReportPage> {
               color: Colors.black87,
             ),
           ),
-          const Spacer(),
-          IconButton(
-            icon: const Icon(Icons.help_outline, color: Colors.black87, size: 24),
-            onPressed: () {},
-          ),
         ],
       ),
     );
@@ -774,10 +770,6 @@ class MobileRetailReportDetailPage extends StatelessWidget {
                     ),
                   ),
                   const Spacer(),
-                  IconButton(
-                    icon: const Icon(Icons.help_outline, color: Colors.black87, size: 24),
-                    onPressed: () {},
-                  ),
                 ],
               ),
             ),

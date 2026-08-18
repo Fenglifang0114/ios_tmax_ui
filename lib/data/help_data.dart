@@ -1,11 +1,20 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 
 class TextUtils {
-  // 新增 color 参数，默认值为 Colors.blue
   static List<TextSpan> generateTextSpans(
       BuildContext context, String text, Color color) {
     List<TextSpan> spans = [];
     int startIndex = 0;
+    const baseStyle = TextStyle(
+      fontSize: 14,
+      height: 1.5,
+      color: Color(0xFF334155),
+    );
+    final highlightStyle = baseStyle.copyWith(
+      color: color,
+      fontWeight: FontWeight.w600,
+    );
+
     while (true) {
       int openBracketIndex = text.indexOf('【', startIndex);
       int openSquareBracketIndex = text.indexOf('[', startIndex);
@@ -14,10 +23,7 @@ class TextUtils {
       if (openBracketIndex == -1 && openSquareBracketIndex == -1) {
         spans.add(TextSpan(
           text: text.substring(startIndex),
-          style: Theme.of(context)
-              .textTheme
-              .bodySmall!
-              .apply(color: Theme.of(context).colorScheme.onSurface),
+          style: baseStyle,
         ));
         break;
       } else if (openBracketIndex == -1) {
@@ -32,10 +38,7 @@ class TextUtils {
 
       spans.add(TextSpan(
         text: text.substring(startIndex, actualOpenIndex),
-        style: Theme.of(context)
-            .textTheme
-            .bodySmall!
-            .apply(color: Theme.of(context).colorScheme.onSurface),
+        style: baseStyle,
       ));
 
       int closeBracketIndex = text.indexOf('】', actualOpenIndex);
@@ -45,10 +48,7 @@ class TextUtils {
       if (closeBracketIndex == -1 && closeSquareBracketIndex == -1) {
         spans.add(TextSpan(
           text: text.substring(actualOpenIndex),
-          style: Theme.of(context)
-              .textTheme
-              .bodySmall!
-              .apply(color: Theme.of(context).colorScheme.onSurface),
+          style: baseStyle,
         ));
         break;
       } else if (closeBracketIndex == -1) {
@@ -63,10 +63,11 @@ class TextUtils {
 
       spans.add(TextSpan(
         text: text.substring(actualOpenIndex, actualCloseIndex + 1),
-        style: Theme.of(context).textTheme.bodySmall!.apply(color: color),
+        style: highlightStyle,
       ));
       startIndex = actualCloseIndex + 1;
     }
     return spans;
   }
 }
+

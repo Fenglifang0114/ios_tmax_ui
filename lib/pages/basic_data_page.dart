@@ -352,12 +352,10 @@ class BasicDataPageState extends State<BasicDataPage> {
           IconButton(
             icon: const Icon(Icons.help_outline, color: Colors.black87),
             onPressed: () {
-              showDialog(
-                context: context,
-                builder: (context) => MobilePageHelpDialog(
-                  title: localizedStrings?.menuBasicDataCollection ?? "Basic Data Collection",
-                  helpInfo: localizedStrings?.gTipBasicDataPageHelp ?? "",
-                ),
+              showMobilePageHelpDialog(
+                context,
+                localizedStrings?.menuBasicDataCollection ?? "Basic Data Collection",
+                localizedStrings?.gTipBasicDataPageHelp ?? "Help instructions for Basic Data Collection page.",
               );
             },
           ),

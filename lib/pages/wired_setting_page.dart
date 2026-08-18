@@ -645,12 +645,6 @@ class WiredSettingPageState extends State<WiredSettingPage> {
           style: const TextStyle(
               color: Colors.black87, fontSize: 18, fontWeight: FontWeight.bold),
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.help_outline, color: Colors.black87),
-            onPressed: () {},
-          ),
-        ],
       ),
       body: Column(
         children: [

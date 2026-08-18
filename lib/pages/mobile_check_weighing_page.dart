@@ -20,6 +20,7 @@ import 'package:t_max/data/language.dart';
 import 'package:t_max/generated/l10n.dart';
 import 'package:t_max/widget/mobile_scale_drawer_widget.dart';
 import 'package:t_max/widget/f_open_file.dart';
+import 'package:t_max/dialog/mobile_page_help_dialog.dart';
 
 class CheckWeightInfo {
   String weight;
@@ -472,7 +473,13 @@ class _MobileCheckWeighingPageState extends State<MobileCheckWeighingPage> {
                     ),
                     IconButton(
                       icon: const Icon(Icons.help_outline, color: Color(0xFF1E293B)),
-                      onPressed: () {},
+                      onPressed: () {
+                        showMobilePageHelpDialog(
+                          context,
+                          "High/Low Setting",
+                          localizedStrings?.gTipCheckWgtPageHelp ?? "Set target weight high and low limits for check weighing.",
+                        );
+                      },
                     ),
                   ],
                 ),
@@ -691,7 +698,14 @@ class _MobileCheckWeighingPageState extends State<MobileCheckWeighingPage> {
         actions: [
           IconButton(
             icon: const Icon(Icons.help_outline, color: Color(0xFF1E293B)),
-            onPressed: () {},
+            onPressed: () {
+              showMobilePageHelpDialog(
+                context,
+                localizedStrings?.menuCheckWeighing ?? "Check Weighing",
+                localizedStrings?.gTipCheckWgtPageHelp ??
+                    "1. Click High/Low Setting to specify weight limits.\n2. Weight values within limit display normal status.\n3. Weight values exceeding high/low limit display warning alert.",
+              );
+            },
           ),
           IconButton(
             icon: const Icon(Icons.settings_outlined, color: Color(0xFF1E293B)),

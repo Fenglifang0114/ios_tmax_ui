@@ -18,6 +18,7 @@ import 'package:t_max/eventbus/eventbus.dart';
 import 'package:t_max/functions/methods.dart';
 import 'package:t_max/generated/l10n.dart';
 import 'package:t_max/widget/mobile_scale_drawer_widget.dart';
+import 'package:t_max/dialog/mobile_page_help_dialog.dart';
 
 class TakeInWeightInfo {
   String weight;
@@ -2260,29 +2261,11 @@ class _MobileTakeInPageState extends State<MobileTakeInPage> {
   }
 
   void _openHelpDialog() {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text(
-            localizedStrings?.menuIncrementWeighing ?? "Increment Weighing",
-            style: const TextStyle(fontWeight: FontWeight.bold),
-          ),
-          content: SingleChildScrollView(
-            child: Text(
-              localizedStrings?.gTipIncrementWgtPageHelp ??
-                  "Help instructions for Increment Weighing page.",
-              style: const TextStyle(fontSize: 14, height: 1.5),
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text(localizedStrings?.gBtnConfirm ?? "Confirm"),
-            ),
-          ],
-        );
-      },
+    showMobilePageHelpDialog(
+      context,
+      localizedStrings?.menuIncrementWeighing ?? "Increment Weighing",
+      localizedStrings?.gTipIncrementWgtPageHelp ??
+          "Help instructions for Increment Weighing page.",
     );
   }
 }

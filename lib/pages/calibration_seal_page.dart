@@ -861,15 +861,6 @@ class CalibrationSealPageState extends State<CalibrationSealPage> {
               ?.copyWith(fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
-        actions: [
-          IconButton(
-            icon: Icon(Icons.help_outline,
-                color: Theme.of(context).colorScheme.primary),
-            onPressed: () {
-              // Help action
-            },
-          )
-        ],
       ),
       body: Column(
         children: [

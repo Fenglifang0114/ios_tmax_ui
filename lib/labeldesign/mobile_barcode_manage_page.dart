@@ -6,6 +6,7 @@ import 'package:path/path.dart' as p;
 import 'package:t_max/data/barcoderowdata.dart';
 import 'package:t_max/dialog/custom_dialog_tip.dart';
 import 'package:t_max/labeldesign/mobile_barcode_edit_page.dart';
+import 'package:t_max/dialog/mobile_page_help_dialog.dart';
 
 class MobileBarcodeManagePage extends StatefulWidget {
   final bool isQrcode;
@@ -173,10 +174,6 @@ class _MobileBarcodeManagePageState extends State<MobileBarcodeManagePage> {
               color: Colors.black87, fontSize: 18, fontWeight: FontWeight.bold),
         ),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.help_outline, color: Colors.black87),
-            onPressed: () {},
-          ),
           IconButton(
             icon: const Icon(Icons.add_circle_outline,
                 color: Colors.black87, size: 26),

@@ -12,6 +12,7 @@ import 'package:t_max/pages/mobile_sel_scales_page.dart';
 import 'package:t_max/pages/mobile_serial_property_edit_page.dart';
 import 'package:t_max/pages/mobile_serial_preview_page.dart';
 import 'package:t_max/pages/update_firmware_page.dart';
+import 'package:t_max/dialog/mobile_page_help_dialog.dart';
 
 class MobileSerialOutputDesignPage extends StatefulWidget {
   const MobileSerialOutputDesignPage({super.key});
@@ -731,19 +732,10 @@ class _MobileSerialOutputDesignPageState
           IconButton(
             icon: const Icon(Icons.help_outline, color: Colors.black87),
             onPressed: () {
-              showDialog(
-                context: context,
-                builder: (ctx) => AlertDialog(
-                  title: const Text("Serial Design Help"),
-                  content: Text(localizedStrings?.gTipSerialDesignPageHelp ??
-                      "Configure custom serial output format for scale."),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(ctx),
-                      child: const Text("OK"),
-                    ),
-                  ],
-                ),
+              showMobilePageHelpDialog(
+                context,
+                localizedStrings?.menuSerialOutputDesign ?? "Serial Output Design",
+                localizedStrings?.gTipSerialDesignPageHelp ?? "Configure custom serial output format for scale.",
               );
             },
           ),

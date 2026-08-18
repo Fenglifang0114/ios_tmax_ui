@@ -221,12 +221,6 @@ class BluetoothPageState extends State<BluetoothPage> {
                       fontSize: 18,
                       fontWeight: FontWeight.bold),
                 ),
-                actions: [
-                  IconButton(
-                    icon: const Icon(Icons.help_outline, color: Colors.black87),
-                    onPressed: () {},
-                  ),
-                ],
               )
             : null,
       body: Container(

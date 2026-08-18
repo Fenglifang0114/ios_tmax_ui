@@ -19,6 +19,8 @@ import '../widget/custom_button.dart';
 import '../usb_serial_manager.dart';
 import 'package:t_max/functions/adaptive.dart';
 import 'package:t_max/pages/mobile_sel_scales_page.dart';
+import 'package:t_max/generated/l10n.dart';
+import 'package:t_max/dialog/mobile_page_help_dialog.dart';
 
 class UpdateFirmwarePage extends StatefulWidget {
   const UpdateFirmwarePage({super.key});
@@ -56,6 +58,7 @@ class _UpdateFirmwarePageState extends State<UpdateFirmwarePage> {
 
   @override
   Widget build(BuildContext context) {
+    localizedStrings = S.of(context);
     if (Adaptive.isMobile(context)) {
       return _buildMobileContent(context);
     }
@@ -188,7 +191,13 @@ class _UpdateFirmwarePageState extends State<UpdateFirmwarePage> {
         actions: [
           IconButton(
             icon: const Icon(Icons.help_outline, color: Colors.black87),
-            onPressed: () {},
+            onPressed: () {
+              showMobilePageHelpDialog(
+                context,
+                localizedStrings?.menuFirmwareUpdate ?? "Firmware Update",
+                localizedStrings?.gTipUpdateFirmwarePageHelp ?? "Help instructions for Firmware Update page.",
+              );
+            },
           )
         ],
       ),

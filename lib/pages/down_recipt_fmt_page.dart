@@ -14,6 +14,8 @@ import '../data/writelog.dart';
 import '../widget/custom_button.dart';
 import 'package:t_max/functions/adaptive.dart';
 import 'package:t_max/pages/mobile_sel_scales_page.dart';
+import 'package:t_max/generated/l10n.dart';
+import 'package:t_max/dialog/mobile_page_help_dialog.dart';
 
 class DownReciptPage extends StatefulWidget {
   const DownReciptPage({super.key});
@@ -74,6 +76,7 @@ class _DownReciptPageState extends State<DownReciptPage> {
 
   @override
   Widget build(BuildContext context) {
+    localizedStrings = S.of(context);
     if (Adaptive.isMobile(context)) {
       return _buildMobileContent(context);
     }
@@ -133,7 +136,13 @@ class _DownReciptPageState extends State<DownReciptPage> {
         actions: [
           IconButton(
             icon: const Icon(Icons.help_outline, color: Colors.black87),
-            onPressed: () {},
+            onPressed: () {
+              showMobilePageHelpDialog(
+                context,
+                localizedStrings?.menuReceiptFormatDownload ?? "Receipt Format Download",
+                localizedStrings?.gTipReceiptFmtDownPageHelp ?? "Help instructions for Receipt Format Download page.",
+              );
+            },
           )
         ],
       ),

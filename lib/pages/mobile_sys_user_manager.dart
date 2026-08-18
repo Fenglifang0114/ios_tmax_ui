@@ -7,6 +7,7 @@ import 'package:t_max/functions/methods.dart';
 import 'package:t_max/data/language.dart';
 import 'package:t_max/pages/mobile_add_sys_user_page.dart';
 import 'package:t_max/pages/mobile_sys_user_detail_page.dart';
+import 'package:t_max/dialog/mobile_page_help_dialog.dart';
 
 class MobileSysUserManagerPage extends StatefulWidget {
   final Function(String)? onNavigate;
@@ -130,10 +131,6 @@ class _MobileSysUserManagerPageState extends State<MobileSysUserManagerPage> {
         ),
         centerTitle: true,
         actions: [
-          IconButton(
-            icon: const Icon(Icons.help_outline, color: Colors.black87),
-            onPressed: () {},
-          ),
           IconButton(
             icon: const Icon(Icons.add_circle_outline, color: Colors.black87),
             onPressed: () {

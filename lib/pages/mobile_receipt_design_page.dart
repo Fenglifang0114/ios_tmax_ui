@@ -18,6 +18,7 @@ import 'package:t_max/pages/mobile_receipt_canvas_page.dart';
 import 'package:t_max/pages/mobile_receipt_variable_setting_page.dart';
 import 'package:t_max/pages/mobile_sel_scales_page.dart';
 import 'package:t_max/pages/update_firmware_page.dart';
+import 'package:t_max/dialog/mobile_page_help_dialog.dart';
 
 class MobileReceiptDesignPage extends StatefulWidget {
   const MobileReceiptDesignPage({super.key});
@@ -702,19 +703,10 @@ class _MobileReceiptDesignPageState extends State<MobileReceiptDesignPage> {
           IconButton(
             icon: const Icon(Icons.help_outline, color: Colors.black87),
             onPressed: () {
-              showDialog(
-                context: context,
-                builder: (ctx) => AlertDialog(
-                  title: const Text("Receipt Design Help"),
-                  content: Text(localizedStrings?.gTipReceiptDesignPageHelp ??
-                      "Configure custom receipt formats and printer protocols for scale."),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(ctx),
-                      child: const Text("OK"),
-                    ),
-                  ],
-                ),
+              showMobilePageHelpDialog(
+                context,
+                localizedStrings?.menuReceiptDesign ?? "Receipt Design",
+                localizedStrings?.gTipReceiptDesignPageHelp ?? "Configure custom receipt formats and printer protocols for scale.",
               );
             },
           ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:t_max/data/barcoderowdata.dart';
 import 'package:t_max/dialog/custom_dialog_tip.dart';
+import 'package:t_max/dialog/mobile_page_help_dialog.dart';
 
 class MobileBarcodeEditPage extends StatefulWidget {
   final bool isQrcode;
@@ -220,12 +221,6 @@ class _MobileBarcodeEditPageState extends State<MobileBarcodeEditPage> {
           style: const TextStyle(
               color: Colors.black87, fontSize: 18, fontWeight: FontWeight.bold),
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.help_outline, color: Colors.black87),
-            onPressed: () {},
-          ),
-        ],
       ),
       body: Column(
         children: [

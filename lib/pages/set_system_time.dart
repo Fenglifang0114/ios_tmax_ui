@@ -15,6 +15,8 @@ import '../data/timer_manager.dart';
 import 'package:adoptive_calendar/adoptive_calendar.dart';
 import 'package:t_max/functions/adaptive.dart';
 import 'package:t_max/data/icons.dart';
+import 'package:t_max/generated/l10n.dart';
+import 'package:t_max/dialog/mobile_page_help_dialog.dart';
 
 class SetSystemTimePage extends StatefulWidget {
   const SetSystemTimePage({super.key});
@@ -174,6 +176,7 @@ class SetSystemTimePageState extends State<SetSystemTimePage> {
 
   @override
   Widget build(BuildContext context) {
+    localizedStrings = S.of(context);
     final bool isMobile = Adaptive.isMobile(context);
     final width = MediaQuery.of(context).size.width;
     
@@ -499,7 +502,13 @@ class SetSystemTimePageState extends State<SetSystemTimePage> {
         actions: [
           IconButton(
             icon: const Icon(Icons.help_outline, color: Colors.black87),
-            onPressed: () {},
+            onPressed: () {
+              showMobilePageHelpDialog(
+                context,
+                localizedStrings?.menuDeviceTime ?? "Device Time",
+                localizedStrings?.gTipDeviceTimePageHelp ?? "Help instructions for Device Time page.",
+              );
+            },
           ),
         ],
       ),

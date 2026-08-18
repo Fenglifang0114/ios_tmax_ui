@@ -19,6 +19,7 @@ import 'package:t_max/functions/methods.dart';
 import 'package:t_max/generated/l10n.dart';
 import 'package:t_max/widget/f_open_file.dart';
 import 'package:t_max/widget/mobile_scale_drawer_widget.dart';
+import 'package:t_max/dialog/mobile_page_help_dialog.dart';
 
 class TakeOutWeightInfo {
   String weight;
@@ -2248,29 +2249,12 @@ class _MobileTakeOutPageState extends State<MobileTakeOutPage> {
   }
 
   void _openHelpDialog() {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title:
-              Text(localizedStrings?.menuTakeOutScale ?? "Take Out Scale Help"),
-          content: SingleChildScrollView(
-            child: Text(
-              localizedStrings?.gTipIncrementWgtPageHelp ??
-                  "1. Click [Start] (▶) to activate Take Out Scale function. It records the weight decrement during unloading.\n"
-                      "2. Click [Save] (💾) to save current weight decrement record.\n"
-                      "3. Click [Record] tab to view saved records.\n"
-                      "4. Click [Settings] (⚙️) to switch save mode (Manual/Auto) and set date format.",
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text(localizedStrings?.gBtnConfirm ?? "OK"),
-            ),
-          ],
-        );
-      },
+    showMobilePageHelpDialog(
+      context,
+      localizedStrings?.menuTakeOutScale ?? "Take Out Scale",
+      localizedStrings?.gTipTakeOutPageHelp ??
+          localizedStrings?.gTipIncrementWgtPageHelp ??
+          "1. Click [Start] to activate Take Out Scale function. It records the weight decrement during unloading.\n2. Click [Save] to save current weight decrement record.\n3. Click [Record] tab to view saved records.\n4. Click [Settings] to switch save mode (Manual/Auto) and set date format.",
     );
   }
 }

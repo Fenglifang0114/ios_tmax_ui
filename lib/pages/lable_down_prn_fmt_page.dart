@@ -15,6 +15,8 @@ import '../widget/custom_button.dart';
 import 'default_prn_fmt_page.dart';
 import 'package:t_max/functions/adaptive.dart';
 import 'package:t_max/pages/mobile_sel_scales_page.dart';
+import 'package:t_max/generated/l10n.dart';
+import 'package:t_max/dialog/mobile_page_help_dialog.dart';
 
 class DownloadLabelPage extends StatefulWidget {
   const DownloadLabelPage({super.key});
@@ -75,6 +77,7 @@ class _DownloadPageState extends State<DownloadLabelPage> {
 
   @override
   Widget build(BuildContext context) {
+    localizedStrings = S.of(context);
     if (Adaptive.isMobile(context)) {
       return _buildMobileContent(context);
     }
@@ -132,7 +135,13 @@ class _DownloadPageState extends State<DownloadLabelPage> {
         actions: [
           IconButton(
             icon: const Icon(Icons.help_outline, color: Colors.black87),
-            onPressed: () {},
+            onPressed: () {
+              showMobilePageHelpDialog(
+                context,
+                localizedStrings?.menuLabelFormatDownload ?? "Label Format Download",
+                localizedStrings?.gTipLabelFmtDownPageHelp ?? "Help instructions for Label Format Download page.",
+              );
+            },
           )
         ],
       ),

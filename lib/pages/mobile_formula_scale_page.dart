@@ -18,6 +18,7 @@ import 'package:t_max/pages/mobile_formula_detail_page.dart';
 import 'package:t_max/pages/start_fma_pct_page.dart';
 import 'package:t_max/pages/start_fma_secret_page.dart';
 import 'package:t_max/widget/mobile_scale_drawer_widget.dart';
+import 'package:t_max/dialog/mobile_page_help_dialog.dart';
 
 class MobileFormulaScalePage extends StatefulWidget {
   final Function(String)? onNavigate;
@@ -590,7 +591,13 @@ class _MobileFormulaScalePageState extends State<MobileFormulaScalePage> {
         actions: [
           IconButton(
             icon: const Icon(Icons.help_outline, color: Colors.black87),
-            onPressed: () {},
+            onPressed: () {
+              showMobilePageHelpDialog(
+                context,
+                localizedStrings?.menuFormula ?? "Formula",
+                localizedStrings?.gTipFmaPageHelp ?? "Help instructions for Formula Scale page.",
+              );
+            },
           ),
           IconButton(
             icon: const Icon(Icons.add, color: Colors.black87),

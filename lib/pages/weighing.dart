@@ -15,6 +15,8 @@ import '../data/language.dart';
 import '../functions/adaptive.dart';
 import '../widget/page_head.dart';
 import 'package:t_max/widget/mobile_scale_drawer_widget.dart';
+import 'package:t_max/generated/l10n.dart';
+import 'package:t_max/dialog/mobile_page_help_dialog.dart';
 
 class WeightModePage extends StatefulWidget {
   final Function(String) onNavigate;
@@ -135,6 +137,7 @@ class WeightModePageState extends State<WeightModePage> {
 
   @override
   Widget build(BuildContext context) {
+    localizedStrings = S.of(context);
     final width = MediaQuery.of(context).size.width;
     final bool isMobile = Adaptive.isMobile(context);
 
@@ -175,7 +178,13 @@ class WeightModePageState extends State<WeightModePage> {
               actions: [
                 IconButton(
                   icon: const Icon(Icons.help_outline, color: Colors.black87),
-                  onPressed: () {},
+                  onPressed: () {
+                    showMobilePageHelpDialog(
+                      context,
+                      localizedStrings?.menuWeighing ?? "Weighing",
+                      localizedStrings?.gTipWeighingPageHelp ?? "Help instructions for Weighing page.",
+                    );
+                  },
                 ),
               ],
             )

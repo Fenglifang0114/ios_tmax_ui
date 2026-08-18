@@ -14,6 +14,8 @@ import 'package:t_max/data/encrypt_data.dart';
 import 'package:t_max/labeldesign/mobile_tag_style_canvas_page.dart';
 import 'package:t_max/labeldesign/mobile_barcode_manage_page.dart';
 import 'package:t_max/labeldesign/widgets/mobile_canvas_element_widget.dart';
+import 'package:t_max/data/language.dart';
+import 'package:t_max/dialog/mobile_page_help_dialog.dart';
 
 class MobileLabelDesignPage extends StatefulWidget {
   final Function(String) onNavigate;
@@ -39,7 +41,7 @@ class _MobileLabelDesignPageState extends State<MobileLabelDesignPage> {
   List<BarCodeRowDataInfo> barcodeList = [];
   List<BarCodeRowDataInfo> qrcodeList = [];
 
-  final List<String> printerProtocols = ["EPM205", "TSPL", "ZPL", "CPCL"];
+  final List<String> printerProtocols = ["EPM205", "ZEBRA", "LP50", "TSC"];
   final List<String> directionOptions = ["0", "90", "180", "270"];
 
   @override
@@ -132,7 +134,11 @@ class _MobileLabelDesignPageState extends State<MobileLabelDesignPage> {
             selectedPrinter = formatContent.printer!;
           }
           if (formatContent.rotation.isNotEmpty) {
-            selectedDirection = formatContent.rotation;
+            if (formatContent.rotation == 'Reverse' || formatContent.rotation == '180') {
+              selectedDirection = '180';
+            } else {
+              selectedDirection = '0';
+            }
           }
 
           final contentDecoded = jsonDecode(formatContent.content);
@@ -143,7 +149,7 @@ class _MobileLabelDesignPageState extends State<MobileLabelDesignPage> {
           final PageInfo pageInfo = PageInfo.fromJson(jsonData as Map<String, dynamic>);
           widthController.text = pageInfo.pWidth.toString();
           heightController.text = pageInfo.pHeight.toString();
-          selectedDirection = pageInfo.rotation;
+          selectedDirection = (pageInfo.rotation == 'Reverse' || pageInfo.rotation == '180') ? '180' : '0';
           rawList = pageInfo.content.map((x) => x.toJson()).toList();
         }
       } else if (jsonData is List) {
@@ -158,8 +164,8 @@ class _MobileLabelDesignPageState extends State<MobileLabelDesignPage> {
               final formData = FromateItemData.fromJson(item);
               elements.add(DraggableElement(
                 type: _parseElementType(formData.type),
-                position: Offset(formData.xPos.toDouble(), formData.yPos.toDouble()),
-                size: Size(formData.width, formData.height),
+                position: Offset(formData.xPos / 8.0, formData.yPos / 8.0),
+                size: Size(formData.width / 8.0, formData.height / 8.0),
                 fontSize: formData.fontSize.toString(),
                 varName: formData.varName,
                 content: formData.content,
@@ -202,7 +208,7 @@ class _MobileLabelDesignPageState extends State<MobileLabelDesignPage> {
     if (typeStr == 'qrcode' || typeStr == 'QrCode' || typeStr == 'QR') {
       return ElementType.qrcode;
     }
-    if (typeStr == 'line' || typeStr == 'L') {
+    if (typeStr == 'line' || typeStr == 'Line' || typeStr == 'L') {
       return ElementType.line;
     }
     return ElementType.text;
@@ -228,12 +234,18 @@ class _MobileLabelDesignPageState extends State<MobileLabelDesignPage> {
       List<FromateItemData> formatDataList = [];
       for (int i = 0; i < elements.length; i++) {
         final el = elements[i];
+        String pcTypeName = 'Text';
+        if (el.type == ElementType.data) pcTypeName = 'DATA';
+        else if (el.type == ElementType.barcode) pcTypeName = 'BarCode';
+        else if (el.type == ElementType.qrcode) pcTypeName = 'QrCode';
+        else if (el.type == ElementType.line) pcTypeName = 'Line';
+
         formatDataList.add(FromateItemData(
-          type: el.type.name,
-          xPos: el.position.dx.toInt(),
-          yPos: el.position.dy.toInt(),
-          width: el.size.width,
-          height: el.size.height,
+          type: pcTypeName,
+          xPos: (el.position.dx * 8.0).round(),
+          yPos: (el.position.dy * 8.0).round(),
+          width: el.size.width * 8.0,
+          height: el.size.height * 8.0,
           fontSize: int.tryParse(el.fontSize ?? "23") ?? 23,
           fontWidthRatio: el.fontWidthRatio ?? 1,
           fontHeightRatio: el.fontHeightRatio ?? 1,
@@ -251,8 +263,8 @@ class _MobileLabelDesignPageState extends State<MobileLabelDesignPage> {
           barcodeName: el.barcodeName ?? '',
           barcodeType: el.barcodeType ?? '',
           hralignment: el.hralignment ?? '',
-          x2Pos: el.x2Pos ?? el.position.dx.toInt(),
-          y2Pos: el.y2Pos ?? el.position.dy.toInt(),
+          x2Pos: (el.x2Pos != null ? el.x2Pos! * 8.0 : el.position.dx * 8.0).round(),
+          y2Pos: (el.y2Pos != null ? el.y2Pos! * 8.0 : el.position.dy * 8.0).round(),
           lineWidth: el.lineWidth ?? 1.0,
           qrWidth: el.qrWidth ?? '3',
           qrcodeName: el.qrcodeName ?? '',
@@ -264,7 +276,7 @@ class _MobileLabelDesignPageState extends State<MobileLabelDesignPage> {
 
       FormatContent formatContent = FormatContent(
         page: "${widthController.text}*${heightController.text}",
-        rotation: selectedDirection,
+        rotation: selectedDirection == "180" ? "Reverse" : "Forward",
         content: jsonEncode(formatDataList),
         printer: selectedPrinter,
         prtType: "L",
@@ -292,28 +304,29 @@ class _MobileLabelDesignPageState extends State<MobileLabelDesignPage> {
   String _exportCSV() {
     List<List<dynamic>> csvData = <List<dynamic>>[];
 
-    if (selectedDirection == '180') {
-      csvData.add(['ROTATE', '180']);
-    } else {
-      csvData.add(['ROTATE', '0']);
-    }
+    csvData.add(['ROTATE', '0']);
 
-    int width = ((double.tryParse(widthController.text) ?? 55.0) * 8).toInt();
-    int height = ((double.tryParse(heightController.text) ?? 55.0) * 8).toInt();
+    int width = ((double.tryParse(widthController.text) ?? 55.0) * 8).round();
+    int height = ((double.tryParse(heightController.text) ?? 55.0) * 8).round();
 
     csvData.add(['P', width.toString(), height.toString()]);
 
     for (var i = 0; i < elements.length; i++) {
       final el = elements[i];
+      int posX = (el.position.dx * 8.0).round();
+      int posY = (el.position.dy * 8.0).round();
+      int elW = (el.size.width * 8.0).round();
+      int elH = (el.size.height * 8.0).round();
+
       if (el.type == ElementType.text) {
         int fontsize = int.tryParse(el.fontSize ?? '23') ?? 23;
         List fontlist = _getFontSize(fontsize);
         csvData.add([
           'TB',
-          el.position.dx.toInt(),
-          el.position.dy.toInt(),
-          el.size.width.toInt(),
-          el.size.height.toInt(),
+          posX,
+          posY,
+          elW,
+          elH,
           fontlist[0],
           fontlist[1],
           fontlist[2],
@@ -328,10 +341,10 @@ class _MobileLabelDesignPageState extends State<MobileLabelDesignPage> {
         List fontlist = _getFontSize(fontsize);
         csvData.add([
           'TB',
-          el.position.dx.toInt(),
-          el.position.dy.toInt(),
-          el.size.width.toInt(),
-          el.size.height.toInt(),
+          posX,
+          posY,
+          elW,
+          elH,
           fontlist[0],
           fontlist[1],
           fontlist[2],
@@ -359,10 +372,10 @@ class _MobileLabelDesignPageState extends State<MobileLabelDesignPage> {
 
         csvData.add([
           'B',
-          el.position.dx.toInt(),
-          el.position.dy.toInt(),
-          el.size.width.toInt(),
-          el.size.height.toInt(),
+          posX,
+          posY,
+          elW,
+          elH,
           '2',
           barcodeType,
           _getRotation(el.rotation ?? 0),
@@ -374,8 +387,8 @@ class _MobileLabelDesignPageState extends State<MobileLabelDesignPage> {
         String tempContent = _barcodeContent(el.varcontent ?? []);
         csvData.add([
           'QR',
-          el.position.dx.toInt(),
-          el.position.dy.toInt(),
+          posX,
+          posY,
           '1',
           el.qrWidth ?? '3',
           '1',
@@ -384,27 +397,25 @@ class _MobileLabelDesignPageState extends State<MobileLabelDesignPage> {
           el.index ?? (i + 1),
         ]);
       } else if (el.type == ElementType.line) {
-        int lineWidth = el.size.width.toInt();
-        int lineHeight = el.size.height.toInt();
-        if (lineHeight <= lineWidth) {
+        if (elH <= elW) {
           csvData.add([
             'L',
-            el.position.dx.toInt(),
-            el.position.dy.toInt(),
-            (lineWidth + el.position.dx.toInt()),
-            el.position.dy.toInt(),
-            lineHeight,
+            posX,
+            posY,
+            posX + elW,
+            posY,
+            elH,
             0,
             el.index ?? (i + 1),
           ]);
         } else {
           csvData.add([
             'L',
-            el.position.dx.toInt(),
-            el.position.dy.toInt(),
-            el.position.dx.toInt(),
-            (lineHeight + el.position.dy.toInt()),
-            lineWidth,
+            posX,
+            posY,
+            posX,
+            posY + elH,
+            elW,
             0,
             el.index ?? (i + 1),
           ]);
@@ -656,7 +667,13 @@ class _MobileLabelDesignPageState extends State<MobileLabelDesignPage> {
         actions: [
           IconButton(
             icon: const Icon(Icons.help_outline, color: Colors.black87),
-            onPressed: () {},
+            onPressed: () {
+              showMobilePageHelpDialog(
+                context,
+                S.of(context).menuLabelDesign,
+                localizedStrings?.gTipLabelDesignPageHelp ?? "Design custom label templates for printer.",
+              );
+            },
           ),
           IconButton(
             icon: const Icon(Icons.add_circle_outline,
