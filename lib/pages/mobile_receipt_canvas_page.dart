@@ -25,6 +25,7 @@ class MobileReceiptCanvasPage extends StatefulWidget {
 class _MobileReceiptCanvasPageState extends State<MobileReceiptCanvasPage> {
   List<ReceiptItemData> receiptItemList = [];
   ReceiptItemData? selectedItem;
+  int? _hoverRowIndex;
   int count = 0;
 
   @override
@@ -229,36 +230,89 @@ class _MobileReceiptCanvasPageState extends State<MobileReceiptCanvasPage> {
                                     ),
                                   ),
 
-                                  // Elements placed & snapped perfectly inside row slots
-                                  ...receiptItemList.map((item) {
-                                    final isSelected = item == selectedItem;
-                                    int rowIdx = (item.yPos / receiptLineHeightDots).round();
-                                    double itemTopPx = rowIdx * rowHeightPx;
-                                    double itemLeftPx = item.xPos * scale;
+                                  // Highlight current target row slot when dragging
+                                  if (_hoverRowIndex != null)
+                                    Positioned(
+                                      left: 0,
+                                      top: _hoverRowIndex! * rowHeightPx,
+                                      width: canvasW,
+                                      height: rowHeightPx,
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          color: const Color(0xFF1CB079).withOpacity(0.15),
+                                          border: Border.all(
+                                            color: const Color(0xFF1CB079),
+                                            width: 1.5,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
 
-                                    return Positioned(
-                                      left: itemLeftPx,
-                                      top: itemTopPx,
-                                      child: GestureDetector(
+                                  // Elements placed & snapped inside row slots (selected item rendered on top)
+                                  ...() {
+                                    List<ReceiptItemData> renderList = List.of(receiptItemList);
+                                    if (selectedItem != null && renderList.contains(selectedItem)) {
+                                      renderList.remove(selectedItem);
+                                      renderList.add(selectedItem!);
+                                    }
+                                    return renderList.map((item) {
+                                      final isSelected = item == selectedItem;
+
+                                      double itemTopPx = (item.yPos / receiptLineHeightDots) * rowHeightPx;
+                                      double itemLeftPx = item.xPos * scale;
+
+                                      return Positioned(
+                                        key: ValueKey(item),
+                                        left: itemLeftPx,
+                                        top: itemTopPx,
+                                        child: GestureDetector(
+                                        behavior: HitTestBehavior.opaque,
                                         onTap: () {
                                           setState(() {
                                             selectedItem = item;
                                           });
                                         },
+                                        onPanStart: (details) {
+                                          setState(() {
+                                            selectedItem = item;
+                                            _hoverRowIndex = (item.yPos / receiptLineHeightDots).round();
+                                          });
+                                        },
                                         onPanUpdate: (details) {
                                           setState(() {
-                                            // Horizontal move
-                                            double nextLeft = itemLeftPx + details.delta.dx;
-                                            nextLeft = math.max(
-                                                0, math.min(canvasW - 40, nextLeft));
-                                            item.xPos = (nextLeft / scale).toInt();
+                                            selectedItem = item;
 
-                                            // Vertical move snapped perfectly into row slots
-                                            double nextTop = itemTopPx + details.delta.dy;
-                                            int newRow = (nextTop / rowHeightPx).round();
+                                            // 1. Horizontal move (continuous in dots)
+                                            double curLeftPx = item.xPos * scale + details.delta.dx;
+                                            curLeftPx = math.max(0, math.min(canvasW - 40, curLeftPx));
+                                            item.xPos = (curLeftPx / scale).toInt();
+
+                                            // 2. Vertical move (continuous dots, NO premature rounding during drag!)
+                                            double curTopDots = item.yPos + (details.delta.dy / rowHeightPx) * receiptLineHeightDots;
+                                            double maxDots = ((canvasH / rowHeightPx).floor() - 1) * receiptLineHeightDots;
+                                            curTopDots = math.max(0, math.min(maxDots, curTopDots));
+                                            item.yPos = curTopDots.toInt();
+
+                                            // 3. Target hover row highlight
                                             int maxRows = (canvasH / rowHeightPx).floor() - 1;
-                                            newRow = math.max(0, math.min(maxRows, newRow));
-                                            item.yPos = (newRow * receiptLineHeightDots).toInt();
+                                            int hoverRow = (item.yPos / receiptLineHeightDots).round();
+                                            _hoverRowIndex = math.max(0, math.min(maxRows, hoverRow));
+                                          });
+                                        },
+                                        onPanEnd: (details) {
+                                          setState(() {
+                                            // Snap item.yPos cleanly to exact target row index on release
+                                            int maxRows = (canvasH / rowHeightPx).floor() - 1;
+                                            int finalRow = (item.yPos / receiptLineHeightDots).round();
+                                            finalRow = math.max(0, math.min(maxRows, finalRow));
+                                            item.yPos = (finalRow * receiptLineHeightDots).toInt();
+
+                                            _hoverRowIndex = null;
+                                          });
+                                        },
+                                        onPanCancel: () {
+                                          setState(() {
+                                            _hoverRowIndex = null;
                                           });
                                         },
                                         child: Container(
@@ -268,7 +322,7 @@ class _MobileReceiptCanvasPageState extends State<MobileReceiptCanvasPage> {
                                           alignment: Alignment.centerLeft,
                                           decoration: BoxDecoration(
                                             color: isSelected
-                                                ? const Color(0xFF005696).withOpacity(0.08)
+                                                ? const Color(0xFF005696).withOpacity(0.12)
                                                 : Colors.transparent,
                                             border: Border.all(
                                               color: isSelected
@@ -277,7 +331,7 @@ class _MobileReceiptCanvasPageState extends State<MobileReceiptCanvasPage> {
                                               width: 1.5,
                                             ),
                                           ),
-                                          child: item.type == 'Line'
+                                          child: item.type == 'Line' || item.type == 'line'
                                               ? SizedBox(
                                                   width: canvasW - 20,
                                                   child: const Divider(
@@ -302,7 +356,8 @@ class _MobileReceiptCanvasPageState extends State<MobileReceiptCanvasPage> {
                                         ),
                                       ),
                                     );
-                                  }),
+                                  }).toList();
+                                }(),
                                 ],
                               ),
                             ),

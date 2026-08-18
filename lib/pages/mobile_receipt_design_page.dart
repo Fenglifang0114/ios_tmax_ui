@@ -47,10 +47,36 @@ class _MobileReceiptDesignPageState extends State<MobileReceiptDesignPage> {
     try {
       final ByteData bytes = await rootBundle.load('assets/template/receipt.json');
       final jsonString = utf8.decode(bytes.buffer.asUint8List());
-      List<dynamic> jsonList = jsonDecode(jsonString);
-      setState(() {
-        receiptItemList = jsonList.map((e) => ReceiptItemData.fromJson(e)).toList();
-      });
+      final dynamic decoded = jsonDecode(jsonString);
+
+      if (decoded is Map<String, dynamic> && decoded.containsKey('content')) {
+        FormatContent formatContent = FormatContent.fromJson(decoded);
+        setState(() {
+          if (formatContent.page.contains('*')) {
+            final parts = formatContent.page.split('*');
+            if (parts.length == 2) {
+              widthCtl.text = parts[0];
+              heightCtl.text = parts[1];
+            }
+          }
+          if (formatContent.printer != null && formatContent.printer!.isNotEmpty) {
+            selectedProtocol = formatContent.printer!;
+          }
+          if (formatContent.rotation.isNotEmpty) {
+            selectedDirection = formatContent.rotation;
+          }
+          final itemsJson = jsonDecode(formatContent.content);
+          if (itemsJson is List) {
+            receiptItemList =
+                itemsJson.map((e) => ReceiptItemData.fromJson(e)).toList();
+          }
+        });
+      } else if (decoded is List) {
+        setState(() {
+          receiptItemList =
+              decoded.map((e) => ReceiptItemData.fromJson(e)).toList();
+        });
+      }
     } catch (e) {
       if (kDebugMode) print(e);
     }
