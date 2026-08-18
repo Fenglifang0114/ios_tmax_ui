@@ -642,8 +642,9 @@ class _MobileReceiptDesignPageState extends State<MobileReceiptDesignPage> {
     setState(() {
       receiptItemList.clear();
     });
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Canvas cleared for new format!")),
+    showTipInfo(
+      localizedStrings?.gTipOperationSuccess ?? "Canvas cleared for new format!",
+      context,
     );
   }
 
