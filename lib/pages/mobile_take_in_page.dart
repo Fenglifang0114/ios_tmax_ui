@@ -79,6 +79,7 @@ class _MobileTakeInPageState extends State<MobileTakeInPage> {
 
   // Records list
   List<ScaleRecInfo> _allWgtRecList = [];
+  bool _isLoadingRecords = false;
 
   // Visible Report Fields
   final Map<String, bool> _visibleFields = {
@@ -196,23 +197,37 @@ class _MobileTakeInPageState extends State<MobileTakeInPage> {
     _eventBusGetAllRecs =
         eventBus.on<EventRespGetAllWgtRecs>().listen((event) {
       if (!mounted) return;
-      String jsonString = event.obj;
+      dynamic rawObj = event.obj;
+      String jsonString = rawObj is String
+          ? rawObj
+          : (rawObj != null ? jsonEncode(rawObj) : '');
+      writelog("[MOBILE_TAKEIN_RECS] Received records json len: ${jsonString.length}");
       try {
         RevAllWgtRecs rev = revAllWgtRecsFromJson(jsonString);
         setState(() {
           _allWgtRecList = rev.scaleRecInfos ?? [];
+          _isLoadingRecords = false;
         });
       } catch (e) {
-        // ignore error
+        writelog("[MOBILE_TAKEIN_RECS_ERR] Parsing error: $e");
+        if (mounted) {
+          setState(() {
+            _isLoadingRecords = false;
+          });
+        }
       }
     });
 
     _eventBusAddRec = eventBus.on<EventAddWgtRec>().listen((event) {
-      if (mounted) _fetchRecords();
+      if (mounted) {
+        Future.delayed(const Duration(milliseconds: 200), () => _fetchRecords());
+      }
     });
 
     _eventBusDelAll = eventBus.on<EventDelAllWgtRecs>().listen((event) {
-      if (mounted) _fetchRecords();
+      if (mounted) {
+        Future.delayed(const Duration(milliseconds: 200), () => _fetchRecords());
+      }
     });
 
     _eventBusUpdateSetting =
@@ -317,8 +332,16 @@ class _MobileTakeInPageState extends State<MobileTakeInPage> {
   }
 
   void _fetchRecords() {
+    if (mounted) {
+      setState(() => _isLoadingRecords = true);
+    }
     PublicFunctions.newGetRecords(
         int.parse(wgtTakeInMode), 1, 100, "CreatedAt", "desc");
+    Future.delayed(const Duration(seconds: 3), () {
+      if (mounted && _isLoadingRecords) {
+        setState(() => _isLoadingRecords = false);
+      }
+    });
   }
 
   void _loadUiConfFromDb() {
@@ -1228,23 +1251,42 @@ class _MobileTakeInPageState extends State<MobileTakeInPage> {
   Widget _buildRecordTabContent() {
     return Column(
       children: [
-        // Records List
+        // Records List with Pull-to-Refresh & Loading State
         Expanded(
-          child: _allWgtRecList.isEmpty
-              ? Center(
-                  child: Text(
-                    localizedStrings?.fNoRecordTip ?? "No records found",
-                    style:
-                        const TextStyle(color: Color(0xFF94A3B8), fontSize: 16),
-                  ),
-                )
-              : ListView.builder(
-                  padding: const EdgeInsets.all(12),
-                  itemCount: _allWgtRecList.length,
-                  itemBuilder: (context, index) {
-                    return _buildRecordCard(_allWgtRecList[index], index + 1);
-                  },
-                ),
+          child: RefreshIndicator(
+            onRefresh: () async {
+              _fetchRecords();
+              await Future.delayed(const Duration(milliseconds: 600));
+            },
+            child: _isLoadingRecords && _allWgtRecList.isEmpty
+                ? const Center(
+                    child: CircularProgressIndicator(color: Color(0xFF004884)),
+                  )
+                : _allWgtRecList.isEmpty
+                    ? ListView(
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        children: [
+                          SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.4,
+                            child: Center(
+                              child: Text(
+                                localizedStrings?.fNoRecordTip ?? "No records found",
+                                style: const TextStyle(
+                                    color: Color(0xFF94A3B8), fontSize: 16),
+                              ),
+                            ),
+                          ),
+                        ],
+                      )
+                    : ListView.builder(
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        padding: const EdgeInsets.all(12),
+                        itemCount: _allWgtRecList.length,
+                        itemBuilder: (context, index) {
+                          return _buildRecordCard(_allWgtRecList[index], index + 1);
+                        },
+                      ),
+          ),
         ),
 
         // Bottom Action Buttons

@@ -1248,11 +1248,9 @@ class _PluEidtPageState extends State<PluEidtPage> {
                       if (await Permission.storage.isGranted == false) {
                         await Permission.storage.request();
                       }
-                      final Directory dir = Directory('/storage/emulated/0/Download');
-                      if (!await dir.exists()) {
-                        await dir.create(recursive: true);
-                      }
-                      outputFile = path.join(dir.path, 'export_product_${DateTime.now().millisecondsSinceEpoch}.csv');
+                      String? selectedDirectory = await FilePicker.platform.getDirectoryPath(dialogTitle: 'Select Output Folder');
+                      if (selectedDirectory == null) return;
+                      outputFile = path.join(selectedDirectory, 'export_product_${DateTime.now().millisecondsSinceEpoch}.csv');
 
                     } else if (Platform.isIOS) {
                       final dir = await getApplicationDocumentsDirectory();
@@ -3069,14 +3067,8 @@ class _PluEidtPageState extends State<PluEidtPage> {
                           if (await Permission.storage.isGranted == false) {
                             await Permission.storage.request();
                           }
-                          final Directory dir = Directory('/storage/emulated/0/Download');
-                          if (!await dir.exists()) {
-                            await dir.create(recursive: true);
-                          }
-                          selectedDirectory = dir.path;
-                        } else {
-                          selectedDirectory = await FilePicker.platform.getDirectoryPath(dialogTitle: 'Select Output Folder');
                         }
+                        selectedDirectory = await FilePicker.platform.getDirectoryPath(dialogTitle: 'Select Output Folder');
                         if (selectedDirectory != null) {
                           String outputFile = path.join(selectedDirectory, 'export_product_${DateTime.now().millisecondsSinceEpoch}.csv');
                           SearchPlu searchPluInfo = SearchPlu(

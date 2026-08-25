@@ -48,8 +48,26 @@ class ReqGetAllWgtRecs {
 //
 //     final revAllWgtRecs = revAllWgtRecsFromJson(jsonString);
 
-RevAllWgtRecs revAllWgtRecsFromJson(String str) =>
-    RevAllWgtRecs.fromJson(json.decode(str));
+RevAllWgtRecs revAllWgtRecsFromJson(String str) {
+  if (str.trim().isEmpty) return RevAllWgtRecs(scaleRecInfos: [], totalCount: 0);
+  try {
+    final decoded = json.decode(str);
+    if (decoded is List) {
+      List<ScaleRecInfo> list = [];
+      for (var item in decoded) {
+        if (item is Map) {
+          list.add(ScaleRecInfo.fromJson(Map<String, dynamic>.from(item)));
+        }
+      }
+      return RevAllWgtRecs(scaleRecInfos: list, totalCount: list.length);
+    } else if (decoded is Map) {
+      return RevAllWgtRecs.fromJson(Map<String, dynamic>.from(decoded));
+    }
+  } catch (e) {
+    // 捕获顶层解析失败
+  }
+  return RevAllWgtRecs(scaleRecInfos: [], totalCount: 0);
+}
 
 String revAllWgtRecsToJson(RevAllWgtRecs data) => json.encode(data.toJson());
 
@@ -63,14 +81,23 @@ class RevAllWgtRecs {
   });
 
   factory RevAllWgtRecs.fromJson(Map<String, dynamic> json) {
-    var recs = json["scale_rec_infos"] ?? json["ScaleRecInfos"] ?? json["scaleRecInfos"];
+    var recs = json["scale_rec_infos"] ?? json["ScaleRecInfos"] ?? json["scaleRecInfos"] ?? json["scale_rec_info"];
     var count = json["total_count"] ?? json["TotalCount"] ?? json["totalCount"];
+    List<ScaleRecInfo> parsedList = [];
+    if (recs is List) {
+      for (var item in recs) {
+        if (item is Map) {
+          try {
+            parsedList.add(ScaleRecInfo.fromJson(Map<String, dynamic>.from(item)));
+          } catch (e) {
+            // 单条记录解析失败不影响其他记录
+          }
+        }
+      }
+    }
     return RevAllWgtRecs(
-      scaleRecInfos: recs == null
-          ? []
-          : List<ScaleRecInfo>.from(
-              recs.map((x) => ScaleRecInfo.fromJson(Map<String, dynamic>.from(x)))),
-      totalCount: count is int ? count : (int.tryParse(count?.toString() ?? '0') ?? 0),
+      scaleRecInfos: parsedList,
+      totalCount: count is int ? count : (int.tryParse(count?.toString() ?? '0') ?? parsedList.length),
     );
   }
 
@@ -262,7 +289,7 @@ class Header {
       );
 
   factory Header.fromJson(Map<String, dynamic> json) => Header(
-        recId: json["RecId"] ?? json["recId"] ?? json["rec_id"],
+        recId: int.tryParse((json["RecId"] ?? json["recId"] ?? json["rec_id"] ?? json["RecID"])?.toString() ?? ''),
         id: json["Id"]?.toString() ?? json["id"]?.toString(),
         scaleModel: json["ScaleModel"] ?? json["scaleModel"] ?? json["scale_model"],
         scaleSn: json["ScaleSn"] ?? json["scaleSn"] ?? json["scale_sn"],

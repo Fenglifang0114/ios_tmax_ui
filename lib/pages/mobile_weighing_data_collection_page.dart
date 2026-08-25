@@ -64,6 +64,7 @@ class _MobileWeighingDataCollectionPageState
 
   // Records list
   List<ScaleRecInfo> _allWgtRecList = [];
+  bool _isLoadingRecords = false;
 
   // Visible Report Fields
   Map<String, bool> _visibleFields = {
@@ -270,26 +271,34 @@ class _MobileWeighingDataCollectionPageState
       String jsonString = rawObj is String
           ? rawObj
           : (rawObj != null ? jsonEncode(rawObj) : '');
-      writelog("[MOBILE_RECS] Received records json: $jsonString");
+      writelog("[MOBILE_RECS] Received records json len: ${jsonString.length}");
       try {
         RevAllWgtRecs getAllWgtInfo = revAllWgtRecsFromJson(jsonString);
         if (getAllWgtInfo.scaleRecInfos != null) {
           List<ScaleRecInfo> recs = getAllWgtInfo.scaleRecInfos!;
-          if (recs.isNotEmpty || (getAllWgtInfo.totalCount ?? 0) == 0) {
-            setState(() {
-              _allWgtRecList = recs;
-            });
-          }
+          setState(() {
+            _allWgtRecList = recs;
+            _isLoadingRecords = false;
+          });
+        } else {
+          setState(() {
+            _isLoadingRecords = false;
+          });
         }
       } catch (e) {
         writelog("[MOBILE_RECS_ERR] Parsing error: $e");
+        if (mounted) {
+          setState(() {
+            _isLoadingRecords = false;
+          });
+        }
       }
     });
 
     _eventBusAddRec = eventBus.on<EventAddWgtRec>().listen((event) {
       if (!mounted) return;
       writelog("[MOBILE_ADD_REC_ACK] Record added success, refetching...");
-      _fetchRecords();
+      Future.delayed(const Duration(milliseconds: 200), () => _fetchRecords());
     });
 
     _eventBusDeleteRecs = eventBus.on<EventDelAllWgtRecs>().listen((event) {
@@ -297,7 +306,7 @@ class _MobileWeighingDataCollectionPageState
       setState(() {
         _allWgtRecList.clear();
       });
-      _fetchRecords();
+      Future.delayed(const Duration(milliseconds: 200), () => _fetchRecords());
     });
 
     _eventBusProductList = eventBus.on<EventProductRecList>().listen((event) {
@@ -1051,22 +1060,42 @@ class _MobileWeighingDataCollectionPageState
   Widget _buildRecordTab() {
     return Column(
       children: [
-        // Records List
+        // Records List with Pull-to-Refresh & Loading State
         Expanded(
-          child: _allWgtRecList.isEmpty
-              ? const Center(
-                  child: Text(
-                    "No Data",
-                    style: TextStyle(color: Color(0xFF94A3B8), fontSize: 15),
-                  ),
-                )
-              : ListView.builder(
-                  padding: const EdgeInsets.all(12),
-                  itemCount: _allWgtRecList.length,
-                  itemBuilder: (context, index) {
-                    return _buildRecordCard(_allWgtRecList[index], index + 1);
-                  },
-                ),
+          child: RefreshIndicator(
+            onRefresh: () async {
+              _fetchRecords();
+              await Future.delayed(const Duration(milliseconds: 600));
+            },
+            child: _isLoadingRecords && _allWgtRecList.isEmpty
+                ? const Center(
+                    child: CircularProgressIndicator(color: Color(0xFF004884)),
+                  )
+                : _allWgtRecList.isEmpty
+                    ? ListView(
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        children: [
+                          SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.4,
+                            child: Center(
+                              child: Text(
+                                localizedStrings?.fNoRecordTip ?? "No records found",
+                                style: const TextStyle(
+                                    color: Color(0xFF94A3B8), fontSize: 16),
+                              ),
+                            ),
+                          ),
+                        ],
+                      )
+                    : ListView.builder(
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        padding: const EdgeInsets.all(12),
+                        itemCount: _allWgtRecList.length,
+                        itemBuilder: (context, index) {
+                          return _buildRecordCard(_allWgtRecList[index], index + 1);
+                        },
+                      ),
+          ),
         ),
 
         // Bottom Action Buttons

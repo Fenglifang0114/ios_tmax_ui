@@ -80,6 +80,7 @@ class _MobileTakeOutPageState extends State<MobileTakeOutPage> {
 
   // Records list
   List<ScaleRecInfo> _allWgtRecList = [];
+  bool _isLoadingRecords = false;
 
   // Visible Report Fields
   final Map<String, bool> _visibleFields = {
@@ -187,25 +188,33 @@ class _MobileTakeOutPageState extends State<MobileTakeOutPage> {
       String jsonString = rawObj is String
           ? rawObj
           : (rawObj != null ? jsonEncode(rawObj) : '');
-      writelog("[MOBILE_TAKEOUT_RECS] Received records json: $jsonString");
+      writelog("[MOBILE_TAKEOUT_RECS] Received records json len: ${jsonString.length}");
       try {
         RevAllWgtRecs getAllWgtInfo = revAllWgtRecsFromJson(jsonString);
         if (getAllWgtInfo.scaleRecInfos != null) {
           List<ScaleRecInfo> recs = getAllWgtInfo.scaleRecInfos!;
-          if (recs.isNotEmpty || (getAllWgtInfo.totalCount ?? 0) == 0) {
-            setState(() {
-              _allWgtRecList = recs;
-            });
-          }
+          setState(() {
+            _allWgtRecList = recs;
+            _isLoadingRecords = false;
+          });
+        } else {
+          setState(() {
+            _isLoadingRecords = false;
+          });
         }
       } catch (e) {
         writelog("[MOBILE_TAKEOUT_RECS_ERR] Parsing error: $e");
+        if (mounted) {
+          setState(() {
+            _isLoadingRecords = false;
+          });
+        }
       }
     });
 
     _eventBusAddRec = eventBus.on<EventAddWgtRec>().listen((event) {
       if (!mounted) return;
-      _fetchRecords();
+      Future.delayed(const Duration(milliseconds: 200), () => _fetchRecords());
     });
 
     _eventBusDeleteRecs = eventBus.on<EventDelAllWgtRecs>().listen((event) {
@@ -213,7 +222,7 @@ class _MobileTakeOutPageState extends State<MobileTakeOutPage> {
       setState(() {
         _allWgtRecList.clear();
       });
-      _fetchRecords();
+      Future.delayed(const Duration(milliseconds: 200), () => _fetchRecords());
     });
 
     _eventBusProductList = eventBus.on<EventProductRecList>().listen((event) {
@@ -311,8 +320,16 @@ class _MobileTakeOutPageState extends State<MobileTakeOutPage> {
   }
 
   void _fetchRecords() {
+    if (mounted) {
+      setState(() => _isLoadingRecords = true);
+    }
     PublicFunctions.newGetRecords(
         int.parse(wgtTakeOutMode), 1, 100, "CreatedAt", "desc");
+    Future.delayed(const Duration(seconds: 3), () {
+      if (mounted && _isLoadingRecords) {
+        setState(() => _isLoadingRecords = false);
+      }
+    });
   }
 
   void _loadUiConfFromDb() {
@@ -1255,23 +1272,42 @@ class _MobileTakeOutPageState extends State<MobileTakeOutPage> {
   Widget _buildRecordTabContent() {
     return Column(
       children: [
-        // Records List
+        // Records List with Pull-to-Refresh & Loading State
         Expanded(
-          child: _allWgtRecList.isEmpty
-              ? Center(
-                  child: Text(
-                    localizedStrings?.fNoRecordTip ?? "No records found",
-                    style:
-                        const TextStyle(color: Color(0xFF94A3B8), fontSize: 16),
-                  ),
-                )
-              : ListView.builder(
-                  padding: const EdgeInsets.all(12),
-                  itemCount: _allWgtRecList.length,
-                  itemBuilder: (context, index) {
-                    return _buildRecordCard(_allWgtRecList[index], index + 1);
-                  },
-                ),
+          child: RefreshIndicator(
+            onRefresh: () async {
+              _fetchRecords();
+              await Future.delayed(const Duration(milliseconds: 600));
+            },
+            child: _isLoadingRecords && _allWgtRecList.isEmpty
+                ? const Center(
+                    child: CircularProgressIndicator(color: Color(0xFF004884)),
+                  )
+                : _allWgtRecList.isEmpty
+                    ? ListView(
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        children: [
+                          SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.4,
+                            child: Center(
+                              child: Text(
+                                localizedStrings?.fNoRecordTip ?? "No records found",
+                                style: const TextStyle(
+                                    color: Color(0xFF94A3B8), fontSize: 16),
+                              ),
+                            ),
+                          ),
+                        ],
+                      )
+                    : ListView.builder(
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        padding: const EdgeInsets.all(12),
+                        itemCount: _allWgtRecList.length,
+                        itemBuilder: (context, index) {
+                          return _buildRecordCard(_allWgtRecList[index], index + 1);
+                        },
+                      ),
+          ),
         ),
 
         // Bottom Action Buttons

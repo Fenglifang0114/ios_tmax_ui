@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:t_max/generated/l10n.dart';
@@ -216,20 +217,18 @@ class _MobileLabelDesignPageState extends State<MobileLabelDesignPage> {
 
   Future<void> _handleSaveFormat() async {
     try {
-      bool hasPerm = await _requestStoragePermission();
+      await _requestStoragePermission();
 
-      String saveDir;
-      if (hasPerm && Platform.isAndroid) {
-        Directory? extDir = await getExternalStorageDirectory();
-        saveDir =
-            extDir?.path ?? (await getApplicationDocumentsDirectory()).path;
-      } else {
-        Directory appDocDir = await getApplicationDocumentsDirectory();
-        saveDir = appDocDir.path;
+      String? selectedDir = await FilePicker.platform.getDirectoryPath(
+        dialogTitle: 'Select Output Folder:',
+      );
+
+      if (selectedDir == null || selectedDir.isEmpty) {
+        return;
       }
 
-      final jsonPath = "$saveDir/format.json";
-      final fmtPath = "$saveDir/format.fmt";
+      final jsonPath = p.join(selectedDir, "format.json");
+      final fmtPath = p.join(selectedDir, "format.fmt");
 
       List<FromateItemData> formatDataList = [];
       for (int i = 0; i < elements.length; i++) {
@@ -292,7 +291,7 @@ class _MobileLabelDesignPageState extends State<MobileLabelDesignPage> {
       await fmtFile.writeAsString(encryptedCsv);
 
       if (mounted) {
-        showTipInfo("Format saved to:\n$saveDir", context);
+        showTipInfo("Format saved to:\n$selectedDir", context);
       }
     } catch (e) {
       if (mounted) {
