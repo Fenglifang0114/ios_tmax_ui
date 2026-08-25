@@ -60,9 +60,11 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
   TextEditingController comPortCtl = TextEditingController(text: '');
   TextEditingController baudRateCtl = TextEditingController(text: '115200');
   TextEditingController protocolCtl = TextEditingController(text: 'None');
+  TextEditingController parityCtl = TextEditingController(text: 'None');
 
   TextEditingController macCtl = TextEditingController(text: '');
   TextEditingController btNameCtl = TextEditingController(text: '');
+  FocusNode scaleNameFocusNode = FocusNode();
 
   int selScaleId = -1;
 
@@ -352,13 +354,11 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
         OnlineInfo info = event.obj;
         if (info.scaleId == selScaleId) {
           setState(() {
-            if (info.factInfo?.modelName != null &&
-                info.factInfo!.modelName!.isNotEmpty) {
-              scaleModelCtl.text = info.factInfo!.modelName!;
-            }
             if (info.factInfo?.scaleSn != null &&
                 info.factInfo!.scaleSn!.isNotEmpty) {
               snCtl.text = info.factInfo!.scaleSn!;
+            } else {
+              snCtl.text = '';
             }
           });
         }
@@ -451,7 +451,6 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
         setState(() {
           myAllScalesList[i].isOnline = status;
           if (selScaleId == scaleId) {
-            scaleModelCtl.text = myAllScalesList[i].scaleModel;
             snCtl.text = myAllScalesList[i].scaleSn;
           }
         });
@@ -486,12 +485,14 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
     comPortCtl.dispose();
     baudRateCtl.dispose();
     protocolCtl.dispose();
+    parityCtl.dispose();
     dataBitCtl.dispose();
     stopBitCtl.dispose();
     scaleModelCtl.dispose();
     snCtl.dispose();
     macCtl.dispose();
     btNameCtl.dispose();
+    scaleNameFocusNode.dispose();
     _eventbus10?.cancel();
     _eventbus11?.cancel();
     _eventbus12?.cancel();
@@ -613,7 +614,7 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
     tempPort.baud = int.tryParse(baudRateCtl.text);
     tempPort.dataBits = int.tryParse(dataBitCtl.text);
     tempPort.devPath = comPortCtl.text;
-    tempPort.parity = 0;
+    tempPort.parity = parityCtl.text == 'Odd' ? 1 : (parityCtl.text == 'Even' ? 2 : 0);
     tempPort.stopBits = 0;
     String infoString = jsonEncode(tempPort);
     String targetModel = selectedModelInfo?.customScaleName ?? (scaleModelCtl.text.isNotEmpty ? scaleModelCtl.text : 'TMax');
@@ -651,8 +652,9 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
 
 
   bool isValidScaleName(String name) {
+    if (name.isEmpty) return false;
     for (Scale tempScale in myAllScalesList) {
-      if (tempScale.scaleName == scaleNameCtl.text) {
+      if (tempScale.scaleId != selScaleId && tempScale.scaleName == name) {
         return false;
       }
     }

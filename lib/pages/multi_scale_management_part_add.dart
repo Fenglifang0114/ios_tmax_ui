@@ -108,11 +108,11 @@ extension MultiScaleManagementAddExt on MultiScaleManagementState {
         buildItemInfo(
             showItemNameWithStar(
                 context, (localizedStrings?.gSerialParity ?? "gSerialParity"), false),
-            showDropDownButton(context, '', protocolCtl, checkBitsList,
+            showDropDownButton(context, '', parityCtl, checkBitsList,
                 (value) {
               setState(() {
                 if (checkBitsList.contains(value)) {
-                  protocolCtl.text = value!;
+                  parityCtl.text = value!;
                 }
               });
             }),
@@ -249,7 +249,7 @@ extension MultiScaleManagementAddExt on MultiScaleManagementState {
     );
   }
 
-  Widget _buildMobileListTile(String title, String value, VoidCallback onTap) {
+  Widget _buildMobileListTile(String title, String value, VoidCallback? onTap) {
     return Column(
       children: [
         Container(
@@ -260,8 +260,10 @@ extension MultiScaleManagementAddExt on MultiScaleManagementState {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(value, style: const TextStyle(color: Colors.grey, fontSize: 16)),
-                const SizedBox(width: 8),
-                const Icon(Icons.chevron_right, color: Colors.grey),
+                if (onTap != null) ...[
+                  const SizedBox(width: 8),
+                  const Icon(Icons.chevron_right, color: Colors.grey),
+                ],
               ],
             ),
             onTap: onTap,
@@ -340,10 +342,10 @@ extension MultiScaleManagementAddExt on MultiScaleManagementState {
                 ),
                 _buildMobileListTile(
                   localizedStrings?.gSerialParity ?? "Parity",
-                  protocolCtl.text.isEmpty ? "None" : protocolCtl.text,
+                  parityCtl.text.isEmpty ? "None" : parityCtl.text,
                   () {
-                    _showMobilePicker(localizedStrings?.gSerialParity ?? "Parity", checkBitsList, protocolCtl.text, (val) {
-                      setState(() => protocolCtl.text = val);
+                    _showMobilePicker(localizedStrings?.gSerialParity ?? "Parity", checkBitsList, parityCtl.text, (val) {
+                      setState(() => parityCtl.text = val);
                     });
                   },
                 ),

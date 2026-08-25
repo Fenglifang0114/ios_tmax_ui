@@ -140,36 +140,50 @@ showScaleNameInputBox(
     String hintText,
     Widget suffixWidget,
     Function(String)? onChanged,
-    bool isEnabled) {
-  return Container(
-    alignment: Alignment.centerLeft,
-    height: inputHeight,
-    padding: const EdgeInsets.only(left: 16, right: 20),
-    decoration: BoxDecoration(
-      border: Border.all(
-          color: Theme.of(context).colorScheme.outlineVariant), // 设置边框颜色
-      borderRadius: BorderRadius.circular(0), // 设置圆角
-    ),
-    child: TextField(
-      readOnly: !isEnabled,
-      controller: controller,
-      decoration: InputDecoration(
-        hintText: hintText,
-        hintStyle: TextStyle(
-          color: Theme.of(context).colorScheme.onSurface, // 设置提示文本颜色
-        ),
-        border: InputBorder.none, // 移除默认边框
-        suffixIcon: suffixWidget,
+    bool isEnabled,
+    {FocusNode? focusNode,
+    VoidCallback? onTap}) {
+  return GestureDetector(
+    onTap: !isEnabled ? onTap : null,
+    child: Container(
+      alignment: Alignment.centerLeft,
+      height: inputHeight,
+      padding: const EdgeInsets.only(left: 16, right: 4),
+      decoration: BoxDecoration(
+        border: Border.all(
+            color: Theme.of(context).colorScheme.outlineVariant), // 设置边框颜色
+        borderRadius: BorderRadius.circular(0), // 设置圆角
       ),
-      textAlignVertical: TextAlignVertical.center,
-      maxLines: 1,
-      inputFormatters: [
-        LengthLimitingTextInputFormatter(30),
-      ],
-      style: Theme.of(context).textTheme.bodySmall?.apply(
-            color: Theme.of(context).colorScheme.onSurface, // 设置输入文本颜色
+      child: Row(
+        children: [
+          Expanded(
+            child: TextField(
+              focusNode: focusNode,
+              readOnly: !isEnabled,
+              controller: controller,
+              decoration: InputDecoration(
+                hintText: hintText,
+                hintStyle: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurface, // 设置提示文本颜色
+                ),
+                border: InputBorder.none, // 移除默认边框
+                isDense: true,
+                contentPadding: EdgeInsets.zero,
+              ),
+              textAlignVertical: TextAlignVertical.center,
+              maxLines: 1,
+              inputFormatters: [
+                LengthLimitingTextInputFormatter(30),
+              ],
+              style: Theme.of(context).textTheme.bodySmall?.apply(
+                    color: Theme.of(context).colorScheme.onSurface, // 设置输入文本颜色
+                  ),
+              onChanged: onChanged, // 监听文本变化,
+            ),
           ),
-      onChanged: onChanged, // 监听文本变化,
+          suffixWidget,
+        ],
+      ),
     ),
   );
 }

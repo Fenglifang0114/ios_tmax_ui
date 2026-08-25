@@ -549,24 +549,6 @@ class _MobileLabelDesignPageState extends State<MobileLabelDesignPage> {
                       style: TextStyle(fontSize: 16)),
                 ),
               ),
-              const SizedBox(height: 12),
-              SizedBox(
-                width: double.infinity,
-                height: 44,
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(ctx);
-                    showTipInfo("AI Design Service ready", context);
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFF6F6F6),
-                    foregroundColor: Colors.black87,
-                    elevation: 0,
-                  ),
-                  child: const Text("AI Design",
-                      style: TextStyle(fontSize: 16)),
-                ),
-              ),
               const SizedBox(height: 16),
             ],
           ),

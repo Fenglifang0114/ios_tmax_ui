@@ -24,11 +24,19 @@ extension MultiScaleManagementInfoExt on MultiScaleManagementState {
                             onPressed: () {
                               setState(() {
                                 isRename = true;
+                                _isModifyName = isValidScaleName(scaleNameCtl.text);
                               });
+                              scaleNameFocusNode.requestFocus();
                             },
                           ), (value) {
                         setState(() {});
-                      }, isRename),
+                      }, isRename, focusNode: scaleNameFocusNode, onTap: () {
+                        setState(() {
+                          isRename = true;
+                          _isModifyName = isValidScaleName(scaleNameCtl.text);
+                        });
+                        scaleNameFocusNode.requestFocus();
+                      }),
                       showItemNameWithStar(
                           context, (localizedStrings?.gModelName ?? "Model Name"), false),
                       showInputBox(context, scaleModelCtl, '', (value) {
@@ -95,11 +103,19 @@ extension MultiScaleManagementInfoExt on MultiScaleManagementState {
                             onPressed: () {
                               setState(() {
                                 isRename = true;
+                                _isModifyName = isValidScaleName(scaleNameCtl.text);
                               });
+                              scaleNameFocusNode.requestFocus();
                             },
                           ), (value) {
                         setState(() {});
-                      }, isRename),
+                      }, isRename, focusNode: scaleNameFocusNode, onTap: () {
+                        setState(() {
+                          isRename = true;
+                          _isModifyName = isValidScaleName(scaleNameCtl.text);
+                        });
+                        scaleNameFocusNode.requestFocus();
+                      }),
                       showItemNameWithStar(
                           context, (localizedStrings?.gModelName ?? "Model Name"), false),
                       showInputBox(context, scaleModelCtl, '', (value) {
@@ -164,11 +180,19 @@ extension MultiScaleManagementInfoExt on MultiScaleManagementState {
                             onPressed: () {
                               setState(() {
                                 isRename = true;
+                                _isModifyName = isValidScaleName(scaleNameCtl.text);
                               });
+                              scaleNameFocusNode.requestFocus();
                             },
                           ), (value) {
                         setState(() {});
-                      }, isRename),
+                      }, isRename, focusNode: scaleNameFocusNode, onTap: () {
+                        setState(() {
+                          isRename = true;
+                          _isModifyName = isValidScaleName(scaleNameCtl.text);
+                        });
+                        scaleNameFocusNode.requestFocus();
+                      }),
                       showItemNameWithStar(
                           context, (localizedStrings?.gModelName ?? "Model Name"), false),
                       showInputBox(context, scaleModelCtl, '', (value) {

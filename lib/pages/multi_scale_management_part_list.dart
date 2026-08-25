@@ -8,7 +8,7 @@ extension MultiScaleManagementListExt on MultiScaleManagementState {
 
     if (isMobile) {
       // 手机端：如果有选中项且不是在添加状态，显示详情页，否则显示列表
-      if (selScaleId != -1 && !isAddScale && !isRename) {
+      if (selScaleId != -1 && !isAddScale) {
         return Column(
           children: [
             // 增加一个返回按钮
@@ -23,8 +23,12 @@ extension MultiScaleManagementListExt on MultiScaleManagementState {
                     icon: Icon(Icons.arrow_back),
                     onPressed: () {
                       setState(() {
-                        selScaleId = -1;
-                        eventBus.fire(EventUiCmd('showScaffoldElements'));
+                        if (isRename) {
+                          isRename = false;
+                        } else {
+                          selScaleId = -1;
+                          eventBus.fire(EventUiCmd('showScaffoldElements'));
+                        }
                       });
                     },
                   ),
@@ -144,6 +148,7 @@ extension MultiScaleManagementListExt on MultiScaleManagementState {
                               portCtl.text = "";
                               macCtl.text = "";
                               btNameCtl.text = "";
+                              parityCtl.text = "None";
                             });
                           }
                         });
@@ -272,6 +277,7 @@ extension MultiScaleManagementListExt on MultiScaleManagementState {
                           comPortCtl.text = serialConfig.devPath;
                           dataBitCtl.text = serialConfig.dataBits.toString();
                           baudRateCtl.text = serialConfig.baudRate.toString();
+                          parityCtl.text = serialConfig.parity == 1 ? "Odd" : (serialConfig.parity == 2 ? "Even" : "None");
 
                           usingComLists = List<String>.from(comLists);
                           if (!comLists.contains(comPortCtl.text)) {
