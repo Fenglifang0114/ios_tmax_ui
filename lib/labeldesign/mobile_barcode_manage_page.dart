@@ -228,54 +228,214 @@ class _MobileBarcodeManagePageState extends State<MobileBarcodeManagePage> {
                       style: TextStyle(color: Colors.black38, fontSize: 16),
                     ),
                   )
-                : ListView.separated(
+                : ListView.builder(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     itemCount: filteredItems.length,
-                    separatorBuilder: (ctx, idx) =>
-                        const Divider(height: 1, color: Color(0xFFEEEEEE)),
                     itemBuilder: (ctx, idx) {
                       final item = filteredItems[idx];
                       final realIndex = items.indexOf(item);
+                      final isExpanded = item.isExpand == true;
+                      final typeLabel = widget.isQrcode ? "QrCode Type" : "BarCode Type";
 
-                      return ListTile(
-                        contentPadding: EdgeInsets.zero,
-                        title: Text(
-                          item.barCodeName,
-                          style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.black87),
+                      return Container(
+                        margin: const EdgeInsets.only(bottom: 12),
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: const Color(0xFFEEEEEE)),
                         ),
-                        subtitle: Text(
-                          "${item.barCodeType} (${item.barCodeRowDataList.length} segments)",
-                          style: const TextStyle(
-                              fontSize: 13, color: Colors.black54),
-                        ),
-                        trailing: Row(
-                          mainAxisSize: MainAxisSize.min,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            IconButton(
-                              icon: const Icon(Icons.edit_outlined,
-                                  color: Color(0xFF005696), size: 22),
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (ctx) => MobileBarcodeEditPage(
-                                      isQrcode: widget.isQrcode,
-                                      barcodeItem: item,
-                                      onSave: (savedItem) =>
-                                          _handleSaveItem(savedItem, realIndex),
+                            // Header Row: Title & Actions
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    item.barCodeName,
+                                    style: const TextStyle(
+                                      color: Color(0xFF0D558E),
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
                                     ),
+                                    overflow: TextOverflow.ellipsis,
                                   ),
-                                );
-                              },
+                                ),
+                                IconButton(
+                                  padding: EdgeInsets.zero,
+                                  constraints: const BoxConstraints(),
+                                  icon: const Icon(Icons.edit_outlined,
+                                      color: Color(0xFF0D558E), size: 20),
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (ctx) => MobileBarcodeEditPage(
+                                          isQrcode: widget.isQrcode,
+                                          barcodeItem: item,
+                                          onSave: (savedItem) =>
+                                              _handleSaveItem(savedItem, realIndex),
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                                const SizedBox(width: 12),
+                                IconButton(
+                                  padding: EdgeInsets.zero,
+                                  constraints: const BoxConstraints(),
+                                  icon: const Icon(Icons.delete_outline,
+                                      color: Color(0xFFE53935), size: 20),
+                                  onPressed: () => _handleDeleteItem(realIndex),
+                                ),
+                                const SizedBox(width: 12),
+                                InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      item.isExpand = !isExpanded;
+                                    });
+                                  },
+                                  child: Icon(
+                                    isExpanded
+                                        ? Icons.keyboard_arrow_up
+                                        : Icons.keyboard_arrow_down,
+                                    color: Colors.black54,
+                                    size: 24,
+                                  ),
+                                ),
+                              ],
                             ),
-                            IconButton(
-                              icon: const Icon(Icons.delete_outline,
-                                  color: Colors.redAccent, size: 22),
-                              onPressed: () => _handleDeleteItem(realIndex),
+                            const SizedBox(height: 8),
+
+                            // Sub-header Row: BarCode Type
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  typeLabel,
+                                  style: const TextStyle(
+                                      color: Colors.black54, fontSize: 14),
+                                ),
+                                Text(
+                                  item.barCodeType.isEmpty ? "Code128" : item.barCodeType,
+                                  style: const TextStyle(
+                                      color: Colors.black87,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500),
+                                ),
+                              ],
                             ),
+
+                            // Expanded Details Section
+                            if (isExpanded) ...[
+                              const SizedBox(height: 12),
+                              if (item.barCodeRowDataList.isEmpty)
+                                const Text(
+                                  "No segment detail",
+                                  style: TextStyle(color: Colors.grey, fontSize: 12),
+                                )
+                              else
+                                ...item.barCodeRowDataList.map((row) {
+                                  return Container(
+                                    margin: const EdgeInsets.only(top: 6),
+                                    padding: const EdgeInsets.all(8),
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xFFF9F9F9),
+                                      borderRadius: BorderRadius.circular(4),
+                                      border: Border.all(color: const Color(0xFFF0F0F0)),
+                                    ),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        // Row 1 Header
+                                        Row(
+                                          children: const [
+                                            Expanded(
+                                                child: Text("DATATYPE",
+                                                    style: TextStyle(
+                                                        color: Colors.grey,
+                                                        fontSize: 12))),
+                                            Expanded(
+                                                child: Text("Content",
+                                                    style: TextStyle(
+                                                        color: Colors.grey,
+                                                        fontSize: 12))),
+                                            Expanded(
+                                                child: Text("Default Value",
+                                                    style: TextStyle(
+                                                        color: Colors.grey,
+                                                        fontSize: 12))),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 2),
+                                        // Row 1 Values
+                                        Row(
+                                          children: [
+                                            Expanded(
+                                                child: Text(
+                                                    row.type.isEmpty ? "-" : row.type,
+                                                    style: const TextStyle(
+                                                        color: Colors.black87,
+                                                        fontSize: 13))),
+                                            Expanded(
+                                                child: Text(
+                                                    row.content.isEmpty ? "-" : row.content,
+                                                    style: const TextStyle(
+                                                        color: Colors.black87,
+                                                        fontSize: 13))),
+                                            Expanded(
+                                                child: Text(
+                                                    row.defaultvalue.isEmpty
+                                                        ? "-"
+                                                        : row.defaultvalue,
+                                                    style: const TextStyle(
+                                                        color: Colors.black87,
+                                                        fontSize: 13))),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 8),
+                                        // Row 2 Header
+                                        Row(
+                                          children: const [
+                                            Expanded(
+                                                child: Text("Alignment",
+                                                    style: TextStyle(
+                                                        color: Colors.grey,
+                                                        fontSize: 12))),
+                                            Expanded(
+                                                child: Text("Max Length",
+                                                    style: TextStyle(
+                                                        color: Colors.grey,
+                                                        fontSize: 12))),
+                                            Expanded(child: SizedBox()),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 2),
+                                        // Row 2 Values
+                                        Row(
+                                          children: [
+                                            Expanded(
+                                                child: Text(
+                                                    row.alignment.isEmpty
+                                                        ? "-"
+                                                        : row.alignment,
+                                                    style: const TextStyle(
+                                                        color: Colors.black87,
+                                                        fontSize: 13))),
+                                            Expanded(
+                                                child: Text("${row.maxlength}",
+                                                    style: const TextStyle(
+                                                        color: Colors.black87,
+                                                        fontSize: 13))),
+                                            const Expanded(child: SizedBox()),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                }),
+                            ],
                           ],
                         ),
                       );

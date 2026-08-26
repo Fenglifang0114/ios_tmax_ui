@@ -315,44 +315,75 @@ class _MobileReceiptCanvasPageState extends State<MobileReceiptCanvasPage> {
                                             _hoverRowIndex = null;
                                           });
                                         },
-                                        child: Container(
-                                          height: rowHeightPx,
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 8),
-                                          alignment: Alignment.centerLeft,
-                                          decoration: BoxDecoration(
-                                            color: isSelected
-                                                ? const Color(0xFF005696).withOpacity(0.12)
-                                                : Colors.transparent,
-                                            border: Border.all(
-                                              color: isSelected
-                                                  ? const Color(0xFF005696)
-                                                  : Colors.transparent,
-                                              width: 1.5,
-                                            ),
-                                          ),
-                                          child: item.type == 'Line' || item.type == 'line'
-                                              ? SizedBox(
-                                                  width: canvasW - 20,
-                                                  child: const Divider(
-                                                    color: Colors.black87,
-                                                    thickness: 1,
-                                                  ),
-                                                )
-                                              : Text(
-                                                  item.content.isNotEmpty
-                                                      ? item.content
-                                                      : item.varName,
-                                                  style: TextStyle(
-                                                    fontSize: 14,
-                                                    color: isSelected
-                                                        ? const Color(0xFF005696)
-                                                        : Colors.black87,
-                                                    fontWeight: isSelected
-                                                        ? FontWeight.bold
-                                                        : FontWeight.normal,
-                                                  ),
+                                        child: Builder(
+                                          builder: (ctx) {
+                                            final isReverse = item.fontReverse == 'true' || item.fontReverse == 'True';
+                                            final isBold = item.fontBold == 'true' || item.fontBold == 'True';
+                                            final rotationTurns = ((item.rotation ?? 0) ~/ 90) % 4;
+
+                                            Alignment containerAlignment = Alignment.centerLeft;
+                                            if (item.alignment == 2) {
+                                              containerAlignment = Alignment.center;
+                                            } else if (item.alignment == 3) {
+                                              containerAlignment = Alignment.centerRight;
+                                            }
+
+                                            Widget childWidget;
+                                            if (item.type == 'Line' || item.type == 'line') {
+                                              childWidget = SizedBox(
+                                                width: canvasW - 20,
+                                                child: const Divider(
+                                                  color: Colors.black87,
+                                                  thickness: 1,
                                                 ),
+                                              );
+                                            } else {
+                                              childWidget = Text(
+                                                item.content.isNotEmpty
+                                                    ? item.content
+                                                    : item.varName,
+                                                style: TextStyle(
+                                                  fontSize: 14,
+                                                  color: isReverse
+                                                      ? Colors.white
+                                                      : (isSelected
+                                                          ? const Color(0xFF005696)
+                                                          : Colors.black87),
+                                                  fontWeight: isBold || isSelected
+                                                      ? FontWeight.bold
+                                                      : FontWeight.normal,
+                                                ),
+                                              );
+                                            }
+
+                                            if (rotationTurns > 0) {
+                                              childWidget = RotatedBox(
+                                                quarterTurns: rotationTurns,
+                                                child: childWidget,
+                                              );
+                                            }
+
+                                            return Container(
+                                              height: rowHeightPx,
+                                              padding: const EdgeInsets.symmetric(
+                                                  horizontal: 8),
+                                              alignment: containerAlignment,
+                                              decoration: BoxDecoration(
+                                                color: isReverse
+                                                    ? Colors.black87
+                                                    : (isSelected
+                                                        ? const Color(0xFF005696).withOpacity(0.12)
+                                                        : Colors.transparent),
+                                                border: Border.all(
+                                                  color: isSelected
+                                                      ? const Color(0xFF005696)
+                                                      : Colors.transparent,
+                                                  width: 1.5,
+                                                ),
+                                              ),
+                                              child: childWidget,
+                                            );
+                                          },
                                         ),
                                       ),
                                     );

@@ -34,7 +34,7 @@ class _MobileReceiptDesignPageState extends State<MobileReceiptDesignPage> {
   TextEditingController widthCtl = TextEditingController(text: '55.0');
   TextEditingController heightCtl = TextEditingController(text: '55.0');
 
-  final List<String> protocols = ['ESC/POS', 'EPM205', 'LP50', 'ZEBRA'];
+  final List<String> protocols = ['ESC/POS', 'EPM205', 'LP50', 'ZEBRA', 'TPUP'];
   final List<String> directions = ['Forward', 'Backward'];
 
   @override
