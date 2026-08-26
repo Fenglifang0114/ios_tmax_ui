@@ -240,8 +240,12 @@ class _MobileSelectScalesPageState extends State<MobileSelectScalesPage> {
 
     if (scaleResMap.containsKey(targetKey)) {
       scaleTimerMap[targetKey]?.cancel();
-      if (myRespDataFromScale.msgBody.contains('ok') || myRespDataFromScale.msgBody.contains('OK')) {
+      bool isError = myRespDataFromScale.msgBody.toLowerCase().contains('error') || 
+                     myRespDataFromScale.msgBody.toLowerCase().contains('fail');
+      if (!isError && (myRespDataFromScale.msgBody.contains('ok') || myRespDataFromScale.msgBody.contains('OK'))) {
         scaleResMap[targetKey]!.process = 1;
+      } else if (isError) {
+        scaleResMap[targetKey]!.process = 0;
       }
       scaleResMap[targetKey]!.res = myRespDataFromScale.msgBody;
     }
@@ -445,7 +449,9 @@ class _MobileSelectScalesPageState extends State<MobileSelectScalesPage> {
                         value: progress,
                         backgroundColor: Colors.grey[300],
                         valueColor: AlwaysStoppedAnimation<Color>(
-                          resStr.contains('ok') || resStr.contains('OK') ? Colors.green : Colors.blue,
+                          resStr.toLowerCase().contains('error') || resStr.toLowerCase().contains('fail')
+                              ? Colors.red
+                              : (resStr.contains('ok') || resStr.contains('OK') ? Colors.green : Colors.blue),
                         ),
                       ),
                     ],
