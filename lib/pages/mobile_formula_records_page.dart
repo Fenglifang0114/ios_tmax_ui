@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:t_max/generated/l10n.dart';
 import 'package:t_max/pages/mobile_formula_auto_sync_page.dart';
 import 'package:t_max/pages/mobile_formula_print_settings_page.dart';
 
@@ -280,9 +281,9 @@ class _MobileFormulaRecordsPageState extends State<MobileFormulaRecordsPage> {
           icon: const Icon(Icons.arrow_back, color: Colors.black87),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        title: const Text(
-          'Formula Records',
-          style: TextStyle(
+        title: Text(
+          S.of(context).fRecordTitle,
+          style: const TextStyle(
             color: Colors.black87,
             fontSize: 18,
             fontWeight: FontWeight.bold,

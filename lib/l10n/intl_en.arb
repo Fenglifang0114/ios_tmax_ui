@@ -1652,7 +1652,7 @@
   "@fPctMode": {
     "description": "Display text for percentage-based formula mode"
   },
-  "fRecordTitle": "Formula Records",
+  "fRecordTitle": "Records",
   "@fRecordTitle": {
     "description": "Page title for formula weighing records"
   },
@@ -2111,6 +2111,10 @@
   "menuWeighing": "Weighing",
   "@menuWeighing": {
     "description": "Menu item for weighing"
+  },
+  "menuRecord": "Records",
+  "@menuRecord": {
+    "description": "Menu or tab label for records"
   },
   "menuPluManagement": "PLU Management",
   "@menuPluManagement": {

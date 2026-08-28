@@ -369,8 +369,9 @@ class RespSysMsgType {
           // 现在可以正常更新状态
           scale.isOnline = scaleOnline.isOnline!;
           if (scaleOnline.isOnline!) {
-            scale.scaleModel = scaleOnline.modelName!;
-            scale.scaleSn = scaleOnline.sn!;
+            if (scaleOnline.sn != null && scaleOnline.sn!.isNotEmpty) {
+              scale.scaleSn = scaleOnline.sn!;
+            }
           }
           eventBus.fire(EventRespScaleOnline(''));
           break;

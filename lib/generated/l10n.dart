@@ -3877,10 +3877,10 @@ class S {
     );
   }
 
-  /// `Formula Records`
+  /// `Records`
   String get fRecordTitle {
     return Intl.message(
-      'Formula Records',
+      'Records',
       name: 'fRecordTitle',
       desc: 'Page title for formula weighing records',
       args: [],
@@ -5028,6 +5028,16 @@ class S {
       'Weighing',
       name: 'menuWeighing',
       desc: 'Menu item for weighing',
+      args: [],
+    );
+  }
+
+  /// `Records`
+  String get menuRecord {
+    return Intl.message(
+      'Records',
+      name: 'menuRecord',
+      desc: 'Menu or tab label for records',
       args: [],
     );
   }

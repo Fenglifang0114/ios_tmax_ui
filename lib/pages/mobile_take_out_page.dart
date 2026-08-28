@@ -739,7 +739,7 @@ class _MobileTakeOutPageState extends State<MobileTakeOutPage> {
                         ),
                         alignment: Alignment.center,
                         child: Text(
-                          localizedStrings?.fRecordTitle ?? "Record",
+                          localizedStrings?.menuRecord ?? "Records",
                           style: TextStyle(
                             color: _selectedTab == 1
                                 ? Colors.white

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:t_max/generated/l10n.dart';
 import 'package:t_max/data/darf_fma_data_from_db.dart';
 import 'package:t_max/data/f_raw_name.dart';
 import 'package:t_max/data/formula_from_db_data.dart';
@@ -194,9 +195,9 @@ class _MobileFormulaRecordDetailPageState
           icon: const Icon(Icons.arrow_back, color: Colors.black87),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        title: const Text(
-          'Formula Records',
-          style: TextStyle(
+        title: Text(
+          S.of(context).fRecordTitle,
+          style: const TextStyle(
             color: Colors.black87,
             fontSize: 18,
             fontWeight: FontWeight.bold,

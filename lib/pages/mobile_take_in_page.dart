@@ -162,8 +162,7 @@ class _MobileTakeInPageState extends State<MobileTakeInPage> {
   // EVENTBUS & DATA INITIALIZATION
   // ---------------------------------------------------------------------------
   void _initEventBusListeners() {
-    _eventBusWeightData =
-        eventBus.on<EventReqWeightCountine>().listen((event) {
+    _eventBusWeightData = eventBus.on<EventReqWeightCountine>().listen((event) {
       if (!mounted) return;
       final req = event.obj;
       if (req.scaleId != null && req.msgBody != null) {
@@ -194,14 +193,14 @@ class _MobileTakeInPageState extends State<MobileTakeInPage> {
       }
     });
 
-    _eventBusGetAllRecs =
-        eventBus.on<EventRespGetAllWgtRecs>().listen((event) {
+    _eventBusGetAllRecs = eventBus.on<EventRespGetAllWgtRecs>().listen((event) {
       if (!mounted) return;
       dynamic rawObj = event.obj;
       String jsonString = rawObj is String
           ? rawObj
           : (rawObj != null ? jsonEncode(rawObj) : '');
-      writelog("[MOBILE_TAKEIN_RECS] Received records json len: ${jsonString.length}");
+      writelog(
+          "[MOBILE_TAKEIN_RECS] Received records json len: ${jsonString.length}");
       try {
         RevAllWgtRecs rev = revAllWgtRecsFromJson(jsonString);
         setState(() {
@@ -220,13 +219,15 @@ class _MobileTakeInPageState extends State<MobileTakeInPage> {
 
     _eventBusAddRec = eventBus.on<EventAddWgtRec>().listen((event) {
       if (mounted) {
-        Future.delayed(const Duration(milliseconds: 200), () => _fetchRecords());
+        Future.delayed(
+            const Duration(milliseconds: 200), () => _fetchRecords());
       }
     });
 
     _eventBusDelAll = eventBus.on<EventDelAllWgtRecs>().listen((event) {
       if (mounted) {
-        Future.delayed(const Duration(milliseconds: 200), () => _fetchRecords());
+        Future.delayed(
+            const Duration(milliseconds: 200), () => _fetchRecords());
       }
     });
 
@@ -249,7 +250,8 @@ class _MobileTakeInPageState extends State<MobileTakeInPage> {
         _dateFormat = param.dateFormat == "1"
             ? "yy-mm-dd"
             : (param.dateFormat == "2" ? "dd-mm-yy" : "mm-dd-yy");
-        _dateSeparator = param.dateSeparator.isNotEmpty ? param.dateSeparator : "/";
+        _dateSeparator =
+            param.dateSeparator.isNotEmpty ? param.dateSeparator : "/";
       });
     });
 
@@ -303,8 +305,7 @@ class _MobileTakeInPageState extends State<MobileTakeInPage> {
   }
 
   void _fetchSelScales() async {
-    List<int> savedScales =
-        await AppSelScalesManager.getIntList(AppNames.insc);
+    List<int> savedScales = await AppSelScalesManager.getIntList(AppNames.insc);
     if (!mounted) return;
     setState(() {
       for (var scale in myAllScalesList) {
@@ -319,8 +320,7 @@ class _MobileTakeInPageState extends State<MobileTakeInPage> {
 
   void _requestAllScalesWeight() {
     for (var scale in myAllScalesList) {
-      bool isChecked =
-          _drawerDeviceCheckedMap[scale.scaleId] ?? true;
+      bool isChecked = _drawerDeviceCheckedMap[scale.scaleId] ?? true;
       if (isChecked) {
         PublicFunctions.getWeight(scale.scaleId);
       }
@@ -724,7 +724,7 @@ class _MobileTakeInPageState extends State<MobileTakeInPage> {
                         ),
                         alignment: Alignment.center,
                         child: Text(
-                          localizedStrings?.fRecordTitle ?? "Record",
+                          localizedStrings?.menuRecord ?? "Records",
                           style: TextStyle(
                             color: _selectedTab == 1
                                 ? Colors.white
@@ -836,8 +836,7 @@ class _MobileTakeInPageState extends State<MobileTakeInPage> {
       grandTotal = convertedW;
     } else {
       for (var scale in myAllScalesList) {
-        bool isChecked =
-            _drawerDeviceCheckedMap[scale.scaleId] ?? true;
+        bool isChecked = _drawerDeviceCheckedMap[scale.scaleId] ?? true;
         if (isChecked) {
           int id = scale.scaleId;
           TakeInWeightInfo info = _scaleWeightMap[id] ??
@@ -1270,7 +1269,8 @@ class _MobileTakeInPageState extends State<MobileTakeInPage> {
                             height: MediaQuery.of(context).size.height * 0.4,
                             child: Center(
                               child: Text(
-                                localizedStrings?.fNoRecordTip ?? "No records found",
+                                localizedStrings?.fNoRecordTip ??
+                                    "No records found",
                                 style: const TextStyle(
                                     color: Color(0xFF94A3B8), fontSize: 16),
                               ),
@@ -1283,7 +1283,8 @@ class _MobileTakeInPageState extends State<MobileTakeInPage> {
                         padding: const EdgeInsets.all(12),
                         itemCount: _allWgtRecList.length,
                         itemBuilder: (context, index) {
-                          return _buildRecordCard(_allWgtRecList[index], index + 1);
+                          return _buildRecordCard(
+                              _allWgtRecList[index], index + 1);
                         },
                       ),
           ),
@@ -1309,7 +1310,8 @@ class _MobileTakeInPageState extends State<MobileTakeInPage> {
                         ),
                         onPressed: () async {
                           String? outputFile =
-                              await PublicFunctions.pickSaveFilePath('export.csv');
+                              await PublicFunctions.pickSaveFilePath(
+                                  'export.csv');
                           if (outputFile != null) {
                             List<String> selFields = [];
                             Map<String, String> selMap = {};
@@ -1349,7 +1351,8 @@ class _MobileTakeInPageState extends State<MobileTakeInPage> {
                         ),
                         onPressed: _openReportSettingSheet,
                         child: Text(
-                          localizedStrings?.gBtnReportSetting ?? "Report Setting",
+                          localizedStrings?.gBtnReportSetting ??
+                              "Report Setting",
                           style: const TextStyle(
                               color: Colors.white,
                               fontSize: 15,
@@ -1545,12 +1548,12 @@ class _MobileTakeInPageState extends State<MobileTakeInPage> {
                               _buildGridCell(
                                   "Item Code", header?.itemCode ?? ""),
                             if (_visibleFields['Unit'] == true)
-                              _buildGridCell(
-                                  "Unit", header?.generalUnit ?? ""),
+                              _buildGridCell("Unit", header?.generalUnit ?? ""),
                             if (_visibleFields['Limit High'] == true)
                               _buildGridCell(
                                   "Limit High", header?.limitHigh ?? ""),
-                            if (isSummary && _visibleFields['Scale Name'] == true)
+                            if (isSummary &&
+                                _visibleFields['Scale Name'] == true)
                               _buildGridCell(
                                   "Scale Name", header?.scaleName ?? ""),
                           ],
@@ -1640,7 +1643,8 @@ class _MobileTakeInPageState extends State<MobileTakeInPage> {
             builder: (context, setDrawerState) {
               return UnifiedDeviceDrawerContent(
                 scaleList: myAllScalesList,
-                isSelected: (scale) => _drawerDeviceCheckedMap[scale.scaleId] ?? true,
+                isSelected: (scale) =>
+                    _drawerDeviceCheckedMap[scale.scaleId] ?? true,
                 onScaleTap: (scale) {
                   bool current = _drawerDeviceCheckedMap[scale.scaleId] ?? true;
                   bool newChecked = !current;
@@ -1691,85 +1695,73 @@ class _MobileTakeInPageState extends State<MobileTakeInPage> {
         return StatefulBuilder(
           builder: (context, setModalState) {
             return Container(
+              height: MediaQuery.of(context).size.height * 0.9,
               decoration: const BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
               ),
-              padding: EdgeInsets.only(
-                bottom: MediaQuery.of(context).viewInsets.bottom,
-              ),
               child: Column(
-                mainAxisSize: MainAxisSize.min,
                 children: [
-                  // Title Bar
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 14),
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          localizedStrings?.gParameterSettingsTitle ??
-                              "Parameter Setting",
-                          style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF1E293B),
-                          ),
-                        ),
                         IconButton(
-                          icon: const Icon(Icons.close,
-                              color: Color(0xFF64748B)),
+                          icon: const Icon(Icons.arrow_back,
+                              color: Color(0xFF1E293B)),
                           onPressed: () => Navigator.pop(context),
                         ),
+                        Expanded(
+                          child: Text(
+                            localizedStrings?.gParameterSettingsTitle ??
+                                "Parameter settings",
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              color: Color(0xFF1E293B),
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 48),
                       ],
                     ),
                   ),
                   const Divider(height: 1, color: Color(0xFFE2E8F0)),
-
-                  Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
+                  Expanded(
+                    child: ListView(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 8),
                       children: [
-                        // Mode Selection: Summary vs Independent Mode
-                        _buildSettingOptionRow(
-                          title: localizedStrings?.gTipWeightSummationMode ??
-                              "Mode Selection",
-                          val: tempSummaryMode
-                              ? (localizedStrings?.gTipWeightSummationMode ??
-                                  "Summary Mode")
-                              : (localizedStrings?.gTipStandaloneMode ??
-                                  "Independent Mode"),
-                          onTap: () {
-                            _openSubSelectionModal(
-                              localizedStrings?.gTipWeightSummationMode ??
-                                  "Mode Selection",
-                              [
-                                (localizedStrings?.gTipStandaloneMode ??
-                                    "Weight Independent Mode"),
-                                (localizedStrings?.gTipWeightSummationMode ??
-                                    "Weight Summary Mode"),
-                              ],
-                              tempSummaryMode
-                                  ? (localizedStrings?.gTipWeightSummationMode ??
-                                      "Weight Summary Mode")
-                                  : (localizedStrings?.gTipStandaloneMode ??
-                                      "Weight Independent Mode"),
-                              (selected) {
-                                setModalState(() {
-                                  tempSummaryMode = selected.contains("Summary") ||
-                                      selected.contains("汇总");
-                                });
-                              },
-                            );
-                          },
+                        // Weight Summary Mode Switch Row
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 4),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                localizedStrings?.gTipWeightSummationMode ??
+                                    "Weight Summary Mode",
+                                style: const TextStyle(
+                                    fontSize: 15, color: Color(0xFF334155)),
+                              ),
+                              Switch(
+                                value: tempSummaryMode,
+                                activeColor: const Color(0xFF10B981),
+                                onChanged: (val) {
+                                  setModalState(() {
+                                    tempSummaryMode = val;
+                                  });
+                                },
+                              ),
+                            ],
+                          ),
                         ),
                         const Divider(height: 1, color: Color(0xFFF1F5F9)),
 
-                        // Save Mode: Manual vs Auto
                         _buildSettingOptionRow(
-                          title:
-                              localizedStrings?.save_mode ?? "Save Mode",
+                          title: localizedStrings?.save_mode ?? "Save Mode",
                           val: tempSaveMode == "Auto"
                               ? (localizedStrings?.gTipAuto ?? "Auto")
                               : (localizedStrings?.gTipManual ?? "Manual"),
@@ -1785,11 +1777,10 @@ class _MobileTakeInPageState extends State<MobileTakeInPage> {
                                   : (localizedStrings?.gTipManual ?? "Manual"),
                               (selected) {
                                 setModalState(() {
-                                  tempSaveMode =
-                                      (selected.contains("Auto") ||
-                                              selected.contains("自动"))
-                                          ? "Auto"
-                                          : "Manual";
+                                  tempSaveMode = (selected.contains("Auto") ||
+                                          selected.contains("自动"))
+                                      ? "Auto"
+                                      : "Manual";
                                 });
                               },
                             );
@@ -1797,33 +1788,27 @@ class _MobileTakeInPageState extends State<MobileTakeInPage> {
                         ),
                         const Divider(height: 1, color: Color(0xFFF1F5F9)),
 
-                        // Stable Time (Seconds)
                         Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 10),
+                          padding: const EdgeInsets.symmetric(vertical: 8),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
                                 localizedStrings?.gTipStableTime ??
-                                    "Stable Time (Sec)",
+                                    "Stable Time (s)",
                                 style: const TextStyle(
                                     fontSize: 15, color: Color(0xFF334155)),
                               ),
                               SizedBox(
-                                width: 80,
+                                width: 60,
                                 height: 36,
                                 child: TextField(
                                   controller: _stableTimeController,
                                   keyboardType: TextInputType.number,
                                   textAlign: TextAlign.center,
-                                  decoration: InputDecoration(
-                                    contentPadding:
-                                        const EdgeInsets.symmetric(vertical: 8),
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(6),
-                                      borderSide: const BorderSide(
-                                          color: Color(0xFFCBD5E1)),
-                                    ),
+                                  decoration: const InputDecoration(
+                                    border: OutlineInputBorder(),
+                                    contentPadding: EdgeInsets.zero,
                                   ),
                                 ),
                               ),
@@ -1832,7 +1817,6 @@ class _MobileTakeInPageState extends State<MobileTakeInPage> {
                         ),
                         const Divider(height: 1, color: Color(0xFFF1F5F9)),
 
-                        // Date Format
                         _buildSettingOptionRow(
                           title: localizedStrings?.date_format ?? "Date Format",
                           val: tempDateFormat,
@@ -1851,7 +1835,6 @@ class _MobileTakeInPageState extends State<MobileTakeInPage> {
                         ),
                         const Divider(height: 1, color: Color(0xFFF1F5F9)),
 
-                        // Date Separator
                         _buildSettingOptionRow(
                           title: localizedStrings?.gDateSeparator ??
                               "Date Separator",
@@ -2126,8 +2109,7 @@ class _MobileTakeInPageState extends State<MobileTakeInPage> {
                                   child: Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       Text(
                                         "${item.plu ?? '--'} : ${item.productName ?? '--'}",
@@ -2184,8 +2166,7 @@ class _MobileTakeInPageState extends State<MobileTakeInPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        localizedStrings?.gBtnReportSetting ??
-                            "Report Setting",
+                        localizedStrings?.gBtnReportSetting ?? "Report Setting",
                         style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,

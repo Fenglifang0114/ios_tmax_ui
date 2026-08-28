@@ -674,7 +674,7 @@ class _MobileWeighingDataCollectionPageState
                         ),
                         alignment: Alignment.center,
                         child: Text(
-                          "Record",
+                          localizedStrings?.menuRecord ?? "Records",
                           style: TextStyle(
                             color: _selectedTab == 1
                                 ? Theme.of(context).colorScheme.onPrimary
@@ -1384,7 +1384,7 @@ class _MobileWeighingDataCollectionPageState
       context: context,
       barrierDismissible: true,
       barrierLabel: 'DeviceListDrawer',
-      barrierColor: Colors.black.withOpacity(0.5),
+      barrierColor: Colors.black.withValues(alpha: 0.5),
       transitionDuration: const Duration(milliseconds: 250),
       pageBuilder: (context, anim1, anim2) {
         return Align(

@@ -134,7 +134,12 @@ class _MobileSysUserManagerPageState extends State<MobileSysUserManagerPage> {
           IconButton(
             icon: const Icon(Icons.add_circle_outline, color: Colors.black87),
             onPressed: () {
-              if (mySysUser.roleId == superAdminRoleId && !mySysUser.isChanged!) {
+              if (mySysUser.roleId == superAdminRoleId && (mySysUser.isChanged == false || (mySysUser.isChanged != null && !mySysUser.isChanged!))) {
+                if (superAdminUser == null || superAdminUser!.userName == null || superAdminUser!.userName!.isEmpty) {
+                  PublicFunctions.getAllSysUsers();
+                  showTipInfo((localizedStrings?.gTipWait ?? "Please wait..."), context);
+                  return;
+                }
                 Navigator.push(
                   context,
                   MaterialPageRoute(

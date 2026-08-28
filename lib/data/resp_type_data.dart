@@ -210,7 +210,6 @@ class RespMsgType {
       for (var scale in myAllScalesList) {
         if (scale.scaleId == id) {
           scale.isOnline = isOnline;
-          if (model.isNotEmpty) scale.scaleModel = model;
           if (sn.isNotEmpty) scale.scaleSn = sn;
           break;
         }
@@ -514,7 +513,6 @@ class RespMsgType {
 
       for (var scale in myAllScalesList) {
         if (scale.scaleId == id) {
-          if (model.isNotEmpty) scale.scaleModel = model;
           if (sn.isNotEmpty) scale.scaleSn = sn;
           scale.isOnline = true;
           break;
@@ -696,14 +694,13 @@ class RespMsgType {
       return eventBus.fire(EventRespCheckNetScale(myOnlineInfo));
     }
 
-    if (myFactoryInfoFromScale.modelName != '') {
-      for (var tempScale in myAllScalesList) {
-        if (tempScale.scaleId == id) {
-          tempScale.scaleModel = myFactoryInfoFromScale.modelName!;
+    for (var tempScale in myAllScalesList) {
+      if (tempScale.scaleId == id) {
+        if (myFactoryInfoFromScale.scaleSn != null && myFactoryInfoFromScale.scaleSn!.isNotEmpty) {
           tempScale.scaleSn = myFactoryInfoFromScale.scaleSn!;
-          tempScale.isOnline = true;
-          break;
         }
+        tempScale.isOnline = true;
+        break;
       }
     }
     myOnlineInfo.factInfo = myFactoryInfoFromScale;

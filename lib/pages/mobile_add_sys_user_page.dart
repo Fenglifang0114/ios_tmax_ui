@@ -54,7 +54,9 @@ class _MobileAddSysUserPageState extends State<MobileAddSysUserPage> {
       _roleId = widget.initUserInfo.roleId ?? 3;
       
       // Load details for edit
-      PublicFunctions.getUserInfo(widget.initUserInfo.userName!);
+      if (widget.initUserInfo.userName != null && widget.initUserInfo.userName!.isNotEmpty) {
+        PublicFunctions.getUserInfo(widget.initUserInfo.userName!);
+      }
     }
     
     if (widget.isSuperAccount) {

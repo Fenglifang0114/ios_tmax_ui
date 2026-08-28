@@ -464,7 +464,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "fRawMaterialWeightLabel": MessageLookupByLibrary.simpleMessage(
       "Ingredient Weight",
     ),
-    "fRecordTitle": MessageLookupByLibrary.simpleMessage("Formula Records"),
+    "fRecordTitle": MessageLookupByLibrary.simpleMessage("Records"),
     "fRemarkCol": MessageLookupByLibrary.simpleMessage("Notes"),
     "fRepeatWeighingBtn": MessageLookupByLibrary.simpleMessage(
       "Repeat Weighing",
@@ -1276,6 +1276,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Variable Value Setting",
     ),
     "menuWeighing": MessageLookupByLibrary.simpleMessage("Weighing"),
+    "menuRecord": MessageLookupByLibrary.simpleMessage("Records"),
     "menuWeighingDataCollection": MessageLookupByLibrary.simpleMessage(
       "Weighing Data Collection",
     ),

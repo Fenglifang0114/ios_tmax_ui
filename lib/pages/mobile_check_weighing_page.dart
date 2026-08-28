@@ -775,7 +775,7 @@ class _MobileCheckWeighingPageState extends State<MobileCheckWeighingPage> {
                         ),
                         alignment: Alignment.center,
                         child: Text(
-                          "Record",
+                          localizedStrings?.menuRecord ?? "Records",
                           style: TextStyle(
                             color: _selectedTab == 1
                                 ? Theme.of(context).colorScheme.onPrimary

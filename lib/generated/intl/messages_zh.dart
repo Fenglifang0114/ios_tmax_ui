@@ -308,7 +308,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "fRawMaterialListTab": MessageLookupByLibrary.simpleMessage("原料列表"),
     "fRawMaterialTypeNameCol": MessageLookupByLibrary.simpleMessage("类别"),
     "fRawMaterialWeightLabel": MessageLookupByLibrary.simpleMessage("原料重量"),
-    "fRecordTitle": MessageLookupByLibrary.simpleMessage("配方记录"),
+    "fRecordTitle": MessageLookupByLibrary.simpleMessage("记录"),
     "fRemarkCol": MessageLookupByLibrary.simpleMessage("备注"),
     "fRepeatWeighingBtn": MessageLookupByLibrary.simpleMessage("重复称重"),
     "fReviseBtn": MessageLookupByLibrary.simpleMessage("修正"),
@@ -880,6 +880,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "menuTakeOutScale": MessageLookupByLibrary.simpleMessage("减法秤"),
     "menuVariableValueSetting": MessageLookupByLibrary.simpleMessage("变量值设置"),
     "menuWeighing": MessageLookupByLibrary.simpleMessage("称重"),
+    "menuRecord": MessageLookupByLibrary.simpleMessage("记录"),
     "menuWeighingDataCollection": MessageLookupByLibrary.simpleMessage(
       "称重数据收集",
     ),

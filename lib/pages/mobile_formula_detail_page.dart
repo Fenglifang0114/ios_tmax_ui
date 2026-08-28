@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:t_max/generated/l10n.dart';
 import 'package:t_max/data/f_raw_name.dart';
 import 'package:t_max/data/formula_common.dart';
 import 'package:t_max/data/formula_from_db_data.dart';
@@ -160,7 +161,7 @@ class _MobileFormulaDetailPageState extends State<MobileFormulaDetailPage> {
           IconButton(
             icon: const Icon(Icons.article_outlined, color: Colors.black87, size: 24),
             onPressed: _openFormulaRecords,
-            tooltip: 'Formula Records',
+            tooltip: S.of(context).fRecordTitle,
           ),
           IconButton(
             icon: const Icon(Icons.edit_note_outlined, color: Colors.black87, size: 26),
