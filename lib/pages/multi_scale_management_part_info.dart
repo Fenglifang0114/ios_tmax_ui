@@ -47,7 +47,7 @@ extension MultiScaleManagementInfoExt on MultiScaleManagementState {
                   ),
                   buildItemInfo(
                       showItemNameWithStar(
-                          context, "Protocol Name", false),
+                          context, (localizedStrings?.protocolName ?? "Protocol Name"), false),
                       showInputBox(context, protocolCtl, '', (value) {
                         setState(() {});
                       }, false),
@@ -126,7 +126,7 @@ extension MultiScaleManagementInfoExt on MultiScaleManagementState {
                   ),
                   buildItemInfo(
                       showItemNameWithStar(
-                          context, "Protocol Name", false),
+                          context, (localizedStrings?.protocolName ?? "Protocol Name"), false),
                       showInputBox(context, protocolCtl, '', (value) {
                         setState(() {});
                       }, false),
@@ -203,7 +203,7 @@ extension MultiScaleManagementInfoExt on MultiScaleManagementState {
                   ),
                   buildItemInfo(
                       showItemNameWithStar(
-                          context, "Protocol Name", false),
+                          context, (localizedStrings?.protocolName ?? "Protocol Name"), false),
                       showInputBox(context, protocolCtl, '', (value) {
                         setState(() {});
                       }, false),

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:t_max/data/language.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
 import 'package:t_max/data/barcoderowdata.dart';
@@ -305,8 +306,8 @@ class _MobileLabelElementEditPageState
                   // --- TEXT SPECIFIC FIELDS ---
                   if (type == ElementType.text) ...[
                     const SizedBox(height: 12),
-                    const Text("Content",
-                        style: TextStyle(fontSize: 13, color: Colors.black54)),
+                    Text(localizedStrings?.gTipContent ?? "Content",
+                        style: const TextStyle(fontSize: 13, color: Colors.black54)),
                     TextField(
                       controller: contentController,
                       decoration: const InputDecoration(
@@ -360,8 +361,8 @@ class _MobileLabelElementEditPageState
                     ),
                     const Divider(height: 1, color: Color(0xFFEEEEEE)),
                     const SizedBox(height: 8),
-                    const Text("Max Length",
-                        style: TextStyle(fontSize: 13, color: Colors.black54)),
+                    Text(localizedStrings?.gTipMaxLength ?? "Max Length",
+                        style: const TextStyle(fontSize: 13, color: Colors.black54)),
                     TextField(
                       controller: maxLengthController,
                       keyboardType: TextInputType.number,
@@ -508,8 +509,8 @@ class _MobileLabelElementEditPageState
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text("Width(mm)",
-                                style: TextStyle(
+                            Text(localizedStrings?.gTipWidthMm ?? "Width(mm)",
+                                style: const TextStyle(
                                     fontSize: 13, color: Colors.black54)),
                             TextField(
                               controller: widthController,
@@ -527,8 +528,8 @@ class _MobileLabelElementEditPageState
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text("Height(mm)",
-                                style: TextStyle(
+                            Text(localizedStrings?.gTipHeightMm ?? "Height(mm)",
+                                style: const TextStyle(
                                     fontSize: 13, color: Colors.black54)),
                             TextField(
                               controller: heightController,
@@ -565,9 +566,9 @@ class _MobileLabelElementEditPageState
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(4)),
                   ),
-                  child: const Text(
-                    "Confirm",
-                    style: TextStyle(
+                  child: Text(
+                    localizedStrings?.gBtnConfirm ?? "Confirm",
+                    style: const TextStyle(
                         fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                 ),

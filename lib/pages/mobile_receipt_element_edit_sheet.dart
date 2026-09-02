@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:t_max/data/language.dart';
 import 'package:t_max/data/receipt_item.dart';
 
 class MobileReceiptElementEditSheet extends StatefulWidget {
@@ -235,8 +236,8 @@ class _MobileReceiptElementEditSheetState
                   // --- TEXT SPECIFIC FIELDS ---
                   if (type == 'TEXT') ...[
                     const SizedBox(height: 12),
-                    const Text("Content",
-                        style: TextStyle(fontSize: 13, color: Colors.black54)),
+                    Text(localizedStrings?.gTipContent ?? "Content",
+                        style: const TextStyle(fontSize: 13, color: Colors.black54)),
                     TextField(
                       controller: _contentCtl,
                       decoration: const InputDecoration(
@@ -259,8 +260,8 @@ class _MobileReceiptElementEditSheetState
                     ),
                     const Divider(height: 1, color: Color(0xFFEEEEEE)),
                     const SizedBox(height: 8),
-                    const Text("Max Length",
-                        style: TextStyle(fontSize: 13, color: Colors.black54)),
+                    Text(localizedStrings?.gTipMaxLength ?? "Max Length",
+                        style: const TextStyle(fontSize: 13, color: Colors.black54)),
                     TextField(
                       controller: _maxLengthCtl,
                       keyboardType: TextInputType.number,
@@ -396,9 +397,9 @@ class _MobileReceiptElementEditSheetState
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(4)),
                   ),
-                  child: const Text(
-                    "Confirm",
-                    style: TextStyle(
+                  child: Text(
+                    localizedStrings?.gBtnConfirm ?? "Confirm",
+                    style: const TextStyle(
                         fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                 ),

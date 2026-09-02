@@ -23,6 +23,7 @@ class BasicDataPage extends StatefulWidget {
 }
 
 class BasicDataPageState extends State<BasicDataPage> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   dynamic eventBus1;
   dynamic eventBus2;
 
@@ -81,7 +82,11 @@ class BasicDataPageState extends State<BasicDataPage> {
         showTipInfo((localizedStrings?.gTipNoDeviceAddFirst ?? "gTipNoDeviceAddFirst"), context);
       } else {
         if (selScaleId == -1) {
-          showTipInfo((localizedStrings?.gTipSelectDeviceFirst ?? "gTipSelectDeviceFirst"), context);
+          if (Platform.isAndroid || Platform.isIOS || Adaptive.isMobile(context)) {
+            _scaffoldKey.currentState?.openDrawer();
+          } else {
+            showTipInfo((localizedStrings?.gTipSelectDeviceFirst ?? "gTipSelectDeviceFirst"), context);
+          }
         }
       }
     });
@@ -297,6 +302,7 @@ class BasicDataPageState extends State<BasicDataPage> {
 
   Widget mobileLayout(BuildContext context, double width) {
     return Scaffold(
+      key: _scaffoldKey,
       backgroundColor: Colors.white,
       drawer: UnifiedDeviceDrawerContent(
         scaleList: myAllScalesList,

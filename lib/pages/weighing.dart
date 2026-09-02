@@ -28,6 +28,7 @@ class WeightModePage extends StatefulWidget {
 }
 
 class WeightModePageState extends State<WeightModePage> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
 
   List<int> mySelScaleIdList = [];
@@ -58,6 +59,9 @@ class WeightModePageState extends State<WeightModePage> {
     // 初始加载时立即检查一次
     WidgetsBinding.instance.addPostFrameCallback((_) {
       checkSameScale();
+      if (Adaptive.isMobile(context) && mySelScaleIdList.isEmpty && myAllScalesList.isNotEmpty) {
+        _scaffoldKey.currentState?.openDrawer();
+      }
     });
 
     eventBus5 = eventBus.on<EventRegWeightResp>().listen((event) {
@@ -142,6 +146,7 @@ class WeightModePageState extends State<WeightModePage> {
     final bool isMobile = Adaptive.isMobile(context);
 
     return Scaffold(
+      key: _scaffoldKey,
       appBar: isMobile
           ? AppBar(
               backgroundColor: Colors.white,

@@ -76,10 +76,12 @@ class MobileLogFilterHeader extends StatelessWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        Text(
-                          tabNames[currentIndex],
-                          style: const TextStyle(fontSize: 16, color: Colors.black87),
-                          overflow: TextOverflow.ellipsis,
+                        Flexible(
+                          child: Text(
+                            tabNames[currentIndex],
+                            style: const TextStyle(fontSize: 15, color: Colors.black87),
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ),
                         const SizedBox(width: 4),
                         const Icon(Icons.keyboard_arrow_down, color: Colors.black54),
@@ -100,11 +102,14 @@ class MobileLogFilterHeader extends StatelessWidget {
                   child: TextField(
                     controller: operatorCtl,
                     onSubmitted: (_) => onSearch(), // Search triggers here
-                    decoration: const InputDecoration(
-                      hintText: "Please enter",
-                      prefixIcon: Icon(Icons.search, size: 20),
+                    textAlignVertical: TextAlignVertical.center,
+                    decoration: InputDecoration(
+                      isDense: true,
+                      hintText: localizedStrings?.gTipPleaseInputKeyWord ?? "Please enter",
+                      hintStyle: const TextStyle(fontSize: 14, color: Colors.black38),
+                      prefixIcon: const Icon(Icons.search, size: 20, color: Colors.black54),
                       border: InputBorder.none,
-                      contentPadding: EdgeInsets.only(top: -4), // Center text
+                      contentPadding: const EdgeInsets.symmetric(vertical: 8),
                     ),
                   ),
                 ),

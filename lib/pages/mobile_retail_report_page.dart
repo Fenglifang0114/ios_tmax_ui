@@ -201,6 +201,12 @@ class _MobileRetailReportPageState extends State<MobileRetailReportPage> {
     _searchController.addListener(() {
       if (mounted) setState(() {});
     });
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (myAllScalesList.isNotEmpty && mySelScaleIdList.isEmpty) {
+        _scaffoldKey.currentState?.openDrawer();
+      }
+    });
   }
 
   @override

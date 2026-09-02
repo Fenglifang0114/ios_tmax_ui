@@ -2312,6 +2312,58 @@
   "@gTitleLanguageSetting": {
     "description": "Title for language setting page"
   },
+  "gTitleSelectWifi": "选择 Wi-Fi",
+  "@gTitleSelectWifi": {
+    "description": "Title for select Wi-Fi"
+  },
+  "gReceiptSample": "票据样例",
+  "@gReceiptSample": {
+    "description": "Label for receipt sample"
+  },
+  "protocolName": "协议名称",
+  "@protocolName": {
+    "description": "Label for protocol name"
+  },
+  "gTitleConnecting": "连接",
+  "@gTitleConnecting": {
+    "description": "Title or label for connecting page"
+  },
+  "gTipPleaseInputKeyWord": "请输入",
+  "@gTipPleaseInputKeyWord": {
+    "description": "Hint text for general input field"
+  },
+  "gTipStableTime": "稳定时间(s)",
+  "@gTipStableTime": {
+    "description": "Label for stable time in seconds"
+  },
+  "gTipNoPluAvailable": "无可用 PLU",
+  "@gTipNoPluAvailable": {
+    "description": "Prompt when no PLU is available"
+  },
+  "subTitleDefaultApp": "默认初始应用",
+  "@subTitleDefaultApp": {
+    "description": "Subtitle for default app setting"
+  },
+  "gBtnNewFormat": "新建格式",
+  "@gBtnNewFormat": {
+    "description": "Button label for creating new format"
+  },
+  "gTipCanvasEmpty": "点击编辑图标设计画布",
+  "@gTipCanvasEmpty": {
+    "description": "Tip when canvas is empty"
+  },
+  "gTipWidthMm": "宽度(mm)",
+  "@gTipWidthMm": {
+    "description": "Label for width in mm"
+  },
+  "gTipHeightMm": "高度(mm)",
+  "@gTipHeightMm": {
+    "description": "Label for height in mm"
+  },
+  "gBtnClearFilter": "重置筛选",
+  "@gBtnClearFilter": {
+    "description": "Button label for resetting filter"
+  },
   "gTipSelectLanguage": "选择语言",
   "@gTipSelectLanguage": {
     "description": "Prompt for selecting language"
@@ -2451,6 +2503,22 @@
   "gTitleAddDevice": "添加设备",
   "@gTitleAddDevice": {
     "description": "This is the title for adding a device."
+  },
+  "gTipAddDeviceMobileNotice": "添加新设备需要先开启设备电源，串口设备需要完成计算机与设备之间的物理连接。",
+  "@gTipAddDeviceMobileNotice": {
+    "description": "This is a description for adding a device on mobile."
+  },
+  "gTipSerialPort": "串口",
+  "@gTipSerialPort": {
+    "description": "Serial port"
+  },
+  "gTipNetwork": "网络",
+  "@gTipNetwork": {
+    "description": "Network"
+  },
+  "gTipBluetooth": "蓝牙",
+  "@gTipBluetooth": {
+    "description": "Bluetooth"
   },
   "gTipAddDevice": "串口连接方式需要使用串口线连接到PC端，WIFI连接方式需要设备IP地址和端口号正确。",
   "@gTipAddDevice": {

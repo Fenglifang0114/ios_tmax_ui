@@ -136,6 +136,12 @@ class _MobileTakeOutPageState extends State<MobileTakeOutPage> {
     _fetchPluList();
     _startContinuousWeightStream();
 
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (myAllScalesList.isNotEmpty && (_drawerDeviceCheckedMap.isEmpty || !_drawerDeviceCheckedMap.values.any((v) => v))) {
+        _openDeviceListDrawer();
+      }
+    });
+
     _eventBusWeightData = eventBus.on<EventReqWeightCountine>().listen((event) {
       if (!mounted) return;
       ReqWeightCountine tempWeight = event.obj;
@@ -1506,8 +1512,8 @@ class _MobileTakeOutPageState extends State<MobileTakeOutPage> {
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Text("Scale Name",
-                                      style: TextStyle(
+                                  Text(localizedStrings?.gScaleName ?? "Scale Name",
+                                      style: const TextStyle(
                                           color: Color(0xFF94A3B8),
                                           fontSize: 12)),
                                   Text(detail.scaleName ?? "",
@@ -1519,8 +1525,8 @@ class _MobileTakeOutPageState extends State<MobileTakeOutPage> {
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.end,
                                 children: [
-                                  const Text("Weight",
-                                      style: TextStyle(
+                                  Text(localizedStrings?.fWeightCol ?? "Weight",
+                                      style: const TextStyle(
                                           color: Color(0xFF94A3B8),
                                           fontSize: 12)),
                                   Text(detail.weight ?? "",

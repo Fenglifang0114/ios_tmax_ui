@@ -184,12 +184,15 @@ class _MobileSysUserManagerPageState extends State<MobileSysUserManagerPage> {
               child: TextField(
                 controller: _searchUserNameCtl,
                 onChanged: (value) => performSearch(),
+                textAlignVertical: TextAlignVertical.center,
                 decoration: InputDecoration(
+                  isDense: true,
                   prefixIcon: const Icon(Icons.search, color: Colors.grey, size: 20),
+                  prefixIconConstraints: const BoxConstraints(minWidth: 36, maxHeight: 40),
                   hintText: localizedStrings?.fSearchHint ?? "Please enter",
                   hintStyle: const TextStyle(color: Colors.grey, fontSize: 14),
                   border: InputBorder.none,
-                  contentPadding: const EdgeInsets.symmetric(vertical: 10),
+                  contentPadding: EdgeInsets.zero,
                 ),
               ),
             ),

@@ -480,14 +480,14 @@ class MyHomePageState extends State<MyHomePage> with WindowLifecycleMixin {
                           child: ListView(
                             padding: EdgeInsets.zero,
                             children: [
-                              _buildDrawerItem(Icons.tune, "Configuration", () {
+                              _buildDrawerItem(Icons.tune, localizedStrings?.menuConfiguration ?? "Configuration", () {
                                 Navigator.pop(context);
                                 setState(() {
                                   _currentTabIndex = 0;
                                   _navigateContent('/multiScaleManagement');
                                 });
                               }),
-                              _buildDrawerItem(Icons.apps, "Application", () {
+                              _buildDrawerItem(Icons.apps, localizedStrings?.menuApplications ?? "Application", () {
                                 Navigator.pop(context);
                                 Navigator.push(
                                   context,
@@ -520,8 +520,10 @@ class MyHomePageState extends State<MyHomePage> with WindowLifecycleMixin {
                                   _navigateContent('/settingsLog');
                                 }),
                               if (mySysUser.roleId == 1 || mySysUser.roleId == 2)
-                                _buildDrawerItem(Icons.balance, "Function Center",
-                                    () {
+                                _buildDrawerItem(
+                                    Icons.balance,
+                                    localizedStrings?.gBtnConfigSetting ??
+                                        "Function Center", () {
                                   Navigator.pop(context);
                                   Navigator.push(
                                     context,
@@ -533,8 +535,10 @@ class MyHomePageState extends State<MyHomePage> with WindowLifecycleMixin {
                                     ),
                                   );
                                 }),
-                              _buildDrawerItem(Icons.language, "Set Language",
-                                  () {
+                              _buildDrawerItem(
+                                  Icons.language,
+                                  localizedStrings?.menuLanguageSetting ??
+                                      "Set Language", () {
                                 Navigator.pop(context);
                                 showSetLanguageDialog();
                               }),
@@ -555,7 +559,9 @@ class MyHomePageState extends State<MyHomePage> with WindowLifecycleMixin {
                                   );
                                 }),
                               _buildDrawerItem(
-                                  Icons.info_outline, "System Information", () {
+                                  Icons.info_outline,
+                                  localizedStrings?.menuSystemInformation ??
+                                      "System Information", () {
                                 Navigator.pop(context);
                                 showDialog(
                                   context: context,
@@ -624,7 +630,7 @@ class MyHomePageState extends State<MyHomePage> with WindowLifecycleMixin {
                           ),
                           title: Text(
                             _currentTabIndex == 0
-                                ? "Connecting"
+                                ? (localizedStrings?.gTitleConnecting ?? "Connecting")
                                 : (localizedStrings?.gBtnSetting ?? "Setting"),
                             style: Theme.of(context)
                                 .textTheme
@@ -809,7 +815,7 @@ class MyHomePageState extends State<MyHomePage> with WindowLifecycleMixin {
                       activeIcon: Padding(
                           padding: const EdgeInsets.only(bottom: 4),
                           child: Icon(Icons.devices_other)),
-                      label: "Connecting",
+                      label: localizedStrings?.gTitleConnecting ?? "Connecting",
                     ),
                     BottomNavigationBarItem(
                       icon: Padding(

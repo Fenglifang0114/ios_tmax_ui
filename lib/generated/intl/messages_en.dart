@@ -571,6 +571,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "gBtnAdd": MessageLookupByLibrary.simpleMessage("Add"),
     "gBtnCancel": MessageLookupByLibrary.simpleMessage("Cancel"),
     "gBtnClear": MessageLookupByLibrary.simpleMessage("Clear"),
+    "gBtnClearFilter": MessageLookupByLibrary.simpleMessage("Clear Filter"),
     "gBtnCloseSerialPort": MessageLookupByLibrary.simpleMessage("Close Port"),
     "gBtnConfigSetting": MessageLookupByLibrary.simpleMessage(
       "Function Center",
@@ -701,6 +702,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "gQrcodeType": MessageLookupByLibrary.simpleMessage("QrCode Type"),
     "gQrcodeWidth": MessageLookupByLibrary.simpleMessage("Qrcode Width:"),
     "gReceiptFormat": MessageLookupByLibrary.simpleMessage("Receipt Format"),
+    "gReceiptSample": MessageLookupByLibrary.simpleMessage("Receipt Sample"),
     "gRotation": MessageLookupByLibrary.simpleMessage("Rotation:"),
     "gRptDateTime": MessageLookupByLibrary.simpleMessage("Date Time"),
     "gRptWeight": MessageLookupByLibrary.simpleMessage("Weight"),
@@ -733,6 +735,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "gTipAddDevice": MessageLookupByLibrary.simpleMessage(
       "For serial port connection, a serial cable is required to connect to the PC. For WiFi connection, the device\'s IP address and port number must be correct.",
     ),
+    "gTipAddDeviceMobileNotice": MessageLookupByLibrary.simpleMessage(
+      "Adding new devices requires the device to be turned on, and serial devices require a complete connection between the computer and the device.",
+    ),
     "gTipAdvancedConfiguration": MessageLookupByLibrary.simpleMessage(
       "Advanced Configuration",
     ),
@@ -752,6 +757,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "gTipBeforeCalibration": MessageLookupByLibrary.simpleMessage(
       "Before Calibration",
     ),
+    "gTipBluetooth": MessageLookupByLibrary.simpleMessage("Bluetooth"),
     "gTipCalResult": MessageLookupByLibrary.simpleMessage(
       "If calibration fails, please click \'Recalibrate\'.",
     ),
@@ -771,6 +777,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "gTipCalibrationWeight": MessageLookupByLibrary.simpleMessage(
       "Please enter the calibration weight",
+    ),
+    "gTipCanvasEmpty": MessageLookupByLibrary.simpleMessage(
+      "Tap edit icon to design canvas",
     ),
     "gTipCheckWgtPageHelp": MessageLookupByLibrary.simpleMessage(
       "1. Click [Edit] to set the upper and lower limits (the judgment is based on the upper and lower limits set in the background, not on the scale). After setting, place the weight and the corresponding alarm light will light up;\n2. Click [Save] to save the current weighing record;\n3. Click [Show Reports] to display the report;\n4. Click [Setting] to set automatic saving. (Can be set to save when OK, HIGH, LOW, ALL.)\n5. You can also set the date format and delimiter for data export;\n6. Enter the PLU number or name in the [PLU Name] column to call the PLU in the backend database; (The PLU here is not the PLU on the scale)\n7. Click [Report Setting] to select the information displayed for weighing data; (Currently, there are no functional variables available: Product Code, Item Code, User Name, User NO）\n8. Click the arrow in a column of the report title row will sort the report in ascending/descending order.\n9.Click [Export] to export all saved data (xlsx).\n\nNote:\n1. The units for the upper and lower limits are the currently selected units on the scale. After setting the upper and lower limits in the software, the values of the upper and lower limits will not undergo unit conversion when switching units through the scale.\n2. At present, the software determines the upper and lower limits from zero, while on the scale, it starts from 20d.\n",
@@ -848,9 +857,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "gTipExportSuccess": MessageLookupByLibrary.simpleMessage(
       "Export successful",
     ),
-    "gTipOperationSuccess": MessageLookupByLibrary.simpleMessage(
-      "Operation successful",
-    ),
     "gTipFailedGetTime": MessageLookupByLibrary.simpleMessage(
       "failed to get time",
     ),
@@ -900,6 +906,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Gravitational acceleration input error",
     ),
     "gTipGrossText": MessageLookupByLibrary.simpleMessage("Gross Text"),
+    "gTipHeightMm": MessageLookupByLibrary.simpleMessage("Height(mm)"),
     "gTipHelp": MessageLookupByLibrary.simpleMessage("Help"),
     "gTipHexInput": MessageLookupByLibrary.simpleMessage(
       "Hexadecimal input, please separate with a space, for example: 31 32 33 34 35 36",
@@ -944,6 +951,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "gTipMaxLength": MessageLookupByLibrary.simpleMessage("Max Length"),
     "gTipMaxRange": MessageLookupByLibrary.simpleMessage("Maximum Range"),
     "gTipNetText": MessageLookupByLibrary.simpleMessage("Net Text"),
+    "gTipNetwork": MessageLookupByLibrary.simpleMessage("Network"),
     "gTipNoData": MessageLookupByLibrary.simpleMessage("No data"),
     "gTipNoDataSelected": MessageLookupByLibrary.simpleMessage(
       "No data selected.",
@@ -954,8 +962,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "gTipNoDeviceAddFirst": MessageLookupByLibrary.simpleMessage(
       "No devices available. Please add a device first.",
     ),
+    "gTipNoPluAvailable": MessageLookupByLibrary.simpleMessage(
+      "No PLU available",
+    ),
     "gTipOffline": MessageLookupByLibrary.simpleMessage("offline"),
     "gTipOnline": MessageLookupByLibrary.simpleMessage("online"),
+    "gTipOperationSuccess": MessageLookupByLibrary.simpleMessage(
+      "Operation successful",
+    ),
     "gTipPerformingOperation": MessageLookupByLibrary.simpleMessage(
       "Performing operation...",
     ),
@@ -966,6 +980,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "gTipPlaceWeight": MessageLookupByLibrary.simpleMessage("Calibration"),
     "gTipPleaseEmptyScalePan": MessageLookupByLibrary.simpleMessage(
       "Please empty the scale pan",
+    ),
+    "gTipPleaseInputKeyWord": MessageLookupByLibrary.simpleMessage(
+      "Please enter",
     ),
     "gTipPleaseLoadWeight": MessageLookupByLibrary.simpleMessage(
       "Please confirm the weight",
@@ -1022,6 +1039,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "gTipSerialDesignPageHelp": MessageLookupByLibrary.simpleMessage(
       "1. The top menu bar has modes such as weighing, counting, price computing, etc, which can be edited by selecting different modes based on the connected scale;\n2. The left menu bar is for variables, which can be selected according to your needs;\n3. You can click [Open Review] to preview the output results;\n4. After editing the format, click [Download]. Once successful, use the serial port tool to test it.\n\nNote: \nThis function can only be used in serial port connection mode.\n",
     ),
+    "gTipSerialPort": MessageLookupByLibrary.simpleMessage("Serial port"),
     "gTipSerialPortDisconnected": MessageLookupByLibrary.simpleMessage(
       "The serial port disconnected",
     ),
@@ -1086,6 +1104,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "gTipWgtDataCollectionHelp": MessageLookupByLibrary.simpleMessage(
       "1. Click [Save] to manually save the current weighing data (with no quantity limit); Click [Export] to export all saved data (xlsx);\n2. Click [Setting] and select Save Mode to Auto, it can be set to auto save mode;\n3. You can also set the date format and delimiter for data export;\n4. Enter the PLU number or name in the PLU Name column to call the PLU in the backend database; (The PLU here is not the PLU on the scale)\n5. Click [Report Setting] to select the information displayed for weighing data; (Currently, there are no functional variables available: Product Code、Item Code、User Name、User NO）\n6. Click the arrow in column of the report title row will sort the report in ascending/descending order.\n\nNote: \n1. To save data, you need to clear the scale before saving the next transaction. Zero point will not be saved.\n2. The upper and lower limit variables are the upper and lower limits set in the backend PLU, not the upper and lower limits set on the scale.\n3. The saved data will not be cleared after closing/restarting the software.\n",
     ),
+    "gTipWidthMm": MessageLookupByLibrary.simpleMessage("Width(mm)"),
     "gTipWifiSettingPageHelp": MessageLookupByLibrary.simpleMessage(
       "1. Select the Wi-Fi you want to connect to from the left menu bar;\n2. Enter the password and click [Connect] to obtain the IP address;\n3. Return to the main interface and enter [Multi-scale Management];\n4. Click [+] at the top of the left status bar, enter the IP address and serial port number;\n5. Click [Confirm] to connect.\n",
     ),
@@ -1096,6 +1115,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "gTitleAddDevice": MessageLookupByLibrary.simpleMessage("Add Device"),
     "gTitleAppConfig": MessageLookupByLibrary.simpleMessage("Application"),
     "gTitleConfirm": MessageLookupByLibrary.simpleMessage("Confirmation"),
+    "gTitleConnecting": MessageLookupByLibrary.simpleMessage("Connecting"),
     "gTitleDeviceList": MessageLookupByLibrary.simpleMessage("Device List"),
     "gTitleGetBuildInfo": MessageLookupByLibrary.simpleMessage(
       "Software Information",
@@ -1109,6 +1129,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "gTitleLicenseInfo": MessageLookupByLibrary.simpleMessage("License Info"),
     "gTitlePluDownload": MessageLookupByLibrary.simpleMessage("PLU Download"),
     "gTitlePreview": MessageLookupByLibrary.simpleMessage("Preview"),
+    "gTitleSelectWifi": MessageLookupByLibrary.simpleMessage("Select Wi-Fi"),
     "gTitleSerialModify": MessageLookupByLibrary.simpleMessage(
       "Serial port information modification",
     ),
@@ -1261,6 +1282,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "menuReceiptFormatDownload": MessageLookupByLibrary.simpleMessage(
       "Receipt Format Download",
     ),
+    "menuRecord": MessageLookupByLibrary.simpleMessage("Records"),
     "menuRetailReport": MessageLookupByLibrary.simpleMessage("Retail Report"),
     "menuSealManagment": MessageLookupByLibrary.simpleMessage(
       "Calibration Lock",
@@ -1276,7 +1298,6 @@ class MessageLookup extends MessageLookupByLibrary {
       "Variable Value Setting",
     ),
     "menuWeighing": MessageLookupByLibrary.simpleMessage("Weighing"),
-    "menuRecord": MessageLookupByLibrary.simpleMessage("Records"),
     "menuWeighingDataCollection": MessageLookupByLibrary.simpleMessage(
       "Weighing Data Collection",
     ),
@@ -1487,6 +1508,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "pretare": MessageLookupByLibrary.simpleMessage("Pretare:"),
     "printSettings": MessageLookupByLibrary.simpleMessage("Print Settings"),
+    "protocolName": MessageLookupByLibrary.simpleMessage("Protocol Name"),
     "rRefreshListBtn": MessageLookupByLibrary.simpleMessage("Refresh List"),
     "rTipFooter": MessageLookupByLibrary.simpleMessage("Footer"),
     "rTipHeader": MessageLookupByLibrary.simpleMessage("Header"),
@@ -1579,6 +1601,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "subTitleCheckWeighing": MessageLookupByLibrary.simpleMessage(
       "Perform online weight inspection and generate inspection reports.",
+    ),
+    "subTitleDefaultApp": MessageLookupByLibrary.simpleMessage(
+      "Default initial application",
     ),
     "subTitleDeviceTime": MessageLookupByLibrary.simpleMessage(
       "Set the device\'s date and time.",

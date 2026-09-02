@@ -2312,6 +2312,58 @@
   "@gTitleLanguageSetting": {
     "description": "Title for language setting page"
   },
+  "gTitleSelectWifi": "Select Wi-Fi",
+  "@gTitleSelectWifi": {
+    "description": "Title for select Wi-Fi"
+  },
+  "gReceiptSample": "Receipt Sample",
+  "@gReceiptSample": {
+    "description": "Label for receipt sample"
+  },
+  "protocolName": "Protocol Name",
+  "@protocolName": {
+    "description": "Label for protocol name"
+  },
+  "gTitleConnecting": "Connecting",
+  "@gTitleConnecting": {
+    "description": "Title or label for connecting page"
+  },
+  "gTipPleaseInputKeyWord": "Please enter",
+  "@gTipPleaseInputKeyWord": {
+    "description": "Hint text for general input field"
+  },
+  "gTipStableTime": "Stable Time (s)",
+  "@gTipStableTime": {
+    "description": "Label for stable time in seconds"
+  },
+  "gTipNoPluAvailable": "No PLU available",
+  "@gTipNoPluAvailable": {
+    "description": "Prompt when no PLU is available"
+  },
+  "subTitleDefaultApp": "Default initial application",
+  "@subTitleDefaultApp": {
+    "description": "Subtitle for default app setting"
+  },
+  "gBtnNewFormat": "New Format",
+  "@gBtnNewFormat": {
+    "description": "Button label for creating new format"
+  },
+  "gTipCanvasEmpty": "Tap edit icon to design canvas",
+  "@gTipCanvasEmpty": {
+    "description": "Tip when canvas is empty"
+  },
+  "gTipWidthMm": "Width(mm)",
+  "@gTipWidthMm": {
+    "description": "Label for width in mm"
+  },
+  "gTipHeightMm": "Height(mm)",
+  "@gTipHeightMm": {
+    "description": "Label for height in mm"
+  },
+  "gBtnClearFilter": "Clear Filter",
+  "@gBtnClearFilter": {
+    "description": "Button label for resetting filter"
+  },
   "gTipSelectLanguage": "Select Language",
   "@gTipSelectLanguage": {
     "description": "Prompt for selecting language"
@@ -2451,6 +2503,22 @@
   "gTitleAddDevice": "Add Device",
   "@gTitleAddDevice": {
     "description": "This is the title for adding a device."
+  },
+  "gTipAddDeviceMobileNotice": "Adding new devices requires the device to be turned on, and serial devices require a complete connection between the computer and the device.",
+  "@gTipAddDeviceMobileNotice": {
+    "description": "This is a description for adding a device on mobile."
+  },
+  "gTipSerialPort": "Serial port",
+  "@gTipSerialPort": {
+    "description": "Serial port"
+  },
+  "gTipNetwork": "Network",
+  "@gTipNetwork": {
+    "description": "Network"
+  },
+  "gTipBluetooth": "Bluetooth",
+  "@gTipBluetooth": {
+    "description": "Bluetooth"
   },
   "gTipAddDevice": "For serial port connection, a serial cable is required to connect to the PC. For WiFi connection, the device's IP address and port number must be correct.",
   "@gTipAddDevice": {

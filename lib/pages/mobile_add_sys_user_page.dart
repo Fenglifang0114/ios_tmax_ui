@@ -202,9 +202,9 @@ class _MobileAddSysUserPageState extends State<MobileAddSysUserPage> {
         readOnly: readOnly,
         textAlign: TextAlign.right,
         style: TextStyle(color: readOnly ? Colors.grey : Colors.black87, fontSize: 16),
-        decoration: const InputDecoration(
-          hintText: "Please enter",
-          hintStyle: TextStyle(color: Colors.grey, fontSize: 16),
+        decoration: InputDecoration(
+          hintText: localizedStrings?.gTipPleaseInputKeyWord ?? "Please enter",
+          hintStyle: const TextStyle(color: Colors.grey, fontSize: 16),
           border: InputBorder.none,
           isDense: true,
           contentPadding: EdgeInsets.zero,
@@ -324,7 +324,7 @@ class _MobileAddSysUserPageState extends State<MobileAddSysUserPage> {
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
                   ),
                   onPressed: _save,
-                  child: Text("Confirm", style: const TextStyle(color: Colors.white, fontSize: 16)),
+                  child: Text(localizedStrings?.gBtnConfirm ?? "Confirm", style: const TextStyle(color: Colors.white, fontSize: 16)),
                 ),
               ),
             ),

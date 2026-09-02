@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:t_max/data/language.dart';
+import 'package:t_max/generated/l10n.dart';
 
 class AddDeviceBottomSheet extends StatefulWidget {
   const AddDeviceBottomSheet({super.key});
@@ -10,6 +12,8 @@ class AddDeviceBottomSheet extends StatefulWidget {
 class _AddDeviceBottomSheetState extends State<AddDeviceBottomSheet> {
   @override
   Widget build(BuildContext context) {
+    localizedStrings = S.of(context);
+    final s = S.of(context);
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
@@ -27,7 +31,7 @@ class _AddDeviceBottomSheetState extends State<AddDeviceBottomSheet> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                "Add Device", // Or use localization if available
+                s.gTitleAddDevice,
                 style: const TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -42,7 +46,7 @@ class _AddDeviceBottomSheetState extends State<AddDeviceBottomSheet> {
           ),
           const SizedBox(height: 8),
           Text(
-            "Adding new devices requires the device to be turned on, and serial devices require a complete connection between the computer and the device.",
+            s.gTipAddDeviceMobileNotice,
             style: TextStyle(
               fontSize: 14,
               color: Colors.grey[600],
@@ -51,22 +55,21 @@ class _AddDeviceBottomSheetState extends State<AddDeviceBottomSheet> {
           const SizedBox(height: 24),
           _buildOptionBtn(
             context,
-            "Serial port",
-            Icons
-                .cable, // Using a generic icon if specific svg isn't easily available, or I can use the existing SVG
+            s.gTipSerialPort,
+            Icons.cable,
             'com',
           ),
           const SizedBox(height: 16),
           _buildOptionBtn(
             context,
-            "Network",
+            s.gTipNetwork,
             Icons.language,
             'wifi',
           ),
           const SizedBox(height: 16),
           _buildOptionBtn(
             context,
-            "Bluetooth",
+            s.gTipBluetooth,
             Icons.bluetooth,
             'bt',
           ),

@@ -120,6 +120,14 @@ class BluetoothPageState extends State<BluetoothPage> {
         showTipInfo(
             (localizedStrings?.gTipNoDeviceAddFirst ?? "gTipNoDeviceAddFirst"),
             context);
+      } else if (selScaleId == -1) {
+        if (Adaptive.isMobile(context)) {
+          _scaffoldKey.currentState?.openDrawer();
+        } else {
+          showTipInfo(
+              (localizedStrings?.gTipSelectDeviceFirst ?? "gTipSelectDeviceFirst"),
+              context);
+        }
       }
     });
   }

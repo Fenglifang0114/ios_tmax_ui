@@ -718,9 +718,9 @@ class _MobileReceiptDesignPageState extends State<MobileReceiptDesignPage> {
           color: Colors.black87,
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          "Receipt Design",
-          style: TextStyle(
+        title: Text(
+          localizedStrings?.menuReceiptDesign ?? "Receipt Design",
+          style: const TextStyle(
             color: Colors.black87,
             fontSize: 18,
             fontWeight: FontWeight.bold,
@@ -764,9 +764,9 @@ class _MobileReceiptDesignPageState extends State<MobileReceiptDesignPage> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text(
-                            "Printer Protocol",
-                            style: TextStyle(
+                          Text(
+                            localizedStrings?.gPrinter?.replaceAll(':', '') ?? "Printer Protocol",
+                            style: const TextStyle(
                               fontSize: 15,
                               color: Colors.black87,
                             ),
@@ -803,9 +803,9 @@ class _MobileReceiptDesignPageState extends State<MobileReceiptDesignPage> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text(
-                            "Direction",
-                            style: TextStyle(
+                          Text(
+                            localizedStrings?.gPrintDirection?.replaceAll(':', '') ?? "Direction",
+                            style: const TextStyle(
                               fontSize: 15,
                               color: Colors.black87,
                             ),
@@ -829,9 +829,9 @@ class _MobileReceiptDesignPageState extends State<MobileReceiptDesignPage> {
                     ),
                   ),
 
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 16),
 
-                  // 3. Width(mm) and Height(mm) Inputs
+                  // 3. Width & Height Input Row
                   Row(
                     children: [
                       Expanded(
@@ -841,24 +841,22 @@ class _MobileReceiptDesignPageState extends State<MobileReceiptDesignPage> {
                             const Text(
                               "Width(mm)",
                               style: TextStyle(
-                                fontSize: 13,
-                                color: Colors.black54,
-                              ),
+                                  fontSize: 12, color: Colors.black54),
                             ),
                             const SizedBox(height: 4),
                             TextField(
                               controller: widthCtl,
                               keyboardType: TextInputType.number,
+                              onChanged: (val) => setState(() {}),
                               decoration: const InputDecoration(
                                 isDense: true,
                                 border: UnderlineInputBorder(),
                               ),
-                              onChanged: (_) => setState(() {}),
                             ),
                           ],
                         ),
                       ),
-                      const SizedBox(width: 24),
+                      const SizedBox(width: 20),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -866,19 +864,17 @@ class _MobileReceiptDesignPageState extends State<MobileReceiptDesignPage> {
                             const Text(
                               "Height(mm)",
                               style: TextStyle(
-                                fontSize: 13,
-                                color: Colors.black54,
-                              ),
+                                  fontSize: 12, color: Colors.black54),
                             ),
                             const SizedBox(height: 4),
                             TextField(
                               controller: heightCtl,
                               keyboardType: TextInputType.number,
+                              onChanged: (val) => setState(() {}),
                               decoration: const InputDecoration(
                                 isDense: true,
                                 border: UnderlineInputBorder(),
                               ),
-                              onChanged: (_) => setState(() {}),
                             ),
                           ],
                         ),
@@ -892,9 +888,9 @@ class _MobileReceiptDesignPageState extends State<MobileReceiptDesignPage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text(
-                        "Receipt Sample",
-                        style: TextStyle(
+                      Text(
+                        localizedStrings?.gReceiptSample ?? "Receipt Sample",
+                        style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                           color: Colors.black87,

@@ -209,6 +209,9 @@ class _MobileWeighingDataCollectionPageState
     // Initial continuous weight stream start
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _startContinuousWeightStream();
+      if (myAllScalesList.isNotEmpty && (_drawerDeviceCheckedMap.isEmpty || !_drawerDeviceCheckedMap.values.any((v) => v))) {
+        _openDeviceListDrawer();
+      }
     });
 
     // Fetch initial records
@@ -599,9 +602,9 @@ class _MobileWeighingDataCollectionPageState
             ),
           ],
         ),
-        title: const Text(
-          "Weighing Data Collection",
-          style: TextStyle(
+        title: Text(
+          localizedStrings?.menuWeighingDataCollection ?? "Weighing Data Collection",
+          style: const TextStyle(
             color: Color(0xFF1E293B),
             fontSize: 18,
             fontWeight: FontWeight.bold,
@@ -647,7 +650,7 @@ class _MobileWeighingDataCollectionPageState
                         ),
                         alignment: Alignment.center,
                         child: Text(
-                          "Weighing",
+                          localizedStrings?.menuWeighing ?? "Weighing",
                           style: TextStyle(
                             color: _selectedTab == 0
                                 ? Theme.of(context).colorScheme.onPrimary
@@ -729,8 +732,8 @@ class _MobileWeighingDataCollectionPageState
             children: [
               Text(
                 _isSummaryMode
-                    ? "Weight Summary Mode"
-                    : "Weight Independent Mode",
+                    ? (localizedStrings?.gTipWeightSummationMode ?? "Weight Summary Mode")
+                    : (localizedStrings?.gTipWeightIndependentMode ?? "Weight Independent Mode"),
                 style: const TextStyle(
                   color: Color(0xFF334155),
                   fontSize: 15,
@@ -1528,8 +1531,8 @@ class _MobileWeighingDataCollectionPageState
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const Text("Stable Time (s)",
-                                  style: TextStyle(
+                              Text(localizedStrings?.gTipStableTime ?? "Stable Time (s)",
+                                  style: const TextStyle(
                                       fontSize: 15, color: Color(0xFF334155))),
                               Container(
                                 width: 100,
@@ -1620,9 +1623,9 @@ class _MobileWeighingDataCollectionPageState
                           _saveLocalSettings();
                           Navigator.pop(context);
                         },
-                        child: const Text(
-                          "Confirm",
-                          style: TextStyle(
+                        child: Text(
+                          localizedStrings?.gBtnConfirm ?? "Confirm",
+                          style: const TextStyle(
                               color: Colors.white,
                               fontSize: 16,
                               fontWeight: FontWeight.w600),
@@ -1793,10 +1796,10 @@ class _MobileWeighingDataCollectionPageState
                       color: const Color(0xFFF1F5F9),
                       borderRadius: BorderRadius.circular(6),
                     ),
-                    child: const TextField(
+                    child: TextField(
                       decoration: InputDecoration(
-                        icon: Icon(Icons.search, color: Color(0xFF94A3B8)),
-                        hintText: "Please enter",
+                        icon: const Icon(Icons.search, color: Color(0xFF94A3B8)),
+                        hintText: localizedStrings?.gTipPleaseInputKeyWord ?? "Please enter",
                         border: InputBorder.none,
                       ),
                     ),
@@ -1805,7 +1808,7 @@ class _MobileWeighingDataCollectionPageState
                   // PLU Grid
                   Expanded(
                     child: myPluInfoList.isEmpty
-                        ? const Center(child: Text("No PLU available"))
+                        ? Center(child: Text(localizedStrings?.gTipNoPluAvailable ?? "No PLU available"))
                         : GridView.builder(
                             gridDelegate:
                                 const SliverGridDelegateWithFixedCrossAxisCount(
@@ -1869,8 +1872,8 @@ class _MobileWeighingDataCollectionPageState
                         });
                         Navigator.pop(context);
                       },
-                      child: const Text("Confirm",
-                          style: TextStyle(color: Colors.white, fontSize: 16)),
+                      child: Text(localizedStrings?.gBtnConfirm ?? "Confirm",
+                          style: const TextStyle(color: Colors.white, fontSize: 16)),
                     ),
                   ),
                 ],
@@ -1976,8 +1979,8 @@ class _MobileWeighingDataCollectionPageState
                                 });
                               },
                             ),
-                            const Text("Select all",
-                                style: TextStyle(
+                            Text(localizedStrings?.gTipSelectAll ?? "Select all",
+                                style: const TextStyle(
                                     fontSize: 14, fontWeight: FontWeight.w600)),
                           ],
                         ),
@@ -2000,8 +2003,8 @@ class _MobileWeighingDataCollectionPageState
                         });
                         Navigator.pop(context);
                       },
-                      child: const Text("Confirm",
-                          style: TextStyle(color: Colors.white, fontSize: 16)),
+                      child: Text(localizedStrings?.gBtnConfirm ?? "Confirm",
+                          style: const TextStyle(color: Colors.white, fontSize: 16)),
                     ),
                   ),
                 ],

@@ -518,8 +518,8 @@ class _MobileLabelDesignPageState extends State<MobileLabelDesignPage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text("Add",
-                      style: TextStyle(
+                  Text(localizedStrings?.gBtnAdd ?? "Add",
+                      style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                           color: Colors.black87)),
@@ -545,8 +545,8 @@ class _MobileLabelDesignPageState extends State<MobileLabelDesignPage> {
                     foregroundColor: Colors.white,
                     elevation: 0,
                   ),
-                  child: const Text("New Format",
-                      style: TextStyle(fontSize: 16)),
+                  child: Text(localizedStrings?.gBtnNewFormat ?? "New Format",
+                      style: const TextStyle(fontSize: 16)),
                 ),
               ),
               const SizedBox(height: 16),
@@ -673,10 +673,10 @@ class _MobileLabelDesignPageState extends State<MobileLabelDesignPage> {
                 children: [
                   // Printer Protocol Tile
                   _buildPropertyTile(
-                    label: "Printer Protocol",
+                    label: localizedStrings?.gPrinter?.replaceAll(':', '') ?? "Printer Protocol",
                     value: selectedPrinter,
                     onTap: () => _showOptionPicker(
-                      "Printer Protocol",
+                      localizedStrings?.gPrinter?.replaceAll(':', '') ?? "Printer Protocol",
                       printerProtocols,
                       selectedPrinter,
                       (val) => setState(() => selectedPrinter = val),
@@ -686,10 +686,10 @@ class _MobileLabelDesignPageState extends State<MobileLabelDesignPage> {
 
                   // Direction Tile
                   _buildPropertyTile(
-                    label: "Direction",
+                    label: localizedStrings?.gPrintDirection?.replaceAll(':', '') ?? "Direction",
                     value: selectedDirection,
                     onTap: () => _showOptionPicker(
-                      "Direction",
+                      localizedStrings?.gPrintDirection?.replaceAll(':', '') ?? "Direction",
                       directionOptions,
                       selectedDirection,
                       (val) => setState(() => selectedDirection = val),
@@ -705,8 +705,8 @@ class _MobileLabelDesignPageState extends State<MobileLabelDesignPage> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text("Width(mm)",
-                                style: TextStyle(
+                            Text(localizedStrings?.gTipWidthMm ?? "Width(mm)",
+                                style: const TextStyle(
                                     fontSize: 13, color: Colors.black54)),
                             TextField(
                               controller: widthController,
@@ -725,8 +725,8 @@ class _MobileLabelDesignPageState extends State<MobileLabelDesignPage> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text("Height(mm)",
-                                style: TextStyle(
+                            Text(localizedStrings?.gTipHeightMm ?? "Height(mm)",
+                                style: const TextStyle(
                                     fontSize: 13, color: Colors.black54)),
                             TextField(
                               controller: heightController,
@@ -790,10 +790,10 @@ class _MobileLabelDesignPageState extends State<MobileLabelDesignPage> {
                         border: Border.all(color: const Color(0xFFEEEEEE)),
                       ),
                       child: elements.isEmpty
-                          ? const Center(
+                          ? Center(
                               child: Text(
-                                "Tap edit icon to design canvas",
-                                style: TextStyle(
+                                localizedStrings?.gTipCanvasEmpty ?? "Tap edit icon to design canvas",
+                                style: const TextStyle(
                                     color: Colors.black38, fontSize: 14),
                               ),
                             )
@@ -856,9 +856,9 @@ class _MobileLabelDesignPageState extends State<MobileLabelDesignPage> {
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(4)),
                             ),
-                            child: const Text(
-                              "BarCode Edit",
-                              style: TextStyle(fontSize: 15),
+                            child: Text(
+                              localizedStrings?.gBarcodeEdit ?? "BarCode Edit",
+                              style: const TextStyle(fontSize: 15),
                             ),
                           ),
                         ),
@@ -890,9 +890,9 @@ class _MobileLabelDesignPageState extends State<MobileLabelDesignPage> {
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(4)),
                             ),
-                            child: const Text(
-                              "Qrcode Edit",
-                              style: TextStyle(fontSize: 15),
+                            child: Text(
+                              localizedStrings?.gQrcodeEdit ?? "Qrcode Edit",
+                              style: const TextStyle(fontSize: 15),
                             ),
                           ),
                         ),
@@ -915,9 +915,9 @@ class _MobileLabelDesignPageState extends State<MobileLabelDesignPage> {
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(4)),
                             ),
-                            child: const Text(
-                              "Open Json",
-                              style: TextStyle(fontSize: 15),
+                            child: Text(
+                              localizedStrings?.gOpenJson ?? "Open Json",
+                              style: const TextStyle(fontSize: 15),
                             ),
                           ),
                         ),
@@ -936,9 +936,9 @@ class _MobileLabelDesignPageState extends State<MobileLabelDesignPage> {
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(4)),
                             ),
-                            child: const Text(
-                              "Save Format",
-                              style: TextStyle(
+                            child: Text(
+                              localizedStrings?.gSaveFormat ?? "Save Format",
+                              style: const TextStyle(
                                   fontSize: 15, fontWeight: FontWeight.bold),
                             ),
                           ),

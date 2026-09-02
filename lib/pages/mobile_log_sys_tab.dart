@@ -319,7 +319,7 @@ class _MobileLogSysTabState extends State<MobileLogSysTab> {
                 padding: const EdgeInsets.symmetric(vertical: 14),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
               ),
-              child: const Text("Export", style: TextStyle(color: Colors.white, fontSize: 16)),
+              child: Text(localizedStrings?.gBtnExport ?? "Export", style: const TextStyle(color: Colors.white, fontSize: 16)),
             ),
           ),
         ),

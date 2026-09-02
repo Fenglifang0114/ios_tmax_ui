@@ -28,6 +28,7 @@ class CalibrationSealPage extends StatefulWidget {
 }
 
 class CalibrationSealPageState extends State<CalibrationSealPage> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   dynamic eventBus1;
   dynamic eventBus3;
   dynamic eventBus4;
@@ -248,12 +249,12 @@ class CalibrationSealPageState extends State<CalibrationSealPage> {
       if (myAllScalesList.isEmpty) {
         showTipInfo((localizedStrings?.gTipNoDeviceAddFirst ?? "gTipNoDeviceAddFirst"), context);
       } else {
-        if (Adaptive.isMobile(context)) {
-          setState(() {
-            selScaleId = -1;
-          });
-        } else if (selScaleId == -1) {
-          showTipInfo((localizedStrings?.gTipSelectDeviceFirst ?? "gTipSelectDeviceFirst"), context);
+        if (selScaleId == -1) {
+          if (Adaptive.isMobile(context)) {
+            _scaffoldKey.currentState?.openDrawer();
+          } else {
+            showTipInfo((localizedStrings?.gTipSelectDeviceFirst ?? "gTipSelectDeviceFirst"), context);
+          }
         }
       }
     });
@@ -812,6 +813,7 @@ class CalibrationSealPageState extends State<CalibrationSealPage> {
 
   Widget mobileLayout(BuildContext context, double width) {
     return Scaffold(
+      key: _scaffoldKey,
       backgroundColor: Colors.grey[100],
       drawer: UnifiedDeviceDrawerContent(
         scaleList: myAllScalesList,

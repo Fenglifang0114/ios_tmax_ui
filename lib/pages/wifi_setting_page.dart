@@ -391,10 +391,14 @@ class WifiSettingPageState extends State<WifiSettingPage> {
             context);
       } else {
         if (selScaleId == -1) {
-          showTipInfo(
-              (localizedStrings?.gTipSelectDeviceFirst ??
-                  "gTipSelectDeviceFirst"),
-              context);
+          if (Adaptive.isMobile(context)) {
+            _scaffoldKey.currentState?.openDrawer();
+          } else {
+            showTipInfo(
+                (localizedStrings?.gTipSelectDeviceFirst ??
+                    "gTipSelectDeviceFirst"),
+                context);
+          }
         }
       }
     });
@@ -1533,9 +1537,9 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text(
-                            "Select Wi-Fi",
-                            style: TextStyle(
+                          Text(
+                            localizedStrings?.gTitleSelectWifi ?? "Select Wi-Fi",
+                            style: const TextStyle(
                                 fontSize: 14, color: Colors.black87),
                           ),
                           Row(
@@ -1577,9 +1581,9 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                   ),
                   const SizedBox(height: 16),
                   // Password Field
-                  const Text(
-                    "Password",
-                    style: TextStyle(fontSize: 14, color: Colors.black87),
+                  Text(
+                    localizedStrings?.gPassword ?? "Password",
+                    style: const TextStyle(fontSize: 14, color: Colors.black87),
                   ),
                   const SizedBox(height: 4),
                   TextField(
@@ -1631,9 +1635,9 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                   ),
                   const SizedBox(height: 16),
                   // Netmask Field
-                  const Text(
-                    "Netmask",
-                    style: TextStyle(fontSize: 14, color: Colors.black87),
+                  Text(
+                    localizedStrings?.gNetmask ?? "Netmask",
+                    style: const TextStyle(fontSize: 14, color: Colors.black87),
                   ),
                   const SizedBox(height: 4),
                   TextField(
@@ -1653,9 +1657,9 @@ class WifiSettingPageState extends State<WifiSettingPage> {
                   ),
                   const SizedBox(height: 16),
                   // Gateway Field
-                  const Text(
-                    "Gateway",
-                    style: TextStyle(fontSize: 14, color: Colors.black87),
+                  Text(
+                    localizedStrings?.gGateway ?? "Gateway",
+                    style: const TextStyle(fontSize: 14, color: Colors.black87),
                   ),
                   const SizedBox(height: 4),
                   TextField(
@@ -1950,9 +1954,9 @@ class _MobileSelectWifiPageState extends State<MobileSelectWifiPage> {
           color: Colors.black87,
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          "Select Wi-Fi",
-          style: TextStyle(
+        title: Text(
+          localizedStrings?.gTitleSelectWifi ?? "Select Wi-Fi",
+          style: const TextStyle(
               color: Colors.black87, fontSize: 18, fontWeight: FontWeight.bold),
         ),
       ),

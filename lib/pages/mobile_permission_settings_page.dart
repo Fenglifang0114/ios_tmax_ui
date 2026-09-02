@@ -53,7 +53,7 @@ class _MobilePermissionSettingsPageState extends State<MobilePermissionSettingsP
             children: [
               Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
               if (title.contains("Configuration"))
-                const Text("Default initial application", style: TextStyle(fontSize: 12, color: Colors.grey)),
+                Text(localizedStrings?.subTitleDefaultApp ?? "Default initial application", style: const TextStyle(fontSize: 12, color: Colors.grey)),
             ],
           ),
         ),
@@ -74,7 +74,7 @@ class _MobilePermissionSettingsPageState extends State<MobilePermissionSettingsP
               });
             },
           ),
-          title: const Text("Select All", style: TextStyle(color: Colors.blue)),
+          title: Text(localizedStrings?.gTipSelectAll ?? "Select All", style: const TextStyle(color: Colors.blue)),
         ),
         // Items
         ...menus.map((menu) {

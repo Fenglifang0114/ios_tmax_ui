@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:t_max/data/custom_serial_protocol_text_dart.dart';
+import 'package:t_max/data/language.dart';
 
 class MobileSerialPropertyEditPage extends StatefulWidget {
   final SerialProtocolText item;
@@ -215,8 +216,8 @@ class _MobileSerialPropertyEditPageState
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text("Max Length",
-                              style: TextStyle(
+                          Text(localizedStrings?.gTipMaxLength ?? "Max Length",
+                              style: const TextStyle(
                                   fontSize: 15, color: Colors.black87)),
                           SizedBox(
                             width: 100,
@@ -245,8 +246,8 @@ class _MobileSerialPropertyEditPageState
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text("Content",
-                              style: TextStyle(
+                          Text(localizedStrings?.gTipContent ?? "Content",
+                              style: const TextStyle(
                                   fontSize: 15, color: Colors.black87)),
                           Expanded(
                             child: TextField(
@@ -273,8 +274,8 @@ class _MobileSerialPropertyEditPageState
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text("Default Value",
-                              style: TextStyle(
+                          Text(localizedStrings?.gTipDefaultValue ?? "Default Value",
+                              style: const TextStyle(
                                   fontSize: 15, color: Colors.black87)),
                           Expanded(
                             child: TextField(
@@ -370,9 +371,9 @@ class _MobileSerialPropertyEditPageState
                             borderRadius: BorderRadius.circular(4),
                           ),
                         ),
-                        child: const Text(
-                          "Confirm",
-                          style: TextStyle(
+                        child: Text(
+                          localizedStrings?.gBtnConfirm ?? "Confirm",
+                          style: const TextStyle(
                               fontSize: 16, fontWeight: FontWeight.bold),
                         ),
                       ),
@@ -395,9 +396,9 @@ class _MobileSerialPropertyEditPageState
                             borderRadius: BorderRadius.circular(4),
                           ),
                         ),
-                        child: const Text(
-                          "Delete",
-                          style: TextStyle(
+                        child: Text(
+                          localizedStrings?.gBtnDelete ?? "Delete",
+                          style: const TextStyle(
                               fontSize: 16, fontWeight: FontWeight.bold),
                         ),
                       ),

@@ -932,7 +932,7 @@ class S {
     return Intl.message(
       'Stable Time (s)',
       name: 'gTipStableTime',
-      desc: 'This is a prompt about stable time.',
+      desc: 'Label for stable time in seconds',
       args: [],
     );
   }
@@ -2841,7 +2841,7 @@ class S {
     return Intl.message(
       'New Format',
       name: 'gBtnNewFormat',
-      desc: 'This is a button for creating a new printing format.',
+      desc: 'Button label for creating new format',
       args: [],
     );
   }
@@ -5533,6 +5533,116 @@ class S {
     );
   }
 
+  /// `Select Wi-Fi`
+  String get gTitleSelectWifi {
+    return Intl.message(
+      'Select Wi-Fi',
+      name: 'gTitleSelectWifi',
+      desc: 'Title for select Wi-Fi',
+      args: [],
+    );
+  }
+
+  /// `Receipt Sample`
+  String get gReceiptSample {
+    return Intl.message(
+      'Receipt Sample',
+      name: 'gReceiptSample',
+      desc: 'Label for receipt sample',
+      args: [],
+    );
+  }
+
+  /// `Protocol Name`
+  String get protocolName {
+    return Intl.message(
+      'Protocol Name',
+      name: 'protocolName',
+      desc: 'Label for protocol name',
+      args: [],
+    );
+  }
+
+  /// `Connecting`
+  String get gTitleConnecting {
+    return Intl.message(
+      'Connecting',
+      name: 'gTitleConnecting',
+      desc: 'Title or label for connecting page',
+      args: [],
+    );
+  }
+
+  /// `Please enter`
+  String get gTipPleaseInputKeyWord {
+    return Intl.message(
+      'Please enter',
+      name: 'gTipPleaseInputKeyWord',
+      desc: 'Hint text for general input field',
+      args: [],
+    );
+  }
+
+  /// `No PLU available`
+  String get gTipNoPluAvailable {
+    return Intl.message(
+      'No PLU available',
+      name: 'gTipNoPluAvailable',
+      desc: 'Prompt when no PLU is available',
+      args: [],
+    );
+  }
+
+  /// `Default initial application`
+  String get subTitleDefaultApp {
+    return Intl.message(
+      'Default initial application',
+      name: 'subTitleDefaultApp',
+      desc: 'Subtitle for default app setting',
+      args: [],
+    );
+  }
+
+  /// `Tap edit icon to design canvas`
+  String get gTipCanvasEmpty {
+    return Intl.message(
+      'Tap edit icon to design canvas',
+      name: 'gTipCanvasEmpty',
+      desc: 'Tip when canvas is empty',
+      args: [],
+    );
+  }
+
+  /// `Width(mm)`
+  String get gTipWidthMm {
+    return Intl.message(
+      'Width(mm)',
+      name: 'gTipWidthMm',
+      desc: 'Label for width in mm',
+      args: [],
+    );
+  }
+
+  /// `Height(mm)`
+  String get gTipHeightMm {
+    return Intl.message(
+      'Height(mm)',
+      name: 'gTipHeightMm',
+      desc: 'Label for height in mm',
+      args: [],
+    );
+  }
+
+  /// `Clear Filter`
+  String get gBtnClearFilter {
+    return Intl.message(
+      'Clear Filter',
+      name: 'gBtnClearFilter',
+      desc: 'Button label for resetting filter',
+      args: [],
+    );
+  }
+
   /// `Select Language`
   String get gTipSelectLanguage {
     return Intl.message(
@@ -5880,6 +5990,46 @@ class S {
       'Add Device',
       name: 'gTitleAddDevice',
       desc: 'This is the title for adding a device.',
+      args: [],
+    );
+  }
+
+  /// `Adding new devices requires the device to be turned on, and serial devices require a complete connection between the computer and the device.`
+  String get gTipAddDeviceMobileNotice {
+    return Intl.message(
+      'Adding new devices requires the device to be turned on, and serial devices require a complete connection between the computer and the device.',
+      name: 'gTipAddDeviceMobileNotice',
+      desc: 'This is a description for adding a device on mobile.',
+      args: [],
+    );
+  }
+
+  /// `Serial port`
+  String get gTipSerialPort {
+    return Intl.message(
+      'Serial port',
+      name: 'gTipSerialPort',
+      desc: 'Serial port',
+      args: [],
+    );
+  }
+
+  /// `Network`
+  String get gTipNetwork {
+    return Intl.message(
+      'Network',
+      name: 'gTipNetwork',
+      desc: 'Network',
+      args: [],
+    );
+  }
+
+  /// `Bluetooth`
+  String get gTipBluetooth {
+    return Intl.message(
+      'Bluetooth',
+      name: 'gTipBluetooth',
+      desc: 'Bluetooth',
       args: [],
     );
   }

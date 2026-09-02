@@ -723,9 +723,9 @@ class _MobileSerialOutputDesignPageState
           color: Colors.black87,
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          "Serial Output Design",
-          style: TextStyle(
+        title: Text(
+          localizedStrings?.menuSerialOutputDesign ?? "Serial Output Design",
+          style: const TextStyle(
               color: Colors.black87, fontSize: 18, fontWeight: FontWeight.bold),
         ),
         actions: [
@@ -964,9 +964,9 @@ class _MobileSerialOutputDesignPageState
                   const SizedBox(height: 16),
 
                   // 5. Open Preview Output String
-                  const Text(
-                    "Open preview",
-                    style: TextStyle(
+                  Text(
+                    localizedStrings?.cBtnOpenPreview ?? "Open preview",
+                    style: const TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
                         color: Colors.black87),
@@ -1013,9 +1013,9 @@ class _MobileSerialOutputDesignPageState
                             borderRadius: BorderRadius.circular(4),
                           ),
                         ),
-                        child: const Text(
-                          "Download",
-                          style: TextStyle(
+                        child: Text(
+                          localizedStrings?.gBtnDownload ?? "Download",
+                          style: const TextStyle(
                               fontSize: 16, fontWeight: FontWeight.bold),
                         ),
                       ),
@@ -1044,9 +1044,9 @@ class _MobileSerialOutputDesignPageState
                             borderRadius: BorderRadius.circular(4),
                           ),
                         ),
-                        child: const Text(
-                          "Open preview",
-                          style: TextStyle(
+                        child: Text(
+                          localizedStrings?.cBtnOpenPreview ?? "Open preview",
+                          style: const TextStyle(
                               fontSize: 16, fontWeight: FontWeight.bold),
                         ),
                       ),

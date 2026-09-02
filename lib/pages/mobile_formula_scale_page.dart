@@ -83,6 +83,11 @@ class _MobileFormulaScalePageState extends State<MobileFormulaScalePage> {
     super.initState();
     _initEventBusListeners();
     _loadData();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (myAllScalesList.isNotEmpty && (_drawerDeviceCheckedMap.isEmpty || !_drawerDeviceCheckedMap.values.any((v) => v))) {
+        _openDeviceListDrawer();
+      }
+    });
   }
 
   void _initEventBusListeners() {

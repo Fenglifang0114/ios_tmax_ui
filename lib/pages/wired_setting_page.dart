@@ -34,6 +34,7 @@ class WiredSettingPageState extends State<WiredSettingPage> {
   TextEditingController netMaskController = TextEditingController();
   TextEditingController ipController = TextEditingController();
   TextEditingController gateWayController = TextEditingController();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   int selectedIndex = -1;
   bool passwordLock = true;
@@ -183,10 +184,14 @@ class WiredSettingPageState extends State<WiredSettingPage> {
             context);
       } else {
         if (selScaleId == -1) {
-          showTipInfo(
-              (localizedStrings?.gTipSelectDeviceFirst ??
-                  "gTipSelectDeviceFirst"),
-              context);
+          if (Adaptive.isMobile(context)) {
+            _scaffoldKey.currentState?.openDrawer();
+          } else {
+            showTipInfo(
+                (localizedStrings?.gTipSelectDeviceFirst ??
+                    "gTipSelectDeviceFirst"),
+                context);
+          }
         }
       }
     });
@@ -615,6 +620,7 @@ class WiredSettingPageState extends State<WiredSettingPage> {
     final bool isKeyboardOpen = MediaQuery.of(context).viewInsets.bottom > 0;
 
     return Scaffold(
+      key: _scaffoldKey,
       backgroundColor: Colors.white,
       resizeToAvoidBottomInset: true,
       drawer: _buildMobileDrawer(context),

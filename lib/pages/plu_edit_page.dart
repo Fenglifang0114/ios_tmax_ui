@@ -2512,13 +2512,19 @@ class _PluEidtPageState extends State<PluEidtPage> {
                 onChanged: (val) {
                   pluCtl.text = val; 
                 },
+                textAlignVertical: TextAlignVertical.center,
                 decoration: InputDecoration(
+                  isDense: true,
                   hintText: localizedStrings?.fSearchHint ?? "Search",
                   hintStyle: const TextStyle(color: Colors.black38, fontSize: 14),
                   prefixIcon: const Icon(Icons.search, color: Colors.black38, size: 20),
+                  prefixIconConstraints: const BoxConstraints(minWidth: 36, maxHeight: 40),
+                  suffixIconConstraints: const BoxConstraints(minWidth: 36, maxHeight: 40),
                   border: InputBorder.none,
-                  contentPadding: const EdgeInsets.symmetric(vertical: 10),
+                  contentPadding: EdgeInsets.zero,
                   suffixIcon: IconButton(
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(minWidth: 36, maxHeight: 40),
                     icon: const Icon(Icons.clear, size: 18, color: Colors.black38),
                     onPressed: () {
                       pluNameCtl.clear();
@@ -3048,7 +3054,10 @@ class _PluEidtPageState extends State<PluEidtPage> {
                 backgroundColor: const Color(0xFF004B87),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
               ),
-              child: const Text("Get PLU Template", style: TextStyle(color: Colors.white, fontSize: 16)),
+              child: Text(
+                localizedStrings?.gBtnGetPluTemplate ?? "Get PLU Template",
+                style: const TextStyle(color: Colors.white, fontSize: 16),
+              ),
             ),
           ),
           const SizedBox(height: 12),
@@ -3089,7 +3098,10 @@ class _PluEidtPageState extends State<PluEidtPage> {
                       backgroundColor: const Color(0xFF004B87),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
                     ),
-                    child: const Text("Export", style: TextStyle(color: Colors.white, fontSize: 16)),
+                    child: Text(
+                      localizedStrings?.gBtnExport ?? "Export",
+                      style: const TextStyle(color: Colors.white, fontSize: 16),
+                    ),
                   ),
                 ),
               ),
@@ -3108,7 +3120,10 @@ class _PluEidtPageState extends State<PluEidtPage> {
                       backgroundColor: const Color(0xFF004B87),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
                     ),
-                    child: const Text("Import", style: TextStyle(color: Colors.white, fontSize: 16)),
+                    child: Text(
+                      localizedStrings?.gBtnImport ?? "Import",
+                      style: const TextStyle(color: Colors.white, fontSize: 16),
+                    ),
                   ),
                 ),
               ),

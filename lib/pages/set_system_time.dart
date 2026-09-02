@@ -132,7 +132,11 @@ class SetSystemTimePageState extends State<SetSystemTimePage> {
         showTipInfo((localizedStrings?.gTipNoDeviceAddFirst ?? "gTipNoDeviceAddFirst"), context);
       } else {
         if (selScaleId == -1) {
-          showTipInfo((localizedStrings?.gTipSelectDeviceFirst ?? "gTipSelectDeviceFirst"), context);
+          if (Adaptive.isMobile(context)) {
+            _scaffoldKey.currentState?.openDrawer();
+          } else {
+            showTipInfo((localizedStrings?.gTipSelectDeviceFirst ?? "gTipSelectDeviceFirst"), context);
+          }
         }
       }
     });

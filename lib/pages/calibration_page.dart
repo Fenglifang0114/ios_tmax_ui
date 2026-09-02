@@ -38,6 +38,7 @@ class CalibrationPage extends StatefulWidget {
 }
 
 class CalibrationPageState extends State<CalibrationPage> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   ReqWeightCountine tempWeight = ReqWeightCountine();
   TextEditingController scaleRangeCtl = TextEditingController(text: "");
@@ -502,7 +503,11 @@ class CalibrationPageState extends State<CalibrationPage> {
         showTipInfo((localizedStrings?.gTipNoDeviceAddFirst ?? "gTipNoDeviceAddFirst"), context);
       } else {
         if (selScaleId == -1) {
-          showTipInfo((localizedStrings?.gTipSelectDeviceFirst ?? "gTipSelectDeviceFirst"), context);
+          if (Adaptive.isMobile(context)) {
+            _scaffoldKey.currentState?.openDrawer();
+          } else {
+            showTipInfo((localizedStrings?.gTipSelectDeviceFirst ?? "gTipSelectDeviceFirst"), context);
+          }
         }
       }
     });
@@ -624,7 +629,7 @@ class CalibrationPageState extends State<CalibrationPage> {
     final bool isMobile = Adaptive.isMobile(context);
 
     return Scaffold(
-
+      key: _scaffoldKey,
       drawer: isMobile
           ? UnifiedDeviceDrawerContent(
               scaleList: myAllScalesList,

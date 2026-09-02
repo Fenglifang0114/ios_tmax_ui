@@ -228,6 +228,9 @@ class _MobileCheckWeighingPageState extends State<MobileCheckWeighingPage> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _startContinuousWeightStream();
+      if (myAllScalesList.isNotEmpty && (_drawerDeviceCheckedMap.isEmpty || !_drawerDeviceCheckedMap.values.any((v) => v))) {
+        _openDeviceListDrawer();
+      }
     });
 
     _fetchRecords();
@@ -506,8 +509,8 @@ class _MobileCheckWeighingPageState extends State<MobileCheckWeighingPage> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text("high",
-                              style: TextStyle(fontSize: 15, color: Color(0xFF334155))),
+                          Text(localizedStrings?.gHighLimit ?? "High",
+                              style: const TextStyle(fontSize: 15, color: Color(0xFF334155))),
                           Container(
                             width: 140,
                             height: 38,
@@ -516,9 +519,9 @@ class _MobileCheckWeighingPageState extends State<MobileCheckWeighingPage> {
                               controller: highController,
                               keyboardType: const TextInputType.numberWithOptions(decimal: true),
                               textAlign: TextAlign.right,
-                              decoration: const InputDecoration(
-                                hintText: "Please enter",
-                                hintStyle: TextStyle(color: Color(0xFFCBD5E1), fontSize: 15),
+                              decoration: InputDecoration(
+                                hintText: localizedStrings?.gTipPleaseInputKeyWord ?? "Please enter",
+                                hintStyle: const TextStyle(color: Color(0xFFCBD5E1), fontSize: 15),
                                 border: InputBorder.none,
                               ),
                               style: const TextStyle(fontSize: 15, color: Color(0xFF334155)),
@@ -535,8 +538,8 @@ class _MobileCheckWeighingPageState extends State<MobileCheckWeighingPage> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text("Low",
-                              style: TextStyle(fontSize: 15, color: Color(0xFF334155))),
+                          Text(localizedStrings?.gLowLimit ?? "Low",
+                              style: const TextStyle(fontSize: 15, color: Color(0xFF334155))),
                           Container(
                             width: 140,
                             height: 38,
@@ -545,9 +548,9 @@ class _MobileCheckWeighingPageState extends State<MobileCheckWeighingPage> {
                               controller: lowController,
                               keyboardType: const TextInputType.numberWithOptions(decimal: true),
                               textAlign: TextAlign.right,
-                              decoration: const InputDecoration(
-                                hintText: "Please enter",
-                                hintStyle: TextStyle(color: Color(0xFFCBD5E1), fontSize: 15),
+                              decoration: InputDecoration(
+                                hintText: localizedStrings?.gTipPleaseInputKeyWord ?? "Please enter",
+                                hintStyle: const TextStyle(color: Color(0xFFCBD5E1), fontSize: 15),
                                 border: InputBorder.none,
                               ),
                               style: const TextStyle(fontSize: 15, color: Color(0xFF334155)),
@@ -696,9 +699,9 @@ class _MobileCheckWeighingPageState extends State<MobileCheckWeighingPage> {
             ),
           ],
         ),
-        title: const Text(
-          "Check Weighing",
-          style: TextStyle(
+        title: Text(
+          localizedStrings?.menuCheckWeighing ?? "Check Weighing",
+          style: const TextStyle(
             color: Color(0xFF1E293B),
             fontSize: 18,
             fontWeight: FontWeight.bold,
@@ -748,7 +751,7 @@ class _MobileCheckWeighingPageState extends State<MobileCheckWeighingPage> {
                         ),
                         alignment: Alignment.center,
                         child: Text(
-                          "Weighing",
+                          localizedStrings?.menuWeighing ?? "Weighing",
                           style: TextStyle(
                             color: _selectedTab == 0
                                 ? Theme.of(context).colorScheme.onPrimary
@@ -1528,8 +1531,8 @@ class _MobileCheckWeighingPageState extends State<MobileCheckWeighingPage> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const Text("Stable Time (s)",
-                                  style: TextStyle(
+                              Text(localizedStrings?.gTipStableTime ?? "Stable Time (s)",
+                                  style: const TextStyle(
                                       fontSize: 15, color: Color(0xFF334155))),
                               Container(
                                 width: 100,
@@ -1640,9 +1643,9 @@ class _MobileCheckWeighingPageState extends State<MobileCheckWeighingPage> {
                           _saveUiConfToDb();
                           Navigator.pop(context);
                         },
-                        child: const Text(
-                          "Confirm",
-                          style: TextStyle(
+                        child: Text(
+                          localizedStrings?.gBtnConfirm ?? "Confirm",
+                          style: const TextStyle(
                               color: Colors.white,
                               fontSize: 16,
                               fontWeight: FontWeight.w600),
@@ -1832,9 +1835,9 @@ class _MobileCheckWeighingPageState extends State<MobileCheckWeighingPage> {
                           Expanded(
                             child: TextField(
                               controller: searchController,
-                              decoration: const InputDecoration(
-                                hintText: "Please enter",
-                                hintStyle: TextStyle(color: Color(0xFF94A3B8), fontSize: 15),
+                              decoration: InputDecoration(
+                                hintText: localizedStrings?.gTipPleaseInputKeyWord ?? "Please enter",
+                                hintStyle: const TextStyle(color: Color(0xFF94A3B8), fontSize: 15),
                                 border: InputBorder.none,
                                 isDense: true,
                               ),
@@ -1865,10 +1868,10 @@ class _MobileCheckWeighingPageState extends State<MobileCheckWeighingPage> {
                   // 3. Grid View
                   Expanded(
                     child: filteredList.isEmpty
-                        ? const Center(
+                        ? Center(
                             child: Text(
-                              "No PLU available",
-                              style: TextStyle(color: Color(0xFF94A3B8), fontSize: 15),
+                              localizedStrings?.gTipNoPluAvailable ?? "No PLU available",
+                              style: const TextStyle(color: Color(0xFF94A3B8), fontSize: 15),
                             ),
                           )
                         : GridView.builder(
@@ -1941,8 +1944,8 @@ class _MobileCheckWeighingPageState extends State<MobileCheckWeighingPage> {
                           });
                           Navigator.pop(context);
                         },
-                        child: const Text("Confirm",
-                            style: TextStyle(color: Colors.white, fontSize: 16)),
+                        child: Text(localizedStrings?.gBtnConfirm ?? "Confirm",
+                            style: const TextStyle(color: Colors.white, fontSize: 16)),
                       ),
                     ),
                   ),
@@ -2056,8 +2059,8 @@ class _MobileCheckWeighingPageState extends State<MobileCheckWeighingPage> {
                                 });
                               },
                             ),
-                            const Text("Select all",
-                                style: TextStyle(
+                            Text(localizedStrings?.gTipSelectAll ?? "Select all",
+                                style: const TextStyle(
                                     fontSize: 14, fontWeight: FontWeight.w600)),
                           ],
                         ),
@@ -2082,8 +2085,8 @@ class _MobileCheckWeighingPageState extends State<MobileCheckWeighingPage> {
                           });
                           Navigator.pop(context);
                         },
-                        child: const Text("Confirm",
-                            style: TextStyle(color: Colors.white, fontSize: 16)),
+                        child: Text(localizedStrings?.gBtnConfirm ?? "Confirm",
+                            style: const TextStyle(color: Colors.white, fontSize: 16)),
                       ),
                     ),
                   ),
