@@ -61,13 +61,15 @@ jobs:
           cd ui
           flutter build ios --release --no-codesign
 
-      - name: Archive iOS Build Artifact
+      - name: Package iOS IPA
         run: |
           cd ui/build/ios/iphoneos
-          zip -r ../../../Runner.app.zip Runner.app
+          mkdir Payload
+          cp -r Runner.app Payload/
+          zip -r ../../../Runner.ipa Payload
 
       - name: Upload iOS Build Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: iOS-Runner-Build
-          path: ui/Runner.app.zip
+          name: iOS-Runner-IPA
+          path: ui/Runner.ipa
