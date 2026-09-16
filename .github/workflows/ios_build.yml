@@ -35,10 +35,7 @@ jobs:
           mkdir -p ui/ios/Frameworks
           cd backend/Backend
           gomobile bind -target=ios -o ../../ui/ios/Frameworks/Tmaxbackend.xcframework ./tmaxbackend
-          cd ../../ui/ios
-          if ! grep -q "Tmaxbackend" Podfile 2>/dev/null; then
-            echo "pod 'Tmaxbackend', :path => 'Frameworks'" >> Podfile
-          fi
+
 
       - name: Set up Java
         uses: actions/setup-java@v4
