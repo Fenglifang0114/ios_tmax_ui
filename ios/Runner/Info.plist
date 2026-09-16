@@ -47,5 +47,16 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>Bluetooth usage is required for electronic scale communication.</string>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>Bluetooth usage is required for electronic scale communication.</string>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>Local network access is required to communicate with local services.</string>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
 </dict>
 </plist>

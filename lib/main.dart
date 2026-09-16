@@ -51,10 +51,12 @@ Future<void> main() async {
     );
   };
 
-  if (Platform.isAndroid) {
+  if (Platform.isAndroid || Platform.isIOS) {
     // 增加启动后端的稳定性，先等待系统资源准备就绪
     Future.microtask(() async {
-      UsbSerialManager().init();
+      if (Platform.isAndroid) {
+        UsbSerialManager().init();
+      }
       await Future.delayed(const Duration(milliseconds: 100));
       const platform = MethodChannel('com.tmax.service/backend');
       try {
@@ -70,8 +72,8 @@ Future<void> main() async {
         debugPrint("Failed to start backend: '${e.message}'.");
       }
     });
-  } else if (isServiceVersion) {
-    //如果是服务的话，先检测服务是否开启
+  } else if (isServiceVersion && Platform.isWindows) {
+    //如果是 Windows 服务的话，先检测服务是否开启
     try {
       // 检查服务是否安装
       bool isInstalled = await checkServiceInstalled(serviceName);
@@ -125,7 +127,7 @@ Future<void> main() async {
   await initPageId();
   await ensureInitialized();
   bool isPortAvailable = true;
-  if (!Platform.isAndroid) {
+  if (!Platform.isAndroid && !Platform.isIOS) {
     await windowManager.ensureInitialized();
     await setWindowOptions();
     isPortAvailable = await checkAndBindPort();
@@ -235,7 +237,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     writelog('go to start ui');
     final WebSocketManager socketManager = WebSocketManager();
-    if (Platform.isAndroid) {
+    if (Platform.isAndroid || Platform.isIOS) {
       // 这里的延迟可以作为二次检查，确保连接
       Future.delayed(const Duration(seconds: 2), () {
         if (!socketManager.isConnected) socketManager.connect();

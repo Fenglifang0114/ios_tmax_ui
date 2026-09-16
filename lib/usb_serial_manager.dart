@@ -24,6 +24,7 @@ class UsbSerialManager {
   bool get isConnected => _isConnected;
 
   Future<void> init() async {
+    if (!Platform.isAndroid) return;
     _updateBaudRateFromScaleList();
 
     // 监听多秤管理配置更新
