@@ -92,7 +92,7 @@ dependencies:
   smart_tooltip: ^0.0.16
   flutter_pickers: ^2.1.9
   adoptive_calendar: ^0.2.0
-  win32: ^5.13.0
+  win32: ^5.5.0
   image_picker: ^1.2.0
   pdf: ^3.11.3
   printing: ^5.14.2
