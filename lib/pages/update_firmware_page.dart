@@ -990,8 +990,7 @@ class SelectScalesPageNewState extends State<SelectScalesPageNew> {
       columns: [
         DataColumn(
           headingRowAlignment: MainAxisAlignment.start,
-          label: SizedBox(),
-          columnWidth: FixedColumnWidth(40),
+          label: SizedBox(width: 40),
         ),
         DataColumn(
           label: SizedBox(
