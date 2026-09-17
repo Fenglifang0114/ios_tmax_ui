@@ -61,28 +61,18 @@ jobs:
           cd ui
           flutter build ios --release --no-codesign
 
-      - name: Package iOS IPA
+      - name: Package iOS IPA with 7-Zip Ultra Compression
         run: |
+          brew install p7zip || true
           cd ui/build/ios/iphoneos
           mkdir Payload
           cp -r Runner.app Payload/
-          zip -r ../../../Runner.ipa Payload
+          7z a -t7z -mx=9 ../../../Runner.ipa.7z Payload
 
-      - name: Build iOS Simulator App
-        run: |
-          cd ui
-          flutter build ios --simulator
-
-      - name: Package iOS Simulator App
-        run: |
-          cd ui/build/ios/iphonesimulator
-          zip -r ../../../Runner-Simulator.app.zip Runner.app
-
-      - name: Upload iOS Artifacts
+      - name: Upload iOS Real Device Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: iOS-Runner-Builds
-          path: |
-            ui/Runner.ipa
-            ui/Runner-Simulator.app.zip
+          name: iOS-Runner-IPA-7z
+          path: ui/Runner.ipa.7z
+
 
