@@ -15,6 +15,7 @@ import 'package:t_max/eventbus/eventbus.dart';
 import 'package:t_max/functions/methods.dart';
 import 'package:t_max/generated/l10n.dart';
 import 'package:t_max/common/window_lifecycle_mixin.dart';
+import 'package:t_max/common/web_socket_channel.dart';
 
 import 'package:tray_manager/tray_manager.dart';
 import 'package:window_manager/window_manager.dart';
