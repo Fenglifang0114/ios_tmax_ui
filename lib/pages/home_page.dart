@@ -425,10 +425,11 @@ class MyHomePageState extends State<MyHomePage> with WindowLifecycleMixin {
                   onYesPressed: () async {
                     Navigator.of(context).pop();
                     dispose();
-                    if (!Platform.isAndroid) {
+                    if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
                       await trayManager.destroy();
                       await windowManager.destroy();
                     }
+
                     exit(0);
                   },
                 );

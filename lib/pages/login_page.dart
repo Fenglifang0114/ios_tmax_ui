@@ -688,7 +688,7 @@ class _WindowButtonsState extends State<WindowButtons> with WindowListener {
   @override
   void initState() {
     super.initState();
-    if (!Platform.isAndroid) {
+    if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
       // 注册监听器
       windowManager.addListener(this);
       _initMaximizedState();
@@ -713,13 +713,14 @@ class _WindowButtonsState extends State<WindowButtons> with WindowListener {
 
   @override
   void dispose() {
-    if (!Platform.isAndroid) {
+    if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
       // 移除监听器
       windowManager.removeListener(this);
     }
     _maximizedStreamController.close();
     super.dispose();
   }
+
 
   // 定义常量
   static const buttonSize = Size(45, 32);
