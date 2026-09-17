@@ -12,9 +12,13 @@ import Tmaxbackend
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
+    // 应用启动时立即拉起 Go 后端引擎
+    startGoBackend()
+
     let controller : FlutterViewController = window?.rootViewController as! FlutterViewController
     let backendChannel = FlutterMethodChannel(name: "com.tmax.service/backend",
                                               binaryMessenger: controller.binaryMessenger)
+
     
     backendChannel.setMethodCallHandler({
       [weak self] (call: FlutterMethodCall, result: @escaping FlutterResult) -> Void in
