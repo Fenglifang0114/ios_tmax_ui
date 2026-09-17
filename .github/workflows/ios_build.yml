@@ -68,8 +68,21 @@ jobs:
           cp -r Runner.app Payload/
           zip -r ../../../Runner.ipa Payload
 
-      - name: Upload iOS Build Artifact
+      - name: Build iOS Simulator App
+        run: |
+          cd ui
+          flutter build ios --simulator
+
+      - name: Package iOS Simulator App
+        run: |
+          cd ui/build/ios/iphonesimulator
+          zip -r ../../../Runner-Simulator.app.zip Runner.app
+
+      - name: Upload iOS Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: iOS-Runner-IPA
-          path: ui/Runner.ipa
+          name: iOS-Runner-Builds
+          path: |
+            ui/Runner.ipa
+            ui/Runner-Simulator.app.zip
+
