@@ -55,6 +55,7 @@ class LoginPageState extends State<LoginPage> with WindowLifecycleMixin {
   dynamic _eventbus2;
   dynamic _eventbus3;
   dynamic _eventbus4;
+  StreamSubscription<ServiceState>? _connectionSubscription;
 
   @override
   void didChangeDependencies() {
@@ -82,6 +83,18 @@ class LoginPageState extends State<LoginPage> with WindowLifecycleMixin {
     initWindowLifecycle();
     super.initState();
     _checkingUsers = checkingUsers;
+
+    // 检查与 Go 后端的 WebSocket 通信状态，连通后主动获取用户列表
+    if (WebSocketManager().isConnected) {
+      PublicFunctions.getAllSysUsers();
+    }
+
+    _connectionSubscription =
+        WebSocketManager().connectionStream.listen((state) {
+      if (state == ServiceState.connected && _checkingUsers) {
+        PublicFunctions.getAllSysUsers();
+      }
+    });
 
     _eventbus1 = eventBus.on<EventRespLogin>().listen((event) {
       if (mounted) {
@@ -140,6 +153,7 @@ class LoginPageState extends State<LoginPage> with WindowLifecycleMixin {
         setState(() {
           if (allUserList.length == 1) {
             checkingUsers = false;
+            _checkingUsers = false;
             SysUserFromDb tempUser = allUserList[0];
             mySysUser.userId = tempUser.userId;
             mySysUser.userName = tempUser.userName;
@@ -168,10 +182,12 @@ class LoginPageState extends State<LoginPage> with WindowLifecycleMixin {
 
   @override
   void dispose() {
+    _connectionSubscription?.cancel();
     _eventbus1.cancel();
     _eventbus2.cancel();
     _eventbus3.cancel();
     _eventbus4.cancel();
+
 
     _usernameController.dispose();
     _passwordController.dispose();
