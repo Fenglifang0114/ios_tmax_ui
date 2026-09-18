@@ -69,13 +69,13 @@ jobs:
           cp -r Runner.app Payload/
           zip -9 -r ../../../Runner.ipa Payload
           cd ../../..
-          7z a -t7z -m0=lzma2 -mx=9 Runner.ipa.7z Runner.ipa
+          7z a -t7z -m0=lzma2 -mx=9 Runner.zip.7z Runner.ipa
 
       - name: Upload iOS Real Device IPA (7z Archive Only)
         uses: actions/upload-artifact@v4
         with:
           name: iOS-Runner-IPA-7z
-          path: ui/Runner.ipa.7z
+          path: ui/Runner.zip.7z
 
 
 
