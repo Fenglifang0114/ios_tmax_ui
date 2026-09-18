@@ -544,7 +544,7 @@ class MyHomePageState extends State<MyHomePage> with WindowLifecycleMixin {
                                 showSetLanguageDialog();
                               }),
                               if ((mySysUser.roleId == superAdminRoleId &&
-                                      mySysUser.isChanged!) ||
+                                      (mySysUser.isChanged ?? false)) ||
                                   (mySysUser.roleId != superAdminRoleId))
                                 _buildDrawerItem(
                                     Icons.lock_outline,
@@ -575,7 +575,7 @@ class MyHomePageState extends State<MyHomePage> with WindowLifecycleMixin {
                             ],
                           ),
                         ),
-                        if ((mySysUser.roleId == superAdminRoleId && mySysUser.isChanged!) ||
+                        if ((mySysUser.roleId == superAdminRoleId && (mySysUser.isChanged ?? false)) ||
                             (mySysUser.roleId != superAdminRoleId))
                           Padding(
                             padding: const EdgeInsets.all(16.0),
@@ -938,7 +938,7 @@ class MyHomePageState extends State<MyHomePage> with WindowLifecycleMixin {
           ),
         if (mySysUser.roleId == 1 || mySysUser.roleId == 2)
           PopupMenuDivider(height: 1.0),
-        if ((mySysUser.roleId == superAdminRoleId && mySysUser.isChanged!) ||
+        if ((mySysUser.roleId == superAdminRoleId && (mySysUser.isChanged ?? false)) ||
             (mySysUser.roleId != superAdminRoleId))
           PopupMenuItem(
             value: '2',
