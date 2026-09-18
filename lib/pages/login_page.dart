@@ -85,23 +85,6 @@ class LoginPageState extends State<LoginPage> with WindowLifecycleMixin {
     super.initState();
     _checkingUsers = checkingUsers;
 
-    // 移动端 (iOS / Android) 启动时无需停留在登录页，直接进入主界面
-    if (Platform.isAndroid || Platform.isIOS) {
-      mySysUser.userId = 1;
-      mySysUser.userName = "Super Admin";
-      mySysUser.roleId = superAdminRoleId;
-      mySysUser.roleName = "super_admin";
-      mySysUser.pageIdList = allPageIdList;
-      mySysUser.initialPageId = 9999;
-      checkingUsers = false;
-      _checkingUsers = false;
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted) {
-          Navigator.pushReplacementNamed(context, '/home');
-        }
-      });
-      return;
-    }
 
     // 检查与 Go 后端的 WebSocket 通信状态，连通后主动获取用户列表
     if (WebSocketManager().isConnected) {
@@ -171,7 +154,7 @@ class LoginPageState extends State<LoginPage> with WindowLifecycleMixin {
         String dataStr = event.obj;
         List<SysUserFromDb> allUserList = sysUserFromDbFromJson(dataStr);
         setState(() {
-          if (allUserList.length == 1) {
+          if (allUserList.length == 1 && (allUserList[0].isChanged == false)) {
             checkingUsers = false;
             _checkingUsers = false;
             SysUserFromDb tempUser = allUserList[0];
