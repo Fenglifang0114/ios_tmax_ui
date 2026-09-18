@@ -1,4 +1,4 @@
-﻿import 'dart:convert';
+import 'dart:convert';
 import 'dart:io';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
@@ -140,7 +140,7 @@ List<String> getSerialOutputFromLog(List<Map<String, dynamic>> jsonDataList) {
 
 Future<String> getAppFilePath(String fileName) async {
   String directory;
-  if (Platform.isAndroid) {
+  if (Platform.isAndroid || Platform.isIOS) {
     directory = (await getApplicationDocumentsDirectory()).path;
   } else {
     directory = p.dirname(Platform.resolvedExecutable);
@@ -151,7 +151,7 @@ Future<String> getAppFilePath(String fileName) async {
 
 Future<String> getAppImportPath(String fileName) async {
   String directory;
-  if (Platform.isAndroid) {
+  if (Platform.isAndroid || Platform.isIOS) {
     directory = (await getApplicationDocumentsDirectory()).path;
   } else {
     directory = p.dirname(Platform.resolvedExecutable);
@@ -178,7 +178,7 @@ Future<void> writePageIdsToJson(
 
   // 获取目录
   String directory;
-  if (Platform.isAndroid) {
+  if (Platform.isAndroid || Platform.isIOS) {
     directory = (await getApplicationDocumentsDirectory()).path;
   } else {
     directory = p.dirname(Platform.resolvedExecutable);
@@ -198,7 +198,7 @@ Future<void> writePageIdsToJson(
 Future<Map<String, dynamic>> readPageIdsFromJsonReversed() async {
   // 获取应用目录
   String directory;
-  if (Platform.isAndroid) {
+  if (Platform.isAndroid || Platform.isIOS) {
     directory = (await getApplicationDocumentsDirectory()).path;
   } else {
     directory = p.dirname(Platform.resolvedExecutable);
