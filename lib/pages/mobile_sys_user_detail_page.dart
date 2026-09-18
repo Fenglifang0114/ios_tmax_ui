@@ -118,7 +118,11 @@ class _MobileSysUserDetailPageState extends State<MobileSysUserDetailPage> {
 
   String _formatDate(DateTime? date) {
     if (date == null) return "-";
-    return DateFormat('yyyy-MM-dd HH:mm:ss').format(date.toLocal());
+    try {
+      return DateFormat('yyyy-MM-dd HH:mm:ss').format(date.toLocal());
+    } catch (_) {
+      return "-";
+    }
   }
 
   @override

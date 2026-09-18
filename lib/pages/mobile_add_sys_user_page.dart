@@ -134,11 +134,11 @@ class _MobileAddSysUserPageState extends State<MobileAddSysUserPage> {
         roleId: _roleId,
         isEnabled: true,
         pagesId: _roleId == 3 ? _selectedPermissions.toList() : [],
-        initialPageId: _roleId == 3 ? _initialPageId : 0,
+        initialPageId: _roleId == 3 ? (_initialPageId ?? 0) : 0,
         email: _emailCtl.text,
         phone: _phoneCtl.text,
-        createdBy: mySysUser.userId,
-        updatedBy: mySysUser.userId,
+        createdBy: mySysUser.userId ?? 1,
+        updatedBy: mySysUser.userId ?? 1,
         remark: "",
       );
       PublicFunctions.addSysUser(reqAddSysUserToJson(req));
