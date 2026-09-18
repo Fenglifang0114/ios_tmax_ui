@@ -26,7 +26,7 @@ class WebSocketManager {
   factory WebSocketManager() => _instance;
   WebSocketManager._internal();
 
-  static final String _url = 'ws://127.0.0.1:$webPort/tmax?scaleid=0';
+  String get _url => 'ws://$ipAddress:$webPort/tmax?scaleid=0';
   IOWebSocketChannel? _channel;
   StreamSubscription? _channelSubscription;
   bool _isConnected = false;

@@ -273,7 +273,7 @@ class MyApp extends StatelessWidget {
 
   Future<bool> checkServerExists() async {
     try {
-      var channel = await Socket.connect('127.0.0.1', webPort);
+      var channel = await Socket.connect(ipAddress, webPort);
       channel.close();
       return true;
     } catch (e) {
