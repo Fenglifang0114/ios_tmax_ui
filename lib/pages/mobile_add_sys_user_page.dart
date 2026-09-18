@@ -44,7 +44,8 @@ class _MobileAddSysUserPageState extends State<MobileAddSysUserPage> {
     super.initState();
     if (widget.type == 2) {
       if (widget.isSuperAccount && widget.initUserInfo.isChanged == false) {
-        // First login of super account
+        _userNameCtl.text = widget.initUserInfo.userName ?? "Super Admin";
+        _nickNameCtl.text = widget.initUserInfo.nickName ?? "Super Admin";
       } else {
         _userNameCtl.text = widget.initUserInfo.userName ?? "";
         _nickNameCtl.text = widget.initUserInfo.nickName ?? "";
@@ -143,7 +144,7 @@ class _MobileAddSysUserPageState extends State<MobileAddSysUserPage> {
       PublicFunctions.addSysUser(reqAddSysUserToJson(req));
     } else {
       UpdateUser tempUser = UpdateUser(
-        userId: widget.initUserInfo.userId,
+        userId: widget.initUserInfo.userId ?? (widget.isSuperAccount ? 1 : null),
         userName: _userNameCtl.text,
         nickName: _nickNameCtl.text,
         roleId: _roleId,
@@ -151,7 +152,7 @@ class _MobileAddSysUserPageState extends State<MobileAddSysUserPage> {
         initialPageId: _roleId == 3 ? _initialPageId : 0,
         email: _emailCtl.text,
         phone: _phoneCtl.text,
-        updatedBy: mySysUser.userId,
+        updatedBy: mySysUser.userId ?? 1,
         password: _pwdCtl.text.isNotEmpty ? _pwdCtl.text : widget.initUserInfo.password,
       );
 
@@ -162,8 +163,10 @@ class _MobileAddSysUserPageState extends State<MobileAddSysUserPage> {
       PublicFunctions.updateSysUser(reqUpdateSysUserToJson(req));
     }
 
-    if (widget.isSuperAccount && widget.type == 2 && mySysUser.userId == widget.initUserInfo.userId) {
+    if (widget.isSuperAccount) {
       mySysUser.isChanged = true;
+      mySysUser.userName = _userNameCtl.text;
+      mySysUser.nickName = _nickNameCtl.text;
     }
 
     Navigator.pop(context, true);
@@ -229,7 +232,9 @@ class _MobileAddSysUserPageState extends State<MobileAddSysUserPage> {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          widget.type == 1 || isFirstSuperAdminSetup ? (localizedStrings?.userAdd ?? "Add User") : (localizedStrings?.userUpdate ?? "Edit User"),
+          isFirstSuperAdminSetup 
+              ? (localizedStrings?.pleaseSetSuperAdmin ?? "Set Super Admin Account")
+              : (widget.type == 1 ? (localizedStrings?.userAdd ?? "Add User") : (localizedStrings?.userUpdate ?? "Edit User")),
           style: const TextStyle(color: Colors.black87, fontSize: 18),
         ),
         centerTitle: true,

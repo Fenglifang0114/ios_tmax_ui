@@ -41,7 +41,6 @@ class _MobileSysUserManagerPageState extends State<MobileSysUserManagerPage> {
         if (allUserList.length == 1 && allUserList[0].isChanged == false) {
           superAdminUser = allUserList[0];
           mySysUser.isChanged = false;
-          allUserList = [];
         } else {
           superAdminUser = null;
           if (mySysUser.roleId == superAdminRoleId) {
@@ -210,7 +209,9 @@ class _MobileSysUserManagerPageState extends State<MobileSysUserManagerPage> {
                 final user = searchUserList[index];
                 String roleName = '';
                 if (user.roleId == 1) {
-                  roleName = localizedStrings?.superAdmin ?? "Super Admin"; // Activating/Super Admin
+                  roleName = (user.isChanged == false)
+                      ? "${localizedStrings?.superAdmin ?? 'Super Admin'} (${localizedStrings?.pleaseSetSuperAdmin ?? 'Please set super admin'})"
+                      : (localizedStrings?.superAdmin ?? "Super Admin");
                 } else if (user.roleId == 2) {
                   roleName = localizedStrings?.admin ?? "Admin";
                 } else {
