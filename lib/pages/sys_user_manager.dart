@@ -909,7 +909,7 @@ class SysUserManagerPageState extends State<SysUserManagerPage>
           width: regularPadding,
         ),
         showTextButton(context, 40, (localizedStrings?.gBtnAdd ?? "gBtnAdd"), () {
-          if (mySysUser.roleId == superAdminRoleId && !mySysUser.isChanged!) {
+          if (mySysUser.roleId == superAdminRoleId && !(mySysUser.isChanged ?? false)) {
             Navigator.push(
                 context,
                 MaterialPageRoute(

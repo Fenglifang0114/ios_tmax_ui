@@ -40,18 +40,19 @@ class _MobileSysUserManagerPageState extends State<MobileSysUserManagerPage> {
         allUserList = sysUserFromDbFromJson(dataStr);
         if (allUserList.length == 1 && allUserList[0].isChanged == false) {
           superAdminUser = allUserList[0];
+          mySysUser.isChanged = false;
           allUserList = [];
-        }
-        if (allUserList.isNotEmpty && mySysUser.roleId == superAdminRoleId) {
-          for (var user in allUserList) {
-            if (user.userId == mySysUser.userId) {
-              mySysUser.isChanged = user.isChanged;
+        } else {
+          superAdminUser = null;
+          if (mySysUser.roleId == superAdminRoleId) {
+            for (var user in allUserList) {
+              if (user.userId == mySysUser.userId) {
+                mySysUser.isChanged = user.isChanged ?? true;
+              }
             }
           }
         }
-        setState(() {
-          performSearch();
-        });
+        performSearch();
       }
     });
 
@@ -99,8 +100,8 @@ class _MobileSysUserManagerPageState extends State<MobileSysUserManagerPage> {
 
       if (keyword.isNotEmpty) {
         searchUserList = searchUserList.where((user) {
-          final userId = user.userId!;
-          final userName = user.userName!;
+          final userId = user.userId ?? 0;
+          final userName = user.userName ?? '';
           return userId.toString().contains(keyword) ||
               userName.contains(keyword);
         }).toList();
@@ -134,10 +135,12 @@ class _MobileSysUserManagerPageState extends State<MobileSysUserManagerPage> {
           IconButton(
             icon: const Icon(Icons.add_circle_outline, color: Colors.black87),
             onPressed: () {
-              if (mySysUser.roleId == superAdminRoleId && (mySysUser.isChanged == false || (mySysUser.isChanged != null && !mySysUser.isChanged!))) {
+              bool isSuperUnset = mySysUser.roleId == superAdminRoleId &&
+                  ((mySysUser.isChanged ?? false) == false || superAdminUser != null);
+              if (isSuperUnset) {
                 if (superAdminUser == null || superAdminUser!.userName == null || superAdminUser!.userName!.isEmpty) {
                   PublicFunctions.getAllSysUsers();
-                  showTipInfo((localizedStrings?.gTipWait ?? "Please wait..."), context);
+                  showTipInfo((localizedStrings?.pleaseSetSuperAdmin ?? "Please set super admin"), context);
                   return;
                 }
                 Navigator.push(
