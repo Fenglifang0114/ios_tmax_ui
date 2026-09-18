@@ -7,7 +7,6 @@ import 'package:t_max/functions/methods.dart';
 import 'package:t_max/data/language.dart';
 import 'package:t_max/pages/mobile_add_sys_user_page.dart';
 import 'package:t_max/pages/mobile_sys_user_detail_page.dart';
-import 'package:t_max/dialog/mobile_page_help_dialog.dart';
 
 class MobileSysUserManagerPage extends StatefulWidget {
   final Function(String)? onNavigate;
@@ -36,43 +35,74 @@ class _MobileSysUserManagerPageState extends State<MobileSysUserManagerPage> {
 
     _eventbus1 = eventBus.on<EventRespGetAllUsers>().listen((event) {
       if (mounted) {
-        String dataStr = event.obj;
-        allUserList = sysUserFromDbFromJson(dataStr);
-        if (allUserList.length == 1 && allUserList[0].isChanged == false) {
-          superAdminUser = allUserList[0];
-          mySysUser.isChanged = false;
-        } else {
-          superAdminUser = null;
-          if (mySysUser.roleId == superAdminRoleId) {
-            for (var user in allUserList) {
-              if (user.userId == mySysUser.userId) {
-                mySysUser.isChanged = user.isChanged ?? true;
+        try {
+          String dataStr = event.obj?.toString() ?? '';
+          allUserList = sysUserFromDbFromJson(dataStr);
+          if (allUserList.length == 1 && allUserList[0].isChanged == false) {
+            superAdminUser = allUserList[0];
+            mySysUser.isChanged = false;
+          } else {
+            superAdminUser = null;
+            if (mySysUser.roleId == superAdminRoleId) {
+              for (var user in allUserList) {
+                if (user.userId == mySysUser.userId) {
+                  mySysUser.isChanged = user.isChanged ?? true;
+                }
               }
             }
           }
+          performSearch();
+        } catch (e) {
+          debugPrint("Error handling EventRespGetAllUsers: $e");
         }
-        performSearch();
       }
     });
 
     _eventbus2 = eventBus.on<EventRespAddSysUser>().listen((event) {
       if (mounted) {
-        showTipInfo((localizedStrings?.fSuccessMsg ?? "Success"), context);
-        PublicFunctions.getAllSysUsers();
+        try {
+          String dataStr = event.obj?.toString() ?? '';
+          if (dataStr.startsWith("fail")) {
+            showTipInfo(dataStr, context);
+          } else {
+            showTipInfo((localizedStrings?.fSuccessMsg ?? "Success"), context);
+            PublicFunctions.getAllSysUsers();
+          }
+        } catch (e) {
+          debugPrint("Error handling EventRespAddSysUser: $e");
+        }
       }
     });
 
     _eventbus3 = eventBus.on<EventRespUpdateSysUser>().listen((event) {
       if (mounted) {
-        showTipInfo((localizedStrings?.fSuccessMsg ?? "Success"), context);
-        PublicFunctions.getAllSysUsers();
+        try {
+          String dataStr = event.obj?.toString() ?? '';
+          if (dataStr.startsWith("fail")) {
+            showTipInfo(dataStr, context);
+          } else {
+            showTipInfo((localizedStrings?.fSuccessMsg ?? "Success"), context);
+            PublicFunctions.getAllSysUsers();
+          }
+        } catch (e) {
+          debugPrint("Error handling EventRespUpdateSysUser: $e");
+        }
       }
     });
 
     _eventbus4 = eventBus.on<EventRespDeleteSysUser>().listen((event) {
       if (mounted) {
-        showTipInfo((localizedStrings?.fSuccessMsg ?? "Success"), context);
-        PublicFunctions.getAllSysUsers();
+        try {
+          String dataStr = event.obj?.toString() ?? '';
+          if (dataStr.startsWith("fail")) {
+            showTipInfo(dataStr, context);
+          } else {
+            showTipInfo((localizedStrings?.fSuccessMsg ?? "Success"), context);
+            PublicFunctions.getAllSysUsers();
+          }
+        } catch (e) {
+          debugPrint("Error handling EventRespDeleteSysUser: $e");
+        }
       }
     });
   }

@@ -85,38 +85,50 @@ class SysUserManagerPageState extends State<SysUserManagerPage>
 
     _eventbus1 = eventBus.on<EventRespGetAllUsers>().listen((event) {
       if (mounted) {
-        String dataStr = event.obj;
-        allUserList = sysUserFromDbFromJson(dataStr);
-        if (allUserList.length == 1 && allUserList[0].isChanged == false) {
-          superAdminUser = allUserList[0];
-          allUserList = [];
-        }
-        setState(() {
-          searchUserList = List.from(allUserList);
-          selectedUserRows.clear();
-          selectUserAll = false;
-          if (allUserList.isNotEmpty && mySysUser.roleId == superAdminRoleId) {
-            for (var user in allUserList) {
-              if (user.userId == mySysUser.userId) {
-                mySysUser.isChanged = user.isChanged;
+        try {
+          String dataStr = event.obj?.toString() ?? '';
+          allUserList = sysUserFromDbFromJson(dataStr);
+          if (allUserList.length == 1 && allUserList[0].isChanged == false) {
+            superAdminUser = allUserList[0];
+            allUserList = [];
+          }
+          setState(() {
+            searchUserList = List.from(allUserList);
+            selectedUserRows.clear();
+            selectUserAll = false;
+            if (allUserList.isNotEmpty && mySysUser.roleId == superAdminRoleId) {
+              for (var user in allUserList) {
+                if (user.userId == mySysUser.userId) {
+                  mySysUser.isChanged = user.isChanged;
+                }
               }
             }
-          }
-        });
-        eventBus.fire(EventMySysUser(""));
+          });
+          eventBus.fire(EventMySysUser(""));
+        } catch (e) {
+          debugPrint("Error handling EventRespGetAllUsers PC: $e");
+        }
       }
     });
     _eventbus2 = eventBus.on<EventRespDeleteSysUser>().listen((event) {
       if (mounted) {
-        showTipInfo((localizedStrings?.fSuccessMsg ?? "fSuccessMsg"), context);
-        PublicFunctions.getAllSysUsers();
+        try {
+          showTipInfo((localizedStrings?.fSuccessMsg ?? "fSuccessMsg"), context);
+          PublicFunctions.getAllSysUsers();
+        } catch (e) {
+          debugPrint("Error handling EventRespDeleteSysUser PC: $e");
+        }
       }
     });
 
     _eventbus3 = eventBus.on<EventRespAddSysUser>().listen((event) {
       if (mounted) {
-        showTipInfo((localizedStrings?.fSuccessMsg ?? "fSuccessMsg"), context);
-        PublicFunctions.getAllSysUsers();
+        try {
+          showTipInfo((localizedStrings?.fSuccessMsg ?? "fSuccessMsg"), context);
+          PublicFunctions.getAllSysUsers();
+        } catch (e) {
+          debugPrint("Error handling EventRespAddSysUser PC: $e");
+        }
       }
     });
 

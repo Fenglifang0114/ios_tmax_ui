@@ -1,11 +1,24 @@
-﻿// To parse this JSON data, do
+// To parse this JSON data, do
 //
 //     final sysUserDetailFromDb = sysUserDetailFromDbFromJson(jsonString);
 
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 
-SysUserDetailFromDb sysUserDetailFromDbFromJson(String str) =>
-    SysUserDetailFromDb.fromJson(json.decode(str));
+SysUserDetailFromDb sysUserDetailFromDbFromJson(String str) {
+  try {
+    if (str.trim().isEmpty) return SysUserDetailFromDb();
+    final decoded = json.decode(str);
+    if (decoded is Map<String, dynamic>) {
+      return SysUserDetailFromDb.fromJson(decoded);
+    } else if (decoded is Map) {
+      return SysUserDetailFromDb.fromJson(Map<String, dynamic>.from(decoded));
+    }
+  } catch (e) {
+    debugPrint("sysUserDetailFromDbFromJson error: $e");
+  }
+  return SysUserDetailFromDb();
+}
 
 String sysUserDetailFromDbToJson(SysUserDetailFromDb data) =>
     json.encode(data.toJson());
@@ -41,20 +54,22 @@ class SysUserDetailFromDb {
 
   factory SysUserDetailFromDb.fromJson(Map<String, dynamic> json) =>
       SysUserDetailFromDb(
-        userId: json["userId"],
-        userName: json["userName"],
-        nickName: json["nickName"],
-        password: json["password"],
-        email: json["email"],
-        phone: json["phone"],
-        isEnabled: json["isEnabled"],
-        roleId: json["roleId"],
-        roleName: json["roleName"],
-        initialPageId: json["initialPageId"],
-        isChanged: json["isChanged"] ?? false,
+        userId: json["userId"] is int ? json["userId"] : int.tryParse(json["userId"]?.toString() ?? ''),
+        userName: json["userName"]?.toString(),
+        nickName: json["nickName"]?.toString(),
+        password: json["password"]?.toString(),
+        email: json["email"]?.toString(),
+        phone: json["phone"]?.toString(),
+        isEnabled: json["isEnabled"] == true || json["isEnabled"] == 1 || json["isEnabled"] == "true",
+        roleId: json["roleId"] is int ? json["roleId"] : int.tryParse(json["roleId"]?.toString() ?? ''),
+        roleName: json["roleName"]?.toString(),
+        initialPageId: json["initialPageId"] is int ? json["initialPageId"] : int.tryParse(json["initialPageId"]?.toString() ?? ''),
+        isChanged: json["isChanged"] == true || json["isChanged"] == 1 || json["isChanged"] == "true",
         pageIdList: json["pageIdList"] == null
             ? []
-            : List<int>.from(json["pageIdList"]!.map((x) => x)),
+            : (json["pageIdList"] is List
+                ? List<int>.from(json["pageIdList"].map((x) => x is int ? x : int.tryParse(x?.toString() ?? '') ?? 0))
+                : []),
       );
 
   Map<String, dynamic> toJson() => {
@@ -76,16 +91,39 @@ class SysUserDetailFromDb {
 }
 
 //全部的系统用户
-// To parse this JSON data, do
-//
-//     final sysUserFromDb = sysUserFromDbFromJson(jsonString);
-
-List<SysUserFromDb> sysUserFromDbFromJson(String str) =>
-    List<SysUserFromDb>.from(
-        json.decode(str).map((x) => SysUserFromDb.fromJson(x)));
+List<SysUserFromDb> sysUserFromDbFromJson(String str) {
+  try {
+    if (str.trim().isEmpty) return [];
+    final decoded = json.decode(str);
+    if (decoded is List) {
+      return decoded.map((x) {
+        if (x is Map<String, dynamic>) {
+          return SysUserFromDb.fromJson(x);
+        } else if (x is Map) {
+          return SysUserFromDb.fromJson(Map<String, dynamic>.from(x));
+        }
+        return SysUserFromDb();
+      }).toList();
+    }
+  } catch (e) {
+    debugPrint("sysUserFromDbFromJson parse error: $e");
+  }
+  return [];
+}
 
 String sysUserFromDbToJson(List<SysUserFromDb> data) =>
     json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
+
+DateTime? _safeParseDateTime(dynamic val) {
+  if (val == null) return null;
+  String str = val.toString().trim();
+  if (str.isEmpty || str == "0001-01-01T00:00:00Z" || str.startsWith("0001-01-01")) return null;
+  try {
+    return DateTime.tryParse(str)?.toLocal();
+  } catch (_) {
+    return null;
+  }
+}
 
 class SysUserFromDb {
   int? userId;
@@ -124,25 +162,21 @@ class SysUserFromDb {
   });
 
   factory SysUserFromDb.fromJson(Map<String, dynamic> json) => SysUserFromDb(
-        userId: json["UserId"],
-        userName: json["UserName"],
-        nickName: json["NickName"],
-        roleId: json["RoleId"],
-        password: json["Password"],
-        isEnabled: json["IsEnabled"],
-        email: json["Email"],
-        phone: json["Phone"],
-        initialPageId: json["InitialPageId"],
-        remark: json["Remark"],
-        createdTime: json["CreatedTime"] == null
-            ? null
-            : DateTime.parse(json["CreatedTime"]).toLocal(),
-        updatedTime: json["UpdatedTime"] == null
-            ? null
-            : DateTime.parse(json["UpdatedTime"]).toLocal(),
-        createdBy: json["CreatedBy"],
-        updatedBy: json["UpdatedBy"],
-        isChanged: json["IsChanged"] ?? false,
+        userId: json["UserId"] is int ? json["UserId"] : int.tryParse(json["UserId"]?.toString() ?? ''),
+        userName: json["UserName"]?.toString(),
+        nickName: json["NickName"]?.toString(),
+        roleId: json["RoleId"] is int ? json["RoleId"] : int.tryParse(json["RoleId"]?.toString() ?? ''),
+        password: json["Password"]?.toString(),
+        isEnabled: json["IsEnabled"] == true || json["IsEnabled"] == 1 || json["IsEnabled"] == "true",
+        email: json["Email"]?.toString(),
+        phone: json["Phone"]?.toString(),
+        initialPageId: json["InitialPageId"] is int ? json["InitialPageId"] : int.tryParse(json["InitialPageId"]?.toString() ?? ''),
+        remark: json["Remark"]?.toString(),
+        createdTime: _safeParseDateTime(json["CreatedTime"]),
+        updatedTime: _safeParseDateTime(json["UpdatedTime"]),
+        createdBy: json["CreatedBy"] is int ? json["CreatedBy"] : int.tryParse(json["CreatedBy"]?.toString() ?? ''),
+        updatedBy: json["UpdatedBy"] is int ? json["UpdatedBy"] : int.tryParse(json["UpdatedBy"]?.toString() ?? ''),
+        isChanged: json["IsChanged"] == true || json["IsChanged"] == 1 || json["IsChanged"] == "true",
       );
 
   Map<String, dynamic> toJson() => {

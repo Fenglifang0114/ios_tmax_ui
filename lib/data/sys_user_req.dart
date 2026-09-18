@@ -1,4 +1,4 @@
-﻿//登录请求参数
+//登录请求参数
 import 'dart:convert';
 
 class SysUserReq {
@@ -263,26 +263,35 @@ class UpdateUser {
     this.updatedBy,
   });
 
-  factory UpdateUser.fromJson(Map<String, dynamic> json) => UpdateUser(
-        userId: json["userId"],
-        userName: json["userName"],
-        nickName: json["nickName"],
-        roleId: json["roleId"],
-        password: json["password"],
-        isEnabled: json["isEnabled"],
-        email: json["email"],
-        phone: json["phone"],
-        initialPageId: json["initialPageId"],
-        remark: json["remark"],
-        createdTime: json["createdTime"] == null
-            ? null
-            : DateTime.parse(json["createdTime"]).toLocal(),
-        updatedTime: json["updatedTime"] == null
-            ? null
-            : DateTime.parse(json["updatedTime"]).toLocal(),
-        createdBy: json["createdBy"],
-        updatedBy: json["updatedBy"],
-      );
+  factory UpdateUser.fromJson(Map<String, dynamic> json) {
+    DateTime? safeParse(dynamic val) {
+      if (val == null) return null;
+      String str = val.toString().trim();
+      if (str.isEmpty || str == "0001-01-01T00:00:00Z" || str.startsWith("0001-01-01")) return null;
+      try {
+        return DateTime.tryParse(str)?.toLocal();
+      } catch (_) {
+        return null;
+      }
+    }
+
+    return UpdateUser(
+      userId: json["userId"],
+      userName: json["userName"],
+      nickName: json["nickName"],
+      roleId: json["roleId"],
+      password: json["password"],
+      isEnabled: json["isEnabled"],
+      email: json["email"],
+      phone: json["phone"],
+      initialPageId: json["initialPageId"],
+      remark: json["remark"],
+      createdTime: safeParse(json["createdTime"]),
+      updatedTime: safeParse(json["updatedTime"]),
+      createdBy: json["createdBy"],
+      updatedBy: json["updatedBy"],
+    );
+  }
 
   Map<String, dynamic> toJson() => {
         "userId": userId,
