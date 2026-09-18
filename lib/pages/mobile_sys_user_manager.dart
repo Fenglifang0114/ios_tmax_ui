@@ -134,26 +134,20 @@ class _MobileSysUserManagerPageState extends State<MobileSysUserManagerPage> {
           IconButton(
             icon: const Icon(Icons.add_circle_outline, color: Colors.black87),
             onPressed: () {
-              bool isSuperUnset = mySysUser.roleId == superAdminRoleId &&
-                  ((mySysUser.isChanged ?? false) == false || superAdminUser != null);
+              bool isSuperUnset = (mySysUser.roleId == superAdminRoleId) &&
+                  ((mySysUser.isChanged ?? false) == false);
               if (isSuperUnset) {
-                if (superAdminUser == null || superAdminUser!.userName == null || superAdminUser!.userName!.isEmpty) {
-                  PublicFunctions.getAllSysUsers();
-                  showTipInfo((localizedStrings?.pleaseSetSuperAdmin ?? "Please set super admin"), context);
-                  return;
-                }
                 Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (context) => MobileAddSysUserPage(
                       sysUserList: allUserList,
-                      initUserInfo: superAdminUser ?? SysUserFromDb(),
+                      initUserInfo: superAdminUser ?? SysUserFromDb(userId: 1, userName: "Super Admin", roleId: 1, isChanged: false),
                       type: 2, // 2: edit
                       isSuperAccount: true,
                     ),
                   ),
                 ).then((_) => PublicFunctions.getAllSysUsers());
-                showTipInfo((localizedStrings?.pleaseSetSuperAdmin ?? "Please set super admin"), context);
                 return;
               }
 
@@ -242,6 +236,21 @@ class _MobileSysUserManagerPageState extends State<MobileSysUserManagerPage> {
                   ),
                   trailing: const Icon(Icons.chevron_right, color: Colors.grey),
                   onTap: () {
+                    if (user.roleId == 1 && user.isChanged == false) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => MobileAddSysUserPage(
+                            sysUserList: allUserList,
+                            initUserInfo: user,
+                            type: 2, // edit
+                            isSuperAccount: true,
+                          ),
+                        ),
+                      ).then((_) => PublicFunctions.getAllSysUsers());
+                      return;
+                    }
+
                     // Go to user detail page
                     Navigator.push(
                       context,
