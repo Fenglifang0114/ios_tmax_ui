@@ -73,8 +73,20 @@ class BluetoothManager {
     }
 
     // 3. 极速重连优化：如果物理链路已通，直接发起握手测试
+    String cleanMac = mac.replaceAll(':', '').replaceAll('-', '').toUpperCase();
+    bool isSameDevice = false;
+    if (_device != null) {
+      String devRemoteId = _device!.remoteId.str.replaceAll(':', '').replaceAll('-', '').toUpperCase();
+      String devName = _device!.platformName;
+      if (Platform.isIOS) {
+        isSameDevice = devRemoteId == cleanMac || (cleanMac.isNotEmpty && devName.toUpperCase().contains(cleanMac));
+      } else {
+        isSameDevice = devRemoteId == cleanMac;
+      }
+    }
+
     if (_device != null && 
-        _device!.remoteId.str.replaceAll(':', '').toUpperCase() == mac.replaceAll(':', '').toUpperCase() &&
+        isSameDevice &&
         FlutterBluePlus.connectedDevices.any((d) => d.remoteId == _device!.remoteId)) {
       update("物理链路在线，正在激活查询...");
       currentScaleId = scaleId;
@@ -138,8 +150,17 @@ class BluetoothManager {
       
       var scanSub = FlutterBluePlus.onScanResults.listen((results) {
         for (ScanResult r in results) {
-          if (r.device.remoteId.str.replaceAll(':', '').toUpperCase() == 
-              mac.replaceAll(':', '').toUpperCase()) {
+          String devRemoteId = r.device.remoteId.str.replaceAll(':', '').replaceAll('-', '').toUpperCase();
+          String devName = r.device.platformName.isNotEmpty ? r.device.platformName : r.advertisementData.advName;
+          
+          bool isMatch = false;
+          if (Platform.isIOS) {
+            isMatch = devRemoteId == cleanMac || (cleanMac.isNotEmpty && devName.toUpperCase().contains(cleanMac));
+          } else {
+            isMatch = devRemoteId == cleanMac;
+          }
+
+          if (isMatch) {
             if (!deviceCompleter.isCompleted) {
               deviceCompleter.complete(r.device);
             }

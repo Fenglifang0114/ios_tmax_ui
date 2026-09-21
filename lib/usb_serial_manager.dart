@@ -87,6 +87,7 @@ class UsbSerialManager {
   }
 
   Future<void> changeBaudRate(int baudRate) async {
+    if (!Platform.isAndroid) return;
     if (_baudRate != baudRate) {
       _baudRate = baudRate;
       debugPrint("USB Serial Manager manually changed baud rate to: $_baudRate");
@@ -98,6 +99,7 @@ class UsbSerialManager {
   }
 
   Future<void> restoreBaudRate() async {
+    if (!Platform.isAndroid) return;
     // trigger a recalculation from the scale list to revert to the normal 115200 (or whatever is configured)
     int targetBaudRate = 9600; 
     for (var scale in myAllScalesList) {
@@ -130,6 +132,7 @@ class UsbSerialManager {
   }
 
   Future<void> connectToFirstAvailablePort() async {
+    if (!Platform.isAndroid) return;
     if (_isConnected) return;
     
     List<UsbDevice> devices = await UsbSerial.listDevices(); 

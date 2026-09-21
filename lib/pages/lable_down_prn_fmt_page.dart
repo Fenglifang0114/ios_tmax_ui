@@ -4,6 +4,7 @@ import 'dart:io';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:path/path.dart' as p;
 import 'package:t_max/pages/update_firmware_page.dart';
 import '../data/manager_scale_channel.dart';
 import 'package:t_max/functions/methods.dart';
@@ -569,8 +570,7 @@ class _DownloadPageState extends State<DownloadLabelPage> {
     if (!destinationFolder.existsSync()) {
       destinationFolder.createSync(recursive: true);
     }
-    File destinationFile = File(
-        '$destinationFolderPath\\${sourceFile.path.split('\\').last}'); // 目标文件路径
+    File destinationFile = File(p.join(destinationFolderPath, p.basename(sourceFile.path))); // 目标文件路径
 
     try {
       sourceFile.copySync(destinationFile.path);
@@ -941,8 +941,8 @@ class _DownloadPageState extends State<DownloadLabelPage> {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       // initialDirectory: directory,
       allowMultiple: false,
-      type: Platform.isAndroid ? FileType.any : FileType.custom,
-      allowedExtensions: Platform.isAndroid ? null : ['fmt'],
+      type: (Platform.isAndroid || Platform.isIOS) ? FileType.any : FileType.custom,
+      allowedExtensions: (Platform.isAndroid || Platform.isIOS) ? null : ['fmt'],
     );
     if (result != null) {
       String path = result.files.single.path!;

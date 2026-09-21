@@ -226,13 +226,52 @@ Future<String> readIpAddr() async {
 /// Flutter 框架的最核心根 Widget。
 /// 它负责在 Build 阶段前拉起后端的 [WebSocketManager] 进行实时通讯连接。
 /// 同时管理全局 [ThemeData] 的下发与多语言国际化 [localizationsDelegates] 的挂载支持。
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp(this.savedLanguage, this.ipAddr, this.savedDarkMode, {super.key});
   final String savedLanguage;
   final String ipAddr;
   final bool savedDarkMode;
 
-  // 重写build 方法，build 方法返回值为Widget类型，返回内容为屏幕上显示内容。
+  @override
+  State<MyApp> createState() => _MyAppState();
+
+  Future<bool> checkServerExists() async {
+    try {
+      var channel = await Socket.connect(ipAddress, webPort);
+      channel.close();
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+}
+
+class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      if (Platform.isAndroid || Platform.isIOS) {
+        final socketManager = WebSocketManager();
+        if (!socketManager.isConnected) {
+          debugPrint("App resumed from background, reconnecting WebSocket...");
+          socketManager.connect();
+        }
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     writelog('go to start ui');
@@ -248,7 +287,7 @@ class MyApp extends StatelessWidget {
 
     return MaterialApp(
       //自定义主题
-      theme: themeColor(colorTheme, savedDarkMode),
+      theme: themeColor(colorTheme, widget.savedDarkMode),
       scrollBehavior: DesktopScrollBehavior(), //触屏支持滚动
       // 国际化
       localizationsDelegates: const [
@@ -260,8 +299,8 @@ class MyApp extends StatelessWidget {
       ],
       // 应用支持的语言列表
       supportedLocales: S.delegate.supportedLocales,
-      locale: Locale(savedLanguage.split('_')[0],
-          savedLanguage.split('_')[1]), // locale: Locale('en', 'US'),
+      locale: Locale(widget.savedLanguage.split('_')[0],
+          widget.savedLanguage.split('_')[1]), // locale: Locale('en', 'US'),
       debugShowCheckedModeBanner: false,
       initialRoute: '/login',
       routes: {
@@ -269,15 +308,5 @@ class MyApp extends StatelessWidget {
         '/home': (context) => MyHomePage(),
       },
     );
-  }
-
-  Future<bool> checkServerExists() async {
-    try {
-      var channel = await Socket.connect(ipAddress, webPort);
-      channel.close();
-      return true;
-    } catch (e) {
-      return false;
-    }
   }
 }

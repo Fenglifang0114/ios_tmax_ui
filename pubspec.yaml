@@ -146,7 +146,7 @@ flutter:
     #     - asset: fonts/STSONG.TTF
     - family: simsunb
       fonts:    
-        - asset: fonts/simsunb.TTF
+        - asset: fonts/simsunb.ttf
     # - family: alibaba
     #   fonts:
     #     - asset: fonts/alibaba.ttf

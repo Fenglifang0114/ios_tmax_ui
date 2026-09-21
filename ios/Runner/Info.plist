@@ -58,5 +58,15 @@
 		<key>NSAllowsArbitraryLoads</key>
 		<true/>
 	</dict>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Permission is required to choose label background image from photo library.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Permission is required to save label images to photo library.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Camera permission is required to capture photos for label background.</string>
+	<key>UIFileSharingEnabled</key>
+	<true/>
+	<key>LSSupportsOpeningDocumentsInPlace</key>
+	<true/>
 </dict>
 </plist>

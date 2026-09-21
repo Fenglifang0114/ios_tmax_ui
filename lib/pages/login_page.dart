@@ -860,12 +860,12 @@ class DraggableTitleBar extends StatelessWidget {
     return GestureDetector(
       // 关键：添加拖拽事件处理
       onPanStart: (details) {
-        if (!Platform.isAndroid) windowManager.startDragging();
+        if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) windowManager.startDragging();
       },
 
       // 双击标题栏时切换窗口最大化/还原
       onDoubleTap: () async {
-        if (Platform.isAndroid) return;
+        if (!Platform.isWindows && !Platform.isLinux && !Platform.isMacOS) return;
         if (await windowManager.isMaximized()) {
           windowManager.unmaximize();
         } else {
