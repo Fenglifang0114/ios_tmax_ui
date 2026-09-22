@@ -67,7 +67,7 @@ jobs:
           rm -rf Payload
           mkdir -p Payload
           cp -R Runner.app Payload/
-          zip -r ../../../Runner.ipa Payload
+          zip -r -X ../../../Runner.ipa Payload
           cd ../../..
 
       - name: Upload iOS Real Device IPA
