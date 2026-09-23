@@ -372,6 +372,9 @@ class _PluEidtPageState extends State<PluEidtPage> {
     _eventbus3 = eventBus.on<EventRespProductAddOne>().listen((event) {
       if (mounted) {
         setState(() {
+          pluCtl.clear();
+          pluNameCtl.clear();
+          categoryCtl.clear();
           dataModels.clear();
           currentPage = 1;
           getCurrentPageDataFormDb();
@@ -433,7 +436,7 @@ class _PluEidtPageState extends State<PluEidtPage> {
         }
 
         SetPluFields revPluSetting = setPluFieldsFromJson(jsonStr);
-        if (revPluSetting.selPlu != null && revPluSetting.selPlu!.isNotEmpty) {
+        if (revPluSetting.selPlu != null) {
           fieldOrder = ["plu", "productName"];
           for (var item in revPluSetting.selPlu!) {
             if (!fieldOrder.contains(item)) {

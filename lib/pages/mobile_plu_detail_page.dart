@@ -283,24 +283,22 @@ class _MobilePluDetailPageState extends State<MobilePluDetailPage> {
           Expanded(
             child: ListView(
               children: [
-                if (widget.selField.contains('plu'))
-                  _buildTextFieldRow(
-                    localizedStrings?.gPluPlu ?? "PLU",
-                    pluCtl,
-                    "0-99999",
-                    keyboardType: TextInputType.number,
-                    inputFormatters: _pluFormatters,
-                    isRequired: true,
-                    isEnabled: widget.type == 0,
-                  ),
-                if (widget.selField.contains('productName'))
-                  _buildTextFieldRow(
-                    localizedStrings?.gPluPluName ?? "Product Name",
-                    pluNameCtl,
-                    "0-30 characters",
-                    inputFormatters: [LengthLimitingTextInputFormatter(30)],
-                    isRequired: true,
-                  ),
+                _buildTextFieldRow(
+                  localizedStrings?.gPluPlu ?? "PLU",
+                  pluCtl,
+                  "0-99999",
+                  keyboardType: TextInputType.number,
+                  inputFormatters: _pluFormatters,
+                  isRequired: true,
+                  isEnabled: widget.type == 0,
+                ),
+                _buildTextFieldRow(
+                  localizedStrings?.gPluPluName ?? "Product Name",
+                  pluNameCtl,
+                  "0-30 characters",
+                  inputFormatters: [LengthLimitingTextInputFormatter(30)],
+                  isRequired: true,
+                ),
                 if (widget.selField.contains('price'))
                   _buildTextFieldRow(
                     localizedStrings?.gPluPrice ?? "Price",
