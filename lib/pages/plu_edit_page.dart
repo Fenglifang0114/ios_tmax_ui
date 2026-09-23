@@ -319,6 +319,7 @@ class _PluEidtPageState extends State<PluEidtPage> {
         }
       } else {}
     });
+    fieldOrder.clear();
     for (var key in _columnVisibility.keys) {
       if (_columnVisibility[key] == true) {
         fieldOrder.add(key);
@@ -373,7 +374,6 @@ class _PluEidtPageState extends State<PluEidtPage> {
         setState(() {
           dataModels.clear();
           currentPage = 1;
-          _sortAscending = false;
           getCurrentPageDataFormDb();
         });
       }
@@ -424,32 +424,34 @@ class _PluEidtPageState extends State<PluEidtPage> {
     _eventbus7 = eventBus.on<EventRespPluSetting>().listen((event) {
       if (mounted) {
         String jsonStr = event.obj;
-        if (jsonStr.isEmpty ||
-            jsonStr.contains('fail') ||
-            jsonStr.contains('ok')) {
+        if (jsonStr.isEmpty || jsonStr.contains('fail')) {
+          return;
+        }
+        if (jsonStr.contains('ok')) {
+          PublicFunctions.getPluSetting();
           return;
         }
 
         SetPluFields revPluSetting = setPluFieldsFromJson(jsonStr);
-        if (revPluSetting.selPlu == null) {
-          fieldOrder = ["plu", "productName"];
-        } else {
+        if (revPluSetting.selPlu != null && revPluSetting.selPlu!.isNotEmpty) {
           fieldOrder = ["plu", "productName"];
           for (var item in revPluSetting.selPlu!) {
-            fieldOrder.add(item);
+            if (!fieldOrder.contains(item)) {
+              fieldOrder.add(item);
+            }
           }
-        }
 
-        for (var item in _columnVisibility.entries) {
-          if (fieldOrder.contains(item.key)) {
-            _columnVisibility[item.key] = true;
-          } else {
-            _columnVisibility[item.key] = false;
+          for (var key in _columnVisibility.keys) {
+            if (fieldOrder.contains(key)) {
+              _columnVisibility[key] = true;
+            } else {
+              _columnVisibility[key] = false;
+            }
           }
+          setState(() {
+            _onDataChanged();
+          });
         }
-        setState(() {
-          _onDataChanged();
-        });
       }
     });
     _eventbus8 = eventBus.on<EventRespDownAllPlu>().listen((event) {

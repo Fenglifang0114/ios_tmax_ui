@@ -1,4 +1,4 @@
-﻿import 'dart:convert';
+import 'dart:convert';
 
 List<PluData> myPluInfoList = [];
 
@@ -159,12 +159,12 @@ class PluDataFromDb {
         pretare: json["Pretare"],
         limitHigh: json["LimitHigh"],
         limitLow: json["LimitLow"],
-        createdAt: json["CreatedAt"] == null
+        createdAt: json["CreatedAt"] == null || json["CreatedAt"] == ""
             ? null
-            : DateTime.parse(json["CreatedAt"]).toLocal(),
-        updatedAt: json["UpdatedAt"] == null
+            : DateTime.tryParse(json["CreatedAt"])?.toLocal(),
+        updatedAt: json["UpdatedAt"] == null || json["UpdatedAt"] == ""
             ? null
-            : DateTime.parse(json["UpdatedAt"]).toLocal(),
+            : DateTime.tryParse(json["UpdatedAt"])?.toLocal(),
         createBy: json["CreateBy"],
         updateBy: json["UpdateBy"],
         enabled: json["Enabled"],
