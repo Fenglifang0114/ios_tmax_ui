@@ -1840,6 +1840,10 @@
   "@fFormulaDetailsTitle": {
     "description": "Title for formula details page or section"
   },
+  "fFormulaDetailsEmpty": "该配方没有配方明细，无法开始称重",
+  "@fFormulaDetailsEmpty": {
+    "description": "Prompt when formula has no details"
+  },
   "fTipTitle": "提示",
   "@fTipTitle": {
     "description": "Title for prompt dialog"

@@ -342,6 +342,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "fFormulaDetailsTitle": MessageLookupByLibrary.simpleMessage(
       "Formula Details",
     ),
+    "fFormulaDetailsEmpty": MessageLookupByLibrary.simpleMessage(
+      "The formula has no details and cannot start weighing",
+    ),
     "fFormulaIdAndBarcodeDuplicate": MessageLookupByLibrary.simpleMessage(
       "Formula ID and barcode already exist",
     ),

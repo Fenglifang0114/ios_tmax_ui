@@ -234,6 +234,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "fFormulaCompletedTip": MessageLookupByLibrary.simpleMessage("配方已完成"),
     "fFormulaCompletionMsg": MessageLookupByLibrary.simpleMessage("配方完成!"),
     "fFormulaDetailsTitle": MessageLookupByLibrary.simpleMessage("配方详情"),
+    "fFormulaDetailsEmpty": MessageLookupByLibrary.simpleMessage(
+      "该配方没有配方明细，无法开始称重",
+    ),
     "fFormulaIdAndBarcodeDuplicate": MessageLookupByLibrary.simpleMessage(
       "配方ID和验证条码重复",
     ),

@@ -1,4 +1,4 @@
-﻿import 'dart:async';
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../data/downloadresponse.dart';
@@ -143,7 +143,7 @@ class BluetoothDialogState extends State<BluetoothDialog> {
                                   btnWidth: 120,
                                   btnHeight: 40,
                                   icon: Icons.bluetooth_audio,
-                                  text: (localizedStrings?.get_bt_name ?? "get_bt_name"),
+                                  text: (localizedStrings?.gGetBluetoothName ?? "Get name"),
                                   onPressed: isSetting
                                       ? null
                                       : () {
@@ -160,7 +160,7 @@ class BluetoothDialogState extends State<BluetoothDialog> {
                                   btnWidth: 120,
                                   btnHeight: 40,
                                   icon: Icons.mode_edit,
-                                  text: (localizedStrings?.modify_bt_name ?? "modify_bt_name"),
+                                  text: (localizedStrings?.gModifyBluetoothName ?? "Modify name"),
                                   onPressed: isSetting
                                       ? null
                                       : () {
@@ -179,7 +179,7 @@ class BluetoothDialogState extends State<BluetoothDialog> {
                             ],
                           ),
                           const SizedBox(height: 10),
-                          Text(localizedStrings?.bt_emission_power ?? "bt_emission_power"),
+                          Text(localizedStrings?.gBluetoothEmissionPower ?? "Emission Power:"),
                           const SizedBox(height: 10),
                           SizedBox(
                             width: 400,
@@ -211,7 +211,7 @@ class BluetoothDialogState extends State<BluetoothDialog> {
                               btnWidth: 340,
                               btnHeight: 40,
                               icon: Icons.settings_bluetooth_outlined,
-                              text: (localizedStrings?.bt_modify_emission ?? "bt_modify_emission"),
+                              text: (localizedStrings?.gModifyBluetoothEmission ?? "Modify emission power"),
                               onPressed: isSetting
                                   ? null
                                   : () {

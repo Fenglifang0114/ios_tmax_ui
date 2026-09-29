@@ -198,7 +198,7 @@ class _MobileCheckCodeDialogState extends State<MobileCheckCodeDialog> {
                         ),
                       ),
                       child: Text(
-                        localizedStrings?.btnSkipRaw ?? 'Skip Ingredient',
+                        localizedStrings?.skipThisIngredient ?? 'Skip Ingredient',
                         style: const TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,

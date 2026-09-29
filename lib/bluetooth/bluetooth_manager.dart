@@ -31,20 +31,58 @@ class BluetoothManager {
   bool _isScanning = false;
   int? currentScaleId;
 
-  // 权限请求逻辑 (同步 test_bt)
-  Future<bool> requestPermissions() async {
+  // 确保系统权限及蓝牙适配器就绪 (兼容 iOS 异步初始化与 Android 动态权限)
+  Future<bool> ensureBluetoothReady() async {
     if (Platform.isAndroid) {
-      Map<Permission, PermissionStatus> statuses = await [
-        Permission.bluetoothScan,
-        Permission.bluetoothConnect,
-        Permission.location,
-      ].request();
+      try {
+        Map<Permission, PermissionStatus> statuses = await [
+          Permission.bluetoothScan,
+          Permission.bluetoothConnect,
+          Permission.location,
+        ].request();
 
-      bool allGranted = statuses.values.every((status) => status.isGranted);
-      return allGranted;
+        bool allGranted = statuses.values.every((status) => status.isGranted);
+        if (!allGranted) {
+          debugPrint("BLE: Android 缺少必要蓝牙或定位权限");
+          return false;
+        }
+      } catch (e) {
+        debugPrint("BLE: 请求 Android 权限异常: $e");
+      }
+    }
+
+    // 针对 iOS / Android: 轮询等待蓝牙状态变为 on，避免 CBCentralManager 初始化 unknown 时序问题
+    if (FlutterBluePlus.adapterStateNow != BluetoothAdapterState.on) {
+      debugPrint("BLE: 蓝牙当前状态为 ${FlutterBluePlus.adapterStateNow}，等待就绪...");
+      try {
+        final state = await FlutterBluePlus.adapterState
+            .where((s) =>
+                s == BluetoothAdapterState.on ||
+                s == BluetoothAdapterState.unauthorized ||
+                s == BluetoothAdapterState.off)
+            .first
+            .timeout(const Duration(seconds: 4));
+
+        if (state == BluetoothAdapterState.unauthorized) {
+          debugPrint("BLE: 缺少蓝牙权限 (系统未授权)");
+          return false;
+        }
+        if (state != BluetoothAdapterState.on) {
+          debugPrint("BLE: 蓝牙未就绪，当前状态: $state");
+          return false;
+        }
+      } catch (e) {
+        debugPrint("BLE: 等待蓝牙就绪超时: $e, adapterStateNow=${FlutterBluePlus.adapterStateNow}");
+        if (FlutterBluePlus.adapterStateNow != BluetoothAdapterState.on) {
+          return false;
+        }
+      }
     }
     return true;
   }
+
+  // 保持向后兼容
+  Future<bool> requestPermissions() async => ensureBluetoothReady();
 
   // 连接逻辑 (完全参考 test_bt 的 RK3288 优化版)
   Future<bool> connectToDevice(String mac, {int? scaleId, Function(String)? onStatusUpdate}) async {
@@ -115,21 +153,12 @@ class BluetoothManager {
     update("开始新连接流程 ($mac)...");
 
     try {
-      // 1. 权限检查
-      update("检查系统权限...");
-      if (!await requestPermissions()) {
-        update("错误: 缺少必要权限");
+      // 1. 权限与蓝牙状态检查
+      update("检查系统权限与蓝牙状态...");
+      if (!await ensureBluetoothReady()) {
+        update("错误: 蓝牙未开启或缺少必要权限");
         isConnecting = false;
-        finalUpdate(false, reason: localizedStrings?.btErrNoPermission);
-        return false;
-      }
-
-      // 2. 确保蓝牙开启
-      update("检查蓝牙状态...");
-      if (await FlutterBluePlus.adapterState.first != BluetoothAdapterState.on) {
-        update("错误: 蓝牙未开启");
-        isConnecting = false;
-        finalUpdate(false, reason: localizedStrings?.btErrNotEnabled);
+        finalUpdate(false, reason: localizedStrings?.btErrNotEnabled ?? localizedStrings?.btErrNoPermission);
         return false;
       }
 
@@ -326,63 +355,73 @@ class BluetoothManager {
     }
     _isScanning = true;
 
-    if (!await requestPermissions()) {
-      debugPrint("BLE: 缺少扫描权限");
-      _isScanning = false;
-      return;
-    }
-
-    // 确保蓝牙开启
-    if (await FlutterBluePlus.adapterState.first != BluetoothAdapterState.on) {
-      debugPrint("BLE: 蓝牙未开启，无法扫描");
-      return;
-    }
-
     try {
+      if (!await ensureBluetoothReady()) {
+        debugPrint("BLE: 蓝牙未就绪或缺少权限，无法扫描");
+        eventBus.fire(EventBtInfoList("fail"));
+        return;
+      }
+
       debugPrint("BLE: 开始扫描...");
-      await FlutterBluePlus.stopScan();
-      
-      List<BtInfo> foundDevices = [];
+      try {
+        await FlutterBluePlus.stopScan();
+      } catch (_) {}
+
+      final Map<String, BtInfo> deviceMap = {};
       StreamSubscription? scanSub;
-      
+
       scanSub = FlutterBluePlus.scanResults.listen((results) {
-        if (results.isEmpty) return; // 忽略空结果
-        
-        foundDevices.clear();
+        if (results.isEmpty) return;
+
+        bool hasNewOrUpdated = false;
         for (ScanResult r in results) {
           String name = r.device.platformName;
           if (name.isEmpty) {
             name = r.advertisementData.advName;
           }
           if (name.isEmpty) {
-            name = "Unknown (${r.device.remoteId.str})"; // 即使没名字也显示，防止空白
+            final idStr = r.device.remoteId.str;
+            name = "Scale (${idStr.length > 8 ? idStr.substring(0, 8) : idStr})";
           }
-          
-          foundDevices.add(BtInfo(
+
+          final id = r.device.remoteId.str;
+          if (!deviceMap.containsKey(id) || deviceMap[id]!.rssi != r.rssi) {
+            hasNewOrUpdated = true;
+          }
+
+          deviceMap[id] = BtInfo(
             name: name,
-            mac: r.device.remoteId.str,
+            mac: id,
             rssi: r.rssi,
-          ));
+          );
         }
-        
-        debugPrint("BLE: 发现 ${foundDevices.length} 个设备");
-        String jsonStr = jsonEncode(foundDevices.map((e) => e.toJson()).toList());
-        eventBus.fire(EventBtInfoList(jsonStr));
+
+        if (hasNewOrUpdated) {
+          final foundList = deviceMap.values.toList();
+          debugPrint("BLE: 发现 ${foundList.length} 个设备");
+          String jsonStr = jsonEncode(foundList.map((e) => e.toJson()).toList());
+          eventBus.fire(EventBtInfoList(jsonStr));
+        }
       });
 
+      const scanDuration = Duration(seconds: 10);
       await FlutterBluePlus.startScan(
-        timeout: const Duration(seconds: 10),
+        timeout: scanDuration,
         androidUsesFineLocation: true,
+        continuousUpdates: true, // 确保 iOS 收到包含名称的 Scan Response 广播包
       );
 
-      // 等待扫描停止
-      await FlutterBluePlus.isScanning.where((scanning) => !scanning).first;
-      
-      debugPrint("BLE: 扫描结束");
+      // 安全等待扫描结束
+      await Future.delayed(scanDuration);
+      try {
+        await FlutterBluePlus.stopScan();
+      } catch (_) {}
+
       await scanSub.cancel();
-      
+      debugPrint("BLE: 扫描结束，共发现 ${deviceMap.length} 个设备");
+
       // 扫描结束后，如果依然没设备，发送一个空列表以通知 UI 停止加载状态
-      if (foundDevices.isEmpty) {
+      if (deviceMap.isEmpty) {
         eventBus.fire(EventBtInfoList("[]"));
       }
     } catch (e) {

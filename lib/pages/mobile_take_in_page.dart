@@ -1506,7 +1506,7 @@ class _MobileTakeInPageState extends State<MobileTakeInPage> {
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.end,
                                 children: [
-                                  Text(localizedStrings?.fWeightCol ?? "Weight",
+                                  Text(localizedStrings?.gRptWeight ?? "Weight",
                                       style: const TextStyle(
                                           color: Color(0xFF94A3B8),
                                           fontSize: 12)),

@@ -4347,6 +4347,16 @@ class S {
     );
   }
 
+  /// `The formula has no details and cannot start weighing`
+  String get fFormulaDetailsEmpty {
+    return Intl.message(
+      'The formula has no details and cannot start weighing',
+      name: 'fFormulaDetailsEmpty',
+      desc: 'Prompt when formula has no details',
+      args: [],
+    );
+  }
+
   /// `Prompt`
   String get fTipTitle {
     return Intl.message(

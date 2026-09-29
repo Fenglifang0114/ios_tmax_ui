@@ -733,7 +733,7 @@ class _MobileWeighingDataCollectionPageState
               Text(
                 _isSummaryMode
                     ? (localizedStrings?.gTipWeightSummationMode ?? "Weight Summary Mode")
-                    : (localizedStrings?.gTipWeightIndependentMode ?? "Weight Independent Mode"),
+                    : (localizedStrings?.gTipStandaloneMode ?? "Weight Independent Mode"),
                 style: const TextStyle(
                   color: Color(0xFF334155),
                   fontSize: 15,
@@ -1979,7 +1979,7 @@ class _MobileWeighingDataCollectionPageState
                                 });
                               },
                             ),
-                            Text(localizedStrings?.gTipSelectAll ?? "Select all",
+                            Text(localizedStrings?.gSelectAll ?? "Select all",
                                 style: const TextStyle(
                                     fontSize: 14, fontWeight: FontWeight.w600)),
                           ],

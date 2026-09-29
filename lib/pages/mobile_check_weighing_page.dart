@@ -509,7 +509,7 @@ class _MobileCheckWeighingPageState extends State<MobileCheckWeighingPage> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(localizedStrings?.gHighLimit ?? "High",
+                          Text(localizedStrings?.gPluLimitHigh ?? "High",
                               style: const TextStyle(fontSize: 15, color: Color(0xFF334155))),
                           Container(
                             width: 140,
@@ -538,7 +538,7 @@ class _MobileCheckWeighingPageState extends State<MobileCheckWeighingPage> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(localizedStrings?.gLowLimit ?? "Low",
+                          Text(localizedStrings?.gPluLimitLow ?? "Low",
                               style: const TextStyle(fontSize: 15, color: Color(0xFF334155))),
                           Container(
                             width: 140,
@@ -2059,7 +2059,7 @@ class _MobileCheckWeighingPageState extends State<MobileCheckWeighingPage> {
                                 });
                               },
                             ),
-                            Text(localizedStrings?.gTipSelectAll ?? "Select all",
+                            Text(localizedStrings?.gSelectAll ?? "Select all",
                                 style: const TextStyle(
                                     fontSize: 14, fontWeight: FontWeight.w600)),
                           ],

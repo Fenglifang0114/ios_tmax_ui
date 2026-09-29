@@ -74,7 +74,7 @@ class _MobilePermissionSettingsPageState extends State<MobilePermissionSettingsP
               });
             },
           ),
-          title: Text(localizedStrings?.gTipSelectAll ?? "Select All", style: const TextStyle(color: Colors.blue)),
+          title: Text(localizedStrings?.gSelectAll ?? "Select All", style: const TextStyle(color: Colors.blue)),
         ),
         // Items
         ...menus.map((menu) {

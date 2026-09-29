@@ -1840,6 +1840,10 @@
   "@fFormulaDetailsTitle": {
     "description": "Title for formula details page or section"
   },
+  "fFormulaDetailsEmpty": "The formula has no details and cannot start weighing",
+  "@fFormulaDetailsEmpty": {
+    "description": "Prompt when formula has no details"
+  },
   "fTipTitle": "Prompt",
   "@fTipTitle": {
     "description": "Title for prompt dialog"

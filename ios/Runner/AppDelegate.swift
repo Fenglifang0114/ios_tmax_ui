@@ -4,7 +4,7 @@ import Flutter
 import Tmaxbackend
 #endif
 
-@UIApplicationMain
+@main
 @objc class AppDelegate: FlutterAppDelegate {
   private var backendStarted = false
 

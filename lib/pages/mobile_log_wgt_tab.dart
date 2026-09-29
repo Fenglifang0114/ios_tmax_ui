@@ -321,7 +321,7 @@ class _MobileLogWgtTabState extends State<MobileLogWgtTab> {
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
                   ),
-                  child: Text(localizedStrings?.clear ?? "Clear", style: const TextStyle(color: Colors.white, fontSize: 16)),
+                  child: Text(localizedStrings?.gBtnClear ?? "Clear", style: const TextStyle(color: Colors.white, fontSize: 16)),
                 ),
               ),
               const SizedBox(width: 16),
