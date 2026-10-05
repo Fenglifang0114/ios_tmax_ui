@@ -297,7 +297,7 @@ extension MultiScaleManagementInfoExt on MultiScaleManagementState {
                     if (scaleType == btScaleType) {
                       showConnectionProgressDialog(context, btScaleType, selScaleId, mac: macCtl.text);
                     } else {
-                      // 缃戠粶绉ゆ垨涓插彛绉わ細涓嶅脊绐楋紝鐩存帴鏄剧ず Tip 骞跺彂閫佹寚浠?
+                      // 网络秤或串口秤：不弹窗，直接显示 Tip 并发送指令
                       setState(() {
                         isTesting = true;
                       });
@@ -317,7 +317,7 @@ extension MultiScaleManagementInfoExt on MultiScaleManagementState {
                 ? () {
                     setState(() {
                       isDel = true;
-                      // 鍒犻櫎鍓嶅厛鍋滄杩炵画鍙戦€?
+                      // 删除前先停止连续发送
                       PublicFunctions.stopWeight(selScaleId);
                       delScale();
                       selScaleId = -1;
@@ -352,6 +352,7 @@ extension MultiScaleManagementInfoExt on MultiScaleManagementState {
     bool isDone = false;
     bool isSuccess = false;
     StreamSubscription? subscription;
+    Timer? timeoutTimer;
 
     showDialog(
       context: context,
@@ -359,7 +360,7 @@ extension MultiScaleManagementInfoExt on MultiScaleManagementState {
       builder: (context) {
         return StatefulBuilder(
           builder: (context, setDialogState) {
-            // 寮€濮嬭繛鎺ワ紙浠呮墽琛屼竴娆★級
+            // 开始连接（仅执行一次）
             if (logs.isEmpty) {
               if (type == btScaleType) {
                 logs.add("${DateTime.now().toString().split(' ')[1].substring(0, 8)}: ${localizedStrings?.gTipConnecting ?? 'Connecting'} ${localizedStrings?.bluetooth ?? 'Bluetooth'}...");
@@ -378,26 +379,43 @@ extension MultiScaleManagementInfoExt on MultiScaleManagementState {
                   });
                 });
               } else {
-                // 缃戠粶杩炴帴鎴栦覆鍙ｈ繛鎺?
-                // 缃戠粶杩炴帴鎴栦覆鍙ｈ繛鎺?
+                // 网络连接或串口连接
                 String typeLabel = type == netScaleType ? "Network" : "Serial";
                 String typeDisplay = type == netScaleType ? (localizedStrings?.gNetwork ?? "Network") : (localizedStrings?.gSerialPort ?? "Serial Port");
-                logs.add("${DateTime.now().toString().split(' ')[1].substring(0, 8)}: [$typeLabel] Preparing connection test ($typeDisplay)...");
+                logs.add("${DateTime.now().toString().split(' ')[1].substring(0, 8)}: [$typeLabel] ${localizedStrings?.gTipConnecting ?? 'Connecting'} ($typeDisplay)...");
                 
+                timeoutTimer = Timer(const Duration(seconds: 5), () {
+                  if (!isDone) {
+                    setDialogState(() {
+                      isDone = true;
+                      isSuccess = false;
+                      logs.add("${DateTime.now().toString().split(' ')[1].substring(0, 8)}: [$typeLabel] ${localizedStrings?.gTipConnectFail ?? 'Connection timeout'}");
+                    });
+                    subscription?.cancel();
+                    setState(() {
+                      isTesting = false;
+                    });
+                  }
+                });
+
                 subscription = eventBus.on<EventRespCheckNetScale>().listen((event) {
                   OnlineInfo info = event.obj;
                   if (info.scaleId == scaleId) {
-                      setDialogState(() {
+                    timeoutTimer?.cancel();
+                    setDialogState(() {
                       isDone = true;
                       isSuccess = info.factInfo?.modelName != null && info.factInfo!.modelName!.isNotEmpty;
                       String resultLabel = isSuccess ? (localizedStrings?.success ?? "Success") : (localizedStrings?.failure ?? "Failure");
                       logs.add("${DateTime.now().toString().split(' ')[1].substring(0, 8)}: [$typeLabel] Test completed. Result: $resultLabel");
                     });
                     subscription?.cancel();
+                    setState(() {
+                      isTesting = false;
+                    });
                   }
                 });
 
-                // 鍙戦€佸悗绔祴璇曟寚浠?
+                // 发送后端测试指令
                 PublicFunctions.checkSerialPort(scaleId);
                 setState(() {
                    isTesting = true;
@@ -484,6 +502,7 @@ extension MultiScaleManagementInfoExt on MultiScaleManagementState {
         );
       },
     ).then((_) {
+      timeoutTimer?.cancel();
       subscription?.cancel();
       if (isTesting) {
         setState(() {

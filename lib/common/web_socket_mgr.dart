@@ -67,16 +67,17 @@ class WebSocketScaleManager {
     }
   }
 
-  // 发送消息到特定scaleId的连接
+  // 发送消息到特定scaleId的连接 (若尚未就绪会自动缓冲排队)
   void sendMessage(int scaleId, String message) {
-    if (!_connections.containsKey(scaleId) ||
-        !_connections[scaleId]!.isConnected) {
-      debugPrint('ScaleId $scaleId 连接未就绪，无法发送消息');
-      return;
+    var connection = _connections[scaleId];
+    if (connection == null) {
+      debugPrint('ScaleId $scaleId 连接不存在，自动创建并缓冲消息');
+      connect(scaleId, "ws://127.0.0.1:7878/tmax?scaleid=$scaleId");
+      connection = _connections[scaleId];
     }
 
     try {
-      _connections[scaleId]!.sendMessage(message);
+      connection?.sendMessage(message);
     } catch (e) {
       debugPrint('ScaleId $scaleId 消息发送失败: $e');
     }
@@ -153,6 +154,8 @@ class _ScaleConnection {
   final Duration _reconnectInterval = Duration(seconds: 5);
   final Duration _heartbeatInterval = Duration(seconds: 30);
 
+  final List<String> _pendingMessages = [];
+
   _ScaleConnection(this.scaleId, this.url);
 
   bool get isConnected => _isConnected;
@@ -186,7 +189,11 @@ class _ScaleConnection {
       _isConnecting = false;
       _reconnectAttempts = 0;
 
-      // debugPrint('ScaleId $scaleId 连接成功');
+      // 冲刷发送排队中的消息
+      while (_pendingMessages.isNotEmpty) {
+        final pendingMsg = _pendingMessages.removeAt(0);
+        sendMessage(pendingMsg);
+      }
 
       // 启动心跳
       _startHeartbeat();
@@ -206,7 +213,8 @@ class _ScaleConnection {
       }
       _channel!.sink.add(message);
     } else {
-      writelog("[WS_OUT_ERR] ScaleId $scaleId not connected! message: $message");
+      _pendingMessages.add(message);
+      writelog("[WS_BUFFER] ScaleId $scaleId not connected yet, buffered message");
     }
   }
 

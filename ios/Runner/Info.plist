@@ -41,6 +41,10 @@
 	<string>Camera permission is required to capture photos for label background.</string>
 	<key>NSLocalNetworkUsageDescription</key>
 	<string>Local network access is required to communicate with local services.</string>
+	<key>NSBonjourServices</key>
+	<array>
+		<string>_tmax-scale._tcp</string>
+	</array>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>Permission is required to save label images to photo library.</string>
 	<key>NSPhotoLibraryUsageDescription</key>

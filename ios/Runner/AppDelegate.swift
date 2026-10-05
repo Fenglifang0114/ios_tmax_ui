@@ -1,5 +1,6 @@
 import UIKit
 import Flutter
+import Network
 #if canImport(Tmaxbackend)
 import Tmaxbackend
 #endif
@@ -7,6 +8,7 @@ import Tmaxbackend
 @main
 @objc class AppDelegate: FlutterAppDelegate {
   private var backendStarted = false
+  private var localNetworkBrowser: NWBrowser?
 
   override func application(
     _ application: UIApplication,
@@ -14,6 +16,7 @@ import Tmaxbackend
   ) -> Bool {
     // 应用启动时立即拉起 Go 后端引擎
     startGoBackend()
+    triggerLocalNetworkPermissionPrompt()
 
     let controller : FlutterViewController = window?.rootViewController as! FlutterViewController
     let backendChannel = FlutterMethodChannel(name: "com.tmax.service/backend",
@@ -32,6 +35,19 @@ import Tmaxbackend
 
     GeneratedPluginRegistrant.register(with: self)
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
+  }
+
+  // 触发 iOS 14+ 本地网络权限授权弹窗
+  private func triggerLocalNetworkPermissionPrompt() {
+    let browser = NWBrowser(for: .bonjour(type: "_tmax-scale._tcp", domain: nil), using: .tcp)
+    self.localNetworkBrowser = browser
+    browser.start(queue: .main)
+
+    // 探测 3 秒后停止，避免长期占用电量
+    DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) { [weak self] in
+      self?.localNetworkBrowser?.cancel()
+      self?.localNetworkBrowser = nil
+    }
   }
 
   private func startGoBackend() {

@@ -1,4 +1,4 @@
-﻿import 'dart:convert';
+import 'dart:convert';
 
 // To parse this JSON data, do
 //
@@ -283,10 +283,10 @@ class ScaleIsOnline {
   });
 
   factory ScaleIsOnline.fromJson(Map<String, dynamic> json) => ScaleIsOnline(
-        scaleId: json["scaleId"],
-        isOnline: json["isOnline"],
-        modelName: json["modelName"],
-        sn: json["sn"],
+        scaleId: json["scaleId"] ?? json["ScaleId"],
+        isOnline: json["isOnline"] ?? json["IsOnline"],
+        modelName: json["modelName"] ?? json["ModelName"],
+        sn: json["sn"] ?? json["Sn"] ?? json["ScaleSn"],
       );
 
   Map<String, dynamic> toJson() => {

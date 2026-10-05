@@ -200,10 +200,10 @@ class RespMsgType {
     try {
       final bodyStr = data['MsgBody'] as String;
       final body = json.decode(bodyStr);
-      int id = body['ScaleId'];
-      String model = body['ModelName'] ?? "";
-      String sn = body['ScaleSn'] ?? "";
-      bool isOnline = body['IsOnline'] ?? false;
+      int id = body['scaleId'] ?? body['ScaleId'];
+      String model = body['modelName'] ?? body['ModelName'] ?? "";
+      String sn = body['sn'] ?? body['Sn'] ?? body['ScaleSn'] ?? "";
+      bool isOnline = body['isOnline'] ?? body['IsOnline'] ?? false;
 
       debugPrint("BLE: 收到型号更新 - ID: $id, Model: $model, SN: $sn");
 
