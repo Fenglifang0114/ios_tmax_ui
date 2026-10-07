@@ -1466,11 +1466,12 @@ class _MobileWeighingDataCollectionPageState
                               color: Color(0xFF1E293B)),
                           onPressed: () => Navigator.pop(context),
                         ),
-                        const Expanded(
+                        Expanded(
                           child: Text(
-                            "Parameter settings",
+                            localizedStrings?.gParameterSettingsTitle ??
+                                "Parameter settings",
                             textAlign: TextAlign.center,
-                            style: TextStyle(
+                            style: const TextStyle(
                               color: Color(0xFF1E293B),
                               fontSize: 18,
                               fontWeight: FontWeight.w600,
@@ -1495,9 +1496,12 @@ class _MobileWeighingDataCollectionPageState
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const Text("Weight Summary Mode",
-                                  style: TextStyle(
-                                      fontSize: 15, color: Color(0xFF334155))),
+                              Text(
+                                localizedStrings?.gTipWeightSummationMode ??
+                                    "Weight Summary Mode",
+                                style: const TextStyle(
+                                    fontSize: 15, color: Color(0xFF334155)),
+                              ),
                               Switch(
                                 value: tempSummaryMode,
                                 activeColor: const Color(0xFF10B981),
@@ -1511,15 +1515,27 @@ class _MobileWeighingDataCollectionPageState
                         const Divider(height: 1, color: Color(0xFFF1F5F9)),
                         // Save Mode Row
                         _buildSettingOptionRow(
-                          title: "Save Mode",
-                          val: tempSaveMode,
+                          title: localizedStrings?.save_mode ?? "Save Mode",
+                          val: tempSaveMode == "Auto"
+                              ? (localizedStrings?.gTipAuto ?? "Auto")
+                              : (localizedStrings?.gTipManual ?? "Manual"),
                           onTap: () {
                             _openSubSelectionModal(
-                              "Save Mode",
-                              ["Manual", "Auto"],
-                              tempSaveMode,
+                              localizedStrings?.save_mode ?? "Save Mode",
+                              [
+                                localizedStrings?.gTipManual ?? "Manual",
+                                localizedStrings?.gTipAuto ?? "Auto",
+                              ],
+                              tempSaveMode == "Auto"
+                                  ? (localizedStrings?.gTipAuto ?? "Auto")
+                                  : (localizedStrings?.gTipManual ?? "Manual"),
                               (selected) {
-                                setModalState(() => tempSaveMode = selected);
+                                setModalState(() {
+                                  tempSaveMode = (selected.contains("Auto") ||
+                                          selected.contains("自动"))
+                                      ? "Auto"
+                                      : "Manual";
+                                });
                               },
                             );
                           },
@@ -1531,7 +1547,9 @@ class _MobileWeighingDataCollectionPageState
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(localizedStrings?.gTipStableTime ?? "Stable Time (s)",
+                              Text(
+                                  localizedStrings?.gTipStableTime ??
+                                      "Stable Time (s)",
                                   style: const TextStyle(
                                       fontSize: 15, color: Color(0xFF334155))),
                               Container(
@@ -1564,11 +1582,11 @@ class _MobileWeighingDataCollectionPageState
                         const Divider(height: 1, color: Color(0xFFF1F5F9)),
                         // Date Format Row
                         _buildSettingOptionRow(
-                          title: "Date Format",
+                          title: localizedStrings?.date_format ?? "Date Format",
                           val: tempDateFormat,
                           onTap: () {
                             _openSubSelectionModal(
-                              "Date Format",
+                              localizedStrings?.date_format ?? "Date Format",
                               ["yy-mm-dd", "dd-mm-yy", "mm-dd-yy"],
                               tempDateFormat,
                               (selected) {
@@ -1580,12 +1598,14 @@ class _MobileWeighingDataCollectionPageState
                         const Divider(height: 1, color: Color(0xFFF1F5F9)),
                         // Date Separator Row
                         _buildSettingOptionRow(
-                          title: "Date Separator",
+                          title: localizedStrings?.gDateSeparator ??
+                              "Date Separator",
                           val: tempDateSeparator,
                           onTap: () {
                             _openSubSelectionModal(
-                              "Date Separator",
-                              [".", "-", "/"],
+                              localizedStrings?.gDateSeparator ??
+                                  "Date Separator",
+                              ["/", "-", "."],
                               tempDateSeparator,
                               (selected) {
                                 setModalState(

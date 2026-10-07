@@ -32,6 +32,10 @@ class _MobileTagStyleCanvasPageState extends State<MobileTagStyleCanvasPage> {
   List<double> redVerticalLinesMm = [];
   List<double> redHorizontalLinesMm = [];
 
+  // Raw un-snapped drag position (in physical mm) to track user's real touch without snap deadlock
+  Offset? _rawDragPositionMm;
+  DraggableElement? _draggingElement;
+
   @override
   void initState() {
     super.initState();
@@ -107,81 +111,176 @@ class _MobileTagStyleCanvasPageState extends State<MobileTagStyleCanvasPage> {
     });
   }
 
+  void _onPanStart(DraggableElement el) {
+    _draggingElement = el;
+    _rawDragPositionMm = el.position;
+    if (selectedElement != el) {
+      setState(() {
+        selectedElement = el;
+      });
+    }
+  }
+
   void _updatePanWithAlignment(
       DraggableElement el, DragUpdateDetails details, double scaleFactor) {
+    if (_draggingElement != el || _rawDragPositionMm == null) {
+      _draggingElement = el;
+      _rawDragPositionMm = el.position;
+    }
+
     final deltaMmX = details.delta.dx / scaleFactor;
     final deltaMmY = details.delta.dy / scaleFactor;
 
-    double newX = (el.position.dx + deltaMmX)
-        .clamp(0.0, widget.widthMm - el.size.width);
-    double newY = (el.position.dy + deltaMmY)
-        .clamp(0.0, widget.heightMm - el.size.height);
+    final maxX = (widget.widthMm - el.size.width).clamp(0.0, double.infinity);
+    final maxY = (widget.heightMm - el.size.height).clamp(0.0, double.infinity);
 
-    final snapThresholdMm = 1.2;
-    final newVerts = <double>{};
-    final newHorizs = <double>{};
+    // 1. Accumulate un-snapped position strictly following the finger
+    final rawX = (_rawDragPositionMm!.dx + deltaMmX).clamp(0.0, maxX);
+    final rawY = (_rawDragPositionMm!.dy + deltaMmY).clamp(0.0, maxY);
+    _rawDragPositionMm = Offset(rawX, rawY);
+
+    // 2. Adaptive snap threshold: around 5-6 screen pixels converted to mm (range 0.4mm ~ 1.0mm)
+    final snapThresholdMm = (5.0 / scaleFactor).clamp(0.4, 1.0);
+
+    double displayX = rawX;
+    double displayY = rawY;
+
+    final Set<double> newVerts = {};
+    final Set<double> newHorizs = {};
+
+    final w = el.size.width;
+    final h = el.size.height;
+
+    double minDistanceX = snapThresholdMm;
+    double minDistanceY = snapThresholdMm;
+    double? snappedX;
+    double? snappedY;
 
     for (var other in elements) {
       if (other == el) continue;
 
-      final w = el.size.width;
-      final h = el.size.height;
       final otherW = other.size.width;
       final otherH = other.size.height;
 
-      // --- Left Alignment ---
-      if ((newX - other.position.dx).abs() < snapThresholdMm) {
-        newX = other.position.dx;
+      // --- Vertical Alignment (X axis) ---
+      // 1. Left to Left
+      final dLeftLeft = (rawX - other.position.dx).abs();
+      if (dLeftLeft < minDistanceX) {
+        minDistanceX = dLeftLeft;
+        snappedX = other.position.dx;
+        newVerts
+          ..clear()
+          ..add(other.position.dx);
+      } else if ((dLeftLeft - minDistanceX).abs() < 0.001 && snappedX != null) {
         newVerts.add(other.position.dx);
       }
-      // --- Right Alignment ---
-      else if (((newX + w) - (other.position.dx + otherW)).abs() <
-          snapThresholdMm) {
-        newX = other.position.dx + otherW - w;
-        newVerts.add(other.position.dx + otherW);
-      }
-      // --- Right to Left Alignment ---
-      else if (((newX + w) - other.position.dx).abs() < snapThresholdMm) {
-        newX = other.position.dx - w;
-        newVerts.add(other.position.dx);
-      }
-      // --- Left to Right Alignment ---
-      else if ((newX - (other.position.dx + otherW)).abs() < snapThresholdMm) {
-        newX = other.position.dx + otherW;
+
+      // 2. Right to Right
+      final dRightRight = ((rawX + w) - (other.position.dx + otherW)).abs();
+      if (dRightRight < minDistanceX) {
+        minDistanceX = dRightRight;
+        snappedX = other.position.dx + otherW - w;
+        newVerts
+          ..clear()
+          ..add(other.position.dx + otherW);
+      } else if ((dRightRight - minDistanceX).abs() < 0.001 && snappedX != null) {
         newVerts.add(other.position.dx + otherW);
       }
 
-      // --- Top Alignment ---
-      if ((newY - other.position.dy).abs() < snapThresholdMm) {
-        newY = other.position.dy;
+      // 3. Right to Left
+      final dRightLeft = ((rawX + w) - other.position.dx).abs();
+      if (dRightLeft < minDistanceX) {
+        minDistanceX = dRightLeft;
+        snappedX = other.position.dx - w;
+        newVerts
+          ..clear()
+          ..add(other.position.dx);
+      } else if ((dRightLeft - minDistanceX).abs() < 0.001 && snappedX != null) {
+        newVerts.add(other.position.dx);
+      }
+
+      // 4. Left to Right
+      final dLeftRight = (rawX - (other.position.dx + otherW)).abs();
+      if (dLeftRight < minDistanceX) {
+        minDistanceX = dLeftRight;
+        snappedX = other.position.dx + otherW;
+        newVerts
+          ..clear()
+          ..add(other.position.dx + otherW);
+      } else if ((dLeftRight - minDistanceX).abs() < 0.001 && snappedX != null) {
+        newVerts.add(other.position.dx + otherW);
+      }
+
+      // --- Horizontal Alignment (Y axis) ---
+      // 1. Top to Top
+      final dTopTop = (rawY - other.position.dy).abs();
+      if (dTopTop < minDistanceY) {
+        minDistanceY = dTopTop;
+        snappedY = other.position.dy;
+        newHorizs
+          ..clear()
+          ..add(other.position.dy);
+      } else if ((dTopTop - minDistanceY).abs() < 0.001 && snappedY != null) {
         newHorizs.add(other.position.dy);
       }
-      // --- Bottom Alignment ---
-      else if (((newY + h) - (other.position.dy + otherH)).abs() <
-          snapThresholdMm) {
-        newY = other.position.dy + otherH - h;
+
+      // 2. Bottom to Bottom
+      final dBottomBottom = ((rawY + h) - (other.position.dy + otherH)).abs();
+      if (dBottomBottom < minDistanceY) {
+        minDistanceY = dBottomBottom;
+        snappedY = other.position.dy + otherH - h;
+        newHorizs
+          ..clear()
+          ..add(other.position.dy + otherH);
+      } else if ((dBottomBottom - minDistanceY).abs() < 0.001 && snappedY != null) {
         newHorizs.add(other.position.dy + otherH);
       }
-      // --- Top to Bottom Alignment ---
-      else if ((newY - (other.position.dy + otherH)).abs() < snapThresholdMm) {
-        newY = other.position.dy + otherH;
+
+      // 3. Top to Bottom
+      final dTopBottom = (rawY - (other.position.dy + otherH)).abs();
+      if (dTopBottom < minDistanceY) {
+        minDistanceY = dTopBottom;
+        snappedY = other.position.dy + otherH;
+        newHorizs
+          ..clear()
+          ..add(other.position.dy + otherH);
+      } else if ((dTopBottom - minDistanceY).abs() < 0.001 && snappedY != null) {
         newHorizs.add(other.position.dy + otherH);
       }
-      // --- Bottom to Top Alignment ---
-      else if (((newY + h) - other.position.dy).abs() < snapThresholdMm) {
-        newY = other.position.dy - h;
+
+      // 4. Bottom to Top
+      final dBottomTop = ((rawY + h) - other.position.dy).abs();
+      if (dBottomTop < minDistanceY) {
+        minDistanceY = dBottomTop;
+        snappedY = other.position.dy - h;
+        newHorizs
+          ..clear()
+          ..add(other.position.dy);
+      } else if ((dBottomTop - minDistanceY).abs() < 0.001 && snappedY != null) {
         newHorizs.add(other.position.dy);
       }
     }
 
+    if (snappedX != null) {
+      displayX = snappedX;
+    }
+    if (snappedY != null) {
+      displayY = snappedY;
+    }
+
     setState(() {
-      el.position = Offset(newX, newY);
+      el.position = Offset(
+        displayX.clamp(0.0, maxX),
+        displayY.clamp(0.0, maxY),
+      );
       redVerticalLinesMm = newVerts.toList();
       redHorizontalLinesMm = newHorizs.toList();
     });
   }
 
   void _clearAlignmentLines() {
+    _rawDragPositionMm = null;
+    _draggingElement = null;
     if (redVerticalLinesMm.isNotEmpty || redHorizontalLinesMm.isNotEmpty) {
       setState(() {
         redVerticalLinesMm.clear();
@@ -193,7 +292,7 @@ class _MobileTagStyleCanvasPageState extends State<MobileTagStyleCanvasPage> {
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
-    final rulerThickness = 24.0;
+    const rulerThickness = 24.0;
 
     final maxAvailableW = screenSize.width - rulerThickness - 32.0;
     final maxAvailableH = screenSize.height - 200.0;
@@ -286,7 +385,7 @@ class _MobileTagStyleCanvasPageState extends State<MobileTagStyleCanvasPage> {
                     Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        SizedBox(width: rulerThickness, height: rulerThickness),
+                        const SizedBox(width: rulerThickness, height: rulerThickness),
                         CustomPaint(
                           size: Size(canvasPxWidth, rulerThickness),
                           painter: TopRulerPainter(
@@ -337,6 +436,7 @@ class _MobileTagStyleCanvasPageState extends State<MobileTagStyleCanvasPage> {
                                         selectedElement = el;
                                       });
                                     },
+                                    onPanStart: (_) => _onPanStart(el),
                                     onPanUpdate: (details) {
                                       _updatePanWithAlignment(
                                           el, details, scaleFactor);
@@ -370,9 +470,11 @@ class _MobileTagStyleCanvasPageState extends State<MobileTagStyleCanvasPage> {
                                   left: xMm * scaleFactor,
                                   top: 0,
                                   bottom: 0,
-                                  child: Container(
-                                    width: 1.0,
-                                    color: Colors.redAccent,
+                                  child: IgnorePointer(
+                                    child: Container(
+                                      width: 1.0,
+                                      color: Colors.redAccent,
+                                    ),
                                   ),
                                 );
                               }),
@@ -383,9 +485,11 @@ class _MobileTagStyleCanvasPageState extends State<MobileTagStyleCanvasPage> {
                                   top: yMm * scaleFactor,
                                   left: 0,
                                   right: 0,
-                                  child: Container(
-                                    height: 1.0,
-                                    color: Colors.redAccent,
+                                  child: IgnorePointer(
+                                    child: Container(
+                                      height: 1.0,
+                                      color: Colors.redAccent,
+                                    ),
                                   ),
                                 );
                               }),

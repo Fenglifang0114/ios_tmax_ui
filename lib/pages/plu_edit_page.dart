@@ -946,18 +946,19 @@ class _PluEidtPageState extends State<PluEidtPage> {
     return (num * multiplier).round() / multiplier;
   }
 
-  String checkImportData(List<PluDataModel> dataSource) {
+  String checkImportData(List<PluDataModel> dataSource, {bool checkAll = false}) {
+    bool hasAnySelected = dataSource.any((row) => row.isSelected);
     for (var dataRow in dataSource) {
-      if (!dataRow.isSelected) {
+      if (!checkAll && hasAnySelected && !dataRow.isSelected) {
         continue;
       }
 
       // 检查PLU相关条件
       if (dataRow.pluData.plu == null) {
-        return '${(localizedStrings?.gPluPlu ?? "gPluPlu")}  null. ${(localizedStrings?.gPluPluName ?? "gPluPluName")} : ${dataRow..pluData.productName}';
+        return '${(localizedStrings?.gPluPlu ?? "gPluPlu")}  null. ${(localizedStrings?.gPluPluName ?? "gPluPluName")} : ${dataRow.pluData.productName}';
       }
       if (dataRow.pluData.plu == 0) {
-        return '${(localizedStrings?.gPluPlu ?? "gPluPlu")} : 1-99999. ${(localizedStrings?.gPluPluName ?? "gPluPluName")} : ${dataRow..pluData.productName}';
+        return '${(localizedStrings?.gPluPlu ?? "gPluPlu")} : 1-99999. ${(localizedStrings?.gPluPluName ?? "gPluPluName")} : ${dataRow.pluData.productName}';
       }
 
       // 检查Product Name相关条件
@@ -1198,7 +1199,9 @@ class _PluEidtPageState extends State<PluEidtPage> {
                     : colorScheme.surfaceContainerHighest),
             colorScheme.onTertiaryFixedVariant,
             dataModels.isEmpty
-                ? null
+                ? () {
+                    showTipInfo(localizedStrings?.gTipNoData ?? "No Data", context);
+                  }
                 : () {
                     showDialog(
                         context: context,
@@ -1589,45 +1592,12 @@ class _PluEidtPageState extends State<PluEidtPage> {
               ? null
               : () async {
                   List<PluDataModel> selectedPluInfos = [];
-
-                  bool selectRow = false;
                   for (var dessert in dataModels) {
                     if (dessert.isSelected) {
                       selectedPluInfos.add(dessert);
-                      selectRow = true;
                     }
                   }
-                  if (!selectRow) {
-                    isSendDb = false;
-                    return showErrorDialog(
-                        context, (localizedStrings?.gTipNoDataSelected ?? "gTipNoDataSelected"));
-                  }
-                  for (var dessert in selectedPluInfos) {
-                    if (dessert.pluData.enabled == false) {
-                      isSendDb = false;
-                      return showErrorDialog(
-                          context, (localizedStrings?.gTipDownPluDisabled ?? "gTipDownPluDisabled"));
-                    }
-                  }
-
-                  String msg = checkImportData(selectedPluInfos);
-                  if (msg != "") {
-                    isSendDb = false;
-                    return showErrorDialog(context, msg);
-                  }
-
-                  String msgStr = await downloadFormExcel(selectedPluInfos);
-                  if (!msgStr.contains("OK") && mounted) {
-                    showTipInfo(msgStr, context);
-                    return;
-                  }
-                  List<String> splitted = msgStr.split(',');
-                  if (splitted.length != 2) {
-                    return;
-                  }
-                  if (mounted) {
-                    _showDownloadTypeDialog(context, splitted[1]);
-                  }
+                  await _handleDownload(selectedList: selectedPluInfos);
                 },
         ),
         SizedBox(
@@ -1977,6 +1947,62 @@ class _PluEidtPageState extends State<PluEidtPage> {
       return ('OK,$filePath');
     } catch (e) {
       return ('${(localizedStrings?.gTipSaveFail ?? "gTipSaveFail")} $e');
+    }
+  }
+
+  Future<void> _handleDownload({List<PluDataModel>? selectedList}) async {
+    // 1. 如果当前并没有PLU数据，提示没有数据
+    if (dataModels.isEmpty) {
+      showTipInfo(localizedStrings?.gTipNoData ?? "No Data", context);
+      return;
+    }
+
+    List<PluDataModel> listToDownload;
+    if (selectedList != null && selectedList.isNotEmpty) {
+      // 用户有勾选具体PLU
+      for (var dessert in selectedList) {
+        if (dessert.pluData.enabled == false) {
+          showTipInfo(localizedStrings?.gTipDownPluDisabled ?? "Disabled PLU", context);
+          return;
+        }
+      }
+      listToDownload = selectedList;
+    } else {
+      // 用户未勾选，下发全部PLU (过滤停用的PLU，与后端 down_all_plu 保持一致)
+      listToDownload = dataModels.where((m) => m.pluData.enabled != false).toList();
+      if (listToDownload.isEmpty) {
+        showTipInfo(localizedStrings?.gTipDownPluDisabled ?? "Disabled PLU", context);
+        return;
+      }
+    }
+
+    String msg = checkImportData(listToDownload, checkAll: true);
+    if (msg.isNotEmpty) {
+      showTipInfo(msg, context);
+      return;
+    }
+
+    String msgStr = await downloadFormExcel(listToDownload);
+    if (!msgStr.contains("OK") && mounted) {
+      showTipInfo(msgStr, context);
+      return;
+    }
+    List<String> splitted = msgStr.split(',');
+    if (splitted.length != 2) {
+      return;
+    }
+    if (mounted) {
+      if (Adaptive.isMobile(context)) {
+        String sendJson = getSendMsg(1, splitted[1]);
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => MobileSelectScalesPage(funcNo: 1, sendMsgStr: sendJson),
+          ),
+        );
+      } else {
+        _showDownloadTypeDialog(context, splitted[1]);
+      }
     }
   }
 
@@ -2587,44 +2613,13 @@ class _PluEidtPageState extends State<PluEidtPage> {
             const Spacer(),
             InkWell(
               onTap: () async {
-                  List<PluDataModel> selectedPluInfos = [];
-                  bool selectRow = false;
-                  for (var dessert in dataModels) {
-                    if (dessert.isSelected) {
-                      selectedPluInfos.add(dessert);
-                      selectRow = true;
-                    }
+                List<PluDataModel> selectedPluInfos = [];
+                for (var dessert in dataModels) {
+                  if (dessert.isSelected) {
+                    selectedPluInfos.add(dessert);
                   }
-                  if (!selectRow) {
-                    showTipInfo(localizedStrings?.gTipNoDataSelected ?? "No Data Selected", context);
-                    return;
-                  }
-                  for (var dessert in selectedPluInfos) {
-                    if (dessert.pluData.enabled == false) {
-                      showTipInfo(localizedStrings?.gTipDownPluDisabled ?? "Disabled PLU", context);
-                      return;
-                    }
-                  }
-
-                  String msg = checkImportData(selectedPluInfos);
-                  if (msg != "") {
-                    showTipInfo(msg, context);
-                    return;
-                  }
-
-                  String msgStr = await downloadFormExcel(selectedPluInfos);
-                  if (!msgStr.contains("OK") && mounted) {
-                    showTipInfo(msgStr, context);
-                    return;
-                  }
-                  List<String> splitted = msgStr.split(',');
-                  if (splitted.length != 2) {
-                    return;
-                  }
-                  if (mounted) {
-                    String sendJson = getSendMsg(1, splitted[1]);
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => MobileSelectScalesPage(funcNo: 1, sendMsgStr: sendJson)));
-                  }
+                }
+                await _handleDownload(selectedList: selectedPluInfos);
               },
               child: Row(
                 children: [
@@ -2668,8 +2663,8 @@ class _PluEidtPageState extends State<PluEidtPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   InkWell(
-                    onTap: () {
-                      showTipInfo(localizedStrings?.gTipNoDataSelected ?? "No Data Selected", context);
+                    onTap: () async {
+                      await _handleDownload();
                     }, 
                     child: Row(
                       children: [

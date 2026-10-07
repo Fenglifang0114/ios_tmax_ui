@@ -52,7 +52,7 @@ class WeightModePageState extends State<WeightModePage> {
     PublicFunctions.getScaleList();
 
     // 初始化定时器，每隔 5 秒执行一次检查
-    _scaleCheckTimer = Timer.periodic(Duration(seconds: 5), (timer) {
+    _scaleCheckTimer = Timer.periodic(const Duration(seconds: 5), (timer) {
       checkSameScale();
     });
 
@@ -372,8 +372,7 @@ class WeightModePageState extends State<WeightModePage> {
     }
 
     return Container(
-      padding:
-          const EdgeInsets.only(left: regularPadding, bottom: regularPadding),
+      padding: const EdgeInsets.only(bottom: regularPadding),
       color: Theme.of(context).colorScheme.surfaceDim,
       child: ListView.builder(
         itemCount: mySelScaleIdList.length,

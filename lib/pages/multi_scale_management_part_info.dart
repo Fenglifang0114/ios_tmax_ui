@@ -24,6 +24,7 @@ extension MultiScaleManagementInfoExt on MultiScaleManagementState {
                             onPressed: () {
                               setState(() {
                                 isRename = true;
+                                isTestConnectDisabled = true;
                                 _isModifyName = isValidScaleName(scaleNameCtl.text);
                               });
                               scaleNameFocusNode.requestFocus();
@@ -33,6 +34,7 @@ extension MultiScaleManagementInfoExt on MultiScaleManagementState {
                       }, isRename, focusNode: scaleNameFocusNode, onTap: () {
                         setState(() {
                           isRename = true;
+                          isTestConnectDisabled = true;
                           _isModifyName = isValidScaleName(scaleNameCtl.text);
                         });
                         scaleNameFocusNode.requestFocus();
@@ -103,6 +105,7 @@ extension MultiScaleManagementInfoExt on MultiScaleManagementState {
                             onPressed: () {
                               setState(() {
                                 isRename = true;
+                                isTestConnectDisabled = true;
                                 _isModifyName = isValidScaleName(scaleNameCtl.text);
                               });
                               scaleNameFocusNode.requestFocus();
@@ -112,6 +115,7 @@ extension MultiScaleManagementInfoExt on MultiScaleManagementState {
                       }, isRename, focusNode: scaleNameFocusNode, onTap: () {
                         setState(() {
                           isRename = true;
+                          isTestConnectDisabled = true;
                           _isModifyName = isValidScaleName(scaleNameCtl.text);
                         });
                         scaleNameFocusNode.requestFocus();
@@ -180,6 +184,7 @@ extension MultiScaleManagementInfoExt on MultiScaleManagementState {
                             onPressed: () {
                               setState(() {
                                 isRename = true;
+                                isTestConnectDisabled = true;
                                 _isModifyName = isValidScaleName(scaleNameCtl.text);
                               });
                               scaleNameFocusNode.requestFocus();
@@ -189,6 +194,7 @@ extension MultiScaleManagementInfoExt on MultiScaleManagementState {
                       }, isRename, focusNode: scaleNameFocusNode, onTap: () {
                         setState(() {
                           isRename = true;
+                          isTestConnectDisabled = true;
                           _isModifyName = isValidScaleName(scaleNameCtl.text);
                         });
                         scaleNameFocusNode.requestFocus();
@@ -240,6 +246,7 @@ extension MultiScaleManagementInfoExt on MultiScaleManagementState {
   Widget showRenameConfirmBtn() {
     return isRename
         ? Wrap(
+            key: const ValueKey('rename_confirm_wrap'),
             alignment: WrapAlignment.center,
             spacing: regularPadding,
             runSpacing: regularPadding,
@@ -250,39 +257,55 @@ extension MultiScaleManagementInfoExt on MultiScaleManagementState {
                   (localizedStrings?.gBtnConfirm ?? "gBtnConfirm"),
                   scaleNameCtl.text.isNotEmpty && _isModifyName
                       ? () {
+                          scaleNameFocusNode.unfocus();
+                          isTestConnectDisabled = true;
                           modifyScaleName();
                           isEditing = true;
                         }
                       : null,
                   Theme.of(context).colorScheme.onPrimary,
                   Theme.of(context).colorScheme.primary,
-                  Theme.of(context).colorScheme.onPrimary),
-              showTextButton(context, btnHeight, (localizedStrings?.gBtnCancel ?? "gBtnCancel"),
+                  Theme.of(context).colorScheme.onPrimary,
+                  key: const ValueKey('btn_rename_confirm')),
+              showTextButton(
+                  context,
+                  btnHeight,
+                  (localizedStrings?.gBtnCancel ?? "gBtnCancel"),
                   () {
-                setState(() {
-                  isAddScale = false; eventBus.fire(EventUiCmd('showScaffoldElements'));
-                  isRename = false;
-                  for (var scale in myAllScalesList) {
-                    if (scale.scaleId == selScaleId) {
-                      scaleNameCtl.text = scale.scaleName;
+                    scaleNameFocusNode.unfocus();
+                    isTestConnectDisabled = true;
+                    _enableTestConnectTimer?.cancel();
+                    for (var scale in myAllScalesList) {
+                      if (scale.scaleId == selScaleId) {
+                        scaleNameCtl.text = scale.scaleName;
+                      }
                     }
-                  }
-
-                  if (isRename) {
-                    isRename = false;
-                  }
-                });
-              },
+                    setState(() {
+                      isAddScale = false;
+                      isRename = false;
+                    });
+                    eventBus.fire(EventUiCmd('showScaffoldElements'));
+                    _enableTestConnectTimer = Timer(const Duration(milliseconds: 1500), () {
+                      if (mounted) {
+                        setState(() {
+                          isTestConnectDisabled = false;
+                        });
+                      }
+                    });
+                  },
                   Theme.of(context).colorScheme.onPrimary,
                   Theme.of(context).colorScheme.onSurfaceVariant,
-                  Theme.of(context).colorScheme.onPrimary),
+                  Theme.of(context).colorScheme.onPrimary,
+                  key: const ValueKey('btn_rename_cancel')),
             ],
           )
         : const SizedBox();
   }
 
   Widget buttonRow({bool showModify = false}) {
+    bool canTestConnect = !isAddScale && !isTesting && !isDel && !isRename && !isTestConnectDisabled;
     return Wrap(
+      key: const ValueKey('normal_button_row_wrap'),
       alignment: WrapAlignment.center,
       spacing: regularPadding,
       runSpacing: regularPadding,
@@ -291,7 +314,7 @@ extension MultiScaleManagementInfoExt on MultiScaleManagementState {
             context,
             btnHeight,
             (localizedStrings?.gBtnTestConnect ?? "gBtnTestConnect"),
-            !isAddScale && !isTesting && !isDel
+            canTestConnect
                 ? () {
                     int scaleType = getScaleType();
                     if (scaleType == btScaleType) {
@@ -307,8 +330,11 @@ extension MultiScaleManagementInfoExt on MultiScaleManagementState {
                   }
                 : null,
             Theme.of(context).colorScheme.onPrimary,
-            Theme.of(context).colorScheme.onTertiaryFixedVariant,
-            Theme.of(context).colorScheme.onPrimary),
+            canTestConnect
+                ? Theme.of(context).colorScheme.onTertiaryFixedVariant
+                : Theme.of(context).colorScheme.surfaceDim,
+            Theme.of(context).colorScheme.onPrimary,
+            key: const ValueKey('btn_test_connect')),
         showTextButton(
             context,
             btnHeight,

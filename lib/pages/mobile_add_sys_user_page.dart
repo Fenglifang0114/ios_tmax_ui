@@ -126,15 +126,22 @@ class _MobileAddSysUserPageState extends State<MobileAddSysUserPage> {
       }
     }
 
+    int finalRoleId = _roleId;
+    if (widget.type == 1) {
+      if (mySysUser.roleId != superAdminRoleId) {
+        finalRoleId = 3;
+      }
+    }
+
     if (widget.type == 1) {
       ReqAddSysUser req = ReqAddSysUser(
         userName: _userNameCtl.text,
         nickName: _nickNameCtl.text,
         password: _pwdCtl.text,
-        roleId: _roleId,
+        roleId: finalRoleId,
         isEnabled: true,
-        pagesId: _roleId == 3 ? _selectedPermissions.toList() : [],
-        initialPageId: _roleId == 3 ? (_initialPageId ?? 0) : 0,
+        pagesId: finalRoleId == 3 ? _selectedPermissions.toList() : [],
+        initialPageId: finalRoleId == 3 ? (_initialPageId ?? 0) : 0,
         email: _emailCtl.text,
         phone: _phoneCtl.text,
         createdBy: mySysUser.userId ?? 1,
@@ -147,9 +154,9 @@ class _MobileAddSysUserPageState extends State<MobileAddSysUserPage> {
         userId: widget.initUserInfo.userId ?? (widget.isSuperAccount ? 1 : null),
         userName: _userNameCtl.text,
         nickName: _nickNameCtl.text,
-        roleId: _roleId,
+        roleId: finalRoleId,
         isEnabled: true,
-        initialPageId: _roleId == 3 ? _initialPageId : 0,
+        initialPageId: finalRoleId == 3 ? _initialPageId : 0,
         email: _emailCtl.text,
         phone: _phoneCtl.text,
         updatedBy: mySysUser.userId ?? 1,
@@ -158,7 +165,7 @@ class _MobileAddSysUserPageState extends State<MobileAddSysUserPage> {
 
       ReqUpdateSysUser req = ReqUpdateSysUser(
         updateUser: tempUser,
-        pagesId: _roleId == 3 ? _selectedPermissions.toList() : [],
+        pagesId: finalRoleId == 3 ? _selectedPermissions.toList() : [],
       );
       PublicFunctions.updateSysUser(reqUpdateSysUserToJson(req));
     }
@@ -264,15 +271,54 @@ class _MobileAddSysUserPageState extends State<MobileAddSysUserPage> {
                   isExpanded: true,
                   icon: const SizedBox.shrink(), // hide icon
                   alignment: Alignment.centerRight,
-                  style: TextStyle(color: (widget.isSuperAccount || isEditingSuper) ? Colors.red : Colors.grey[700], fontSize: 16),
-                  items: [
-                    DropdownMenuItem(value: 1, child: Align(alignment: Alignment.centerRight, child: Text(localizedStrings?.superAdmin ?? "Super Admin"))),
-                    DropdownMenuItem(value: 2, child: Align(alignment: Alignment.centerRight, child: Text(localizedStrings?.admin ?? "Admin"))),
-                    DropdownMenuItem(value: 3, child: Align(alignment: Alignment.centerRight, child: Text(localizedStrings?.operator ?? "Operator"))),
-                  ],
-                  onChanged: (widget.isSuperAccount || isEditingSuper) ? null : (val) {
-                    setState(() => _roleId = val ?? 3);
-                  },
+                  style: TextStyle(
+                    color: (widget.isSuperAccount || isEditingSuper || mySysUser.roleId != superAdminRoleId)
+                        ? Colors.grey[600]
+                        : Colors.grey[700],
+                    fontSize: 16,
+                  ),
+                  items: () {
+                    if (widget.isSuperAccount || isEditingSuper) {
+                      return [
+                        DropdownMenuItem(
+                          value: 1,
+                          child: Align(
+                            alignment: Alignment.centerRight,
+                            child: Text(localizedStrings?.superAdmin ?? "Super Admin"),
+                          ),
+                        ),
+                      ];
+                    }
+                    List<DropdownMenuItem<int>> list = [];
+                    // 仅超级管理员可以新增/分配管理员角色；普通管理员不能新增其他管理员
+                    if (mySysUser.roleId == superAdminRoleId) {
+                      list.add(
+                        DropdownMenuItem(
+                          value: 2,
+                          child: Align(
+                            alignment: Alignment.centerRight,
+                            child: Text(localizedStrings?.admin ?? "Admin"),
+                          ),
+                        ),
+                      );
+                    }
+                    // 超管和普通管理员都可以选择操作员角色
+                    list.add(
+                      DropdownMenuItem(
+                        value: 3,
+                        child: Align(
+                          alignment: Alignment.centerRight,
+                          child: Text(localizedStrings?.operator ?? "Operator"),
+                        ),
+                      ),
+                    );
+                    return list;
+                  }(),
+                  onChanged: (widget.isSuperAccount || isEditingSuper || mySysUser.roleId != superAdminRoleId)
+                      ? null
+                      : (val) {
+                          setState(() => _roleId = val ?? 3);
+                        },
                 ),
               ),
             ),

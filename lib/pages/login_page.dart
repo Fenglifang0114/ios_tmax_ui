@@ -154,7 +154,7 @@ class LoginPageState extends State<LoginPage> with WindowLifecycleMixin {
         String dataStr = event.obj;
         List<SysUserFromDb> allUserList = sysUserFromDbFromJson(dataStr);
         setState(() {
-          if (allUserList.length == 1 && (allUserList[0].isChanged == false)) {
+          if (allUserList.length == 1) {
             checkingUsers = false;
             _checkingUsers = false;
             SysUserFromDb tempUser = allUserList[0];

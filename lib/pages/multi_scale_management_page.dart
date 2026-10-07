@@ -72,6 +72,8 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
   String addScaleType = '';
   bool isTesting = false;
   bool isRename = false;
+  bool isTestConnectDisabled = false;
+  Timer? _enableTestConnectTimer;
   bool _isValidIP = false;
   bool _isModifyName = false;
   bool isEditing = false;
@@ -468,6 +470,7 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
 
   @override
   void dispose() {
+    _enableTestConnectTimer?.cancel();
     _eventbus1.cancel();
     _eventbus2.cancel();
     _eventbus3.cancel();
@@ -662,12 +665,23 @@ class MultiScaleManagementState extends State<MultiScaleManagement> {
   }
 
   void modifyScaleName() {
+    scaleNameFocusNode.unfocus();
+    isTestConnectDisabled = true;
+    _enableTestConnectTimer?.cancel();
     myModifyScaleName.scaleId = selScaleId;
     myModifyScaleName.scaleName = scaleNameCtl.text;
     PublicFunctions.sendModifyScaleName(jsonEncode(myModifyScaleName));
     changeScaleName(myModifyScaleName.scaleId!, myModifyScaleName.scaleName!);
     setState(() {
       isRename = false;
+    });
+    // 延迟 1.5 秒后再恢复 Test Connect 可用，彻底杜绝任何触屏穿透或误触
+    _enableTestConnectTimer = Timer(const Duration(milliseconds: 1500), () {
+      if (mounted) {
+        setState(() {
+          isTestConnectDisabled = false;
+        });
+      }
     });
   }
 

@@ -112,8 +112,10 @@ showInputBox(BuildContext context, TextEditingController controller,
 //button
 
 showTextButton(BuildContext context, double btnHeight, String btnText,
-    Function()? onPressed, Color textColor, Color bgColor, Color fColor) {
+    Function()? onPressed, Color textColor, Color bgColor, Color fColor,
+    {Key? key}) {
   return ElevatedButton(
+    key: key,
     style: ElevatedButton.styleFrom(
       foregroundColor: fColor,
       backgroundColor: bgColor,

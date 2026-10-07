@@ -178,6 +178,7 @@ class _MobileSysUserManagerPageState extends State<MobileSysUserManagerPage> {
                     ),
                   ),
                 ).then((_) => PublicFunctions.getAllSysUsers());
+                showTipInfo(localizedStrings?.pleaseSetSuperAdmin ?? "新建账号前,请先设置超级管理员", context);
                 return;
               }
 

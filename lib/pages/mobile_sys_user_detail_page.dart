@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:t_max/data/g_data.dart';
 import 'package:t_max/data/sys_user_from_db.dart';
 import 'package:t_max/data/sys_user_req.dart';
 import 'package:t_max/data/language.dart';
@@ -23,6 +24,45 @@ class MobileSysUserDetailPage extends StatefulWidget {
 class _MobileSysUserDetailPageState extends State<MobileSysUserDetailPage> {
   late SysUserFromDb _currentUser;
 
+  bool get _canEdit {
+    if (mySysUser.roleId == superAdminRoleId) {
+      return true;
+    }
+    if (mySysUser.roleId == adminRoleId) {
+      // 管理员不能编辑其他管理员和超级管理员，只能修改操作员 (roleId == 3)
+      return _currentUser.roleId == 3 && (_currentUser.isEnabled ?? true);
+    }
+    return false;
+  }
+
+  bool get _canToggleEnable {
+    if (_currentUser.userId == 1 || _currentUser.userId == mySysUser.userId) {
+      return false;
+    }
+    if (mySysUser.roleId == superAdminRoleId) {
+      return true;
+    }
+    if (mySysUser.roleId == adminRoleId) {
+      // 管理员不能禁用其他管理员，只能操作操作员
+      return _currentUser.roleId == 3;
+    }
+    return false;
+  }
+
+  bool get _canDelete {
+    if (_currentUser.userId == 1 || _currentUser.userId == mySysUser.userId) {
+      return false;
+    }
+    if (mySysUser.roleId == superAdminRoleId) {
+      return true;
+    }
+    if (mySysUser.roleId == adminRoleId) {
+      // 管理员不能删除其他管理员，只能删除操作员
+      return _currentUser.roleId == 3;
+    }
+    return false;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -30,6 +70,7 @@ class _MobileSysUserDetailPageState extends State<MobileSysUserDetailPage> {
   }
 
   void _onEdit() {
+    if (!_canEdit) return;
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -50,7 +91,7 @@ class _MobileSysUserDetailPageState extends State<MobileSysUserDetailPage> {
   }
 
   void _onToggleEnable(bool value) {
-    if (_currentUser.userId == 1) return;
+    if (!_canToggleEnable) return;
     
     ReqEnableSysUser req = ReqEnableSysUser(
       userId: _currentUser.userId,
@@ -63,7 +104,7 @@ class _MobileSysUserDetailPageState extends State<MobileSysUserDetailPage> {
   }
 
   void _onDelete() {
-    if (_currentUser.userId == 1) return;
+    if (!_canDelete) return;
     
     showDialog(
       context: context,
@@ -151,10 +192,11 @@ class _MobileSysUserDetailPageState extends State<MobileSysUserDetailPage> {
         ),
         centerTitle: true,
         actions: [
-          IconButton(
-            icon: const Icon(Icons.edit_outlined, color: Colors.black87),
-            onPressed: _onEdit,
-          ),
+          if (_canEdit)
+            IconButton(
+              icon: const Icon(Icons.edit_outlined, color: Colors.black87),
+              onPressed: _onEdit,
+            ),
         ],
       ),
       body: Column(
@@ -181,7 +223,7 @@ class _MobileSysUserDetailPageState extends State<MobileSysUserDetailPage> {
                         Switch(
                           value: _currentUser.isEnabled ?? true,
                           activeColor: const Color(0xFF1ABC9C),
-                          onChanged: _currentUser.userId == 1 ? null : _onToggleEnable,
+                          onChanged: _canToggleEnable ? _onToggleEnable : null,
                         ),
                       ],
                     ),
@@ -192,7 +234,7 @@ class _MobileSysUserDetailPageState extends State<MobileSysUserDetailPage> {
             ),
           ),
           
-          if (_currentUser.userId != 1)
+          if (_canDelete)
             SafeArea(
               child: Padding(
                 padding: const EdgeInsets.all(16),

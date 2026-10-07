@@ -454,156 +454,168 @@ class _MobileCheckWeighingPageState extends State<MobileCheckWeighingPage> {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (context) {
-        return Container(
-          height: MediaQuery.of(context).size.height * 0.75,
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+        return Padding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
           ),
-          child: Column(
-            children: [
-              // Header Row: Back Arrow, Scale Icon, Title "High/Low Setting", Help Icon
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
-                child: Row(
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.arrow_back, color: Color(0xFF1E293B)),
-                      onPressed: () => Navigator.pop(context),
+          child: Container(
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+            ),
+            child: SafeArea(
+              top: false,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Header Row: Back Arrow, Scale Icon, Title "High/Low Setting", Help Icon
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+                    child: Row(
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.arrow_back, color: Color(0xFF1E293B)),
+                          onPressed: () => Navigator.pop(context),
+                        ),
+                        getSvgIcon(weighingSvgIcon(), 22, 22, const Color(0xFF1E293B)),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            localizedStrings?.iTitleHLSetting ?? "High/Low Setting",
+                            style: const TextStyle(
+                              color: Color(0xFF1E293B),
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.help_outline, color: Color(0xFF1E293B)),
+                          onPressed: () {
+                            showMobilePageHelpDialog(
+                              context,
+                              localizedStrings?.iTitleHLSetting ?? "High/Low Setting",
+                              localizedStrings?.gTipCheckWgtPageHelp ?? "Set target weight high and low limits for check weighing.",
+                            );
+                          },
+                        ),
+                      ],
                     ),
-                    getSvgIcon(weighingSvgIcon(), 22, 22, const Color(0xFF1E293B)),
-                    const SizedBox(width: 8),
-                    const Expanded(
-                      child: Text(
-                        "High/Low Setting",
-                        style: TextStyle(
-                          color: Color(0xFF1E293B),
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
+                  ),
+                  const Divider(height: 1, color: Color(0xFFE2E8F0)),
+
+                  // Content Area
+                  Flexible(
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // High Row
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(localizedStrings?.gPluLimitHigh ?? "High",
+                                    style: const TextStyle(fontSize: 15, color: Color(0xFF334155))),
+                                Container(
+                                  width: 140,
+                                  height: 38,
+                                  alignment: Alignment.centerRight,
+                                  child: TextField(
+                                    controller: highController,
+                                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                                    textAlign: TextAlign.right,
+                                    decoration: InputDecoration(
+                                      hintText: localizedStrings?.gTipPleaseInputKeyWord ?? "Please enter",
+                                      hintStyle: const TextStyle(color: Color(0xFFCBD5E1), fontSize: 15),
+                                      border: InputBorder.none,
+                                    ),
+                                    style: const TextStyle(fontSize: 15, color: Color(0xFF334155)),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const Divider(height: 1, color: Color(0xFFF1F5F9)),
+
+                          // Low Row
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(localizedStrings?.gPluLimitLow ?? "Low",
+                                    style: const TextStyle(fontSize: 15, color: Color(0xFF334155))),
+                                Container(
+                                  width: 140,
+                                  height: 38,
+                                  alignment: Alignment.centerRight,
+                                  child: TextField(
+                                    controller: lowController,
+                                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                                    textAlign: TextAlign.right,
+                                    decoration: InputDecoration(
+                                      hintText: localizedStrings?.gTipPleaseInputKeyWord ?? "Please enter",
+                                      hintStyle: const TextStyle(color: Color(0xFFCBD5E1), fontSize: 15),
+                                      border: InputBorder.none,
+                                    ),
+                                    style: const TextStyle(fontSize: 15, color: Color(0xFF334155)),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const Divider(height: 1, color: Color(0xFFF1F5F9)),
+                          const SizedBox(height: 12),
+
+                          // Hint Text
+                          Text(
+                            localizedStrings?.iTipHLUnit ?? "The unit of weight is the same as scale..",
+                            style: const TextStyle(color: Color(0xFF94A3B8), fontSize: 13),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  // Confirm Button
+                  Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: SizedBox(
+                      width: double.infinity,
+                      height: 48,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF10B981),
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(6)),
+                        ),
+                        onPressed: () {
+                          double newHigh = double.tryParse(highController.text) ?? 0.0;
+                          double newLow = double.tryParse(lowController.text) ?? 0.0;
+                          setState(() {
+                            _scaleHighValueMap[scaleId] = newHigh;
+                            _scaleLowValueMap[scaleId] = newLow;
+                          });
+                          Navigator.pop(context);
+                        },
+                        child: Text(
+                          localizedStrings?.gBtnConfirm ?? "Confirm",
+                          style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600),
                         ),
                       ),
                     ),
-                    IconButton(
-                      icon: const Icon(Icons.help_outline, color: Color(0xFF1E293B)),
-                      onPressed: () {
-                        showMobilePageHelpDialog(
-                          context,
-                          "High/Low Setting",
-                          localizedStrings?.gTipCheckWgtPageHelp ?? "Set target weight high and low limits for check weighing.",
-                        );
-                      },
-                    ),
-                  ],
-                ),
-              ),
-              const Divider(height: 1, color: Color(0xFFE2E8F0)),
-
-              // Content Area
-              Expanded(
-                child: ListView(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  children: [
-                    // High Row
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(localizedStrings?.gPluLimitHigh ?? "High",
-                              style: const TextStyle(fontSize: 15, color: Color(0xFF334155))),
-                          Container(
-                            width: 140,
-                            height: 38,
-                            alignment: Alignment.centerRight,
-                            child: TextField(
-                              controller: highController,
-                              keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                              textAlign: TextAlign.right,
-                              decoration: InputDecoration(
-                                hintText: localizedStrings?.gTipPleaseInputKeyWord ?? "Please enter",
-                                hintStyle: const TextStyle(color: Color(0xFFCBD5E1), fontSize: 15),
-                                border: InputBorder.none,
-                              ),
-                              style: const TextStyle(fontSize: 15, color: Color(0xFF334155)),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const Divider(height: 1, color: Color(0xFFF1F5F9)),
-
-                    // Low Row
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(localizedStrings?.gPluLimitLow ?? "Low",
-                              style: const TextStyle(fontSize: 15, color: Color(0xFF334155))),
-                          Container(
-                            width: 140,
-                            height: 38,
-                            alignment: Alignment.centerRight,
-                            child: TextField(
-                              controller: lowController,
-                              keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                              textAlign: TextAlign.right,
-                              decoration: InputDecoration(
-                                hintText: localizedStrings?.gTipPleaseInputKeyWord ?? "Please enter",
-                                hintStyle: const TextStyle(color: Color(0xFFCBD5E1), fontSize: 15),
-                                border: InputBorder.none,
-                              ),
-                              style: const TextStyle(fontSize: 15, color: Color(0xFF334155)),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const Divider(height: 1, color: Color(0xFFF1F5F9)),
-                    const SizedBox(height: 12),
-
-                    // Hint Text
-                    const Text(
-                      "The unit of weight is the same as scale..",
-                      style: TextStyle(color: Color(0xFF94A3B8), fontSize: 13),
-                    ),
-                  ],
-                ),
-              ),
-
-              // Confirm Button
-              Padding(
-                padding: const EdgeInsets.all(16),
-                child: SizedBox(
-                  width: double.infinity,
-                  height: 48,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF10B981),
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(6)),
-                    ),
-                    onPressed: () {
-                      double newHigh = double.tryParse(highController.text) ?? 0.0;
-                      double newLow = double.tryParse(lowController.text) ?? 0.0;
-                      setState(() {
-                        _scaleHighValueMap[scaleId] = newHigh;
-                        _scaleLowValueMap[scaleId] = newLow;
-                      });
-                      Navigator.pop(context);
-                    },
-                    child: const Text(
-                      "Confirm",
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600),
-                    ),
                   ),
-                ),
+                ],
               ),
-            ],
+            ),
           ),
         );
       },
@@ -1485,11 +1497,12 @@ class _MobileCheckWeighingPageState extends State<MobileCheckWeighingPage> {
                               color: Color(0xFF1E293B)),
                           onPressed: () => Navigator.pop(context),
                         ),
-                        const Expanded(
+                        Expanded(
                           child: Text(
-                            "Parameter settings",
+                            localizedStrings?.gParameterSettingsTitle ??
+                                "Parameter settings",
                             textAlign: TextAlign.center,
-                            style: TextStyle(
+                            style: const TextStyle(
                               color: Color(0xFF1E293B),
                               fontSize: 18,
                               fontWeight: FontWeight.w600,
@@ -1510,15 +1523,27 @@ class _MobileCheckWeighingPageState extends State<MobileCheckWeighingPage> {
                       children: [
                         // Save Mode Row
                         _buildSettingItemRow(
-                          "Save Mode",
-                          tempSaveMode,
+                          localizedStrings?.save_mode ?? "Save Mode",
+                          tempSaveMode == "Auto"
+                              ? (localizedStrings?.gTipAuto ?? "Auto")
+                              : (localizedStrings?.gTipManual ?? "Manual"),
                           () {
                             _openSubSelectionModal(
-                              "Save Mode",
-                              ["Manual", "Auto"],
-                              tempSaveMode,
+                              localizedStrings?.save_mode ?? "Save Mode",
+                              [
+                                localizedStrings?.gTipManual ?? "Manual",
+                                localizedStrings?.gTipAuto ?? "Auto",
+                              ],
+                              tempSaveMode == "Auto"
+                                  ? (localizedStrings?.gTipAuto ?? "Auto")
+                                  : (localizedStrings?.gTipManual ?? "Manual"),
                               (selected) {
-                                setModalState(() => tempSaveMode = selected);
+                                setModalState(() {
+                                  tempSaveMode = (selected.contains("Auto") ||
+                                          selected.contains("自动"))
+                                      ? "Auto"
+                                      : "Manual";
+                                });
                               },
                             );
                           },
@@ -1531,7 +1556,9 @@ class _MobileCheckWeighingPageState extends State<MobileCheckWeighingPage> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(localizedStrings?.gTipStableTime ?? "Stable Time (s)",
+                              Text(
+                                  localizedStrings?.gTipStableTime ??
+                                      "Stable Time (s)",
                                   style: const TextStyle(
                                       fontSize: 15, color: Color(0xFF334155))),
                               Container(
@@ -1565,11 +1592,11 @@ class _MobileCheckWeighingPageState extends State<MobileCheckWeighingPage> {
 
                         // Date Format Row
                         _buildSettingItemRow(
-                          "Date Format",
+                          localizedStrings?.date_format ?? "Date Format",
                           tempDateFormat,
                           () {
                             _openSubSelectionModal(
-                              "Date Format",
+                              localizedStrings?.date_format ?? "Date Format",
                               ["yy-mm-dd", "dd-mm-yy", "mm-dd-yy"],
                               tempDateFormat,
                               (selected) {
@@ -1582,12 +1609,13 @@ class _MobileCheckWeighingPageState extends State<MobileCheckWeighingPage> {
 
                         // Date Separator Row
                         _buildSettingItemRow(
-                          "Date Separator",
+                          localizedStrings?.gDateSeparator ?? "Date Separator",
                           tempDateSeparator,
                           () {
                             _openSubSelectionModal(
-                              "Date Separator",
-                              [".", "-", "/"],
+                              localizedStrings?.gDateSeparator ??
+                                  "Date Separator",
+                              ["/", "-", "."],
                               tempDateSeparator,
                               (selected) {
                                 setModalState(
@@ -1600,11 +1628,11 @@ class _MobileCheckWeighingPageState extends State<MobileCheckWeighingPage> {
 
                         // Save type Row (Check Weighing specific)
                         _buildSettingItemRow(
-                          "Save type",
+                          localizedStrings?.gTipSaveType ?? "Save type",
                           tempSaveType,
                           () {
                             _openSubSelectionModal(
-                              "Save type",
+                              localizedStrings?.gTipSaveType ?? "Save type",
                               ["All", "Hi", "ok", "Low"],
                               tempSaveType,
                               (selected) {
