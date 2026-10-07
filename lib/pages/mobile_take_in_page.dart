@@ -19,6 +19,8 @@ import 'package:t_max/functions/methods.dart';
 import 'package:t_max/generated/l10n.dart';
 import 'package:t_max/widget/mobile_scale_drawer_widget.dart';
 import 'package:t_max/dialog/mobile_page_help_dialog.dart';
+import 'package:t_max/widget/f_open_file.dart';
+import 'package:t_max/data/weight_report_data.dart';
 
 class TakeInWeightInfo {
   String weight;
@@ -115,6 +117,7 @@ class _MobileTakeInPageState extends State<MobileTakeInPage> {
   dynamic _eventBusDelAll;
   dynamic _eventBusPluList;
   dynamic _eventBusSaveTrigger;
+  dynamic _eventBusExportRecs;
 
   // Auto-Save helper maps
   final Map<int, Timer?> _scaleStableTimerMap = {};
@@ -159,6 +162,7 @@ class _MobileTakeInPageState extends State<MobileTakeInPage> {
     _eventBusDelAll?.cancel();
     _eventBusPluList?.cancel();
     _eventBusSaveTrigger?.cancel();
+    _eventBusExportRecs?.cancel();
 
     super.dispose();
   }
@@ -305,6 +309,23 @@ class _MobileTakeInPageState extends State<MobileTakeInPage> {
             _scaleLastWgtMap[id] = nowVal;
           }
         }
+      }
+    });
+
+    _eventBusExportRecs = eventBus.on<EventExportAllRecs>().listen((event) {
+      if (!mounted) return;
+      String resString = event.obj;
+      if (resString.contains('ok')) {
+        String filePath =
+            resString.contains(',') ? resString.split(',')[1] : resString;
+        showExportDialog(filePath, context);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Export Failed: $resString"),
+            backgroundColor: const Color(0xFFEF4444),
+          ),
+        );
       }
     });
   }
@@ -1323,7 +1344,7 @@ class _MobileTakeInPageState extends State<MobileTakeInPage> {
                             _visibleFields.forEach((key, val) {
                               if (val) {
                                 selFields.add(key);
-                                selMap[key] = key;
+                                selMap[key] = getRptTitleName(key);
                               }
                             });
                             PublicFunctions.exportAllRecords(
@@ -2218,7 +2239,7 @@ class _MobileTakeInPageState extends State<MobileTakeInPage> {
                                   ),
                                   Expanded(
                                     child: Text(
-                                      key,
+                                      getRptTitleName(key),
                                       style: const TextStyle(
                                           fontSize: 14,
                                           color: Color(0xFF334155)),

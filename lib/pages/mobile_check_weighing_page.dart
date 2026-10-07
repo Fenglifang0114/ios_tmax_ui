@@ -21,6 +21,7 @@ import 'package:t_max/generated/l10n.dart';
 import 'package:t_max/widget/mobile_scale_drawer_widget.dart';
 import 'package:t_max/widget/f_open_file.dart';
 import 'package:t_max/dialog/mobile_page_help_dialog.dart';
+import 'package:t_max/data/weight_report_data.dart';
 
 class CheckWeightInfo {
   String weight;
@@ -1168,16 +1169,16 @@ class _MobileCheckWeighingPageState extends State<MobileCheckWeighingPage> {
                             _visibleFields.forEach((key, val) {
                               if (val) {
                                 selFields.add(key);
-                                selMap[key] = key;
+                                selMap[key] = getRptTitleName(key);
                               }
                             });
                             PublicFunctions.exportAllRecords(
                                 1, outputFile, selFields, selMap);
                           }
                         },
-                        child: const Text(
-                          "Export",
-                          style: TextStyle(
+                        child: Text(
+                          localizedStrings?.gBtnExport ?? "Export",
+                          style: const TextStyle(
                               color: Colors.white,
                               fontSize: 15,
                               fontWeight: FontWeight.w600),
@@ -1197,9 +1198,9 @@ class _MobileCheckWeighingPageState extends State<MobileCheckWeighingPage> {
                               borderRadius: BorderRadius.circular(6)),
                         ),
                         onPressed: _openReportSettingSheet,
-                        child: const Text(
-                          "Report Setting",
-                          style: TextStyle(
+                        child: Text(
+                          localizedStrings?.gBtnReportSetting ?? "Report Setting",
+                          style: const TextStyle(
                               color: Colors.white,
                               fontSize: 15,
                               fontWeight: FontWeight.w600),
@@ -1223,9 +1224,9 @@ class _MobileCheckWeighingPageState extends State<MobileCheckWeighingPage> {
                   onPressed: () {
                     PublicFunctions.newDeleteAllRecords(int.parse(wgtCheckMode));
                   },
-                  child: const Text(
-                    "Delete All",
-                    style: TextStyle(
+                  child: Text(
+                    localizedStrings?.gBtnDeleteAll ?? "Delete All",
+                    style: const TextStyle(
                         color: Colors.white,
                         fontSize: 15,
                         fontWeight: FontWeight.w600),
@@ -2018,11 +2019,11 @@ class _MobileCheckWeighingPageState extends State<MobileCheckWeighingPage> {
                               color: Color(0xFF1E293B)),
                           onPressed: () => Navigator.pop(context),
                         ),
-                        const Expanded(
+                        Expanded(
                           child: Text(
-                            "Report Setting",
+                            localizedStrings?.gBtnReportSetting ?? "Report Setting",
                             textAlign: TextAlign.center,
-                            style: TextStyle(
+                            style: const TextStyle(
                                 fontSize: 18, fontWeight: FontWeight.w600),
                           ),
                         ),
@@ -2064,7 +2065,7 @@ class _MobileCheckWeighingPageState extends State<MobileCheckWeighingPage> {
                                 ),
                                 Expanded(
                                   child: Text(
-                                    key,
+                                    getRptTitleName(key),
                                     style: const TextStyle(
                                         fontSize: 14, color: Color(0xFF334155)),
                                   ),

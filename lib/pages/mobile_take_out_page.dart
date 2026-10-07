@@ -20,6 +20,7 @@ import 'package:t_max/generated/l10n.dart';
 import 'package:t_max/widget/f_open_file.dart';
 import 'package:t_max/widget/mobile_scale_drawer_widget.dart';
 import 'package:t_max/dialog/mobile_page_help_dialog.dart';
+import 'package:t_max/data/weight_report_data.dart';
 
 class TakeOutWeightInfo {
   String weight;
@@ -1343,7 +1344,7 @@ class _MobileTakeOutPageState extends State<MobileTakeOutPage> {
                             _visibleFields.forEach((key, val) {
                               if (val) {
                                 selFields.add(key);
-                                selMap[key] = key;
+                                selMap[key] = getRptTitleName(key);
                               }
                             });
                             PublicFunctions.exportAllRecords(
@@ -2224,7 +2225,7 @@ class _MobileTakeOutPageState extends State<MobileTakeOutPage> {
                                   ),
                                   Expanded(
                                     child: Text(
-                                      key,
+                                      getRptTitleName(key),
                                       style: const TextStyle(
                                           fontSize: 14,
                                           color: Color(0xFF334155)),

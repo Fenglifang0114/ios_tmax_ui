@@ -1,6 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
+import 'package:intl/intl.dart';
+import 'package:path/path.dart' as p;
+import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:t_max/data/new_get_recs.dart';
 import 'package:t_max/data/req_formula_data.dart';
@@ -27,7 +30,7 @@ const String weighingTakeOutMode = '3';
 /// 封装了所有底层向硬件及数据库请求的方法指令（基于 [WebSocket] JSON 通信格式）。
 /// 方法命名主要由动词开头，调用 [sendMsgChan0] 统一打包分发至主通道。
 class PublicFunctions {
-  /// 跨平台文件选择器，解决 Android 上 file_picker saveFile 返回 null 的问题
+  /// 跨平台文件选择器，解决 Android 上 file_picker saveFile 返回 null 以及 iOS 沙盒保存问题
   static Future<String?> pickSaveFilePath(String defaultFileName) async {
     if (Platform.isAndroid) {
       if (await Permission.manageExternalStorage.isDenied) {
@@ -42,6 +45,14 @@ class PublicFunctions {
         return "$selectedDirectory/$defaultFileName";
       }
       return "/storage/emulated/0/Download/$defaultFileName";
+    } else if (Platform.isIOS) {
+      final dir = await getApplicationDocumentsDirectory();
+      final timestamp = DateFormat('yyyyMMdd_HHmmss').format(DateTime.now());
+      String baseName = defaultFileName;
+      if (baseName.toLowerCase().endsWith('.csv')) {
+        baseName = baseName.substring(0, baseName.length - 4);
+      }
+      return p.join(dir.path, '${baseName}_$timestamp.csv');
     } else {
       String? outputFile = await FilePicker.platform.saveFile(
         initialDirectory: Directory.current.path,
