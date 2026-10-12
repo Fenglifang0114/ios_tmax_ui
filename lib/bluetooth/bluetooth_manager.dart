@@ -442,20 +442,50 @@ class BluetoothManager {
     return data.map((b) => b.toRadixString(16).padLeft(2, '0').toUpperCase()).join(' ');
   }
 
-  // 向蓝牙设备发送数据
+  // 向蓝牙设备发送数据（兼容老固件 MTU 限制与单片机串口 FIFO 防溢出）
   void sendData(List<int> data) async {
     if (_device == null || _writeChar == null) {
       debugPrint("BLE: 发送失败 - 设备未连接或写特征不可用");
       return;
     }
 
+    // 1. 获取当前安全单包大小（老固件 MTU 23，除去 3 字节 ATT Header 仅为 20 字节）
+    int safeChunkSize = 20;
+    try {
+      int currentMtu = _device!.mtuNow;
+      if (currentMtu > 23) {
+        // 保留安全余量，最大不超过 240 字节
+        safeChunkSize = (currentMtu - 3).clamp(20, 240);
+      }
+    } catch (_) {
+      safeChunkSize = 20;
+    }
+
     String hex = _toHex(data);
     try {
-      // 实时调试：显示发送的具体指令内容 (已移除高频 Toast 以防崩溃)
-      
-      // 尝试写入（RK3288 及普通安卓兼容处理）
-      await _writeChar!.write(data, withoutResponse: true).timeout(Duration(seconds: 2));
-      debugPrint("BLE <- Go: 已写入 $hex");
+      // 如果在安全单包范围内，直接写入
+      if (data.length <= safeChunkSize) {
+        await _writeChar!.write(data, withoutResponse: true).timeout(const Duration(seconds: 2));
+        debugPrint("BLE <- Go: 已写入 $hex");
+        return;
+      }
+
+      // 超过单包限制，进行切片分包发送（针对固件 14 及老模组的核心修复）
+      for (int i = 0; i < data.length; i += safeChunkSize) {
+        int end = i + safeChunkSize;
+        if (end > data.length) {
+          end = data.length;
+        }
+        List<int> chunk = data.sublist(i, end);
+
+        await _writeChar!.write(chunk, withoutResponse: true).timeout(const Duration(seconds: 2));
+
+        // 切片间增加 8~10ms 微延时，防止老款 MCU 串口 FIFO 接收溢出
+        if (end < data.length) {
+          await Future.delayed(const Duration(milliseconds: 10));
+        }
+      }
+      debugPrint("BLE <- Go (分包已完成): 总长 ${data.length} 字节, 单包 $safeChunkSize 字节");
     } catch (e) {
       debugPrint("BLE: 写入数据异常: $e");
       // 如果 withoutResponse 失败，尝试带响应写入
