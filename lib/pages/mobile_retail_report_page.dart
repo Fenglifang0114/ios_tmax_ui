@@ -2,11 +2,9 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:t_max/data/detail_info.dart';
 import 'package:t_max/data/downloadresponse.dart';
 import 'package:t_max/data/language.dart';
@@ -17,7 +15,8 @@ import 'package:t_max/eventbus/eventbus.dart';
 import 'package:t_max/functions/methods.dart';
 import 'package:t_max/widget/show_error_dialog.dart';
 import 'package:t_max/widget/mobile_scale_drawer_widget.dart';
-import 'package:t_max/dialog/mobile_page_help_dialog.dart';
+import 'package:t_max/generated/l10n.dart';
+import 'package:t_max/widget/f_open_file.dart';
 
 class TransactionWithExpansion extends DetailInfoRev {
   bool isExpanded;
@@ -269,9 +268,17 @@ class _MobileRetailReportPageState extends State<MobileRetailReportPage> {
     }
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    localizedStrings = S.of(context);
+  }
+
   Future<void> exportToCsv() async {
     if (!exportFlag) return;
-    exportFlag = false;
+    setState(() {
+      exportFlag = false;
+    });
 
     List<String> header = [
       'Model Name',
@@ -357,58 +364,35 @@ class _MobileRetailReportPageState extends State<MobileRetailReportPage> {
 
     data.insert(0, header);
 
-    String? outputFile;
+    try {
+      String? outputFile =
+          await PublicFunctions.pickSaveFilePath('retail_report.csv');
 
-    if (Platform.isAndroid) {
-      if (await Permission.manageExternalStorage.isDenied) {
-        await Permission.manageExternalStorage.request();
-      }
-      if (await Permission.storage.isDenied) {
-        await Permission.storage.request();
-      }
-      String? selectedDirectory = await FilePicker.platform.getDirectoryPath(
-        dialogTitle: 'Select Output Folder',
-      );
-
-      if (selectedDirectory != null) {
-        String timestamp = DateFormat('yyyyMMdd_HHmmss').format(DateTime.now());
-        outputFile = "$selectedDirectory/report_$timestamp.csv";
-      } else {
-        exportFlag = true;
-        return;
-      }
-    } else {
-      var directory = Directory.current.path;
-      outputFile = (await FilePicker.platform.saveFile(
-        initialDirectory: directory,
-        dialogTitle: 'Output file:',
-        type: FileType.custom,
-        allowedExtensions: ['csv'],
-        fileName: 'report.csv',
-      ));
-    }
-
-    if (outputFile != null) {
-      if (!outputFile.contains(".csv")) {
-        outputFile = "$outputFile.csv";
-      }
-      final filePath = outputFile;
-      File file = File(filePath);
-      try {
+      if (outputFile != null) {
+        if (!outputFile.contains(".csv")) {
+          outputFile = "$outputFile.csv";
+        }
+        final filePath = outputFile;
+        File file = File(filePath);
         await file.writeAsString(
           List.generate(data.length, (index) => data[index].join(','))
               .join('\n'),
         );
         if (mounted && context.mounted) {
-          showErrorDialog(context, 'Exported Successfully:\n${file.path}');
-        }
-      } catch (e) {
-        if (mounted && context.mounted) {
-          showErrorDialog(context, e.toString());
+          showExportDialog(filePath, context);
         }
       }
+    } catch (e) {
+      if (mounted && context.mounted) {
+        showErrorDialog(context, "${S.of(context).gTipExportFail}: $e");
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          exportFlag = true;
+        });
+      }
     }
-    exportFlag = true;
   }
 
   @override
@@ -677,14 +661,23 @@ class _MobileRetailReportPageState extends State<MobileRetailReportPage> {
                   ),
                 ),
                 onPressed: exportFlag ? exportToCsv : null,
-                child: Text(
-                  localizedStrings?.gBtnExport ?? 'Export',
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                child: exportFlag
+                    ? Text(
+                        S.of(context).gBtnExport,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      )
+                    : const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
+                      ),
               ),
             ),
           ),
