@@ -3818,5 +3818,21 @@
   "gWeightSummaryMode": "Weight Summary Mode",
   "@gWeightSummaryMode": {
     "description": "Weight summary mode toggle"
+  },
+  "gBtnShareOrSave": "Share / Save to Files",
+  "@gBtnShareOrSave": {
+    "description": "Share or save to files button"
+  },
+  "gTipExportIosSavedNotice": "Tip: Saved to iOS [Files] -> [On My Device] -> [T Max]",
+  "@gTipExportIosSavedNotice": {
+    "description": "iOS saved path tip notice"
+  },
+  "gTipExportingRecords": "Exporting weighing records...",
+  "@gTipExportingRecords": {
+    "description": "Exporting weighing records loading prompt"
+  },
+  "gTipLoadingRecordsWait": "Loading records, please wait...",
+  "@gTipLoadingRecordsWait": {
+    "description": "Loading records please wait prompt"
   }
 }

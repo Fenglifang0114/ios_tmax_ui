@@ -10,6 +10,7 @@ import 'package:t_max/data/req_formula_data.dart';
 import 'package:t_max/data/scale_info_from_db.dart';
 import 'package:t_max/data/sys_user_req.dart';
 import 'package:t_max/data/writelog.dart';
+import 'package:t_max/data/language.dart';
 
 import '../common/web_socket_channel.dart';
 import '../data/download_prt_fmt.dart';
@@ -40,7 +41,9 @@ class PublicFunctions {
         await Permission.storage.request();
       }
 
-      String? selectedDirectory = await FilePicker.platform.getDirectoryPath(dialogTitle: 'Select Output Folder');
+      String? selectedDirectory = await FilePicker.platform.getDirectoryPath(
+        dialogTitle: localizedStrings?.gBtnExport ?? 'Export',
+      );
       if (selectedDirectory != null) {
         return "$selectedDirectory/$defaultFileName";
       }
@@ -57,7 +60,7 @@ class PublicFunctions {
       String? outputFile = await FilePicker.platform.saveFile(
         initialDirectory: Directory.current.path,
         type: FileType.custom,
-        dialogTitle: 'Output file:',
+        dialogTitle: localizedStrings?.gBtnExport ?? 'Export',
         allowedExtensions: ["csv"],
         fileName: defaultFileName,
       );

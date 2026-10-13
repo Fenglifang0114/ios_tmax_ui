@@ -3,10 +3,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart' as p;
 import 'package:printing/printing.dart';
-import 'package:t_max/data/home_page_common_data.dart';
 import 'package:t_max/data/icons.dart';
-import 'package:t_max/data/language.dart';
-import 'package:t_max/widget/common_widget.dart';
+import 'package:t_max/generated/l10n.dart';
 import 'package:t_max/widget/dialog_head_style.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -19,10 +17,10 @@ void showExportDialog(String filePath, BuildContext context) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
+        final s = S.of(context);
         final screenWidth = MediaQuery.of(context).size.width;
         final isMobile = Platform.isIOS || Platform.isAndroid || screenWidth < 650;
         final dialogWidth = isMobile ? (screenWidth * 0.9).clamp(300.0, 500.0) : 610.0;
-        final isZh = Localizations.localeOf(context).languageCode == 'zh';
 
         return Dialog(
           backgroundColor: Colors.transparent,
@@ -41,8 +39,7 @@ void showExportDialog(String filePath, BuildContext context) {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   // 头部
-                  ...dialogHeadStyle(
-                      context, (localizedStrings?.gTipExportSuccess ?? "Export Successful"), true),
+                  ...dialogHeadStyle(context, s.gTipExportSuccess, true),
 
                   Container(
                     padding: const EdgeInsets.only(top: 20),
@@ -63,16 +60,16 @@ void showExportDialog(String filePath, BuildContext context) {
                     child: Column(
                       children: [
                         SelectableText(
-                          filePath,
+                          Platform.isIOS ? p.basename(filePath) : filePath,
                           textAlign: TextAlign.center,
-                          style: textTheme.bodyMedium,
+                          style: Platform.isIOS
+                              ? textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600)
+                              : textTheme.bodyMedium,
                         ),
                         if (Platform.isIOS) ...[
                           const SizedBox(height: 12),
                           Text(
-                            isZh
-                                ? "提示：文件已保存至系统【文件】->【我的 iPhone】->【T Max】目录下"
-                                : "Tip: Saved to iOS [Files] -> [On My iPhone] -> [T Max]",
+                            s.gTipExportIosSavedNotice,
                             textAlign: TextAlign.center,
                             style: const TextStyle(fontSize: 13, color: Color(0xFF64748B)),
                           ),
@@ -84,82 +81,174 @@ void showExportDialog(String filePath, BuildContext context) {
                   // 底部
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-                    child: Wrap(
-                      spacing: 12,
-                      runSpacing: 10,
-                      alignment: WrapAlignment.center,
-                      children: [
-                        showTextButton(
-                            context, btnHeight, (localizedStrings?.gBtnCancel ?? "Cancel"), () {
-                          Navigator.pop(context);
-                        }, colorScheme.onPrimary, colorScheme.error,
-                            colorScheme.onPrimary),
-
-                        // 移动端（iOS / Android）：支持通过系统分享面板另存为或分享
-                        if (Platform.isIOS || Platform.isAndroid)
-                          showTextButton(
-                            context,
-                            btnHeight,
-                            isZh ? "分享 / 另存为" : "Share / Export",
-                            () async {
-                              try {
-                                final file = File(filePath);
-                                if (await file.exists()) {
-                                  final bytes = await file.readAsBytes();
-                                  await Printing.sharePdf(
-                                    bytes: bytes,
-                                    filename: p.basename(filePath),
-                                  );
-                                }
-                              } catch (e) {
-                                debugPrint("Share file error: $e");
-                              }
-                            },
-                            colorScheme.onPrimary,
-                            colorScheme.primary,
-                            colorScheme.onPrimary,
+                    child: isMobile
+                        ? Row(
+                            children: [
+                              Expanded(
+                                child: SizedBox(
+                                  height: 42,
+                                  child: OutlinedButton(
+                                    style: OutlinedButton.styleFrom(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(6),
+                                      ),
+                                      side: BorderSide(
+                                          color: colorScheme.outline.withOpacity(0.3)),
+                                    ),
+                                    onPressed: () => Navigator.pop(context),
+                                    child: Text(
+                                      s.gBtnCancel,
+                                      style: TextStyle(
+                                        color: colorScheme.onSurface,
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: SizedBox(
+                                  height: 42,
+                                  child: ElevatedButton.icon(
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: const Color(0xFF10B981),
+                                      foregroundColor: Colors.white,
+                                      elevation: 0,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(6),
+                                      ),
+                                    ),
+                                    icon: const Icon(Icons.share,
+                                        size: 18, color: Colors.white),
+                                    label: Text(
+                                      s.gBtnShareOrSave,
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    onPressed: () async {
+                                      final box =
+                                          context.findRenderObject() as RenderBox?;
+                                      final bounds = box != null && box.hasSize
+                                          ? box.localToGlobal(Offset.zero) &
+                                              box.size
+                                          : Rect.fromLTWH(
+                                              0, 0, screenWidth, 100);
+                                      try {
+                                        final file = File(filePath);
+                                        if (await file.exists()) {
+                                          final bytes = await file.readAsBytes();
+                                          await Printing.sharePdf(
+                                            bytes: bytes,
+                                            filename: p.basename(filePath),
+                                            bounds: bounds,
+                                          );
+                                        } else {
+                                          debugPrint(
+                                              "Export file does not exist: $filePath");
+                                        }
+                                      } catch (e) {
+                                        debugPrint("Share file error: $e");
+                                      }
+                                    },
+                                  ),
+                                ),
+                              ),
+                            ],
+                          )
+                        : Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              SizedBox(
+                                width: 100,
+                                height: 38,
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: colorScheme.error,
+                                    foregroundColor: colorScheme.onPrimary,
+                                    shape: const RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.zero,
+                                    ),
+                                  ),
+                                  onPressed: () => Navigator.pop(context),
+                                  child: Text(
+                                    s.gBtnCancel,
+                                    style: TextStyle(color: colorScheme.onPrimary),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              SizedBox(
+                                width: 140,
+                                height: 38,
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: colorScheme.primary,
+                                    foregroundColor: colorScheme.onPrimary,
+                                    shape: const RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.zero,
+                                    ),
+                                  ),
+                                  onPressed: () async {
+                                    if (Platform.isWindows) {
+                                      await Process.run(
+                                          'explorer.exe', ['/select,', filePath]);
+                                    } else if (Platform.isMacOS) {
+                                      await Process.run('open', ['-R', filePath]);
+                                    } else if (Platform.isLinux) {
+                                      String directory =
+                                          Directory(filePath).parent.path;
+                                      await Process.run('xdg-open', [directory]);
+                                    }
+                                    if (context.mounted) {
+                                      Navigator.pop(context);
+                                    }
+                                  },
+                                  child: Text(
+                                    s.gBtnOpenFileLocation,
+                                    style: TextStyle(color: colorScheme.onPrimary),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              SizedBox(
+                                width: 120,
+                                height: 38,
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: colorScheme.primary,
+                                    foregroundColor: colorScheme.onPrimary,
+                                    shape: const RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.zero,
+                                    ),
+                                  ),
+                                  onPressed: () async {
+                                    final Uri fileUri = Uri.file(filePath);
+                                    if (await canLaunchUrl(fileUri)) {
+                                      await launchUrl(fileUri);
+                                    } else {
+                                      String directory =
+                                          Directory(filePath).parent.path;
+                                      final Uri dirUri = Uri.file(directory);
+                                      if (await canLaunchUrl(dirUri)) {
+                                        await launchUrl(dirUri);
+                                      }
+                                    }
+                                    if (context.mounted) {
+                                      Navigator.pop(context);
+                                    }
+                                  },
+                                  child: Text(
+                                    s.gBtnOpenFile,
+                                    style: TextStyle(color: colorScheme.onPrimary),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-
-                        // 桌面端专属：打开文件所在文件夹
-                        if (!Platform.isAndroid && !Platform.isIOS)
-                          showTextButton(context, btnHeight,
-                              (localizedStrings?.gBtnOpenFileLocation ?? "Open Location"), () async {
-                            if (Platform.isWindows) {
-                              await Process.run('explorer.exe', ['/select,', filePath]);
-                            } else if (Platform.isMacOS) {
-                              await Process.run('open', ['-R', filePath]);
-                            } else if (Platform.isLinux) {
-                              String directory = Directory(filePath).parent.path;
-                              await Process.run('xdg-open', [directory]);
-                            }
-                            if (context.mounted) {
-                              Navigator.pop(context);
-                            }
-                          }, colorScheme.onPrimary, colorScheme.primary,
-                              colorScheme.onPrimary),
-
-                        // 桌面端专属：直接打开文件
-                        if (!Platform.isAndroid && !Platform.isIOS)
-                          showTextButton(
-                              context, btnHeight, (localizedStrings?.gBtnOpenFile ?? "Open File"),
-                              () async {
-                            final Uri fileUri = Uri.file(filePath);
-                            if (await canLaunchUrl(fileUri)) {
-                              await launchUrl(fileUri);
-                            } else {
-                              String directory = Directory(filePath).parent.path;
-                              final Uri dirUri = Uri.file(directory);
-                              if (await canLaunchUrl(dirUri)) {
-                                await launchUrl(dirUri);
-                              }
-                            }
-                            if (context.mounted) {
-                              Navigator.pop(context);
-                            }
-                          }, colorScheme.onPrimary, colorScheme.primary,
-                              colorScheme.onPrimary),
-                      ],
-                    ),
                   ),
                 ],
               ),

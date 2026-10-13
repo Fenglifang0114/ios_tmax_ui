@@ -28,9 +28,10 @@ class S {
   static const AppLocalizationDelegate delegate = AppLocalizationDelegate();
 
   static Future<S> load(Locale locale) {
-    final name = (locale.countryCode?.isEmpty ?? false)
-        ? locale.languageCode
-        : locale.toString();
+    final name =
+        (locale.countryCode?.isEmpty ?? false)
+            ? locale.languageCode
+            : locale.toString();
     final localeName = Intl.canonicalizedLocale(name);
     return initializeMessages(localeName).then((_) {
       Intl.defaultLocale = localeName;
@@ -9272,6 +9273,46 @@ class S {
       'Weight Summary Mode',
       name: 'gWeightSummaryMode',
       desc: 'Weight summary mode toggle',
+      args: [],
+    );
+  }
+
+  /// `Share / Save to Files`
+  String get gBtnShareOrSave {
+    return Intl.message(
+      'Share / Save to Files',
+      name: 'gBtnShareOrSave',
+      desc: 'Share or save to files button',
+      args: [],
+    );
+  }
+
+  /// `Tip: Saved to iOS [Files] -> [On My Device] -> [T Max]`
+  String get gTipExportIosSavedNotice {
+    return Intl.message(
+      'Tip: Saved to iOS [Files] -> [On My Device] -> [T Max]',
+      name: 'gTipExportIosSavedNotice',
+      desc: 'iOS saved path tip notice',
+      args: [],
+    );
+  }
+
+  /// `Exporting weighing records...`
+  String get gTipExportingRecords {
+    return Intl.message(
+      'Exporting weighing records...',
+      name: 'gTipExportingRecords',
+      desc: 'Exporting weighing records loading prompt',
+      args: [],
+    );
+  }
+
+  /// `Loading records, please wait...`
+  String get gTipLoadingRecordsWait {
+    return Intl.message(
+      'Loading records, please wait...',
+      name: 'gTipLoadingRecordsWait',
+      desc: 'Loading records please wait prompt',
       args: [],
     );
   }

@@ -101,6 +101,7 @@ class _MobileWeighingDataCollectionPageState
   dynamic _eventBusScaleAdded;
   dynamic _eventBusProductList;
   dynamic _eventBusExportRecs;
+  bool _isExporting = false;
 
   // Auto Save State for Independent Mode
   final Map<int, bool> _scalePassedZeroMap = {};
@@ -354,15 +355,20 @@ class _MobileWeighingDataCollectionPageState
 
     _eventBusExportRecs = eventBus.on<EventExportAllRecs>().listen((event) {
       if (!mounted) return;
+      setState(() {
+        _isExporting = false;
+      });
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
       String resString = event.obj;
       if (resString.contains('ok')) {
-        String filePath =
-            resString.contains(',') ? resString.split(',')[1] : resString;
+        String filePath = resString.contains(',')
+            ? resString.substring(resString.indexOf(',') + 1).trim()
+            : resString;
         showExportDialog(filePath, context);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text("Export Failed: $resString"),
+            content: Text("${S.of(context).gTipExportFail}: $resString"),
             backgroundColor: const Color(0xFFEF4444),
           ),
         );
@@ -1120,30 +1126,111 @@ class _MobileWeighingDataCollectionPageState
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(6)),
                         ),
-                        onPressed: () async {
-                          String? outputFile =
-                              await PublicFunctions.pickSaveFilePath(
-                                  'report.csv');
-                          if (outputFile != null) {
-                            List<String> selFields = [];
-                            Map<String, String> selMap = {};
-                            _visibleFields.forEach((key, val) {
-                              if (val) {
-                                selFields.add(key);
-                                selMap[key] = getRptTitleName(key);
-                              }
-                            });
-                            PublicFunctions.exportAllRecords(
-                                0, outputFile, selFields, selMap);
-                          }
-                        },
-                        child: Text(
-                          localizedStrings?.gBtnExport ?? "Export",
-                          style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 15,
-                              fontWeight: FontWeight.w600),
-                        ),
+                        onPressed: _isExporting
+                            ? null
+                            : () async {
+                                final s = S.of(context);
+                                if (_isLoadingRecords) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(s.gTipLoadingRecordsWait),
+                                      duration: const Duration(seconds: 2),
+                                    ),
+                                  );
+                                  return;
+                                }
+
+                                setState(() {
+                                  _isExporting = true;
+                                });
+
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Row(
+                                      children: [
+                                        const SizedBox(
+                                          width: 16,
+                                          height: 16,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 12),
+                                        Text(s.gTipExportingRecords),
+                                      ],
+                                    ),
+                                    duration: const Duration(seconds: 4),
+                                  ),
+                                );
+
+                                // Fallback timeout to unblock UI if backend doesn't reply
+                                Timer(const Duration(seconds: 8), () {
+                                  if (mounted && _isExporting) {
+                                    setState(() {
+                                      _isExporting = false;
+                                    });
+                                  }
+                                });
+
+                                try {
+                                  String? outputFile =
+                                      await PublicFunctions.pickSaveFilePath(
+                                          'report.csv');
+                                  if (outputFile != null) {
+                                    List<String> selFields = [];
+                                    Map<String, String> selMap = {};
+                                    _visibleFields.forEach((key, val) {
+                                      if (val) {
+                                        selFields.add(key);
+                                        selMap[key] = getRptTitleName(key);
+                                      }
+                                    });
+                                    PublicFunctions.exportAllRecords(
+                                        0, outputFile, selFields, selMap);
+                                  } else {
+                                    if (mounted) {
+                                      setState(() {
+                                        _isExporting = false;
+                                      });
+                                      ScaffoldMessenger.of(context)
+                                          .hideCurrentSnackBar();
+                                    }
+                                  }
+                                } catch (e) {
+                                  debugPrint("Export error: $e");
+                                  if (mounted) {
+                                    setState(() {
+                                      _isExporting = false;
+                                    });
+                                    ScaffoldMessenger.of(context)
+                                        .hideCurrentSnackBar();
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text("${s.gTipExportFail}: $e"),
+                                        backgroundColor:
+                                            const Color(0xFFEF4444),
+                                      ),
+                                    );
+                                  }
+                                }
+                              },
+                        child: _isExporting
+                            ? const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: Colors.white,
+                                ),
+                              )
+                            : Text(
+                                localizedStrings?.gBtnExport ?? "Export",
+                                style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w600),
+                              ),
                       ),
                     ),
                   ),

@@ -3818,5 +3818,21 @@
   "gWeightSummaryMode": "重量汇总模式",
   "@gWeightSummaryMode": {
     "description": "Weight summary mode toggle"
+  },
+  "gBtnShareOrSave": "分享 / 另存为",
+  "@gBtnShareOrSave": {
+    "description": "Share or save to files button"
+  },
+  "gTipExportIosSavedNotice": "提示：文件已保存至系统【文件】->【我的设备】->【T Max】目录下",
+  "@gTipExportIosSavedNotice": {
+    "description": "iOS saved path tip notice"
+  },
+  "gTipExportingRecords": "正在导出称重记录...",
+  "@gTipExportingRecords": {
+    "description": "Exporting weighing records loading prompt"
+  },
+  "gTipLoadingRecordsWait": "正在加载记录，请稍候...",
+  "@gTipLoadingRecordsWait": {
+    "description": "Loading records please wait prompt"
   }
 }

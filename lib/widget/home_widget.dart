@@ -120,34 +120,47 @@ class _WindowButtonsState extends State<WindowButtons> with WindowListener {
   final StreamController<bool> _maximizedStreamController =
       StreamController<bool>.broadcast();
 
+  bool get _isDesktop =>
+      Platform.isWindows || Platform.isLinux || Platform.isMacOS;
+
   @override
   void initState() {
     super.initState();
-    // 注册监听器
-    windowManager.addListener(this);
-    _initMaximizedState();
+    // 仅在桌面平台注册监听器
+    if (_isDesktop) {
+      windowManager.addListener(this);
+      _initMaximizedState();
+    }
   }
 
   Future<void> _initMaximizedState() async {
-    _maximizedStreamController.add(await windowManager.isMaximized());
+    if (_isDesktop) {
+      _maximizedStreamController.add(await windowManager.isMaximized());
+    }
   }
 
   // 实现 WindowListener 接口的 onWindowMaximize 方法
   @override
   void onWindowMaximize() {
-    _maximizedStreamController.add(true);
+    if (_isDesktop) {
+      _maximizedStreamController.add(true);
+    }
   }
 
   // 实现 WindowListener 接口的 onWindowUnmaximize 方法
   @override
   void onWindowUnmaximize() {
-    _maximizedStreamController.add(false);
+    if (_isDesktop) {
+      _maximizedStreamController.add(false);
+    }
   }
 
   @override
   void dispose() {
-    // 移除监听器
-    windowManager.removeListener(this);
+    // 仅在桌面平台移除监听器
+    if (_isDesktop) {
+      windowManager.removeListener(this);
+    }
     _maximizedStreamController.close();
     super.dispose();
   }
@@ -260,6 +273,9 @@ class _WindowButtonsState extends State<WindowButtons> with WindowListener {
 
   @override
   Widget build(BuildContext context) {
+    if (!_isDesktop) {
+      return const SizedBox.shrink();
+    }
     return Row(
       children: [
         _buildMinimizeButton(),
@@ -285,6 +301,14 @@ class DraggableTitleBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool isDesktop =
+        Platform.isWindows || Platform.isLinux || Platform.isMacOS;
+
+    // 移动端（iOS / iPadOS / Android）直接隐藏桌面标题栏
+    if (!isDesktop) {
+      return const SizedBox.shrink();
+    }
+
     return GestureDetector(
       // 关键：添加拖拽事件处理
       onPanStart: (details) => windowManager.startDragging(),
@@ -300,27 +324,27 @@ class DraggableTitleBar extends StatelessWidget {
 
       child: Container(
         height: 32, // 标题栏高度
-        color: Color(0xFFF0F0F0), // 标题栏背景色
+        color: const Color(0xFFF0F0F0), // 标题栏背景色
         child: Row(
           children: [
             if (leading != null) leading!,
-            SizedBox(width: 8), // 左侧图标和标题之间的间距
+            const SizedBox(width: 8), // 左侧图标和标题之间的间距
             Image.asset(appIconPath, width: 20, height: 20), // 左侧图标
 
             // 标题文本
             Expanded(
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16),
+                padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Text(
                   title,
-                  style: TextStyle(fontSize: 12),
+                  style: const TextStyle(fontSize: 12),
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
             ),
 
             // 窗口控制按钮
-            if (showButtons) WindowButtons(),
+            if (showButtons) const WindowButtons(),
           ],
         ),
       ),

@@ -233,10 +233,10 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "fFormulaCompletedTip": MessageLookupByLibrary.simpleMessage("配方已完成"),
     "fFormulaCompletionMsg": MessageLookupByLibrary.simpleMessage("配方完成!"),
-    "fFormulaDetailsTitle": MessageLookupByLibrary.simpleMessage("配方详情"),
     "fFormulaDetailsEmpty": MessageLookupByLibrary.simpleMessage(
       "该配方没有配方明细，无法开始称重",
     ),
+    "fFormulaDetailsTitle": MessageLookupByLibrary.simpleMessage("配方详情"),
     "fFormulaIdAndBarcodeDuplicate": MessageLookupByLibrary.simpleMessage(
       "配方ID和验证条码重复",
     ),
@@ -420,6 +420,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "gBtnSelectZipFirmware": MessageLookupByLibrary.simpleMessage("请选择更新文件Zip"),
     "gBtnSetTime": MessageLookupByLibrary.simpleMessage("设置时间日期"),
     "gBtnSetting": MessageLookupByLibrary.simpleMessage("设置"),
+    "gBtnShareOrSave": MessageLookupByLibrary.simpleMessage("分享 / 另存为"),
     "gBtnStart": MessageLookupByLibrary.simpleMessage("开始"),
     "gBtnStatic": MessageLookupByLibrary.simpleMessage("静态"),
     "gBtnSyncPcTime": MessageLookupByLibrary.simpleMessage("同步PC时间"),
@@ -593,7 +594,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "gTipExportFail": MessageLookupByLibrary.simpleMessage("导出失败"),
     "gTipExportFileError": MessageLookupByLibrary.simpleMessage("导出文件错误或文件被占用"),
     "gTipExportIOError": MessageLookupByLibrary.simpleMessage("导出IO错误"),
+    "gTipExportIosSavedNotice": MessageLookupByLibrary.simpleMessage(
+      "提示：文件已保存至系统【文件】->【我的设备】->【T Max】目录下",
+    ),
     "gTipExportSuccess": MessageLookupByLibrary.simpleMessage("导出成功"),
+    "gTipExportingRecords": MessageLookupByLibrary.simpleMessage("正在导出称重记录..."),
     "gTipFailedGetTime": MessageLookupByLibrary.simpleMessage("获取设备时间失败"),
     "gTipFilling": MessageLookupByLibrary.simpleMessage("填充"),
     "gTipFirmwareZipFile": MessageLookupByLibrary.simpleMessage("软件Zip:"),
@@ -654,6 +659,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "gTipLoadWeightThenNext": MessageLookupByLibrary.simpleMessage(
       "请等待绿灯亮起后点击下一步",
+    ),
+    "gTipLoadingRecordsWait": MessageLookupByLibrary.simpleMessage(
+      "正在加载记录，请稍候...",
     ),
     "gTipManual": MessageLookupByLibrary.simpleMessage("手动"),
     "gTipManualZero": MessageLookupByLibrary.simpleMessage("手动归零"),

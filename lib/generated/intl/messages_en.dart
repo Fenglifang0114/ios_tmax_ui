@@ -339,11 +339,11 @@ class MessageLookup extends MessageLookupByLibrary {
       "Formula completed",
     ),
     "fFormulaCompletionMsg": MessageLookupByLibrary.simpleMessage("Completed!"),
-    "fFormulaDetailsTitle": MessageLookupByLibrary.simpleMessage(
-      "Formula Details",
-    ),
     "fFormulaDetailsEmpty": MessageLookupByLibrary.simpleMessage(
       "The formula has no details and cannot start weighing",
+    ),
+    "fFormulaDetailsTitle": MessageLookupByLibrary.simpleMessage(
+      "Formula Details",
     ),
     "fFormulaIdAndBarcodeDuplicate": MessageLookupByLibrary.simpleMessage(
       "Formula ID and barcode already exist",
@@ -620,6 +620,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "gBtnSetTime": MessageLookupByLibrary.simpleMessage("Set Date/Time"),
     "gBtnSetting": MessageLookupByLibrary.simpleMessage("Setting"),
+    "gBtnShareOrSave": MessageLookupByLibrary.simpleMessage(
+      "Share / Save to Files",
+    ),
     "gBtnStart": MessageLookupByLibrary.simpleMessage("Start"),
     "gBtnStatic": MessageLookupByLibrary.simpleMessage("Static"),
     "gBtnSyncPcTime": MessageLookupByLibrary.simpleMessage("Sync PC Time"),
@@ -857,8 +860,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "gTipExportIOError": MessageLookupByLibrary.simpleMessage(
       "Export IO error",
     ),
+    "gTipExportIosSavedNotice": MessageLookupByLibrary.simpleMessage(
+      "Tip: Saved to iOS [Files] -> [On My Device] -> [T Max]",
+    ),
     "gTipExportSuccess": MessageLookupByLibrary.simpleMessage(
       "Export successful",
+    ),
+    "gTipExportingRecords": MessageLookupByLibrary.simpleMessage(
+      "Exporting weighing records...",
     ),
     "gTipFailedGetTime": MessageLookupByLibrary.simpleMessage(
       "failed to get time",
@@ -948,6 +957,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "gTipLoadWeightThenNext": MessageLookupByLibrary.simpleMessage(
       "Please wait for the green light to turn on and click next",
+    ),
+    "gTipLoadingRecordsWait": MessageLookupByLibrary.simpleMessage(
+      "Loading records, please wait...",
     ),
     "gTipManual": MessageLookupByLibrary.simpleMessage("Manual"),
     "gTipManualZero": MessageLookupByLibrary.simpleMessage("Manual Zero Reset"),

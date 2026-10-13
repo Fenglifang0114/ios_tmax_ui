@@ -1,10 +1,6 @@
 import 'dart:convert';
-import 'dart:io';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:path/path.dart' as p;
-import 'package:permission_handler/permission_handler.dart';
 import 'package:t_max/data/language.dart';
 import 'package:t_max/data/log_data.dart';
 import 'package:t_max/eventbus/eventbus.dart';
@@ -12,6 +8,8 @@ import 'package:t_max/functions/methods.dart';
 import 'package:t_max/pages/mobile_log_detail_page.dart';
 import 'package:t_max/widget/mobile_log_filter_header.dart';
 import 'package:t_max/dialog/custom_dialog_tip.dart';
+import 'package:t_max/generated/l10n.dart';
+import 'package:t_max/widget/f_open_file.dart';
 
 class MobileLogWgtTab extends StatefulWidget {
   final String contentType;
@@ -93,11 +91,19 @@ class _MobileLogWgtTabState extends State<MobileLogWgtTab> {
         String josnData = event.obj;
         try {
           if (josnData.isEmpty) {
-            showTipInfo((localizedStrings?.gTipExportFail ?? "Export failed"), context);
+            showTipInfo(S.of(context).gTipExportFail, context);
             return;
           }
           if (josnData.contains('ok')) {
-            showTipInfo((localizedStrings?.gTipExportSuccess ?? "Export succeeded"), context);
+            String filePath = "";
+            if (josnData.contains(',')) {
+              filePath = josnData.substring(josnData.indexOf(',') + 1).trim();
+            }
+            if (filePath.isNotEmpty) {
+              showExportDialog(filePath, context);
+            } else {
+              showTipInfo(S.of(context).gTipExportSuccess, context);
+            }
           }
         } catch (e) {
           return;
@@ -140,25 +146,16 @@ class _MobileLogWgtTabState extends State<MobileLogWgtTab> {
   }
 
   void _export() async {
-    if (Platform.isAndroid) {
-      await Permission.storage.request();
-    }
-    
-    String? selectedDirectory = await FilePicker.platform.getDirectoryPath(
-      dialogTitle: 'Select Output Folder',
-    );
-    
-    if (selectedDirectory == null) {
+    String? outputFile = await PublicFunctions.pickSaveFilePath('wgt_log.csv');
+    if (!mounted || outputFile == null) {
       return;
     }
-    
-    String timestamp = DateFormat('yyyyMMdd_HHmmss').format(DateTime.now());
-    String outputFile = p.join(selectedDirectory, 'wgt_log_$timestamp.csv');
-    
+
     int? roleId = int.tryParse(roleIdCtl.text);
     String dateStart = startDate != null ? DateFormat('yyyy-MM-dd').format(startDate!) : "";
     String dateEnd = endDate != null ? DateFormat('yyyy-MM-dd').format(endDate!) : "";
-    
+
+    final s = S.of(context);
     ReqExportLog exportLog = ReqExportLog(
       filePath: outputFile,
       fieldName: 'rec_id',
@@ -173,12 +170,12 @@ class _MobileLogWgtTabState extends State<MobileLogWgtTab> {
       translation: WgtLogTranslator.getLanguageMap(),
       headers: [
         'ID',
-        (localizedStrings?.operator ?? "operator"),
-        (localizedStrings?.module ?? "module"),
-        (localizedStrings?.fCreatedAtCol ?? "fCreatedAtCol"),
+        s.operator,
+        s.module,
+        s.fCreatedAtCol,
       ],
     );
-    
+
     String jsonStr = jsonEncode(exportLog.toJson());
     PublicFunctions.exportWgtLog(jsonStr);
   }

@@ -394,9 +394,9 @@ class LoginPageState extends State<LoginPage> with WindowLifecycleMixin {
     TextTheme textTheme = Theme.of(context).textTheme;
     double tHeight = MediaQuery.of(context).size.height;
     return Scaffold(
-      appBar: Platform.isAndroid
+      appBar: (Platform.isAndroid || Platform.isIOS)
           ? null
-          : PreferredSize(
+          : const PreferredSize(
               preferredSize: Size.fromHeight(40), // 自定义高度
               child: DraggableTitleBar(title: ''),
             ),
@@ -832,6 +832,9 @@ class _WindowButtonsState extends State<WindowButtons> with WindowListener {
 
   @override
   Widget build(BuildContext context) {
+    if (!Platform.isWindows && !Platform.isLinux && !Platform.isMacOS) {
+      return const SizedBox.shrink();
+    }
     return Row(
       children: [
         _buildMinimizeButton(),
@@ -857,6 +860,9 @@ class DraggableTitleBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (!Platform.isWindows && !Platform.isLinux && !Platform.isMacOS) {
+      return const SizedBox.shrink();
+    }
     return GestureDetector(
       // 关键：添加拖拽事件处理
       onPanStart: (details) {

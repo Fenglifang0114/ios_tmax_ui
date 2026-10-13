@@ -614,61 +614,69 @@ class MyHomePageState extends State<MyHomePage> with WindowLifecycleMixin {
               : null,
           appBar: (isMobile && _shouldHideScaffoldElements)
               ? null
-              : PreferredSize(
-                  preferredSize: Size.fromHeight(isMobile ? 56 : 40),
-                  child: isMobile
-                      ? AppBar(
-                          backgroundColor: Colors.white,
-                          foregroundColor: Colors.black87,
-                          elevation: 0,
-                          leading: Builder(
-                            builder: (context) => IconButton(
-                              icon: const Icon(Icons.grid_view_outlined,
+              : (isMobile
+                  ? PreferredSize(
+                      preferredSize: const Size.fromHeight(56),
+                      child: AppBar(
+                        backgroundColor: Colors.white,
+                        foregroundColor: Colors.black87,
+                        elevation: 0,
+                        leading: Builder(
+                          builder: (context) => IconButton(
+                            icon: const Icon(Icons.grid_view_outlined,
+                                color: Colors.black87),
+                            onPressed: () =>
+                                Scaffold.of(context).openDrawer(),
+                          ),
+                        ),
+                        title: Text(
+                          _currentTabIndex == 0
+                              ? (localizedStrings?.gTitleConnecting ?? "Connecting")
+                              : (localizedStrings?.gBtnSetting ?? "Setting"),
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleLarge!
+                              .copyWith(
+                                  color: Colors.black87,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18),
+                        ),
+                        centerTitle: true,
+                        actions: [
+                          if (_currentTabIndex == 0)
+                            IconButton(
+                              icon: const Icon(Icons.help_outline,
                                   color: Colors.black87),
-                              onPressed: () =>
-                                  Scaffold.of(context).openDrawer(),
+                              onPressed: () {
+                                showMobilePageHelpDialog(
+                                  context,
+                                  localizedStrings?.menuMultiScaleManagement ?? "Multi-scale Management",
+                                  localizedStrings?.gTipScaleMgrPageHelp ?? "Help instructions for Multi-scale Management.",
+                                );
+                              },
                             ),
-                          ),
-                          title: Text(
-                            _currentTabIndex == 0
-                                ? (localizedStrings?.gTitleConnecting ?? "Connecting")
-                                : (localizedStrings?.gBtnSetting ?? "Setting"),
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleLarge!
-                                .copyWith(
-                                    color: Colors.black87,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 18),
-                          ),
-                          centerTitle: true,
-                          actions: [
-                            if (_currentTabIndex == 0)
-                              IconButton(
-                                icon: const Icon(Icons.help_outline,
-                                    color: Colors.black87),
-                                onPressed: () {
-                                  showMobilePageHelpDialog(
-                                    context,
-                                    localizedStrings?.menuMultiScaleManagement ?? "Multi-scale Management",
-                                    localizedStrings?.gTipScaleMgrPageHelp ?? "Help instructions for Multi-scale Management.",
-                                  );
-                                },
-                              ),
-                            if (_selectedNavRoute == '/multiScaleManagement')
-                              IconButton(
-                                icon: const Icon(Icons.add_circle_outline,
-                                    color: Colors.black87),
-                                onPressed: () {
-                                  eventBus.fire(EventUiCmd('showAddDevice'));
-                                },
-                              ),
-                            const SizedBox(width: 8),
-                          ],
-                        )
-                      : DraggableTitleBar(title: ''),
-                ),
-          body: Row(
+                          if (_selectedNavRoute == '/multiScaleManagement')
+                            IconButton(
+                              icon: const Icon(Icons.add_circle_outline,
+                                  color: Colors.black87),
+                              onPressed: () {
+                                eventBus.fire(EventUiCmd('showAddDevice'));
+                              },
+                            ),
+                          const SizedBox(width: 8),
+                        ],
+                      ),
+                    )
+                  : ((Platform.isAndroid || Platform.isIOS)
+                      ? null
+                      : const PreferredSize(
+                          preferredSize: Size.fromHeight(40),
+                          child: DraggableTitleBar(title: ''),
+                        ))),
+          body: SafeArea(
+            top: (Platform.isAndroid || Platform.isIOS) && !isMobile,
+            bottom: false,
+            child: Row(
             children: [
               // Desktop Navigation Bar
               if (!isMobile && showLeftNavigationBar)
@@ -776,6 +784,7 @@ class MyHomePageState extends State<MyHomePage> with WindowLifecycleMixin {
               ),
             ],
           ),
+        ),
           bottomNavigationBar: isMobile && !_shouldHideScaffoldElements
               ? BottomNavigationBar(
                   currentIndex: _currentTabIndex,
